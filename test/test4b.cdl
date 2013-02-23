@@ -1,0 +1,23 @@
+netcdf test4b {
+
+dimensions:
+    dim1 = 1, dim2 = 2, dim3 = 2, dim4 = 2, rec = unlimited ; 
+        
+variables:
+    double data1(dim1, dim2);       // test values
+    float data2(dim1, dim3);         
+    long  data3(dim2);               
+    int data4(dim4);                
+    short recdata1(rec, dim2);       
+    char recdata2(rec, dim3);       
+    float rec(rec);                  
+
+data:
+   data1   = 1.000001, 2.01 ;
+   data2   = 7.000001, 7.99 ;
+   data3   = 8, -10;
+   data4   = 110, 12;
+   recdata1 = 3, 0 ;
+   recdata2 = 'c', 'b' ;
+   rec     = 5, 6.1 ;
+}

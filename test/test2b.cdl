@@ -1,0 +1,13 @@
+netcdf test2b {
+
+dimensions:
+    dim1 = 1, time = unlimited ; 
+        
+variables:
+    double recdata(time, dim1);      // test rec dim name
+    float rec(time);                 
+   
+data:
+   recdata = 3, 4 ;
+   rec     = 5, 6 ;
+}

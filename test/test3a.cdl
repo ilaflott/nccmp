@@ -1,0 +1,13 @@
+netcdf test3a {
+
+dimensions:
+    dim1 = 1, rec = unlimited ; 
+        
+variables:
+    double recdata(rec, dim1);      // test rec length
+    float rec(rec);                 
+   
+data:
+   recdata = 3, 4, 5 ;
+   rec     = 5, 6, 7 ;
+}

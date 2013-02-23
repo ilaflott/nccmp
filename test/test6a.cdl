@@ -1,0 +1,20 @@
+netcdf test5a {
+
+dimensions:
+    dim1 = 1, rec = unlimited ;
+
+variables:
+    double data1(dim1);       // test values
+    float rec(rec);
+
+		// variable attributes
+    data1:units = "m" ; 
+	  data1:long_name = "data1";
+    data1:standard_name = "meters" ; 
+		rec:units = "none";
+    rec:standard_name = "record" ; 
+
+data:
+   data1   = 1;
+   rec     = 5;
+}
