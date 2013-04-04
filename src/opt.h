@@ -68,12 +68,12 @@ Usage: nccmp [OPTION...] file1 file2\n\
   -v, --variable=var1[,...]  Compare variable(s) var1[,...] only.\n\
   -V, --version              Print program version.\n\
   -x, --exclude=var1[,...]   Exclude variable(s) var1[,...].\n\
-  -w, --warn=tag[,...]       Selectively make certain differences exceptions,\n\
-                             so only informational messages are\n\
-                             printed for them.\n\
-                             Supported tags and their meaning:\n\
+  -w, --warn=tag[,...]       Selectively make certain differences\n\
+                             exceptions, but still print messages.\n\
+                             Supported tags and their meanings:\n\
                              all: All differences.\n\
                              format: File formats.\n\
+                             eos: Extra attribute end-of-string nulls.\n\
 \n\
 Report bugs to Remik . Ziemlinski @ noaa . gov.\n\
 "
@@ -82,10 +82,11 @@ Report bugs to Remik . Ziemlinski @ noaa . gov.\n\
 #define NCCMP_MAX_STRINGS 256
 
 /* Warning tags supported, which are used as array indices. */
-#define NCCMP_W_TAGS "all,format"
-#define NCCMP_W_NUMTAGS 2
+#define NCCMP_W_TAGS "all,format,eos"
+#define NCCMP_W_NUMTAGS 3
 #define NCCMP_W_ALL 0
 #define NCCMP_W_FORMAT 1
+#define NCCMP_W_EOS 2
 
 typedef struct NCCMPOPTS
 {

@@ -1,1 +1,2 @@
-DIFFER : VARIABLE : rec : ATTRIBUTE : units : VALUES : none <> unknown
+DIFFER : LENGTHS : ATTRIBUTE : units : VARIABLE : rec : 4 <> 7 : VALUES : "none" : "unknown"
+DIFFER : VARIABLE : rec : ATTRIBUTE : units : VALUES : "none" <> "unknown"

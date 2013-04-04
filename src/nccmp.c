@@ -428,41 +428,68 @@ int cmpatt(int varid1, int varid2,
   }
 
   if (type1 != type2) {
-      type2string(type1, typestr1);
-      type2string(type2, typestr2);                                                
-      fprintf(stderr, "DIFFER : TYPES : ATTRIBUTE : %s : VARIABLE : %s : %s <> %s\n", 
-              name, varname, typestr1, typestr2);
-              
-      if (!opts->warn[NCCMP_W_ALL]) 
-        status = EXIT_DIFFER;
+    type2string(type1, typestr1);
+    type2string(type2, typestr2);                                                
+    fprintf(stderr, "DIFFER : TYPES : ATTRIBUTE : %s : VARIABLE : %s : %s <> %s\n", name, varname, typestr1, typestr2);
+            
+    if (!opts->warn[NCCMP_W_ALL]) 
+      status = EXIT_DIFFER;
 
-      return status;
-    }
+    return status;
+  }
 
   if (lenp1 != lenp2) {
-      /*fprintf(stderr, "DIFFER : LENGTHS : ATTRIBUTE : %s : VARIABLE : %s : %lu <> %lu\n", 
-              name, varname, (unsigned long)lenp1, (unsigned long)lenp2);
-      */
-      prettyprintatt(ncid1, varname, varid1, name, typestr1);
-      prettyprintatt(ncid2, varname, varid2, name, typestr2);
-      fprintf(stderr, "DIFFER : VARIABLE : %s : ATTRIBUTE : %s : VALUES : %s <> %s\n", varname, name, typestr1, typestr2);
-          
-      if (!opts->warn[NCCMP_W_ALL]) 
-        status = EXIT_DIFFER;
-
-      return status;
-    }
+    prettyprintatt(ncid1, varname, varid1, name, typestr1);
+    prettyprintatt(ncid2, varname, varid2, name, typestr2);
+    
+    fprintf(stderr, "DIFFER : LENGTHS : ATTRIBUTE : %s : VARIABLE : %s : %lu <> %lu : VALUES : ", name, varname, (unsigned long)lenp1, (unsigned long)lenp2);
+    
+    switch(type1) {
+      case NC_CHAR:
+        /* Quote strings. */
+        fprintf(stderr, "\"%s\" : \"%s\"\n", typestr1, typestr2);
+        if (strcmp(typestr1,typestr2) == 0) {
+          /* Same text, but invisible trailing nulls because lengths differ. */
+          if (opts->warn[NCCMP_W_EOS] || opts->warn[NCCMP_W_ALL]) {
+            /* Pass */
+          } else {
+            status = EXIT_DIFFER;
+            return status;
+          }
+        }
+        break;
+      default:
+        /* Unquoted. */
+        fprintf(stderr, "%s : %s\n", typestr1, typestr2);
+        if (!opts->warn[NCCMP_W_ALL]) {
+          status = EXIT_DIFFER;
+          return status;
+        }
+        break;
+    } 
+  }
 
   if (cmpattval(ncid1, ncid2, varid1, varid2, name, lenp1, type1) != NC_NOERR) {
-      prettyprintatt(ncid1, varname, varid1, name, typestr1);
-      prettyprintatt(ncid2, varname, varid2, name, typestr2);
-      fprintf(stderr, "DIFFER : VARIABLE : %s : ATTRIBUTE : %s : VALUES : %s <> %s\n", varname, name, typestr1, typestr2);
+    prettyprintatt(ncid1, varname, varid1, name, typestr1);
+    prettyprintatt(ncid2, varname, varid2, name, typestr2);
+    fprintf(stderr, "DIFFER : VARIABLE : %s : ATTRIBUTE : %s : VALUES : ", varname, name);
 
-      if (!opts->warn[NCCMP_W_ALL]) 
-        status = EXIT_DIFFER;
-
+    switch(type1) {
+      case NC_CHAR:
+        /* Quote strings. */
+        fprintf(stderr, "\"%s\" <> \"%s\"\n", typestr1, typestr2);
+        break;
+      default:
+        /* Unquoted. */
+        fprintf(stderr, "%s <> %s\n", typestr1, typestr2);
+        break;
+    }
+    
+    if (!opts->warn[NCCMP_W_ALL]) {
+      status = EXIT_DIFFER;
       return status;
     }
+  }
   
   return EXIT_SUCCESS;
 }
@@ -897,7 +924,7 @@ nccmpglobalatts(nccmpopts* opts)
   char name1[NC_MAX_NAME], name2[NC_MAX_NAME];
   char** processedatts = NULL;
   char typestr1[1024], typestr2[1024];
-
+  
   status = EXIT_SUCCESS;
   if (!opts->global)
     return status;
@@ -1063,11 +1090,34 @@ nccmpglobalatts(nccmpopts* opts)
     }
     
     if (len1 != len2)  {
-      fprintf(stderr, "DIFFER : LENGTHS OF GLOBAL ATTRIBUTE : %s : %lu <> %lu\n", name1, (unsigned long)len1, (unsigned long)len2);
-      if (!opts->warn[NCCMP_W_ALL]) 
-        status = EXIT_DIFFER;
-        
-      if(opts->force) continue; else return status;
+      prettyprintatt(ncid1, NULL, NC_GLOBAL, name1, typestr1);
+      prettyprintatt(ncid2, NULL, NC_GLOBAL, name1, typestr2);
+      
+      fprintf(stderr, "DIFFER : LENGTHS OF GLOBAL ATTRIBUTE : %s : %lu <> %lu : VALUES : ", name1, (unsigned long)len1, (unsigned long)len2);
+
+      switch(type1) {
+        case NC_CHAR:
+          /* Quote strings. */
+          fprintf(stderr, "\"%s\" : \"%s\"\n", typestr1, typestr2);
+          if (strcmp(typestr1,typestr2) == 0) {
+            /* Same text, but invisible trailing nulls because lengths differ. */
+            if (opts->warn[NCCMP_W_EOS] || opts->warn[NCCMP_W_ALL]) {
+              /* Pass */
+            } else {
+              status = EXIT_DIFFER;
+              if(opts->force) continue; else return status;
+            }
+          }
+          break;
+        default:
+          /* No quotes. */
+          fprintf(stderr, "%s : %s\n", typestr1, typestr2);
+          if (!opts->warn[NCCMP_W_ALL]) {
+            status = EXIT_DIFFER;
+            if(opts->force) continue; else return status;
+          }
+          break;
+      } 
     }
     
     if (cmpattval(ncid1,ncid2,NC_GLOBAL,NC_GLOBAL,name1,len1,type1) != NC_NOERR) {
@@ -1281,10 +1331,10 @@ nccmpmetadata(nccmpopts *opts)
     fprintf(stderr, "ERROR: Failed to allocate string list for comparing attributes.\n");
     return EXIT_FATAL;
   }
-  /*printf("DEBUG : %d : \n", __LINE__);*/
+  /*printf("DEBUG : %d : \n", __LINE__); fflush(stdout);*/
   
   for(i=0; i < opts->ncmpvarlist; ++i) {
-    /*printf("DEBUG : %d : i = %d\n", __LINE__, i);*/
+    /*printf("DEBUG : %d : i = %d\n", __LINE__, i); fflush(stdout);*/
     j1 = findvar(opts->cmpvarlist[i], vars1);
     j2 = findvar(opts->cmpvarlist[i], vars2);
     
@@ -1294,8 +1344,7 @@ nccmpmetadata(nccmpopts *opts)
     natts1 = natts2 = 0;
     clearstringlist(processedatts, NC_MAX_VARS);
     
-    /*printf("DEBUG : %d : var=%s\n", __LINE__, opts->cmpvarlist[i]);*/
-    fflush(stdout);
+    /*printf("DEBUG : %d : var=%s\n", __LINE__, opts->cmpvarlist[i]); fflush(stdout);*/
     
     /* Attributes */
     for(attid1=0; attid1 < vars1[j1].natts; ++attid1) {

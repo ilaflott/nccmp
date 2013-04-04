@@ -5,7 +5,7 @@ DIFFER : NAME : VARIABLE : data3 : VARIABLE DOESN'T EXIST IN "test1b.nc"
 DIFFER : TYPES : VARIABLE : rec : FLOAT <> INT
 DIFFER : DIMENSION NAMES FOR VARIABLE data4 : dim4 <> dim2
 DIFFER : VARIABLE "data1" IS MISSING ATTRIBUTE WITH NAME "units" IN FILE "test1b.nc"
-DIFFER : VARIABLE : data1 : ATTRIBUTE : long_name : VALUES : test data <> test data_
+DIFFER : LENGTHS : ATTRIBUTE : long_name : VARIABLE : data1 : 9 <> 10 : VALUES : "test data" : "test data_"
 DIFFER : VARIABLE : data1 : ATTRIBUTE : valid_range : VALUES : 1,2 <> -2,1
 DIFFER : NUMBER OF ATTRIBUTES : VARIABLE : data1 : 3 <> 2
 DIFFER : TYPES : ATTRIBUTE : _FillValue : VARIABLE : rec : FLOAT <> INT

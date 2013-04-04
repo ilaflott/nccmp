@@ -1,108 +1,127 @@
 ncinfo-ncinfo.o: ncinfo.c /usr/include/stdlib.h /usr/include/features.h \
- /usr/include/bits/predefs.h /usr/include/sys/cdefs.h \
- /usr/include/bits/wordsize.h /usr/include/gnu/stubs.h \
- /usr/include/gnu/stubs-64.h \
- /usr/lib/gcc/x86_64-linux-gnu/4.4.1/include/stddef.h \
- /usr/include/sys/types.h /usr/include/bits/types.h \
- /usr/include/bits/typesizes.h /usr/include/time.h /usr/include/endian.h \
- /usr/include/bits/endian.h /usr/include/bits/byteswap.h \
- /usr/include/sys/select.h /usr/include/bits/select.h \
- /usr/include/bits/sigset.h /usr/include/bits/time.h \
- /usr/include/sys/sysmacros.h /usr/include/bits/pthreadtypes.h \
- /usr/include/alloca.h /usr/include/bits/stdlib.h \
- /usr/local/include/netcdf.h /usr/include/errno.h \
- /usr/include/bits/errno.h /usr/include/linux/errno.h \
- /usr/include/asm/errno.h /usr/include/asm-generic/errno.h \
- /usr/include/asm-generic/errno-base.h /usr/include/stdio.h \
- /usr/include/libio.h /usr/include/_G_config.h /usr/include/wchar.h \
- /usr/lib/gcc/x86_64-linux-gnu/4.4.1/include/stdarg.h \
- /usr/include/bits/stdio_lim.h /usr/include/bits/sys_errlist.h \
- /usr/include/bits/stdio.h /usr/include/bits/stdio2.h \
- include/nc4internal.h ../config.h /usr/include/error.h \
- /usr/include/bits/error.h /usr/include/ctype.h /usr/include/xlocale.h \
- /usr/include/string.h /usr/include/bits/string.h \
- /usr/include/bits/string2.h /usr/include/bits/string3.h \
- include/netcdf3.h /usr/local/include/hdf5.h \
- /usr/local/include/H5public.h /usr/local/include/H5pubconf.h \
- /usr/local/include/H5version.h \
- /usr/lib/gcc/x86_64-linux-gnu/4.4.1/include-fixed/limits.h \
- /usr/lib/gcc/x86_64-linux-gnu/4.4.1/include-fixed/syslimits.h \
- /usr/include/limits.h /usr/include/bits/posix1_lim.h \
- /usr/include/bits/local_lim.h /usr/include/linux/limits.h \
- /usr/include/bits/posix2_lim.h /usr/include/stdint.h \
- /usr/include/bits/wchar.h /usr/include/inttypes.h \
- /usr/local/include/H5api_adpt.h /usr/local/include/H5Apublic.h \
- /usr/local/include/H5Ipublic.h /usr/local/include/H5Opublic.h \
- /usr/local/include/H5Lpublic.h /usr/local/include/H5Tpublic.h \
- /usr/local/include/H5ACpublic.h /usr/local/include/H5Cpublic.h \
- /usr/local/include/H5Dpublic.h /usr/local/include/H5Epublic.h \
- /usr/local/include/H5Epubgen.h /usr/local/include/H5Fpublic.h \
- /usr/local/include/H5FDpublic.h /usr/local/include/H5Gpublic.h \
- /usr/local/include/H5MMpublic.h /usr/local/include/H5Ppublic.h \
- /usr/local/include/H5Zpublic.h /usr/local/include/H5Rpublic.h \
- /usr/local/include/H5Spublic.h /usr/local/include/H5FDcore.h \
- /usr/local/include/H5FDfamily.h /usr/local/include/H5FDlog.h \
- /usr/local/include/H5FDmpi.h /usr/local/include/H5FDmpio.h \
- /usr/local/include/H5FDmpiposix.h /usr/local/include/H5FDmulti.h \
- /usr/local/include/H5FDsec2.h /usr/local/include/H5FDstdio.h \
- /usr/local/include/H5FDdirect.h include/nc.h include/ncio.h \
- include/fbits.h
+ /usr/include/x86_64-linux-gnu/bits/predefs.h \
+ /usr/include/x86_64-linux-gnu/sys/cdefs.h \
+ /usr/include/x86_64-linux-gnu/bits/wordsize.h \
+ /usr/include/x86_64-linux-gnu/gnu/stubs.h \
+ /usr/include/x86_64-linux-gnu/gnu/stubs-64.h \
+ /usr/lib/gcc/x86_64-linux-gnu/4.6/include/stddef.h \
+ /usr/include/x86_64-linux-gnu/bits/waitflags.h \
+ /usr/include/x86_64-linux-gnu/bits/waitstatus.h /usr/include/endian.h \
+ /usr/include/x86_64-linux-gnu/bits/endian.h \
+ /usr/include/x86_64-linux-gnu/bits/byteswap.h \
+ /usr/include/x86_64-linux-gnu/sys/types.h \
+ /usr/include/x86_64-linux-gnu/bits/types.h \
+ /usr/include/x86_64-linux-gnu/bits/typesizes.h /usr/include/time.h \
+ /usr/include/x86_64-linux-gnu/sys/select.h \
+ /usr/include/x86_64-linux-gnu/bits/select.h \
+ /usr/include/x86_64-linux-gnu/bits/sigset.h \
+ /usr/include/x86_64-linux-gnu/bits/time.h \
+ /usr/include/x86_64-linux-gnu/bits/select2.h \
+ /usr/include/x86_64-linux-gnu/sys/sysmacros.h \
+ /usr/include/x86_64-linux-gnu/bits/pthreadtypes.h /usr/include/alloca.h \
+ /usr/include/x86_64-linux-gnu/bits/stdlib.h /usr/include/netcdf.h \
+ /usr/include/errno.h /usr/include/x86_64-linux-gnu/bits/errno.h \
+ /usr/include/linux/errno.h /usr/include/x86_64-linux-gnu/asm/errno.h \
+ /usr/include/asm-generic/errno.h /usr/include/asm-generic/errno-base.h \
+ /usr/include/stdio.h /usr/include/libio.h /usr/include/_G_config.h \
+ /usr/include/wchar.h /usr/lib/gcc/x86_64-linux-gnu/4.6/include/stdarg.h \
+ /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
+ /usr/include/x86_64-linux-gnu/bits/sys_errlist.h \
+ /usr/include/x86_64-linux-gnu/bits/stdio.h \
+ /usr/include/x86_64-linux-gnu/bits/stdio2.h include/nc4internal.h \
+ ../config.h /usr/include/error.h \
+ /usr/include/x86_64-linux-gnu/bits/error.h /usr/include/ctype.h \
+ /usr/include/xlocale.h /usr/include/string.h \
+ /usr/include/x86_64-linux-gnu/bits/string.h \
+ /usr/include/x86_64-linux-gnu/bits/string2.h \
+ /usr/include/x86_64-linux-gnu/bits/string3.h include/netcdf3.h \
+ /usr/include/hdf5.h /usr/include/H5public.h /usr/include/H5pubconf.h \
+ /usr/include/H5version.h \
+ /usr/lib/gcc/x86_64-linux-gnu/4.6/include-fixed/limits.h \
+ /usr/lib/gcc/x86_64-linux-gnu/4.6/include-fixed/syslimits.h \
+ /usr/include/limits.h /usr/include/x86_64-linux-gnu/bits/posix1_lim.h \
+ /usr/include/x86_64-linux-gnu/bits/local_lim.h \
+ /usr/include/linux/limits.h \
+ /usr/include/x86_64-linux-gnu/bits/posix2_lim.h \
+ /usr/lib/gcc/x86_64-linux-gnu/4.6/include/stdint.h /usr/include/stdint.h \
+ /usr/include/x86_64-linux-gnu/bits/wchar.h /usr/include/inttypes.h \
+ /usr/include/H5api_adpt.h /usr/include/H5Apublic.h \
+ /usr/include/H5Ipublic.h /usr/include/H5Opublic.h \
+ /usr/include/H5Lpublic.h /usr/include/H5Tpublic.h \
+ /usr/include/H5ACpublic.h /usr/include/H5Cpublic.h \
+ /usr/include/H5Dpublic.h /usr/include/H5Epublic.h \
+ /usr/include/H5Epubgen.h /usr/include/H5Fpublic.h \
+ /usr/include/H5FDpublic.h /usr/include/H5Gpublic.h \
+ /usr/include/H5MMpublic.h /usr/include/H5Ppublic.h \
+ /usr/include/H5Zpublic.h /usr/include/H5Rpublic.h \
+ /usr/include/H5Spublic.h /usr/include/H5FDcore.h \
+ /usr/include/H5FDfamily.h /usr/include/H5FDlog.h /usr/include/H5FDmpi.h \
+ /usr/include/H5FDmpio.h /usr/include/H5FDmpiposix.h \
+ /usr/include/H5FDmulti.h /usr/include/H5FDsec2.h \
+ /usr/include/H5FDstdio.h /usr/include/H5FDdirect.h include/nc.h \
+ include/ncio.h include/fbits.h
 
 /usr/include/stdlib.h:
 
 /usr/include/features.h:
 
-/usr/include/bits/predefs.h:
+/usr/include/x86_64-linux-gnu/bits/predefs.h:
 
-/usr/include/sys/cdefs.h:
+/usr/include/x86_64-linux-gnu/sys/cdefs.h:
 
-/usr/include/bits/wordsize.h:
+/usr/include/x86_64-linux-gnu/bits/wordsize.h:
 
-/usr/include/gnu/stubs.h:
+/usr/include/x86_64-linux-gnu/gnu/stubs.h:
 
-/usr/include/gnu/stubs-64.h:
+/usr/include/x86_64-linux-gnu/gnu/stubs-64.h:
 
-/usr/lib/gcc/x86_64-linux-gnu/4.4.1/include/stddef.h:
+/usr/lib/gcc/x86_64-linux-gnu/4.6/include/stddef.h:
 
-/usr/include/sys/types.h:
+/usr/include/x86_64-linux-gnu/bits/waitflags.h:
 
-/usr/include/bits/types.h:
-
-/usr/include/bits/typesizes.h:
-
-/usr/include/time.h:
+/usr/include/x86_64-linux-gnu/bits/waitstatus.h:
 
 /usr/include/endian.h:
 
-/usr/include/bits/endian.h:
+/usr/include/x86_64-linux-gnu/bits/endian.h:
 
-/usr/include/bits/byteswap.h:
+/usr/include/x86_64-linux-gnu/bits/byteswap.h:
 
-/usr/include/sys/select.h:
+/usr/include/x86_64-linux-gnu/sys/types.h:
 
-/usr/include/bits/select.h:
+/usr/include/x86_64-linux-gnu/bits/types.h:
 
-/usr/include/bits/sigset.h:
+/usr/include/x86_64-linux-gnu/bits/typesizes.h:
 
-/usr/include/bits/time.h:
+/usr/include/time.h:
 
-/usr/include/sys/sysmacros.h:
+/usr/include/x86_64-linux-gnu/sys/select.h:
 
-/usr/include/bits/pthreadtypes.h:
+/usr/include/x86_64-linux-gnu/bits/select.h:
+
+/usr/include/x86_64-linux-gnu/bits/sigset.h:
+
+/usr/include/x86_64-linux-gnu/bits/time.h:
+
+/usr/include/x86_64-linux-gnu/bits/select2.h:
+
+/usr/include/x86_64-linux-gnu/sys/sysmacros.h:
+
+/usr/include/x86_64-linux-gnu/bits/pthreadtypes.h:
 
 /usr/include/alloca.h:
 
-/usr/include/bits/stdlib.h:
+/usr/include/x86_64-linux-gnu/bits/stdlib.h:
 
-/usr/local/include/netcdf.h:
+/usr/include/netcdf.h:
 
 /usr/include/errno.h:
 
-/usr/include/bits/errno.h:
+/usr/include/x86_64-linux-gnu/bits/errno.h:
 
 /usr/include/linux/errno.h:
 
-/usr/include/asm/errno.h:
+/usr/include/x86_64-linux-gnu/asm/errno.h:
 
 /usr/include/asm-generic/errno.h:
 
@@ -116,15 +135,15 @@ ncinfo-ncinfo.o: ncinfo.c /usr/include/stdlib.h /usr/include/features.h \
 
 /usr/include/wchar.h:
 
-/usr/lib/gcc/x86_64-linux-gnu/4.4.1/include/stdarg.h:
+/usr/lib/gcc/x86_64-linux-gnu/4.6/include/stdarg.h:
 
-/usr/include/bits/stdio_lim.h:
+/usr/include/x86_64-linux-gnu/bits/stdio_lim.h:
 
-/usr/include/bits/sys_errlist.h:
+/usr/include/x86_64-linux-gnu/bits/sys_errlist.h:
 
-/usr/include/bits/stdio.h:
+/usr/include/x86_64-linux-gnu/bits/stdio.h:
 
-/usr/include/bits/stdio2.h:
+/usr/include/x86_64-linux-gnu/bits/stdio2.h:
 
 include/nc4internal.h:
 
@@ -132,7 +151,7 @@ include/nc4internal.h:
 
 /usr/include/error.h:
 
-/usr/include/bits/error.h:
+/usr/include/x86_64-linux-gnu/bits/error.h:
 
 /usr/include/ctype.h:
 
@@ -140,99 +159,101 @@ include/nc4internal.h:
 
 /usr/include/string.h:
 
-/usr/include/bits/string.h:
+/usr/include/x86_64-linux-gnu/bits/string.h:
 
-/usr/include/bits/string2.h:
+/usr/include/x86_64-linux-gnu/bits/string2.h:
 
-/usr/include/bits/string3.h:
+/usr/include/x86_64-linux-gnu/bits/string3.h:
 
 include/netcdf3.h:
 
-/usr/local/include/hdf5.h:
+/usr/include/hdf5.h:
 
-/usr/local/include/H5public.h:
+/usr/include/H5public.h:
 
-/usr/local/include/H5pubconf.h:
+/usr/include/H5pubconf.h:
 
-/usr/local/include/H5version.h:
+/usr/include/H5version.h:
 
-/usr/lib/gcc/x86_64-linux-gnu/4.4.1/include-fixed/limits.h:
+/usr/lib/gcc/x86_64-linux-gnu/4.6/include-fixed/limits.h:
 
-/usr/lib/gcc/x86_64-linux-gnu/4.4.1/include-fixed/syslimits.h:
+/usr/lib/gcc/x86_64-linux-gnu/4.6/include-fixed/syslimits.h:
 
 /usr/include/limits.h:
 
-/usr/include/bits/posix1_lim.h:
+/usr/include/x86_64-linux-gnu/bits/posix1_lim.h:
 
-/usr/include/bits/local_lim.h:
+/usr/include/x86_64-linux-gnu/bits/local_lim.h:
 
 /usr/include/linux/limits.h:
 
-/usr/include/bits/posix2_lim.h:
+/usr/include/x86_64-linux-gnu/bits/posix2_lim.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/4.6/include/stdint.h:
 
 /usr/include/stdint.h:
 
-/usr/include/bits/wchar.h:
+/usr/include/x86_64-linux-gnu/bits/wchar.h:
 
 /usr/include/inttypes.h:
 
-/usr/local/include/H5api_adpt.h:
+/usr/include/H5api_adpt.h:
 
-/usr/local/include/H5Apublic.h:
+/usr/include/H5Apublic.h:
 
-/usr/local/include/H5Ipublic.h:
+/usr/include/H5Ipublic.h:
 
-/usr/local/include/H5Opublic.h:
+/usr/include/H5Opublic.h:
 
-/usr/local/include/H5Lpublic.h:
+/usr/include/H5Lpublic.h:
 
-/usr/local/include/H5Tpublic.h:
+/usr/include/H5Tpublic.h:
 
-/usr/local/include/H5ACpublic.h:
+/usr/include/H5ACpublic.h:
 
-/usr/local/include/H5Cpublic.h:
+/usr/include/H5Cpublic.h:
 
-/usr/local/include/H5Dpublic.h:
+/usr/include/H5Dpublic.h:
 
-/usr/local/include/H5Epublic.h:
+/usr/include/H5Epublic.h:
 
-/usr/local/include/H5Epubgen.h:
+/usr/include/H5Epubgen.h:
 
-/usr/local/include/H5Fpublic.h:
+/usr/include/H5Fpublic.h:
 
-/usr/local/include/H5FDpublic.h:
+/usr/include/H5FDpublic.h:
 
-/usr/local/include/H5Gpublic.h:
+/usr/include/H5Gpublic.h:
 
-/usr/local/include/H5MMpublic.h:
+/usr/include/H5MMpublic.h:
 
-/usr/local/include/H5Ppublic.h:
+/usr/include/H5Ppublic.h:
 
-/usr/local/include/H5Zpublic.h:
+/usr/include/H5Zpublic.h:
 
-/usr/local/include/H5Rpublic.h:
+/usr/include/H5Rpublic.h:
 
-/usr/local/include/H5Spublic.h:
+/usr/include/H5Spublic.h:
 
-/usr/local/include/H5FDcore.h:
+/usr/include/H5FDcore.h:
 
-/usr/local/include/H5FDfamily.h:
+/usr/include/H5FDfamily.h:
 
-/usr/local/include/H5FDlog.h:
+/usr/include/H5FDlog.h:
 
-/usr/local/include/H5FDmpi.h:
+/usr/include/H5FDmpi.h:
 
-/usr/local/include/H5FDmpio.h:
+/usr/include/H5FDmpio.h:
 
-/usr/local/include/H5FDmpiposix.h:
+/usr/include/H5FDmpiposix.h:
 
-/usr/local/include/H5FDmulti.h:
+/usr/include/H5FDmulti.h:
 
-/usr/local/include/H5FDsec2.h:
+/usr/include/H5FDsec2.h:
 
-/usr/local/include/H5FDstdio.h:
+/usr/include/H5FDstdio.h:
 
-/usr/local/include/H5FDdirect.h:
+/usr/include/H5FDdirect.h:
 
 include/nc.h:
 

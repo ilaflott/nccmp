@@ -5,6 +5,11 @@ See the end for copying conditions.
 
 Please send nccmp bug reports to Remik Ziemlinski @ noaa gov.
 
+Version 1.3.0
+
+1. Added new warning flag (-w eos) to ignore extra end-of-string nulls in (global and variable) attribute strings (NC_CHAR type).
+2. Added missing support for -D debug flag.
+
 Version 1.2.0
 
 1. Added configure option --enable-ncinfo (default is yes). This will build and install the small helper tool. Use --enable-ncinfo=no to skip it.

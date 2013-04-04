@@ -144,7 +144,7 @@ int getnccmpopts(int argc, char** argv, nccmpopts* popts)
     exit(EXIT_FATAL);
   }
 
-  while ( (c = getopt_long(argc, argv, "A:dx:fFghmp:qst:T:v:bHVG:w:", long_options, 0))
+  while ( (c = getopt_long(argc, argv, "A:dDx:fFghmp:qst:T:v:bHVG:w:", long_options, 0))
           != -1
         )
   switch (c)
@@ -153,6 +153,10 @@ int getnccmpopts(int argc, char** argv, nccmpopts* popts)
           popts->data = 1;
           break;
 
+  case 'D':
+          popts->debug = 1;
+          break;
+    
   case 'x':
           popts->exclude = 1;
           getstringlist(optarg, &popts->excludelist, &popts->nexclude);
@@ -255,6 +259,8 @@ int getnccmpopts(int argc, char** argv, nccmpopts* popts)
       popts->warn[NCCMP_W_ALL] = 1;
     else if (instringlist(warningtags, "format", nwarningtags))
       popts->warn[NCCMP_W_FORMAT] = 1;
+    else if (instringlist(warningtags, "eos", nwarningtags))
+      popts->warn[NCCMP_W_EOS] = 1;
           
     break;
   }
