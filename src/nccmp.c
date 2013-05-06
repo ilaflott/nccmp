@@ -774,14 +774,53 @@ void getdiminfo(int ncid, dimstruct* dims, int* ndims)
     handle_error(status);
   }
 }
-
-/* *********************************************************** */
+/# *********************************************************** */
+char get_missing(int ncid, varstruct * var, const char* attname) {
+  nc_type att_type;
+  int status;
+  
+  status = nc_inq_atttype(ncid, var->varid, attname, att_type);
+  if (status != NC_NOERR) return 0;
+  
+  switch(att_type) {
+    case NC_CHAR:
+      status = nc_get_att_text(ncid, var->varid, attname, &var->missing.text);
+      if (status != NC_NOERR) return 0;
+      break;
+    case NC_BYTE: 
+      status = nc_get_att_uchar(ncid, var->varid, attname, &var->missing.byte);
+      if (status != NC_NOERR) return 0;
+      break;
+    case NC_SHORT:
+      status = nc_get_att_short(ncid, var->varid, attname, &var->missing.int16);
+      if (status != NC_NOERR) return 0;
+      break;
+    case NC_INT:
+      status = nc_get_att_int(ncid, var->varid, attname, &var->missing.int32);
+      if (status != NC_NOERR) return 0;
+      break;
+    case NC_FLOAT:
+      status = nc_get_att_float(ncid, var->varid, attname, &var->missing.float32);
+      if (status != NC_NOERR) return 0;
+      break;
+    case NC_DOUBLE:
+      status = nc_get_att_double(ncid, var->varid, attname, &var->missing.double);
+      if (status != NC_NOERR) return 0;
+      break;
+    default: return 0;
+  }
+  
+  var->hasmissing = 1;
+  return 1;
+}
+/* *****************************s****************************** */
 /* Read all the file's metadata for variables. */
 void getvarinfo(int ncid, varstruct* vars, int* nvars)
 {
   int status, i, j, recid;
   char name[NC_MAX_NAME];
-
+  nc_type att_type;
+  
   status = nc_inq_nvars(ncid, nvars);
   handle_error(status);
 
@@ -806,6 +845,10 @@ void getvarinfo(int ncid, varstruct* vars, int* nvars)
     }
 
     vars[i].hasrec = (vars[i].dimids[0] == recid);
+    
+    /* Get missing_value or _FillValue. */
+    if (get_missing(ncid, &vars[i], "missing_value") == 0)
+      get_missing(ncid, &vars[i], "_FillValue");
   }
 }
 /* *********************************************************** */
@@ -2009,6 +2052,7 @@ int nccmpdata(nccmpopts* opts)
 
       /* Compare only if # recs are equal and not zero. */ 
       if ((nrec1 == nrec2) && (nrec1+nrec2)) {
+        /* TODO: Check if ignorem missing. */
         if (cmpstatus = nccmpdatarecvar(opts->cmpvarlist[i], opts, 0, nrec1-1)) {
           status = cmpstatus;
           if (opts->force)
@@ -2018,6 +2062,7 @@ int nccmpdata(nccmpopts* opts)
         }
       }
     } else {
+      /* TODO: Check if ignorem missing. */
       if (cmpstatus = cmpvar(opts->cmpvarlist[i], -1, opts)) {
         status = cmpstatus;
         if (opts->force)

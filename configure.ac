@@ -1,5 +1,5 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT(nccmp, 1.3.0, [[=Remik.Ziemlinski_at_noaa.gov]]) 
+AC_INIT(nccmp, 1.4.0, [[=Remik.Ziemlinski_at_noaa.gov]]) 
 AM_INIT_AUTOMAKE
 
 AC_CONFIG_HEADERS(config.h)

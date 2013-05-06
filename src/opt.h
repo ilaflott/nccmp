@@ -48,8 +48,10 @@ Usage: nccmp [OPTION...] file1 file2\n\
   -b, --verbose              Print messages to show progress.\n\
   -d, --data                 Compare data (variable values).\n\
   -D, --debug                Prints verbose debug messages.\n\
-  -f, --force                Forcefully compare, do not stop after first difference.\n\
-  -F, --fortran              Print position indices using Fortran style (1-based reverse order).\n\
+  -f, --force                Forcefully compare, do not stop after first\n\
+                             difference.\n\
+  -F, --fortran              Print position indices using Fortran style\n\
+                             (1-based reverse order).\n\
   -g, --global               Compare global attributes.\n\
                              (-m required)\n\
   -G, --globalex att1[,...]  Exclude global attributes att1[,...].\n\
@@ -59,7 +61,11 @@ Usage: nccmp [OPTION...] file1 file2\n\
   -H, --help                 Give this usage message.\n\
       --usage                \n\
   -m, --metadata             Compare metadata, excluding global attributes.\n\
-  -p, --precision='%%.17g'    Precision of difference printing (default is '%%g').\n\
+  -M, --missing              Ignore difference between values that have\n\
+                             different missing_value and/or _FillValue.\n\
+                             Attribute differences are still reported.\n\
+  -p, --precision='%%.17g'   Precision of difference printing\n\
+                             (default is '%%g').\n\
                              Use '%%x' to print bytes.\n\
   -s, --report-identical-files\n\
                              Report when files are the same.\n\
@@ -101,6 +107,7 @@ typedef struct NCCMPOPTS
 	char**  globalexclude;  /* list of global atts to exclude */
 	int     history;        /* compare global history attribute */
 	int     metadata;       /* compare metadata, excluding global attributes */
+  int     missing;        /* ignore different missing_value/_FillValues */
 	int     quiet;          /* deprecated. prints differences only, no script making for viewing */
 	char*   precision;      /* print precision of values. */
 	int     verbose;        /* print messages to show progress */

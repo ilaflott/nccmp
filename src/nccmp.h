@@ -23,6 +23,23 @@
 #include <netcdf.h>
 #include <math.h>
 
+typedef enum { BYTE, INT16, UINT16, INT32, UINT32, FLOAT, DOUBLE } MissingType;
+
+typedef struct MISSING_STRUCT
+{
+  MissingType type;
+  union {
+    char text;
+    unsigned char byte;
+    short int16;
+    unsigned short uint16;
+    int int32;
+    unsigned int uint32;
+    float float32;
+    double float64;
+  }
+} missing_struct;
+
 typedef struct VARSTRUCT
 {
 	char name[NC_MAX_NAME];
@@ -34,6 +51,8 @@ typedef struct VARSTRUCT
 	int dimids[NC_MAX_VAR_DIMS];
 	char hasrec; /* has record dimension? */
 	int natts;
+  char hasmissing;
+  missing_struct missing;
 } varstruct;
 
 typedef struct DIMSTRUCT
