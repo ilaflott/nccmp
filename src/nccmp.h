@@ -23,21 +23,17 @@
 #include <netcdf.h>
 #include <math.h>
 
-typedef enum { BYTE, INT16, UINT16, INT32, UINT32, FLOAT, DOUBLE } MissingType;
-
 typedef struct MISSING_STRUCT
 {
-  MissingType type;
+  nc_type type;
   union {
-    char text;
-    unsigned char byte;
-    short int16;
-    unsigned short uint16;
-    int int32;
-    unsigned int uint32;
-    float float32;
-    double float64;
-  }
+    char c;
+    unsigned char b;
+    short s;
+    int i;
+    float f;
+    double d;
+  };
 } missing_struct;
 
 typedef struct VARSTRUCT
@@ -66,7 +62,7 @@ int openfiles(nccmpopts* opts);
 int nccmp(nccmpopts* opts); 
 int nccmpmetadata(nccmpopts* opts); 
 int nccmpdata(nccmpopts* opts); 
-void getvarinfo(int ncid, varstruct* vars, int* nvars);
+void getvarinfo(int ncid, varstruct* vars, int* nvars, int debug);
 void type2string(nc_type type, char* str);
 int excludevars(int ncid1, int ncid2, char** finallist,
                 int nfinal, char** excludelist, int nexclude);

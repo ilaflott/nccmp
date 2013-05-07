@@ -774,48 +774,75 @@ void getdiminfo(int ncid, dimstruct* dims, int* ndims)
     handle_error(status);
   }
 }
-/# *********************************************************** */
+/* *********************************************************** */
+/* Copy attribute type to same type as var, just in case of mismatch. */
+void broadcast_missing(nc_type var_type, nc_type att_type, missing_struct *values) {
+  #define BROADCAST_MISSING(T) { \
+    switch(att_type) { \
+      case NC_CHAR: values->T = values->c; break; \
+      case NC_BYTE: values->T = values->b; break; \
+      case NC_SHORT: values->T = values->s; break; \
+      case NC_INT: values->T = values->i; break; \
+      case NC_FLOAT: values->T = values->f; break; \
+      case NC_DOUBLE: values->T = values->d; break; \
+    } \
+  }
+  
+  switch(var_type) {
+    case NC_CHAR: BROADCAST_MISSING(c); break;
+    case NC_BYTE: BROADCAST_MISSING(b); break;
+    case NC_SHORT: BROADCAST_MISSING(s); break;
+    case NC_INT: BROADCAST_MISSING(i); break;
+    case NC_FLOAT: BROADCAST_MISSING(f); break;
+    case NC_DOUBLE: BROADCAST_MISSING(d); break;
+  }
+}
+/* *********************************************************** */
 char get_missing(int ncid, varstruct * var, const char* attname) {
   nc_type att_type;
   int status;
   
-  status = nc_inq_atttype(ncid, var->varid, attname, att_type);
+  status = nc_inq_atttype(ncid, var->varid, attname, &att_type);
   if (status != NC_NOERR) return 0;
+  
+  var->missing.type = att_type;
   
   switch(att_type) {
     case NC_CHAR:
-      status = nc_get_att_text(ncid, var->varid, attname, &var->missing.text);
+      status = nc_get_att_text(ncid, var->varid, attname, &var->missing.c);
       if (status != NC_NOERR) return 0;
       break;
     case NC_BYTE: 
-      status = nc_get_att_uchar(ncid, var->varid, attname, &var->missing.byte);
+      status = nc_get_att_uchar(ncid, var->varid, attname, &var->missing.b);
       if (status != NC_NOERR) return 0;
       break;
     case NC_SHORT:
-      status = nc_get_att_short(ncid, var->varid, attname, &var->missing.int16);
+      status = nc_get_att_short(ncid, var->varid, attname, &var->missing.s);
       if (status != NC_NOERR) return 0;
       break;
     case NC_INT:
-      status = nc_get_att_int(ncid, var->varid, attname, &var->missing.int32);
+      status = nc_get_att_int(ncid, var->varid, attname, &var->missing.i);
       if (status != NC_NOERR) return 0;
       break;
     case NC_FLOAT:
-      status = nc_get_att_float(ncid, var->varid, attname, &var->missing.float32);
+      status = nc_get_att_float(ncid, var->varid, attname, &var->missing.f);
       if (status != NC_NOERR) return 0;
       break;
     case NC_DOUBLE:
-      status = nc_get_att_double(ncid, var->varid, attname, &var->missing.double);
+      status = nc_get_att_double(ncid, var->varid, attname, &var->missing.d);
       if (status != NC_NOERR) return 0;
       break;
     default: return 0;
   }
   
   var->hasmissing = 1;
+  broadcast_missing(var->type, att_type, &var->missing);
+  
   return 1;
 }
 /* *****************************s****************************** */
 /* Read all the file's metadata for variables. */
-void getvarinfo(int ncid, varstruct* vars, int* nvars)
+void getvarinfo(int ncid, varstruct* vars, int* nvars, int verbose)
 {
   int status, i, j, recid;
   char name[NC_MAX_NAME];
@@ -849,6 +876,20 @@ void getvarinfo(int ncid, varstruct* vars, int* nvars)
     /* Get missing_value or _FillValue. */
     if (get_missing(ncid, &vars[i], "missing_value") == 0)
       get_missing(ncid, &vars[i], "_FillValue");
+    
+    if (verbose) {
+      if (vars[i].hasmissing) {
+        printf("INFO: \"%s\" missing value: ", vars[i].name);
+        switch(vars[i].missing.type) {
+          case NC_BYTE: printf("%d (byte)\n", vars[i].missing.b); break;
+          case NC_CHAR: printf("%d (char)\n", vars[i].missing.c); break;
+          case NC_SHORT: printf("%d (short)\n", vars[i].missing.s); break;
+          case NC_INT: printf("%d (int)\n", vars[i].missing.i); break;
+          case NC_FLOAT: printf("%g (float)\n", vars[i].missing.f); break;
+          case NC_DOUBLE: printf("%g (double)\n", vars[i].missing.d); break;
+        }
+      }
+    }
   }
 }
 /* *********************************************************** */
@@ -1482,9 +1523,21 @@ off_t cmp_text(char* in1, char* in2) {
     continue;
   return p1 - in1;
 }
+off_t cmp_text_missing(char* in1, char* in2, char m1, char m2) {
+  char const *p1, *p2;
+  for(p1 = in1, p2 = in2; (*p1 == *p2) || ((*p1 == m1) && (*p2 == m2)); ++p1, ++p2)
+    continue;
+  return p1 - in1;
+}
 off_t cmp_uchar(unsigned char* in1, unsigned char* in2) {
   unsigned char const *p1, *p2;
   for(p1 = in1, p2 = in2; *p1 == *p2; ++p1, ++p2)
+    continue;
+  return p1 - in1;
+}
+off_t cmp_uchar_missing(unsigned char* in1, unsigned char* in2, unsigned char m1, unsigned char m2) {
+  unsigned char const *p1, *p2;
+  for(p1 = in1, p2 = in2; (*p1 == *p2) || ((*p1 == m1) && (*p2 == m2)); ++p1, ++p2)
     continue;
   return p1 - in1;
 }
@@ -1494,9 +1547,21 @@ off_t cmp_short(short* in1, short* in2) {
     continue;
   return p1 - in1;
 }
+off_t cmp_short_missing(short* in1, short* in2, short m1, short m2) {
+  short const *p1, *p2;
+  for(p1 = in1, p2 = in2; (*p1 == *p2) || ((*p1 == m1) && (*p2 == m2)); ++p1, ++p2)
+    continue;
+  return p1 - in1;
+}
 off_t cmp_int(int* in1, int* in2) {
   int const *p1, *p2;
   for(p1 = in1, p2 = in2; *p1 == *p2; ++p1, ++p2)
+    continue;
+  return p1 - in1;
+}
+off_t cmp_int_missing(int* in1, int* in2, int m1, int m2) {
+  int const *p1, *p2;
+  for(p1 = in1, p2 = in2; (*p1 == *p2) || ((*p1 == m1) && (*p2 == m2)); ++p1, ++p2)
     continue;
   return p1 - in1;
 }
@@ -1506,9 +1571,21 @@ off_t cmp_float(float* in1, float* in2) {
     continue;
   return p1 - in1;
 }
+off_t cmp_float_missing(float* in1, float* in2, float m1, float m2) {
+  float const *p1, *p2;
+  for(p1 = in1, p2 = in2; (*p1 == *p2) || ((*p1 == m1) && (*p2 == m2)); ++p1, ++p2)
+    continue;
+  return p1 - in1;
+}
 off_t cmp_double(double* in1, double* in2) {
   double const *p1, *p2;
   for(p1 = in1, p2 = in2; *p1 == *p2; ++p1, ++p2)
+    continue;
+  return p1 - in1;
+}
+off_t cmp_double_missing(double* in1, double* in2, double m1, double m2) {
+  double const *p1, *p2;
+  for(p1 = in1, p2 = in2; (*p1 == *p2) || ((*p1 == m1) && (*p2 == m2)); ++p1, ++p2)
     continue;
   return p1 - in1;
 }
@@ -1520,7 +1597,8 @@ off_t cmp_double(double* in1, double* in2) {
 */
 int cmpvar(char* name, int rec, nccmpopts* opts)
 {
-  unsigned char *c1,*c2;
+  unsigned char *b1,*b2;
+  char *c1,*c2;
   short *s1,*s2;
   int *i1,*i2;
   float *f1,*f2;
@@ -1541,6 +1619,7 @@ int cmpvar(char* name, int rec, nccmpopts* opts)
   char textvalue1, textvalue2;
   unsigned char ucharvalue1, ucharvalue2;
   char printHex = strchr(opts->precision, 'X') || strchr(opts->precision, 'x');
+  char do_missing = 0;
   
   if (opts->verbose) {
     if (rec != -1)
@@ -1555,6 +1634,11 @@ int cmpvar(char* name, int rec, nccmpopts* opts)
   v1 = &vars1[idx1];
   v2 = &vars2[idx2];
 
+  /* Setup missing mode. */
+  if (opts->missing && v1->hasmissing && v2->hasmissing) {
+    do_missing = 1;
+  }
+  
   /*printf("DEBUG : %s len : %d <> %d\n", name, v1->len, v2->len); */
   
   if (v1->len != v2->len) {
@@ -1600,7 +1684,7 @@ int cmpvar(char* name, int rec, nccmpopts* opts)
     
   /*printf("DEBUG : %d : nitems = %d\n", __LINE__, nitems);\*/
 
-#define CMP_VAR(TYPE, NCFUNTYPE, P1, P2) {\
+#define CMP_VAR(TYPE, NCFUNTYPE, P1, P2, M) {\
     P1 = (TYPE*)malloc(sizeof(TYPE) * (nitems + 1));      \
     P2 = (TYPE*)malloc(sizeof(TYPE) * (nitems + 1));      \
      \
@@ -1618,7 +1702,11 @@ int cmpvar(char* name, int rec, nccmpopts* opts)
             /* for(i=0; i<nitems; ++i) { \
                 printf("nitems = %d, rec = %d, P1[%d] = %g, P2[%d] = %g\n", nitems, rec, i, P1[i], i, P2[i]); \
             } */ \
-      diff = cmp_##NCFUNTYPE(P1, P2); \
+      if (do_missing) \
+        diff = cmp_##NCFUNTYPE##_missing(P1, P2, v1->missing.M, v2->missing.M); \
+      else \
+        diff = cmp_##NCFUNTYPE(P1, P2); \
+      \
       while (diff < cmplen) { \
         if (!opts->warn[NCCMP_W_ALL]) \
           diffstatus = EXIT_DIFFER; \
@@ -1658,29 +1746,29 @@ int cmpvar(char* name, int rec, nccmpopts* opts)
   case NC_BYTE: 
     CMP_VAR(unsigned char, 
                 uchar, 
-                c1, c2);
+                b1, b2, b);
     break;
     
   case NC_CHAR:
     CMP_VAR( char, 
                 text, 
-                c1, c2);
+                c1, c2, c);
     break;
     
   case NC_SHORT:
-    CMP_VAR(short, short, s1, s2)
+    CMP_VAR(short, short, s1, s2, s)
     break;
     
   case NC_INT:
-    CMP_VAR(int, int, i1, i2)
+    CMP_VAR(int, int, i1, i2, i)
     break;
   
   case NC_FLOAT:
-    CMP_VAR(float, float, f1, f2);
+    CMP_VAR(float, float, f1, f2, f);
     break;
   
   case NC_DOUBLE:
-    CMP_VAR(double, double, d1, d2);
+    CMP_VAR(double, double, d1, d2, d);
     break;
   }
 
@@ -1693,6 +1781,7 @@ int cmpvar(char* name, int rec, nccmpopts* opts)
 */
 int cmpvartol(char* name, int rec, nccmpopts* opts)
 {
+  unsigned char *b1,*b2;
   char *c1,*c2;
   short *s1,*s2;
   int *i1,*i2;
@@ -1715,6 +1804,7 @@ int cmpvartol(char* name, int rec, nccmpopts* opts)
   char textvalue1, textvalue2;
   unsigned char ucharvalue1, ucharvalue2;
   char printHex = strchr(opts->precision, 'X') || strchr(opts->precision, 'x');
+  char do_missing = 0;
   
   if (opts->verbose) {
     if (rec != -1)
@@ -1749,6 +1839,11 @@ int cmpvartol(char* name, int rec, nccmpopts* opts)
   v1 = &vars1[idx1];
   v2 = &vars2[idx2];
     
+  /* Setup missing mode. */
+  if (opts->missing && v1->hasmissing && v2->hasmissing) {
+    do_missing = 1;
+  }
+
   for(i=0; i < v1->ndims; ++i) {
     start[i] = 0;
     odomax[i] = v1->dimlens[i] - 1;
@@ -1774,7 +1869,7 @@ int cmpvartol(char* name, int rec, nccmpopts* opts)
     count[v1->ndims-1] = nitems;
 
     /* todo: make cmpvar and cmpvartol same function to re-use code immediately above; just use conditional to choose CMP_VAR or CMP_VARTOL macro. */
-#define CMP_VARTOL(TYPE, NCFUNTYPE, P1, P2) {       \
+#define CMP_VARTOL(TYPE, NCFUNTYPE, P1, P2, M) {       \
     P1 = (TYPE*)malloc(sizeof(TYPE) * nitems);      \
     P2 = (TYPE*)malloc(sizeof(TYPE) * nitems);      \
      \
@@ -1790,6 +1885,10 @@ int cmpvartol(char* name, int rec, nccmpopts* opts)
             } */ \
       for(i=0; i < nitems; ++i) \
       {                       \
+        if (do_missing) { \
+          if ((v1->missing.M == P1[i]) && (v2->missing.M == P2[i])) continue; \
+        } \
+        \
         absdelta = fabs((double)(P1[i]-P2[i]));     \
         if (opts->abstolerance ? (absdelta > opts->tolerance) : (double)absdelta*100./(fabs((double)P1[i]) > fabs((double)P2[i]) ? fabs((double)P1[i]) : fabs((double)P2[i])) > opts->tolerance)  \
         {                           \
@@ -1835,29 +1934,29 @@ int cmpvartol(char* name, int rec, nccmpopts* opts)
   case NC_BYTE: 
     CMP_VARTOL(unsigned char, 
                 uchar, 
-                c1, c2);
+                b1, b2, b);
     break;
     
   case NC_CHAR:
     CMP_VARTOL( char, 
                 text, 
-                c1, c2);
+                c1, c2, c);
     break;
     
   case NC_SHORT:
-    CMP_VARTOL(short, short, s1, s2)
+    CMP_VARTOL(short, short, s1, s2, s)
     break;
     
   case NC_INT:
-    CMP_VARTOL(int, int, i1, i2)
+    CMP_VARTOL(int, int, i1, i2, i)
     break;
   
   case NC_FLOAT:
-    CMP_VARTOL(float, float, f1, f2);
+    CMP_VARTOL(float, float, f1, f2, f);
     break;
   
   case NC_DOUBLE:
-    CMP_VARTOL(double, double, d1, d2);
+    CMP_VARTOL(double, double, d1, d2, d);
     break;
   }
 
@@ -2053,7 +2152,8 @@ int nccmpdata(nccmpopts* opts)
       /* Compare only if # recs are equal and not zero. */ 
       if ((nrec1 == nrec2) && (nrec1+nrec2)) {
         /* TODO: Check if ignorem missing. */
-        if (cmpstatus = nccmpdatarecvar(opts->cmpvarlist[i], opts, 0, nrec1-1)) {
+        if (cmpstatus = nccmpdatarecvar(opts->cmpvarlist[i], opts, 0, nrec1-1))
+        {
           status = cmpstatus;
           if (opts->force)
             continue;
@@ -2063,7 +2163,8 @@ int nccmpdata(nccmpopts* opts)
       }
     } else {
       /* TODO: Check if ignorem missing. */
-      if (cmpstatus = cmpvar(opts->cmpvarlist[i], -1, opts)) {
+      if (cmpstatus = cmpvar(opts->cmpvarlist[i], -1, opts))
+      {
         status = cmpstatus;
         if (opts->force)
           continue;
@@ -2127,12 +2228,12 @@ nccmp(nccmpopts* opts)
   if (opts->verbose)
     printf("INFO: Collecting variable information for first file.\n");
   
-  getvarinfo(ncid1, vars1, &nvars1);
+  getvarinfo(ncid1, vars1, &nvars1, opts->verbose);
 
   if (opts->verbose)
     printf("INFO: Collecting variable information for second file.\n");
   
-  getvarinfo(ncid2, vars2, &nvars2);
+  getvarinfo(ncid2, vars2, &nvars2, opts->verbose);
 
   if(status2 = nccmprecinfo(opts))
     status = status2;
