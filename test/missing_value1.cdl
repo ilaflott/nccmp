@@ -1,0 +1,17 @@
+netcdf missing_value1 {
+
+dimensions:
+  dim1 = 2, dim2 = 3, rec = unlimited;
+  
+variables:
+  double data1(dim1, dim2);
+  double recdata1(rec, dim1);
+  
+  // attributes
+  data1:missing_value = 0.f;
+  recdata1:missing_value = 0.f;
+  
+data:
+  data1 = 1,2,0,4,0,6;
+  recdata1 = 1,0,0,4;
+}

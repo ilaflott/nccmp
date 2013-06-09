@@ -37,17 +37,17 @@ ctr=1
 
 while test "$ctr" -le "$NCDL" 
 do
-    `ncgen -o test${ctr}a.nc test${ctr}a.cdl` 
-    if test "$?" = "0"; then :; else
-	exit 1
-    fi
+  `ncgen -o test${ctr}a.nc test${ctr}a.cdl` 
+  if test "$?" = "0"; then :; else
+   	exit 1
+  fi
 
-    `ncgen -o test${ctr}b.nc test${ctr}b.cdl` 
-    if test "$?" = "0"; then :; else
-	exit 1
-    fi
+  `ncgen -o test${ctr}b.nc test${ctr}b.cdl` 
+  if test "$?" = "0"; then :; else
+	  exit 1
+  fi
     
-    ctr=`expr $ctr + 1`
+  ctr=`expr $ctr + 1`
 done
 
 # Create file in other format to test warning option.
@@ -58,6 +58,10 @@ if test "$?" = "0";
 	exit 1
 fi
 
+# Create two files with different missing_values.
+ncgen -o missing_value1.nc missing_value1.cdl
+ncgen -o missing_value2.nc missing_value2.cdl
+ncgen -o _FillValue1.nc _FillValue1.cdl
 
 # 1 metadata globals
 echo "1."
@@ -622,7 +626,53 @@ grep 'are identical' stderr.tmp > /dev/null
 
 if test "$?" = "0"; then :; else
     echo
-    echo "nccmp failed to ingore when files that have attribute strings with extra trailing end-of-string nulls."
+    echo "nccmp failed to ignore when files that have attribute strings with extra trailing end-of-string nulls."
+    echo "Test that failed: "
+    echo "$CMD  > stderr.tmp 2>&1"
+    echo "grep 'are identical' stderr.tmp"
+    echo
+    exit 1
+fi
+
+# 26 Ignore different missing_value.
+echo "26."
+CMD="$NCCMP -d -s -M missing_value1.nc missing_value2.nc"
+$CMD  > stderr.tmp 2>&1
+
+if test "$?" = "0"; then :; else
+    echo
+    echo "Expected exit code 0."
+    exit 1
+fi
+
+grep 'are identical' stderr.tmp > /dev/null
+
+if test "$?" = "0"; then :; else
+    echo
+    echo "nccmp failed to ignore when files have different missing_values."
+    echo "Test that failed: "
+    echo "$CMD  > stderr.tmp 2>&1"
+    echo "grep 'are identical' stderr.tmp"
+    echo
+    exit 1
+fi
+
+# 27 Ignore different missing_value and _FillValue.
+echo "27."
+CMD="$NCCMP -d -s --missing missing_value1.nc _FillValue1.nc"
+$CMD  > stderr.tmp 2>&1
+
+if test "$?" = "0"; then :; else
+    echo
+    echo "Expected exit code 0."
+    exit 1
+fi
+
+grep 'are identical' stderr.tmp > /dev/null
+
+if test "$?" = "0"; then :; else
+    echo
+    echo "nccmp failed to ignore when files have different missing_value and _FillValue."
     echo "Test that failed: "
     echo "$CMD  > stderr.tmp 2>&1"
     echo "grep 'are identical' stderr.tmp"

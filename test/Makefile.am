@@ -8,14 +8,14 @@
 # WITHOUT ANY WARRANTY, to the extent permitted by law; without even the
 # implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
-CLEANFILES = test*.nc stderr.tmp padded.nc unpadded.nc test_strlist
+CLEANFILES = test*.nc stderr.tmp padded.nc unpadded.nc test_strlist missing_value*.nc _FillValue*.nc
 
 TESTS = nccmp_test.sh 
 
 EXTRA_DIST = nccmp_test.sh test1a.cdl test1b.cdl \
 test2a.cdl test2b.cdl test3a.cdl test3b.cdl \
 stderr1.txt stderr2.txt stderr3.txt stderr4.txt stderr5.txt \
-stderr6.txt stderr7.txt stderr8.txt 
+stderr6.txt stderr7.txt stderr8.txt missing_value*.cdl _FillValue*.cdl
 
 check_PROGRAMS = padheader test_strlist
 padheader_LDADD = -lnetcdf

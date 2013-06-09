@@ -146,7 +146,7 @@ int getnccmpopts(int argc, char** argv, nccmpopts* popts)
     exit(EXIT_FATAL);
   }
 
-  while ( (c = getopt_long(argc, argv, "A:dDx:fFghmp:qst:T:v:bHVG:w:", long_options, 0))
+  while ( (c = getopt_long(argc, argv, "A:dDx:fFghmMp:qst:T:v:bHVG:w:", long_options, 0))
           != -1
         )
   switch (c)

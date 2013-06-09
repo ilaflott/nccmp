@@ -1,0 +1,17 @@
+netcdf _FillValue1 {
+
+dimensions:
+  dim1 = 2, dim2 = 3, rec = unlimited;
+  
+variables:
+  double data1(dim1, dim2);
+  double recdata1(rec, dim1);
+  
+  // attributes
+  data1:_FillValue = 111.f;
+  recdata1:_FillValue = 111.f;
+  
+data:
+  data1 = 1,2,111,4,111,6;
+  recdata1 = 1,111,111,4;
+}

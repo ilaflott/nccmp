@@ -18,7 +18,6 @@ II. Developer Tasks
 
   After making modifications to code, also update the following:
 
-  NEWS - Make an entry for the new version describing the changes.
   configure.ac - Update the version number in AC_INIT.
   doc/index.html - Update version news, links and usage.
 
@@ -37,7 +36,7 @@ II. Developer Tasks
 
   And package it up into a tarball.
     cd .. # From within nccmp-code/
-    ver=1.3.0
+    ver=1.4.0
     cp -r nccmp-code nccmp-$ver
     tar zcvf nccmp-$ver.tgz nccmp-$ver/*
     rm -rf nccmp-$ver
@@ -46,7 +45,7 @@ II. Developer Tasks
 
   Add the new tarball onto SourceForge via File Releases form.
 
-4. Update the webpage's download link and NEWS in doc/index.html.
+4. Update the webpage's download link in doc/index.html.
   Update the webpage:
   scp doc/index.html rsz@web.sourceforge.net:/home/groups/n/nc/nccmp/htdocs
 
