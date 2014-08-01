@@ -143,7 +143,7 @@ Download
 </a>
 </h2>
 <p>
-Source Code: <a href="http://prdownloads.sourceforge.net/nccmp/nccmp-1.4.0.tgz?download">nccmp-1.3.0.tgz</a><br>
+Source Code: <a href="http://prdownloads.sourceforge.net/nccmp/nccmp-1.4.0.tgz?download">nccmp-1.4.0.tgz</a><br>
 
 </p>
 
@@ -157,6 +157,12 @@ Source Code: <a href="http://prdownloads.sourceforge.net/nccmp/nccmp-1.4.0.tgz?d
 Installation
 </a>
 </h2>
+
+<h3>
+<a name="install_linux">
+Linux/Unix/MacPorts
+</a>
+</h3>
 
 <p>
 <ol>
@@ -200,6 +206,53 @@ tar -zxvf nccmp-*gz
 
 </p>
 
+<h3>
+<a name="install_cygwin">
+Cygwin
+</a>
+</h3>
+
+<p>
+<pre>
+$ C:/cygwin/setup-x86.exe
+# Install these prebuilt binary cygwin packages:
+# All => Libs => libnetcdf7 v4.3.2-1
+#             => libnetcdf-devel v4.3.2-1
+# All => Devel => libhdf5_8 v1.8.12-1
+#     => Libs => libhdf5_8 v1.8.12-1
+
+$ ./configure --disable-ncinfo
+$ make
+$ make check
+$ make install
+
+</pre>
+</p>
+
+<h3>
+<a name="install_brew">
+Mac OSX Homebrew
+</a>
+</h3>
+
+<p>
+<pre>
+$ brew tap homebrew/science
+$ brew install hdf5
+$ brew install netcdf
+
+$ NC=/usr/local/Cellar/netcdf/4.3.2
+$ export CFLAGS="-I$NC/include"
+$ export CPPFLAGS="$CFLAGS"
+$ export LDFLAGS="-L$NC/lib"
+$ export DYLD_LIBRARY_PATH="$DYLD_LIBRARY_PATH":$NC/lib
+
+$ ./configure --disable-ncinfo --prefix=/Users/rsz/bin
+$ make
+$ make check
+$ make install
+</pre>
+</p>
 
 <p>
 <hr>
