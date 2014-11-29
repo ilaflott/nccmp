@@ -33,6 +33,8 @@ static struct option const long_options[] =
         {"history",     no_argument,            0, 'h'},        
         {"metadata",    no_argument,            0, 'm'},
         {"missing",     no_argument,            0, 'M'},
+        {"nans-are-equal",  no_argument,        0, 'N'},
+        {"padding",     no_argument,            0, 'P'},
         {"precision",   required_argument,      0, 'p'},       
         {"quiet",       no_argument,            0, 'q'},
         {"report-identical-files", no_argument, 0, 's'},
@@ -69,7 +71,9 @@ void initnccmpopts(nccmpopts* popts)
         popts->global   = 0;        
         popts->history  = 0;                
         popts->metadata = 0;
-        popts->missing  = 0; 
+        popts->missing  = 0;
+        popts->nanequal = 0;
+        popts->padding  = 0;
         popts->precision = NULL;      
         popts->quiet    = 0;
         popts->report_identical = 0;
@@ -103,7 +107,7 @@ void printversion()
 {
   fprintf(stderr, "nccmp %s\n", VERSION);             
   fprintf(stderr, "Built with NetCDF %s\n", nc_inq_libvers());
-  fprintf(stderr, "Copyright (C) 2004-2007,2009,2010,2012,2013 Remik Ziemlinski\n \
+  fprintf(stderr, "Copyright (C) 2004-2007,2009,2010,2012-2014 Remik Ziemlinski\n \
 \n\
 This program comes with NO WARRANTY, to the extent permitted by law.\n\
 You may redistribute copies of this program\n\
@@ -146,7 +150,7 @@ int getnccmpopts(int argc, char** argv, nccmpopts* popts)
     exit(EXIT_FATAL);
   }
 
-  while ( (c = getopt_long(argc, argv, "A:dDx:fFghmMp:qst:T:v:bHVG:w:", long_options, 0))
+  while ( (c = getopt_long(argc, argv, "A:dDx:fFghmMNp:Pqst:T:v:bHVG:w:", long_options, 0))
           != -1
         )
   switch (c)
@@ -188,15 +192,27 @@ int getnccmpopts(int argc, char** argv, nccmpopts* popts)
           popts->missing = 1;
           break;
 
+  case 'N':
+          popts->nanequal = 1;
+          break;
+
   case 'p':
           popts->precision = XMALLOC(char,strlen(optarg) + 1); 
           strcpy(popts->precision, optarg);
+          break;
+
+  case 'P':
+          popts->padding = 1;
+          break;
+
   case 'q':
           popts->quiet = 1;
           break;
+
   case 's':
           popts->report_identical = 1;
-          break;          
+          break;
+
   case 't':
     popts->tolerance = strtod(optarg, NULL);
     popts->abstolerance = 1;
@@ -206,6 +222,7 @@ int getnccmpopts(int argc, char** argv, nccmpopts* popts)
         return EXIT_FATAL;
       }           
     break;
+
   case 'T':
     popts->tolerance = strtod(optarg, NULL);
     popts->abstolerance = 0;
@@ -215,10 +232,12 @@ int getnccmpopts(int argc, char** argv, nccmpopts* popts)
         return EXIT_FATAL;
       }
     break;
+
   case 'v':
     getstringlist(optarg, &popts->variablelist, &popts->nvariable);
     popts->variable = 1;       
     break;
+
   case 'b':
     popts->verbose = 1;
     break;

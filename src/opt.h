@@ -64,9 +64,12 @@ Usage: nccmp [OPTION...] file1 file2\n\
   -M, --missing              Ignore difference between values that have\n\
                              different missing_value and/or _FillValue.\n\
                              Attribute differences are still reported.\n\
+  -N, --nans-are-equal       Allow NaNs to be equal.\n\
   -p, --precision='%%.17g'   Precision of difference printing\n\
                              (default is '%%g').\n\
                              Use '%%x' to print bytes.\n\
+  -P, --padding              Compare header padding in classic or 64bit\n\
+                             file formats.\n\
   -s, --report-identical-files\n\
                              Report when files are the same.\n\
   -t, --tolerance=TOL        Compare if absolute difference > TOL.\n\
@@ -103,11 +106,11 @@ typedef struct NCCMPOPTS
 	int     force;          /* continue checking after 1st difference */
 	int     fortran;        /* fortran style index printing */
 	int     global;         /* compare global attributes */
-  int     nglobalexclude; /* number of global atts to exclude */
+    int     nglobalexclude; /* number of global atts to exclude */
 	char**  globalexclude;  /* list of global atts to exclude */
 	int     history;        /* compare global history attribute */
 	int     metadata;       /* compare metadata, excluding global attributes */
-  int     missing;        /* ignore different missing_value/_FillValues */
+    int     missing;        /* ignore different missing_value/_FillValues */
 	int     quiet;          /* deprecated. prints differences only, no script making for viewing */
 	char*   precision;      /* print precision of values. */
 	int     verbose;        /* print messages to show progress */
@@ -123,11 +126,13 @@ typedef struct NCCMPOPTS
 	char**  variablelist;   /* specific variables to compare */
 	char*   file1;          /* two files to compare */
 	char*   file2;          /*                      */
-  char**  cmpvarlist;     /* list of var names to ultimately compare. */
-                          /* Not user input. Derived by processing inputs. */
-  int     ncmpvarlist;    /* length of above array. */
-  char    warn[NCCMP_W_NUMTAGS];   /* booleans if a warning is on/off */
-  char    report_identical;        /* Print message if files match. */
+    char**  cmpvarlist;     /* list of var names to ultimately compare. */
+                            /* Not user input. Derived by processing inputs. */
+    int     ncmpvarlist;    /* length of above array. */
+    char    warn[NCCMP_W_NUMTAGS];   /* booleans if a warning is on/off */
+    char    report_identical;        /* Print message if files match. */
+    char    padding;        /* Compare header padding in classic/64 formats. */
+    char    nanequal;       /* Nans should be considered equal if compared. */
 } nccmpopts;
 
 int getnccmpopts(int argc, char** argv, nccmpopts* popts);

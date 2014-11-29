@@ -1571,9 +1571,21 @@ off_t cmp_float(float* in1, float* in2) {
     continue;
   return p1 - in1;
 }
+off_t cmp_float_nanequal(float* in1, float* in2) {
+  float const *p1, *p2;
+  for(p1 = in1, p2 = in2; (*p1 == *p2) || (isnan(*p1) && isnan(*p2)); ++p1, ++p2)
+    continue;
+  return p1 - in1;
+}
 off_t cmp_float_missing(float* in1, float* in2, float m1, float m2) {
   float const *p1, *p2;
   for(p1 = in1, p2 = in2; (*p1 == *p2) || ((*p1 == m1) && (*p2 == m2)); ++p1, ++p2)
+    continue;
+  return p1 - in1;
+}
+off_t cmp_float_missing_nanequal(float* in1, float* in2, float m1, float m2) {
+  float const *p1, *p2;
+  for(p1 = in1, p2 = in2; (*p1 == *p2) || ((*p1 == m1) && (*p2 == m2)) || (isnan(*p1) && isnan(*p2)); ++p1, ++p2)
     continue;
   return p1 - in1;
 }
@@ -1583,15 +1595,27 @@ off_t cmp_double(double* in1, double* in2) {
     continue;
   return p1 - in1;
 }
+off_t cmp_double_nanequal(double* in1, double* in2) {
+  double const *p1, *p2;
+  for(p1 = in1, p2 = in2; (*p1 == *p2) || (isnan(*p1) && isnan(*p2)); ++p1, ++p2)
+    continue;
+  return p1 - in1;
+}
 off_t cmp_double_missing(double* in1, double* in2, double m1, double m2) {
   double const *p1, *p2;
   for(p1 = in1, p2 = in2; (*p1 == *p2) || ((*p1 == m1) && (*p2 == m2)); ++p1, ++p2)
     continue;
   return p1 - in1;
 }
+off_t cmp_double_missing_nanequal(double* in1, double* in2, double m1, double m2) {
+  double const *p1, *p2;
+  for(p1 = in1, p2 = in2; (*p1 == *p2) || ((*p1 == m1) && (*p2 == m2)) || (isnan(*p1) && isnan(*p2)); ++p1, ++p2)
+    continue;
+  return p1 - in1;
+}
 
 /* *********************************************************** */
-/* Do the comparision of variables.
+/* Do comparison of variables.
    Record index (rec) is optional; -1 if not applicable.
    Returns comparison result success or failure.
 */
@@ -1684,7 +1708,7 @@ int cmpvar(char* name, int rec, nccmpopts* opts)
     
   /*printf("DEBUG : %d : nitems = %d\n", __LINE__, nitems);\*/
 
-#define CMP_VAR(TYPE, NCFUNTYPE, P1, P2, M) {\
+#define CMP_VAR(TYPE, NCFUNTYPE, P1, P2, M, NANEQUAL) {\
     P1 = (TYPE*)malloc(sizeof(TYPE) * (nitems + 1));      \
     P2 = (TYPE*)malloc(sizeof(TYPE) * (nitems + 1));      \
      \
@@ -1702,11 +1726,19 @@ int cmpvar(char* name, int rec, nccmpopts* opts)
             /* for(i=0; i<nitems; ++i) { \
                 printf("nitems = %d, rec = %d, P1[%d] = %g, P2[%d] = %g\n", nitems, rec, i, P1[i], i, P2[i]); \
             } */ \
-      if (do_missing) \
-        diff = cmp_##NCFUNTYPE##_missing(P1, P2, v1->missing.M, v2->missing.M); \
-      else \
-        diff = cmp_##NCFUNTYPE(P1, P2); \
-      \
+      if (do_missing) { \
+        if (NANEQUAL) { \
+        	diff = cmp_##NCFUNTYPE##_missing_nanequal(P1, P2, v1->missing.M, v2->missing.M); \
+        } else { \
+        	diff = cmp_##NCFUNTYPE##_missing(P1, P2, v1->missing.M, v2->missing.M); \
+        } \
+      } else { \
+    	if (NANEQUAL) { \
+    	  diff = cmp_##NCFUNTYPE##_nanequal(P1, P2); \
+    	} else { \
+    	  diff = cmp_##NCFUNTYPE(P1, P2); \
+    	} \
+      } \
       while (diff < cmplen) { \
         if (!opts->warn[NCCMP_W_ALL]) \
           diffstatus = EXIT_DIFFER; \
@@ -1731,7 +1763,10 @@ int cmpvar(char* name, int rec, nccmpopts* opts)
         /* printf("%d nitems=%d, cmplen=%d, diff=%d\n", __LINE__, nitems, cmplen, diff); */\
         if (opts->force) { \
           cmplen = cmplen - (diff+1); \
-          diff = cmp_##NCFUNTYPE(P1+diff+1, P2+diff+1); \
+          if (do_missing) \
+            diff = cmp_##NCFUNTYPE##_missing(P1+diff+1, P2+diff+1, v1->missing.M, v2->missing.M); \
+          else \
+            diff = cmp_##NCFUNTYPE(P1+diff+1, P2+diff+1); \
         } else  \
           goto break_##NCFUNTYPE; \
       } \
@@ -1744,38 +1779,38 @@ int cmpvar(char* name, int rec, nccmpopts* opts)
 
   switch(v1->type) {
   case NC_BYTE: 
-    CMP_VAR(unsigned char, 
-                uchar, 
-                b1, b2, b);
+    CMP_VAR(unsigned char, uchar, b1, b2, b, 0);
     break;
     
   case NC_CHAR:
-    CMP_VAR( char, 
-                text, 
-                c1, c2, c);
+    CMP_VAR(char, text, c1, c2, c, 0);
     break;
     
   case NC_SHORT:
-    CMP_VAR(short, short, s1, s2, s)
+    CMP_VAR(short, short, s1, s2, s, 0)
     break;
     
   case NC_INT:
-    CMP_VAR(int, int, i1, i2, i)
+    CMP_VAR(int, int, i1, i2, i, 0)
     break;
   
   case NC_FLOAT:
-    CMP_VAR(float, float, f1, f2, f);
+    CMP_VAR(float, float, f1, f2, f, opts->nanequal);
     break;
   
   case NC_DOUBLE:
-    CMP_VAR(double, double, d1, d2, d);
+    CMP_VAR(double, double, d1, d2, d, opts->nanequal);
+    break;
+
+  default:
+	fprintf(stderr, "ERROR: unsupported var data type = %d\n", v1->type);
     break;
   }
 
   return diffstatus;
 }
 /* *********************************************************** */
-/* Do the comparision of variables.
+/* Do the comparison of variables.
    Record index (rec) is optional; -1 if not applicable.
    Returns comparison result success or failure.
 */
@@ -1869,7 +1904,7 @@ int cmpvartol(char* name, int rec, nccmpopts* opts)
     count[v1->ndims-1] = nitems;
 
     /* todo: make cmpvar and cmpvartol same function to re-use code immediately above; just use conditional to choose CMP_VAR or CMP_VARTOL macro. */
-#define CMP_VARTOL(TYPE, NCFUNTYPE, P1, P2, M) {       \
+#define CMP_VARTOL(TYPE, NCFUNTYPE, P1, P2, M, NANEQUAL) {       \
     P1 = (TYPE*)malloc(sizeof(TYPE) * nitems);      \
     P2 = (TYPE*)malloc(sizeof(TYPE) * nitems);      \
      \
@@ -1888,7 +1923,9 @@ int cmpvartol(char* name, int rec, nccmpopts* opts)
         if (do_missing) { \
           if ((v1->missing.M == P1[i]) && (v2->missing.M == P2[i])) continue; \
         } \
-        \
+        if (NANEQUAL) { \
+          if ( isnan(P1[i]) && isnan(P2[i]) ) continue; \
+        } \
         absdelta = fabs((double)(P1[i]-P2[i]));     \
         if (opts->abstolerance ? (absdelta > opts->tolerance) : (double)absdelta*100./(fabs((double)P1[i]) > fabs((double)P2[i]) ? fabs((double)P1[i]) : fabs((double)P2[i])) > opts->tolerance)  \
         {                           \
@@ -1932,32 +1969,32 @@ int cmpvartol(char* name, int rec, nccmpopts* opts)
 
   switch(v1->type) {
   case NC_BYTE: 
-    CMP_VARTOL(unsigned char, 
-                uchar, 
-                b1, b2, b);
+    CMP_VARTOL(unsigned char, uchar, b1, b2, b, 0);
     break;
     
   case NC_CHAR:
-    CMP_VARTOL( char, 
-                text, 
-                c1, c2, c);
+    CMP_VARTOL(char, text, c1, c2, c, 0);
     break;
     
   case NC_SHORT:
-    CMP_VARTOL(short, short, s1, s2, s)
+    CMP_VARTOL(short, short, s1, s2, s, 0)
     break;
     
   case NC_INT:
-    CMP_VARTOL(int, int, i1, i2, i)
+    CMP_VARTOL(int, int, i1, i2, i, 0)
     break;
   
   case NC_FLOAT:
-    CMP_VARTOL(float, float, f1, f2, f);
+    CMP_VARTOL(float, float, f1, f2, f, opts->nanequal);
     break;
   
   case NC_DOUBLE:
-    CMP_VARTOL(double, double, d1, d2, d);
+    CMP_VARTOL(double, double, d1, d2, d, opts->nanequal);
     break;
+
+  default:
+	fprintf(stderr, "ERROR: Unsupported var data type = %d\n", v1->type);
+	break;
   }
 
   return diffstatus;

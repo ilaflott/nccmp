@@ -65,7 +65,7 @@
 #define PACKAGE_NAME "nccmp"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "nccmp 1.2.0"
+#define PACKAGE_STRING "nccmp 1.4.0"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "nccmp"
@@ -74,13 +74,18 @@
 #define PACKAGE_URL ""
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "1.2.0"
+#define PACKAGE_VERSION "1.4.0"
 
 /* Define to 1 if you have the ANSI C header files. */
 #define STDC_HEADERS 1
 
 /* Version number of package */
-#define VERSION "1.2.0"
+#define VERSION "1.4.0"
+
+/* Enable large inode numbers on Mac OS X 10.5.  */
+#ifndef _DARWIN_USE_64_BIT_INODE
+# define _DARWIN_USE_64_BIT_INODE 1
+#endif
 
 /* Number of bits in a file offset, on hosts where this is settable. */
 /* #undef _FILE_OFFSET_BITS */
