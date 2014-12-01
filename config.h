@@ -59,13 +59,13 @@
 #define PACKAGE "nccmp"
 
 /* Define to the address where bug reports for this package should be sent. */
-#define PACKAGE_BUGREPORT "=Remik.Ziemlinski_at_noaa.gov"
+#define PACKAGE_BUGREPORT "Remik.Ziemlinski_at_noaa.gov"
 
 /* Define to the full name of this package. */
 #define PACKAGE_NAME "nccmp"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "nccmp 1.4.0"
+#define PACKAGE_STRING "nccmp 1.5.0"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "nccmp"
@@ -74,13 +74,13 @@
 #define PACKAGE_URL ""
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "1.4.0"
+#define PACKAGE_VERSION "1.5.0"
 
 /* Define to 1 if you have the ANSI C header files. */
 #define STDC_HEADERS 1
 
 /* Version number of package */
-#define VERSION "1.4.0"
+#define VERSION "1.5.0"
 
 /* Enable large inode numbers on Mac OS X 10.5.  */
 #ifndef _DARWIN_USE_64_BIT_INODE

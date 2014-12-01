@@ -47,8 +47,8 @@ typedef struct VARSTRUCT
 	int dimids[NC_MAX_VAR_DIMS];
 	char hasrec; /* has record dimension? */
 	int natts;
-  char hasmissing;
-  missing_struct missing;
+	char hasmissing;
+	missing_struct missing;
 } varstruct;
 
 typedef struct DIMSTRUCT
@@ -60,6 +60,7 @@ typedef struct DIMSTRUCT
 
 int openfiles(nccmpopts* opts);
 int nccmp(nccmpopts* opts); 
+int nccmp_header_pad(nccmpopts* opts);
 int nccmpmetadata(nccmpopts* opts); 
 int nccmpdata(nccmpopts* opts); 
 void getvarinfo(int ncid, varstruct* vars, int* nvars, int debug);

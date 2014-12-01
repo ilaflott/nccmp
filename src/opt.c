@@ -30,11 +30,11 @@ static struct option const long_options[] =
         {"fortran",     no_argument,            0, 'F'},        
         {"global",      no_argument,            0, 'g'},        
         {"globalex",    required_argument,      0, 'G'},        
+        {"header-pad",  no_argument,            0, 'P'},
         {"history",     no_argument,            0, 'h'},        
         {"metadata",    no_argument,            0, 'm'},
         {"missing",     no_argument,            0, 'M'},
         {"nans-are-equal",  no_argument,        0, 'N'},
-        {"padding",     no_argument,            0, 'P'},
         {"precision",   required_argument,      0, 'p'},       
         {"quiet",       no_argument,            0, 'q'},
         {"report-identical-files", no_argument, 0, 's'},
@@ -73,7 +73,7 @@ void initnccmpopts(nccmpopts* popts)
         popts->metadata = 0;
         popts->missing  = 0;
         popts->nanequal = 0;
-        popts->padding  = 0;
+        popts->header_pad  = 0;
         popts->precision = NULL;      
         popts->quiet    = 0;
         popts->report_identical = 0;
@@ -202,7 +202,7 @@ int getnccmpopts(int argc, char** argv, nccmpopts* popts)
           break;
 
   case 'P':
-          popts->padding = 1;
+          popts->header_pad = 1;
           break;
 
   case 'q':

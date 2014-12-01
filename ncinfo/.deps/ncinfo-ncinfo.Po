@@ -1,10 +1,10 @@
-ncinfo-ncinfo.o: ncinfo.c /usr/include/stdlib.h /usr/include/features.h \
- /usr/include/stdc-predef.h /usr/include/x86_64-linux-gnu/bits/predefs.h \
+ncinfo-ncinfo.o: ncinfo.c /usr/include/stdc-predef.h \
+ /usr/include/stdlib.h /usr/include/features.h \
  /usr/include/x86_64-linux-gnu/sys/cdefs.h \
  /usr/include/x86_64-linux-gnu/bits/wordsize.h \
  /usr/include/x86_64-linux-gnu/gnu/stubs.h \
  /usr/include/x86_64-linux-gnu/gnu/stubs-64.h \
- /usr/lib/gcc/x86_64-linux-gnu/4.7/include/stddef.h \
+ /usr/lib/gcc/x86_64-linux-gnu/4.8/include/stddef.h \
  /usr/include/x86_64-linux-gnu/bits/waitflags.h \
  /usr/include/x86_64-linux-gnu/bits/waitstatus.h /usr/include/endian.h \
  /usr/include/x86_64-linux-gnu/bits/endian.h \
@@ -20,32 +20,33 @@ ncinfo-ncinfo.o: ncinfo.c /usr/include/stdlib.h /usr/include/features.h \
  /usr/include/x86_64-linux-gnu/bits/select2.h \
  /usr/include/x86_64-linux-gnu/sys/sysmacros.h \
  /usr/include/x86_64-linux-gnu/bits/pthreadtypes.h /usr/include/alloca.h \
+ /usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h \
  /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
- /usr/include/x86_64-linux-gnu/bits/stdlib.h /usr/include/netcdf.h \
+ /usr/include/x86_64-linux-gnu/bits/stdlib.h \
+ /home/rsz/projects/netcdf/netcdf-4.1.3/include/netcdf.h \
  /usr/include/errno.h /usr/include/x86_64-linux-gnu/bits/errno.h \
  /usr/include/linux/errno.h /usr/include/x86_64-linux-gnu/asm/errno.h \
  /usr/include/asm-generic/errno.h /usr/include/asm-generic/errno-base.h \
  /usr/include/stdio.h /usr/include/libio.h /usr/include/_G_config.h \
- /usr/include/wchar.h /usr/lib/gcc/x86_64-linux-gnu/4.7/include/stdarg.h \
+ /usr/include/wchar.h /usr/lib/gcc/x86_64-linux-gnu/4.8/include/stdarg.h \
  /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
  /usr/include/x86_64-linux-gnu/bits/sys_errlist.h \
  /usr/include/x86_64-linux-gnu/bits/stdio.h \
- /usr/include/x86_64-linux-gnu/bits/stdio2.h include/nc4internal.h \
- ../config.h /usr/include/error.h \
- /usr/include/x86_64-linux-gnu/bits/error.h /usr/include/ctype.h \
- /usr/include/xlocale.h /usr/include/string.h \
+ /usr/include/x86_64-linux-gnu/bits/stdio2.h \
+ /home/rsz/projects/netcdf/netcdf-4.1.3/libsrc4/nc4internal.h ../config.h \
+ /usr/include/ctype.h /usr/include/xlocale.h /usr/include/string.h \
  /usr/include/x86_64-linux-gnu/bits/string.h \
  /usr/include/x86_64-linux-gnu/bits/string2.h \
- /usr/include/x86_64-linux-gnu/bits/string3.h include/netcdf3.h \
- /usr/include/hdf5.h /usr/include/H5public.h /usr/include/H5pubconf.h \
+ /usr/include/x86_64-linux-gnu/bits/string3.h /usr/include/hdf5.h \
+ /usr/include/H5public.h /usr/include/H5pubconf.h \
  /usr/include/H5version.h \
- /usr/lib/gcc/x86_64-linux-gnu/4.7/include-fixed/limits.h \
- /usr/lib/gcc/x86_64-linux-gnu/4.7/include-fixed/syslimits.h \
+ /usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed/limits.h \
+ /usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed/syslimits.h \
  /usr/include/limits.h /usr/include/x86_64-linux-gnu/bits/posix1_lim.h \
  /usr/include/x86_64-linux-gnu/bits/local_lim.h \
  /usr/include/linux/limits.h \
  /usr/include/x86_64-linux-gnu/bits/posix2_lim.h \
- /usr/lib/gcc/x86_64-linux-gnu/4.7/include/stdint.h /usr/include/stdint.h \
+ /usr/lib/gcc/x86_64-linux-gnu/4.8/include/stdint.h /usr/include/stdint.h \
  /usr/include/x86_64-linux-gnu/bits/wchar.h /usr/include/inttypes.h \
  /usr/include/H5api_adpt.h /usr/include/H5Apublic.h \
  /usr/include/H5Ipublic.h /usr/include/H5Opublic.h \
@@ -60,16 +61,21 @@ ncinfo-ncinfo.o: ncinfo.c /usr/include/stdlib.h /usr/include/features.h \
  /usr/include/H5FDfamily.h /usr/include/H5FDlog.h /usr/include/H5FDmpi.h \
  /usr/include/H5FDmpio.h /usr/include/H5FDmpiposix.h \
  /usr/include/H5FDmulti.h /usr/include/H5FDsec2.h \
- /usr/include/H5FDstdio.h /usr/include/H5FDdirect.h include/nc.h \
- include/ncio.h include/fbits.h
+ /usr/include/H5FDstdio.h /usr/include/H5FDdirect.h \
+ /home/rsz/projects/netcdf/netcdf-4.1.3/include/ncdimscale.h \
+ /home/rsz/projects/netcdf/netcdf-4.1.3/include/nc_logging.h \
+ /usr/include/assert.h \
+ /home/rsz/projects/netcdf/netcdf-4.1.3/include/netcdf_f.h \
+ /home/rsz/projects/netcdf/netcdf-4.1.3/include/nc.h \
+ /home/rsz/projects/netcdf/netcdf-4.1.3/include/ncio.h \
+ /home/rsz/projects/netcdf/netcdf-4.1.3/include/netcdf.h \
+ /home/rsz/projects/netcdf/netcdf-4.1.3/include/fbits.h
+
+/usr/include/stdc-predef.h:
 
 /usr/include/stdlib.h:
 
 /usr/include/features.h:
-
-/usr/include/stdc-predef.h:
-
-/usr/include/x86_64-linux-gnu/bits/predefs.h:
 
 /usr/include/x86_64-linux-gnu/sys/cdefs.h:
 
@@ -79,7 +85,7 @@ ncinfo-ncinfo.o: ncinfo.c /usr/include/stdlib.h /usr/include/features.h \
 
 /usr/include/x86_64-linux-gnu/gnu/stubs-64.h:
 
-/usr/lib/gcc/x86_64-linux-gnu/4.7/include/stddef.h:
+/usr/lib/gcc/x86_64-linux-gnu/4.8/include/stddef.h:
 
 /usr/include/x86_64-linux-gnu/bits/waitflags.h:
 
@@ -117,11 +123,13 @@ ncinfo-ncinfo.o: ncinfo.c /usr/include/stdlib.h /usr/include/features.h \
 
 /usr/include/alloca.h:
 
+/usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h:
+
 /usr/include/x86_64-linux-gnu/bits/stdlib-float.h:
 
 /usr/include/x86_64-linux-gnu/bits/stdlib.h:
 
-/usr/include/netcdf.h:
+/home/rsz/projects/netcdf/netcdf-4.1.3/include/netcdf.h:
 
 /usr/include/errno.h:
 
@@ -143,7 +151,7 @@ ncinfo-ncinfo.o: ncinfo.c /usr/include/stdlib.h /usr/include/features.h \
 
 /usr/include/wchar.h:
 
-/usr/lib/gcc/x86_64-linux-gnu/4.7/include/stdarg.h:
+/usr/lib/gcc/x86_64-linux-gnu/4.8/include/stdarg.h:
 
 /usr/include/x86_64-linux-gnu/bits/stdio_lim.h:
 
@@ -153,13 +161,9 @@ ncinfo-ncinfo.o: ncinfo.c /usr/include/stdlib.h /usr/include/features.h \
 
 /usr/include/x86_64-linux-gnu/bits/stdio2.h:
 
-include/nc4internal.h:
+/home/rsz/projects/netcdf/netcdf-4.1.3/libsrc4/nc4internal.h:
 
 ../config.h:
-
-/usr/include/error.h:
-
-/usr/include/x86_64-linux-gnu/bits/error.h:
 
 /usr/include/ctype.h:
 
@@ -173,8 +177,6 @@ include/nc4internal.h:
 
 /usr/include/x86_64-linux-gnu/bits/string3.h:
 
-include/netcdf3.h:
-
 /usr/include/hdf5.h:
 
 /usr/include/H5public.h:
@@ -183,9 +185,9 @@ include/netcdf3.h:
 
 /usr/include/H5version.h:
 
-/usr/lib/gcc/x86_64-linux-gnu/4.7/include-fixed/limits.h:
+/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed/limits.h:
 
-/usr/lib/gcc/x86_64-linux-gnu/4.7/include-fixed/syslimits.h:
+/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed/syslimits.h:
 
 /usr/include/limits.h:
 
@@ -197,7 +199,7 @@ include/netcdf3.h:
 
 /usr/include/x86_64-linux-gnu/bits/posix2_lim.h:
 
-/usr/lib/gcc/x86_64-linux-gnu/4.7/include/stdint.h:
+/usr/lib/gcc/x86_64-linux-gnu/4.8/include/stdint.h:
 
 /usr/include/stdint.h:
 
@@ -263,8 +265,18 @@ include/netcdf3.h:
 
 /usr/include/H5FDdirect.h:
 
-include/nc.h:
+/home/rsz/projects/netcdf/netcdf-4.1.3/include/ncdimscale.h:
 
-include/ncio.h:
+/home/rsz/projects/netcdf/netcdf-4.1.3/include/nc_logging.h:
 
-include/fbits.h:
+/usr/include/assert.h:
+
+/home/rsz/projects/netcdf/netcdf-4.1.3/include/netcdf_f.h:
+
+/home/rsz/projects/netcdf/netcdf-4.1.3/include/nc.h:
+
+/home/rsz/projects/netcdf/netcdf-4.1.3/include/ncio.h:
+
+/home/rsz/projects/netcdf/netcdf-4.1.3/include/netcdf.h:
+
+/home/rsz/projects/netcdf/netcdf-4.1.3/include/fbits.h:

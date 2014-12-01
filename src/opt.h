@@ -65,10 +65,10 @@ Usage: nccmp [OPTION...] file1 file2\n\
                              different missing_value and/or _FillValue.\n\
                              Attribute differences are still reported.\n\
   -N, --nans-are-equal       Allow NaNs to be equal.\n\
-  -p, --precision='%%.17g'   Precision of difference printing\n\
+  -p, --precision='%%.17g'    Precision of difference printing\n\
                              (default is '%%g').\n\
                              Use '%%x' to print bytes.\n\
-  -P, --padding              Compare header padding in classic or 64bit\n\
+  -P, --header-pad           Compare header padding in classic or 64bit\n\
                              file formats.\n\
   -s, --report-identical-files\n\
                              Report when files are the same.\n\
@@ -131,7 +131,7 @@ typedef struct NCCMPOPTS
     int     ncmpvarlist;    /* length of above array. */
     char    warn[NCCMP_W_NUMTAGS];   /* booleans if a warning is on/off */
     char    report_identical;        /* Print message if files match. */
-    char    padding;        /* Compare header padding in classic/64 formats. */
+    char    header_pad;     /* Compare header padding in classic/64 formats. */
     char    nanequal;       /* Nans should be considered equal if compared. */
 } nccmpopts;
 

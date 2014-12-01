@@ -20,6 +20,8 @@
 #include "nccmp.h"
 #include "ncinfo.h"
 
+#include <nc.h>
+
 int ncid1, ncid2;
 varstruct vars1[(int)NC_MAX_VARS], vars2[(int)NC_MAX_VARS];
 dimstruct dims1[(int)NC_MAX_DIMS], dims2[(int)NC_MAX_DIMS];
@@ -1223,6 +1225,136 @@ nccmpglobalatts(nccmpopts* opts)
   return status;
 }
 /* *********************************************************** */
+int nccmp_header_pad(nccmpopts* opts)
+{
+	int ncstatus;
+
+	if ( 0 == opts->header_pad )
+	{
+		return EXIT_SUCCESS;
+	}
+
+	if (opts->verbose)
+	    printf("INFO: Comparing header padding.\n");
+
+	NC * ncp1;
+	NC * ncp2;
+
+	ncstatus = NC_check_id( ncid1, & ncp1 );
+	handle_error( ncstatus );
+    if (ncstatus != NC_NOERR)
+    {
+    	return EXIT_FATAL;
+    }
+
+	ncstatus = NC_check_id( ncid2, & ncp2 );
+	handle_error( ncstatus );
+    if (ncstatus != NC_NOERR)
+    {
+    	return EXIT_FATAL;
+    }
+
+    int status = EXIT_SUCCESS;
+	const size_t padsize1 = ncp1->begin_var - ncp1->xsz;
+	const size_t padsize2 = ncp2->begin_var - ncp2->xsz;
+	unsigned char * bytes1 = 0;
+	unsigned char * bytes2 = 0;
+
+	if ( padsize1 != padsize2 )
+	{
+	    fprintf(stderr, "DIFFER : LENGTHS : HEADERPAD : %lu <> %lu\n",
+	    		(unsigned long) padsize1, (unsigned long) padsize2);
+		if ( !opts->warn[NCCMP_W_ALL] )
+		{
+			status = EXIT_DIFFER;
+		}
+		if( ! opts->force ) goto recover;
+	}
+
+	// Empty pad?
+	if ( 0 == padsize1 )
+	{
+		return EXIT_SUCCESS;
+	}
+
+	// Compare bytes.
+	bytes1 = (unsigned char *) malloc( padsize1 );
+	bytes2 = (unsigned char *) malloc( padsize2 );
+
+	FILE * pFile = fopen ( opts->file1, "r" );
+	if ( NULL == pFile )
+	{
+		fprintf(stderr, "Fatal error initializing header pad for file %s\n", opts->file1);
+		goto recover;
+	}
+
+	fseek ( pFile , ncp1->xsz , SEEK_SET );
+	size_t numRead = fread( bytes1, 1, padsize1, pFile );
+	fclose ( pFile );
+
+	if ( numRead != padsize1 )
+	{
+		fprintf(stderr, "Fatal error reading header pad from file %s\n", opts->file1);
+		goto recover;
+	}
+
+	pFile = fopen ( opts->file2, "r" );
+	if ( NULL == pFile )
+	{
+		fprintf(stderr, "Fatal error initializing header pad for file %s\n", opts->file2);
+		goto recover;
+	}
+
+	fseek ( pFile , ncp2->xsz , SEEK_SET );
+	numRead = fread( bytes2, 1, padsize2, pFile );
+	fclose ( pFile );
+
+	if ( numRead != padsize2 )
+	{
+		fprintf(stderr, "Fatal error reading header pad from file %s\n", opts->file2);
+		goto recover;
+	}
+
+	char hex1[5], hex2[5]; // Printable bytes as hex strings like 0xAB.
+
+	int i = 0;
+	for( ; i < padsize1; ++i )
+	{
+		if ( bytes1[i] != bytes2[i] )
+		{
+			ucharToHex( bytes1[i], hex1 );
+			ucharToHex( bytes2[i], hex2 );
+		    fprintf(stderr, "DIFFER : VALUES : HEADERPAD : %s <> %s : OFFSETS : %lu, %lu\n",
+		    		hex1, hex2,
+					(unsigned long) ncp1->xsz + i, (unsigned long) ncp2->xsz + i );
+
+		    if ( !opts->warn[NCCMP_W_ALL] )
+		    {
+		    	status = EXIT_DIFFER;
+		    }
+
+		    if ( !opts->force )
+		    {
+		    	goto recover;
+		    }
+		}
+	}
+
+recover:
+
+	if ( bytes1 )
+	{
+		free( bytes1 );
+	}
+
+	if ( bytes2 )
+	{
+		free( bytes2 );
+	}
+
+	return status;
+}
+/* *********************************************************** */
 int 
 nccmpmetadata(nccmpopts *opts)
 {
@@ -1499,7 +1631,9 @@ nccmpmetadata(nccmpopts *opts)
   freestringlist(&processedatts, NC_MAX_VARS);
   processedatts = NULL;
   
-  return status;  
+  int statusPad = nccmp_header_pad( opts );
+
+  return status || statusPad;
 }
 /* *********************************************************** */
 /* Returns index into varstruct array if found using name otherwise -1. */
@@ -2285,7 +2419,7 @@ nccmp(nccmpopts* opts)
   
   if (status && !opts->force)
       return status;
-      
+
   if (opts->data) {
     if(status2 = nccmpdata(opts))
       status = status2;

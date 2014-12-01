@@ -21,6 +21,6 @@ else
 nccmp_SOURCES += getopt.c getopt.h 
 endif
 
-nccmp_CFLAGS	= -I..
+nccmp_CFLAGS	= -I.. $(AM_CFLAGS)
 
 nccmp_LDADD	= -lnetcdf -lm

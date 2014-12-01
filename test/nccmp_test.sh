@@ -30,7 +30,7 @@ if test "$?" = "0"; then :; else
     echo "ERROR: nccmp not built or missing from ../src/"
 fi
 
-
+######################################################################
 # create netcdf test files
 NCDL="7"
 ctr=1
@@ -63,6 +63,16 @@ ncgen -o missing_value1.nc missing_value1.cdl
 ncgen -o missing_value2.nc missing_value2.cdl
 ncgen -o _FillValue1.nc _FillValue1.cdl
 
+# Create the test files for comparison.
+./padheader unpadded.nc 0
+./padheader padded.nc 2048
+
+# Files for NaN features.
+./makenans test_nans1a.nc 0 # Without nans.
+./makenans test_nans1b.nc 1 # With nans.
+./makenans test_nans1c.nc 1 # With nans. Just separate file from version 1b.
+
+######################################################################
 # 1 metadata globals
 echo "1."
 CMD="$NCCMP -mgqf -x data1,data2,data3,data4,recdata,rec test1a.nc test1b.nc"
@@ -71,6 +81,7 @@ $CMD  > stderr.tmp 2>&1
 if test "$?" = "1"; then :; else
     echo
     echo "Expected exit code 1."
+    echo "$CMD"
     exit 1
 fi
 
@@ -339,9 +350,6 @@ fi
 
 # 13 test header padded netcdf file vs. unpadded.
 echo "13."
-# Create the test files for comparison.
-./padheader unpadded.nc 0
-./padheader padded.nc 1
 
 CMD="$NCCMP -qdmf padded.nc unpadded.nc"
 $CMD  > stderr.tmp 2>&1
@@ -680,5 +688,118 @@ if test "$?" = "0"; then :; else
     exit 1
 fi
 
+# 28 Nans differ from real values.
+echo "28."
+CMD="$NCCMP -d -s test_nans1a.nc test_nans1b.nc"
+$CMD  > stderr.tmp 2>&1
+
+if test "$?" = "1"; then :; else
+    echo
+    echo "Expected exit code 1."
+    exit 1
+fi
+
+grep '1 <> nan' stderr.tmp > /dev/null
+
+if test "$?" = "0"; then :; else
+    echo
+    echo "nccmp could not differentiate a NaN from a real value."
+    echo "Test that failed: "
+    echo "$CMD  > stderr.tmp 2>&1"
+    echo "grep '1 <> nan' stderr.tmp"
+    echo
+    exit 1
+fi
+
+# 29 Nans differ.
+echo "29."
+CMD="$NCCMP -d -s test_nans1b.nc test_nans1c.nc"
+$CMD  > stderr.tmp 2>&1
+
+if test "$?" = "1"; then :; else
+    echo
+    echo "Expected exit code 1."
+    exit 1
+fi
+
+grep 'nan <> nan' stderr.tmp > /dev/null
+
+if test "$?" = "0"; then :; else
+    echo
+    echo "NaNs should not be equal."
+    echo "Test that failed: "
+    echo "$CMD  > stderr.tmp 2>&1"
+    echo "grep '1 <> nan' stderr.tmp"
+    echo
+    exit 1
+fi
+
+# 30 Nans should be equal.
+echo "30."
+CMD="$NCCMP -d -s -N test_nans1b.nc test_nans1c.nc"
+$CMD  > stderr.tmp 2>&1
+
+if test "$?" = "0"; then :; else
+    echo
+    echo "Expected exit code 0."
+    exit 1
+fi
+
+grep 'are identical' stderr.tmp > /dev/null
+
+if test "$?" = "0"; then :; else
+    echo
+    echo "nccmp still differs NaNs with override -N enabled."
+    echo "Test that failed: "
+    echo "$CMD  > stderr.tmp 2>&1"
+    echo
+    exit 1
+fi
+
+# 31 Header pads ignored.
+echo "31."
+CMD="$NCCMP -md -s test_pad1a.nc test_pad1b.nc"
+$CMD  > stderr.tmp 2>&1
+
+if test "$?" = "0"; then :; else
+    echo
+    echo "Expected exit code 0."
+    exit 1
+fi
+
+grep 'are identical' stderr.tmp > /dev/null
+
+if test "$?" = "0"; then :; else
+    echo
+    echo "nccmp should have ignored differing header pads by default."
+    echo "Test that failed: "
+    echo "$CMD  > stderr.tmp 2>&1"
+    echo
+    exit 1
+fi
+
+# 32 Header pads difference detected.
+echo "32."
+CMD="$NCCMP -md -s -P -f test_pad1a.nc test_pad1b.nc"
+$CMD  > stderr.tmp 2>&1
+
+if test "$?" = "1"; then :; else
+    echo
+    echo "Expected exit code 1."
+    exit 1
+fi
+
+grep 'HEADERPAD' stderr.tmp > /dev/null
+
+if test "$?" = "0"; then :; else
+    echo
+    echo "nccmp should have found differing header pads with -P option."
+    echo "Test that failed: "
+    echo "$CMD  > stderr.tmp 2>&1"
+    echo
+    exit 1
+fi
+
+########################################################################
 # success
 exit 0

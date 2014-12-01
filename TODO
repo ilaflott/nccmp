@@ -1,12 +1,1 @@
-[ ] nan equal
-    [x] cmpvar
-        [x] cmp_##NCFUNTYPE##_missing
-        [x] cmp_##NCFUNTYPE## 
-    [x] cmpvartol
-    [ ] test
-        [ ] float
-        [ ] double
-        [ ] tol float
-        [ ] tol double
-[ ] cmppadding
-    
+

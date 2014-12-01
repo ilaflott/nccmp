@@ -10,7 +10,7 @@
 
 bin_PROGRAMS = ncinfo
 ncinfo_SOURCES = ncinfo.c
-ncinfo_CFLAGS = -Iinclude
+ncinfo_CFLAGS = $(AM_CFLAGS)
 ncinfo_LDADD = -lnetcdf -lhdf5_hl -lhdf5 -lz -lm
 
 CLEANFILES = test*.nc ncinfo

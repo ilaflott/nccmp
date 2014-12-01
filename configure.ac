@@ -1,6 +1,8 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT(nccmp, 1.4.0, [[=Remik.Ziemlinski_at_noaa.gov]]) 
+AC_INIT(nccmp, 1.5.0, [[Remik.Ziemlinski_at_noaa.gov]]) 
 AM_INIT_AUTOMAKE
+
+AC_LANG([C])
 
 AC_CONFIG_HEADERS(config.h)
 
@@ -10,6 +12,16 @@ AC_ARG_ENABLE([ncinfo],
   [enable_ncinfo="$enableval"],
   [enable_ncinfo="yes"])
 AM_CONDITIONAL([ENABLE_NCINFO], [test x$enable_ncinfo = xyes])
+
+dnl Check for netcdf source includes to use private functions not in library.
+AC_ARG_WITH([netcdf],
+  [AS_HELP_STRING([--with-netcdf=prefix],
+    [Path to full NetCDF source package. Required.])],
+  [with_netcdf="$withval"],
+  AC_MSG_ERROR([[Required NetCDF source package not set with --with-netcdf. Download from www.unidata.ucar.edu]]))
+
+AM_CFLAGS="$AM_CFLAGS -I$with_netcdf/include -I$with_netcdf/libsrc4"
+AC_SUBST([AM_CFLAGS])
 
 dnl Checks for programs.
 AC_PROG_AWK
@@ -39,3 +51,13 @@ AC_SYS_LARGEFILE
 
 dnl Checks for library functions. 
 AC_OUTPUT(src/Makefile test/Makefile Makefile ncinfo/Makefile)
+
+AC_MSG_NOTICE([
+
+    CFLAGS   = $CFLAGS
+    CPPFLAGS = $CPPFLAGS
+    LDFLAGS  = $LDFLAGS 
+    LIBS     = $LIBS 
+    
+    with-netcdf = $with_netcdf
+])
