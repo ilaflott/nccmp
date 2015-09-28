@@ -1,0 +1,17 @@
+APP = nccmp
+DEVDIR = nccmp-code
+
+all: help
+
+clean:
+	find . \( -name "*~" -o -name "*.exe" \) -exec rm -f "{}" \;
+	
+help:
+	@echo make [ clean sdist ]
+	
+sdist: clean
+ifndef VER
+	@echo "ERROR: VER is not defined. Try: make sdist VER=0.1.0"
+else
+	cd ..; rm -fr $(APP)-$(VER); mkdir $(APP)-$(VER); rsync --cvs-exclude -a $(DEVDIR)/ $(APP)-$(VER); tar zcvf $(APP)-$(VER).tar.gz $(APP)-$(VER); rm -fr $(APP)-$(VER);
+endif  

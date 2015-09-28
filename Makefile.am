@@ -10,8 +10,4 @@
 
 EXTRA_DIST = configure
 
-SUBDIRS = src test
-
-if ENABLE_NCINFO
-SUBDIRS += ncinfo
-endif
+SUBDIRS = man src test

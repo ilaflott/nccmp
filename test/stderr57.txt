@@ -1,0 +1,18 @@
+DIFFER : NUMBER OF USER DEFINED TYPES : 7 <> 8
+DIFFER : TYPE : comp2 : SIZE : 8 <> 16
+DIFFER : TYPE : comp2 : NUMBER OF FIELDS : 2 <> 3
+DIFFER : TYPE : comp2 : FIELD : d2 : DOES NOT EXIST IN "test15a.nc"
+DIFFER : TYPE : comp3 : FIELD : s3 : DOES NOT EXIST IN "test15b.nc"
+DIFFER : TYPE : comp3 : FIELD : ss3 : DOES NOT EXIST IN "test15a.nc"
+DIFFER : TYPE : comp4 : FIELD : s4 : OFFSET : 0 <> 4
+DIFFER : TYPE : comp4 : FIELD : i4 : OFFSET : 4 <> 0
+DIFFER : TYPE : comp5 : FIELD : i5 : TYPE : INT <> FLOAT
+DIFFER : TYPE : comp7 : DOES NOT EXIST IN "test15a.nc"
+DIFFER : VARIABLE : var7 : DOES NOT EXIST IN "test15a.nc"
+DIFFER : VARIABLE : var3 : POSITION : [1] : FIELD : i3 : VALUES : 4 <> 24
+DIFFER : VARIABLE : var4 : POSITION : [1] : FIELD : s4 : VALUES : 3 <> 0
+DIFFER : VARIABLE : var4 : POSITION : [1] : FIELD : i4 : VALUES : 4 <> 0
+DIFFER : VARIABLE : var5 : POSITION : [1] : FIELD : i5 : VALUES : 4 <> 44
+DIFFER : VARIABLE : var6 : POSITION : [1] : FIELD : i6 : VALUES : 4 <> 54
+DIFFER : VARIABLE : var8 : POSITION : [1] : FIELD : t8 : VALUES : cde <> cd f
+DIFFER : VARIABLE : var9 : POSITION : [1] : FIELD : t8 : VALUES : h <> 

@@ -1,0 +1,2 @@
+DIFFER : VARIABLE : StringArray : POSITION : [2] : VALUES : DEF <> XYZ
+DIFFER : VARIABLE : StringArray : POSITION : [4] : VALUES : QWER <> (null)

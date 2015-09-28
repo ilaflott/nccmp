@@ -1,0 +1,271 @@
+netcdf test16b {
+dimensions:
+	dim1 = 2 ;
+	dim2 = 3 ;
+variables:
+	char   sc_c  (dim1, dim2) ;
+	ubyte  sc_uc (dim1, dim2) ;
+	byte   sc_sc (dim1, dim2) ;	
+	short  sc_s  (dim1, dim2) ;
+	ushort sc_us (dim1, dim2) ;
+	int    sc_i  (dim1, dim2) ;
+	uint   sc_ui (dim1, dim2) ;
+	int64  sc_ll (dim1, dim2) ;
+	uint64 sc_ull(dim1, dim2) ;
+	double sc_d  (dim1, dim2) ;
+	float  sc_f  (dim1, dim2) ;
+
+	char   usc_c  (dim1, dim2) ;
+	ubyte  usc_uc (dim1, dim2) ;
+	byte   usc_sc (dim1, dim2) ;	
+	short  usc_s  (dim1, dim2) ;
+	ushort usc_us (dim1, dim2) ;
+	int    usc_i  (dim1, dim2) ;
+	uint   usc_ui (dim1, dim2) ;
+	int64  usc_ll (dim1, dim2) ;
+	uint64 usc_ull(dim1, dim2) ;
+	double usc_d  (dim1, dim2) ;
+	float  usc_f  (dim1, dim2) ;
+	
+	char   c_c  (dim1, dim2) ;
+	ubyte  c_uc (dim1, dim2) ;
+	byte   c_sc (dim1, dim2) ;	
+	short  c_s  (dim1, dim2) ;
+	ushort c_us (dim1, dim2) ;
+	int    c_i  (dim1, dim2) ;
+	uint   c_ui (dim1, dim2) ;
+	int64  c_ll (dim1, dim2) ;
+	uint64 c_ull(dim1, dim2) ;
+	double c_d  (dim1, dim2) ;
+	float  c_f  (dim1, dim2) ;
+
+	char   s_c  (dim1, dim2) ;
+	ubyte  s_uc (dim1, dim2) ;
+	byte   s_sc (dim1, dim2) ;	
+	short  s_s  (dim1, dim2) ;
+	ushort s_us (dim1, dim2) ;
+	int    s_i  (dim1, dim2) ;
+	uint   s_ui (dim1, dim2) ;
+	int64  s_ll (dim1, dim2) ;
+	uint64 s_ull(dim1, dim2) ;
+	double s_d  (dim1, dim2) ;
+	float  s_f  (dim1, dim2) ;
+
+	char   us_c  (dim1, dim2) ;
+	ubyte  us_uc (dim1, dim2) ;
+	byte   us_sc (dim1, dim2) ;	
+	short  us_s  (dim1, dim2) ;
+	ushort us_us (dim1, dim2) ;
+	int    us_i  (dim1, dim2) ;
+	uint   us_ui (dim1, dim2) ;
+	int64  us_ll (dim1, dim2) ;
+	uint64 us_ull(dim1, dim2) ;
+	double us_d  (dim1, dim2) ;
+	float  us_f  (dim1, dim2) ;
+	
+	char   i_c  (dim1, dim2) ;
+	ubyte  i_uc (dim1, dim2) ;
+	byte   i_sc (dim1, dim2) ;	
+	short  i_s  (dim1, dim2) ;
+	ushort i_us (dim1, dim2) ;
+	int    i_i  (dim1, dim2) ;
+	uint   i_ui (dim1, dim2) ;
+	int64  i_ll (dim1, dim2) ;
+	uint64 i_ull(dim1, dim2) ;
+	double i_d  (dim1, dim2) ;
+	float  i_f  (dim1, dim2) ;
+
+	char   ui_c  (dim1, dim2) ;
+	ubyte  ui_uc (dim1, dim2) ;
+	byte   ui_sc (dim1, dim2) ;	
+	short  ui_s  (dim1, dim2) ;
+	ushort ui_us (dim1, dim2) ;
+	int    ui_i  (dim1, dim2) ;
+	uint   ui_ui (dim1, dim2) ;
+	int64  ui_ll (dim1, dim2) ;
+	uint64 ui_ull(dim1, dim2) ;
+	double ui_d  (dim1, dim2) ;
+	float  ui_f  (dim1, dim2) ;
+	
+	char   ll_c  (dim1, dim2) ;
+	ubyte  ll_uc (dim1, dim2) ;
+	byte   ll_sc (dim1, dim2) ;	
+	short  ll_s  (dim1, dim2) ;
+	ushort ll_us (dim1, dim2) ;
+	int    ll_i  (dim1, dim2) ;
+	uint   ll_ui (dim1, dim2) ;
+	int64  ll_ll (dim1, dim2) ;
+	uint64 ll_ull(dim1, dim2) ;
+	double ll_d  (dim1, dim2) ;
+	float  ll_f  (dim1, dim2) ;
+	
+	char   ull_c  (dim1, dim2) ;
+	ubyte  ull_uc (dim1, dim2) ;
+	byte   ull_sc (dim1, dim2) ;	
+	short  ull_s  (dim1, dim2) ;
+	ushort ull_us (dim1, dim2) ;
+	int    ull_i  (dim1, dim2) ;
+	uint   ull_ui (dim1, dim2) ;
+	int64  ull_ll (dim1, dim2) ;
+	uint64 ull_ull(dim1, dim2) ;
+	double ull_d  (dim1, dim2) ;
+	float  ull_f  (dim1, dim2) ;
+	
+	char   d_c  (dim1, dim2) ;
+	ubyte  d_uc (dim1, dim2) ;
+	byte   d_sc (dim1, dim2) ;	
+	short  d_s  (dim1, dim2) ;
+	ushort d_us (dim1, dim2) ;
+	int    d_i  (dim1, dim2) ;
+	uint   d_ui (dim1, dim2) ;
+	int64  d_ll (dim1, dim2) ;
+	uint64 d_ull(dim1, dim2) ;
+	double d_d  (dim1, dim2) ;
+	float  d_f  (dim1, dim2) ;
+
+	char   f_c  (dim1, dim2) ;
+	ubyte  f_uc (dim1, dim2) ;
+	byte   f_sc (dim1, dim2) ;	
+	short  f_s  (dim1, dim2) ;
+	ushort f_us (dim1, dim2) ;
+	int    f_i  (dim1, dim2) ;
+	uint   f_ui (dim1, dim2) ;
+	int64  f_ll (dim1, dim2) ;
+	uint64 f_ull(dim1, dim2) ;
+	double f_d  (dim1, dim2) ;
+	float  f_f  (dim1, dim2) ;
+	
+data:
+	sc_c   = "012346";
+	sc_uc  = 0, 1, 2, 3, 4, 7;
+	sc_sc  = 0, 1, 2, 3, 4, 8;
+	sc_s   = 0, 1, 2, 3, 4, 9;
+	sc_us  = 0, 1, 2, 3, 4, 10;
+	sc_i   = 0, 1, 2, 3, 4, 11;
+	sc_ui  = 0, 1, 2, 3, 4, 12;
+	sc_ll  = 0, 1, 2, 3, 4, 13;
+	sc_ull = 0, 1, 2, 3, 4, 14;
+	sc_d   = 0, 1, 2, 3, 4, 15;
+	sc_f   = 0, 1, 2, 3, 4, 16;
+
+	usc_c   = "012347";
+	usc_uc  = 0, 1, 2, 3, 4, 17;
+	usc_sc  = 0, 1, 2, 3, 4, 18;
+	usc_s   = 0, 1, 2, 3, 4, 19;
+	usc_us  = 0, 1, 2, 3, 4, 20;
+	usc_i   = 0, 1, 2, 3, 4, 21;
+	usc_ui  = 0, 1, 2, 3, 4, 22;
+	usc_ll  = 0, 1, 2, 3, 4, 23;
+	usc_ull = 0, 1, 2, 3, 4, 24;
+	usc_d   = 0, 1, 2, 3, 4, 25;
+	usc_f   = 0, 1, 2, 3, 4, 26;
+
+	c_c   = "012348";
+	c_uc  = 48, 49, 50, 51, 52, 57;
+	c_sc  = 48, 49, 50, 51, 52, 65;
+	c_s   = 48, 49, 50, 51, 52, 66;
+	c_us  = 48, 49, 50, 51, 52, 67;
+	c_i   = 48, 49, 50, 51, 52, 68;
+	c_ui  = 48, 49, 50, 51, 52, 69;	
+	c_ll  = 48, 49, 50, 51, 52, 70;
+	c_ull = 48, 49, 50, 51, 52, 71;	
+	c_d   = 48, 49, 50, 51, 52, 72;
+	c_f   = 48, 49, 50, 51, 52, 73;
+	
+	s_c   = "012349";
+	s_uc  = 0, 1, 2, 3, 4, 27;
+	s_sc  = 0, 1, 2, 3, 4, 28;
+	s_s   = 0, 1, 2, 3, 4, 29;
+	s_us  = 0, 1, 2, 3, 4, 30;
+	s_i   = 0, 1, 2, 3, 4, 31;
+	s_ui  = 0, 1, 2, 3, 4, 32;
+	s_ll  = 0, 1, 2, 3, 4, 33;
+	s_ull = 0, 1, 2, 3, 4, 34;
+	s_d   = 0, 1, 2, 3, 4, 35;
+	s_f   = 0, 1, 2, 3, 4, 36;
+
+	us_c   = "01234A";
+	us_uc  = 0, 1, 2, 3, 4, 37;
+	us_sc  = 0, 1, 2, 3, 4, 38;
+	us_s   = 0, 1, 2, 3, 4, 39;
+	us_us  = 0, 1, 2, 3, 4, 40;
+	us_i   = 0, 1, 2, 3, 4, 41;
+	us_ui  = 0, 1, 2, 3, 4, 42;
+	us_ll  = 0, 1, 2, 3, 4, 43;
+	us_ull = 0, 1, 2, 3, 4, 44;
+	us_d   = 0, 1, 2, 3, 4, 45;
+	us_f   = 0, 1, 2, 3, 4, 46;
+
+	i_c   = "01234B";
+	i_uc  = 0, 1, 2, 3, 4, 47;
+	i_sc  = 0, 1, 2, 3, 4, 48;
+	i_s   = 0, 1, 2, 3, 4, 49;
+	i_us  = 0, 1, 2, 3, 4, 50;
+	i_i   = 0, 1, 2, 3, 4, 51;
+	i_ui  = 0, 1, 2, 3, 4, 52;
+	i_ll  = 0, 1, 2, 3, 4, 53;
+	i_ull = 0, 1, 2, 3, 4, 54;
+	i_d   = 0, 1, 2, 3, 4, 55;
+	i_f   = 0, 1, 2, 3, 4, 56;
+
+	ui_c   = "01234C";
+	ui_uc  = 0, 1, 2, 3, 4, 57;
+	ui_sc  = 0, 1, 2, 3, 4, 58;
+	ui_s   = 0, 1, 2, 3, 4, 59;
+	ui_us  = 0, 1, 2, 3, 4, 60;
+	ui_i   = 0, 1, 2, 3, 4, 61;
+	ui_ui  = 0, 1, 2, 3, 4, 62;
+	ui_ll  = 0, 1, 2, 3, 4, 63;
+	ui_ull = 0, 1, 2, 3, 4, 64;
+	ui_d   = 0, 1, 2, 3, 4, 65;
+	ui_f   = 0, 1, 2, 3, 4, 66;
+
+	ll_c   = "01234D";
+	ll_uc  = 0, 1, 2, 3, 4, 67;
+	ll_sc  = 0, 1, 2, 3, 4, 68;
+	ll_s   = 0, 1, 2, 3, 4, 69;
+	ll_us  = 0, 1, 2, 3, 4, 70;
+	ll_i   = 0, 1, 2, 3, 4, 71;
+	ll_ui  = 0, 1, 2, 3, 4, 72;
+	ll_ll  = 0, 1, 2, 3, 4, 73;
+	ll_ull = 0, 1, 2, 3, 4, 74;
+	ll_d   = 0, 1, 2, 3, 4, 75;
+	ll_f   = 0, 1, 2, 3, 4, 76;
+
+	ull_c   = "01234E";
+	ull_uc  = 0, 1, 2, 3, 4, 77;
+	ull_sc  = 0, 1, 2, 3, 4, 78;
+	ull_s   = 0, 1, 2, 3, 4, 79;
+	ull_us  = 0, 1, 2, 3, 4, 80;
+	ull_i   = 0, 1, 2, 3, 4, 81;
+	ull_ui  = 0, 1, 2, 3, 4, 82;
+	ull_ll  = 0, 1, 2, 3, 4, 83;
+	ull_ull = 0, 1, 2, 3, 4, 84;
+	ull_d   = 0, 1, 2, 3, 4, 85;
+	ull_f   = 0, 1, 2, 3, 4, 86;
+
+	d_c   = "01234F";
+	d_uc  = 0, 1, 2, 3, 4, 87;
+	d_sc  = 0, 1, 2, 3, 4, 88;
+	d_s   = 0, 1, 2, 3, 4, 89;
+	d_us  = 0, 1, 2, 3, 4, 90;
+	d_i   = 0, 1, 2, 3, 4, 91;
+	d_ui  = 0, 1, 2, 3, 4, 92;
+	d_ll  = 0, 1, 2, 3, 4, 93;
+	d_ull = 0, 1, 2, 3, 4, 94;
+	d_d   = 0, 1, 2, 3, 4, 95;
+	d_f   = 0, 1, 2, 3, 4, 96;
+
+	f_c   = "01234G";
+	f_uc  = 0, 1, 2, 3, 4, 97;
+	f_sc  = 0, 1, 2, 3, 4, 98;
+	f_s   = 0, 1, 2, 3, 4, 99;
+	f_us  = 0, 1, 2, 3, 4, 100;
+	f_i   = 0, 1, 2, 3, 4, 101;
+	f_ui  = 0, 1, 2, 3, 4, 102;
+	f_ll  = 0, 1, 2, 3, 4, 103;
+	f_ull = 0, 1, 2, 3, 4, 104;
+	f_d   = 0, 1, 2, 3, 4, 105;
+	f_f   = 0, 1, 2, 3, 4, 106;
+	
+}

@@ -1,0 +1,4 @@
+DIFFER : NAMES OF RECORDS : rec <> time
+DIFFER : DIMENSION : rec : DOES NOT EXIST IN "test2b.nc"
+DIFFER : VARIABLE : recdata : DIMENSION : rec <> time
+DIFFER : VARIABLE : rec : DIMENSION : rec <> time

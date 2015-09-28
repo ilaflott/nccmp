@@ -1,0 +1,17 @@
+netcdf test12b {
+types:
+  int   enum enum1 {FOO = -1, BAR = 0, SIC = 1} ;
+  short enum enum2 {A = -1, B = 0, C = 1} ;            // diff type
+  short enum enum3 {D = -1, E = 0, F = 10, EXTRA = 2} ; // diff num members
+  short enum enum5 {J = -1, L = 0} ;                   // diff second identifier
+  short enum enum6 {M = -1, N = 0} ;                   // missing in test12a
+dimensions:
+	dim1 = 4 ;
+variables:
+	enum1 var1(dim1) ;
+	enum3 var2(dim1) ;
+data:
+
+ var1 = FOO, BAR, SIC, FOO ;
+ var2 = D, F, F, E;          // diff positions 1,3
+}

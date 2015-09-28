@@ -1,0 +1,21 @@
+netcdf test17a {
+types:
+  opaque(3) opaq1 ;
+  compound comp1 {
+    opaq1 o1;
+  };
+
+dimensions:
+        rec = unlimited;
+	dim1 = 2 ;
+	dim2 = 2 ;
+variables:
+	comp1 var1(dim1) ;
+	comp1 var2(dim1,dim2) ;	
+	comp1 var3(rec,dim2) ;		
+data:
+
+ var1 = {0X000001}, {0X000002} ;
+ var2 = {0X000001}, {0X000002}, {0X000003}, {0X000004} ;
+ var3 = {0X000001}, {0X000002}, {0X000003}, {0X000004} ;
+}

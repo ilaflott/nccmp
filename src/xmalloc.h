@@ -20,7 +20,7 @@
 #ifndef XMALLOC_H
 #define XMALLOC_H 1
 
-#include "common.h"
+#include "nccmp_common.h"
 
 #ifdef __cplusplus
 #define BEGIN_C_DECLS extern "C" {

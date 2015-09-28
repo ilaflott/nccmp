@@ -1,0 +1,22 @@
+netcdf test14a {
+types:
+  int(*) vlen1 ;
+  short(*) vlen2 ;
+  double(*) vlen3 ;
+  string(*) vlen4 ;
+dimensions:
+  dim1 = 4 ;
+variables:
+  vlen1 var1(dim1) ;
+  vlen2 var2(dim1) ;
+  vlen3 var3(dim1) ;
+  vlen3 var4(dim1) ;
+  vlen4 var5(dim1) ;
+data:
+
+ var1 = {0}, {0, 1}, {0, 1, 2}, {0, 1, 2, 3} ;
+ var2 = {0}, {0, 1}, {0, 1, 2}, {0, 1, 2, 3} ;
+ var3 = {0}, {0, 1}, {0, 1, 2}, {0, 1, 2, 3} ;
+ var4 = {0}, {0, 1}, {0, 1, 2}, {0, 1, 2, 3} ;
+ var5 = {"a"}, {"b", "cd"}, {"e", "f", "g"}, {"h", "i", "j", "klm"} ;
+}

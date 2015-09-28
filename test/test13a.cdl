@@ -1,0 +1,17 @@
+netcdf test13a {
+types:
+  opaque(3) opaq1 ;
+  opaque(3) opaq2 ;
+dimensions:
+	dim1 = 2 ;
+	dim2 = 3 ;	
+variables:
+	opaq1 var1(dim1) ;
+	opaq1 var2(dim1) ;	
+	opaq1 var3(dim1,dim2) ;		
+data:
+
+ var1 = 0X000001, 0X0A0B0C ;
+ var2 = 0X000001, 0X0A0B0C ; 
+ var3 = 0X000001, 0X000002, 0X000003, 0X000004, 0X000005, 0X000006 ;  
+}

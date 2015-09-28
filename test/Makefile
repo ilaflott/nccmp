@@ -85,30 +85,97 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-check_PROGRAMS = padheader$(EXEEXT) makenans$(EXEEXT) \
-	test_strlist$(EXEEXT)
+build_triplet = x86_64-unknown-linux-gnu
+host_triplet = x86_64-unknown-linux-gnu
+TESTS = test_nccmp_setup.sh test_nccmp_strlist$(EXEEXT) \
+	test_nccmp_odometer$(EXEEXT) test_nccmp_user_type$(EXEEXT) \
+	test_nccmp_01.sh test_nccmp_02.sh test_nccmp_03.sh \
+	test_nccmp_04.sh test_nccmp_05.sh test_nccmp_06.sh \
+	test_nccmp_07.sh test_nccmp_08.sh test_nccmp_09.sh \
+	test_nccmp_10.sh test_nccmp_11.sh test_nccmp_12.sh \
+	test_nccmp_13.sh test_nccmp_14.sh test_nccmp_15.sh \
+	test_nccmp_16.sh test_nccmp_17.sh test_nccmp_18.sh \
+	test_nccmp_19.sh test_nccmp_20.sh test_nccmp_21.sh \
+	test_nccmp_22.sh test_nccmp_23.sh test_nccmp_24.sh \
+	test_nccmp_25.sh test_nccmp_26.sh test_nccmp_27.sh \
+	test_nccmp_28.sh test_nccmp_29.sh test_nccmp_30.sh \
+	test_nccmp_31.sh test_nccmp_32.sh test_nccmp_33.sh \
+	test_nccmp_34.sh test_nccmp_35.sh test_nccmp_36.sh \
+	test_nccmp_37.sh test_nccmp_38.sh test_nccmp_39.sh \
+	test_nccmp_40.sh test_nccmp_41.sh test_nccmp_42.sh \
+	test_nccmp_43.sh test_nccmp_44.sh test_nccmp_45.sh \
+	test_nccmp_46.sh test_nccmp_47.sh test_nccmp_48.sh \
+	test_nccmp_49.sh test_nccmp_50.sh test_nccmp_51.sh \
+	test_nccmp_52.sh test_nccmp_53.sh test_nccmp_54.sh \
+	test_nccmp_55.sh test_nccmp_56.sh test_nccmp_57.sh \
+	test_nccmp_58.sh test_nccmp_59.sh test_nccmp_60.sh \
+	test_nccmp_61.sh test_nccmp_62.sh test_nccmp_63.sh \
+	test_nccmp_64.sh test_nccmp_65.sh test_nccmp_66.sh \
+	$(am__append_1)
+#am__append_1 = test_big.sh
+check_PROGRAMS = make_compound_array_atomic$(EXEEXT) \
+	make_compound_array_user_type$(EXEEXT) \
+	make_compound_nest_atomic$(EXEEXT) \
+	make_compound_vlen_nest$(EXEEXT) make_big$(EXEEXT) \
+	make_nans$(EXEEXT) make_nc4_encodings$(EXEEXT) \
+	padheader$(EXEEXT) test_nccmp_odometer$(EXEEXT) \
+	test_nccmp_strlist$(EXEEXT) test_nccmp_user_type$(EXEEXT)
 subdir = test
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
 	$(top_srcdir)/mkinstalldirs $(top_srcdir)/depcomp \
 	$(top_srcdir)/test-driver
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/configure.ac
+am__aclocal_m4_deps = $(top_srcdir)/m4/ax_pthread.m4 \
+	$(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
-makenans_SOURCES = makenans.c
-makenans_OBJECTS = makenans.$(OBJEXT)
-makenans_DEPENDENCIES =
+make_big_SOURCES = make_big.c
+make_big_OBJECTS = make_big.$(OBJEXT)
+make_big_DEPENDENCIES =
+make_compound_array_atomic_SOURCES = make_compound_array_atomic.c
+make_compound_array_atomic_OBJECTS =  \
+	make_compound_array_atomic.$(OBJEXT)
+make_compound_array_atomic_DEPENDENCIES =
+make_compound_array_user_type_SOURCES =  \
+	make_compound_array_user_type.c
+make_compound_array_user_type_OBJECTS =  \
+	make_compound_array_user_type.$(OBJEXT)
+make_compound_array_user_type_DEPENDENCIES =
+make_compound_nest_atomic_SOURCES = make_compound_nest_atomic.c
+make_compound_nest_atomic_OBJECTS =  \
+	make_compound_nest_atomic.$(OBJEXT)
+make_compound_nest_atomic_DEPENDENCIES =
+make_compound_vlen_nest_SOURCES = make_compound_vlen_nest.c
+make_compound_vlen_nest_OBJECTS = make_compound_vlen_nest.$(OBJEXT)
+make_compound_vlen_nest_LDADD = $(LDADD)
+make_nans_SOURCES = make_nans.c
+make_nans_OBJECTS = make_nans.$(OBJEXT)
+make_nans_DEPENDENCIES =
+make_nc4_encodings_SOURCES = make_nc4_encodings.c
+make_nc4_encodings_OBJECTS = make_nc4_encodings.$(OBJEXT)
+make_nc4_encodings_DEPENDENCIES =
 padheader_SOURCES = padheader.c
 padheader_OBJECTS = padheader.$(OBJEXT)
 padheader_DEPENDENCIES =
-test_strlist_SOURCES = test_strlist.c
-test_strlist_OBJECTS = test_strlist-test_strlist.$(OBJEXT)
-test_strlist_DEPENDENCIES = ../src/nccmp-xmalloc.o \
-	../src/nccmp-strlist.o
+test_nccmp_odometer_SOURCES = test_nccmp_odometer.c
+test_nccmp_odometer_OBJECTS =  \
+	test_nccmp_odometer-test_nccmp_odometer.$(OBJEXT)
+test_nccmp_odometer_DEPENDENCIES = ../src/nccmp-nccmp_odometer.o
+test_nccmp_strlist_SOURCES = test_nccmp_strlist.c
+test_nccmp_strlist_OBJECTS =  \
+	test_nccmp_strlist-test_nccmp_strlist.$(OBJEXT)
+test_nccmp_strlist_DEPENDENCIES = ../src/nccmp-xmalloc.o \
+	../src/nccmp-nccmp_strlist.o
+test_nccmp_user_type_SOURCES = test_nccmp_user_type.c
+test_nccmp_user_type_OBJECTS =  \
+	test_nccmp_user_type-test_nccmp_user_type.$(OBJEXT)
+test_nccmp_user_type_DEPENDENCIES = ../src/nccmp-log.o \
+	../src/nccmp-nccmp_strlist.o ../src/nccmp-nccmp_user_type.o \
+	../src/nccmp-nccmp_utils.o ../src/nccmp-xmalloc.o
 AM_V_P = $(am__v_P_$(V))
 am__v_P_ = $(am__v_P_$(AM_DEFAULT_VERBOSITY))
 am__v_P_0 = false
@@ -141,8 +208,16 @@ AM_V_CCLD = $(am__v_CCLD_$(V))
 am__v_CCLD_ = $(am__v_CCLD_$(AM_DEFAULT_VERBOSITY))
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
-SOURCES = makenans.c padheader.c test_strlist.c
-DIST_SOURCES = makenans.c padheader.c test_strlist.c
+SOURCES = make_big.c make_compound_array_atomic.c \
+	make_compound_array_user_type.c make_compound_nest_atomic.c \
+	make_compound_vlen_nest.c make_nans.c make_nc4_encodings.c \
+	padheader.c test_nccmp_odometer.c test_nccmp_strlist.c \
+	test_nccmp_user_type.c
+DIST_SOURCES = make_big.c make_compound_array_atomic.c \
+	make_compound_array_user_type.c make_compound_nest_atomic.c \
+	make_compound_vlen_nest.c make_nans.c make_nc4_encodings.c \
+	padheader.c test_nccmp_odometer.c test_nccmp_strlist.c \
+	test_nccmp_user_type.c
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -372,17 +447,17 @@ TEST_LOG_DRIVER = $(SHELL) $(top_srcdir)/test-driver
 TEST_LOG_COMPILE = $(TEST_LOG_COMPILER) $(AM_TEST_LOG_FLAGS) \
 	$(TEST_LOG_FLAGS)
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
-ACLOCAL = aclocal-1.14
+ACLOCAL = ${SHELL} /home/rsz/projects/nccmp/nccmp-code/missing aclocal-1.14
 AMTAR = $${TAR-tar}
-AM_CFLAGS =  -I/home/rsz/projects/netcdf/netcdf-4.1.3/include -I/home/rsz/projects/netcdf/netcdf-4.1.3/libsrc4
+AM_CFLAGS =  -I/include -I/libsrc4
 AM_DEFAULT_VERBOSITY = 1
-AUTOCONF = autoconf
-AUTOHEADER = autoheader
-AUTOMAKE = automake-1.14
+AUTOCONF = ${SHELL} /home/rsz/projects/nccmp/nccmp-code/missing autoconf
+AUTOHEADER = ${SHELL} /home/rsz/projects/nccmp/nccmp-code/missing autoheader
+AUTOMAKE = ${SHELL} /home/rsz/projects/nccmp/nccmp-code/missing automake-1.14
 AWK = gawk
 CC = gcc
 CCDEPMODE = depmode=gcc3
-CFLAGS = -g -O2
+CFLAGS = -I/usr/local/hdf5-1.8.15-patch1/include -I/usr/local/netcdf-4.3.3.1/include -pthread
 CPP = gcc -E
 CPPFLAGS = 
 CYGPATH_W = echo
@@ -399,26 +474,29 @@ INSTALL_DATA = ${INSTALL} -m 644
 INSTALL_PROGRAM = ${INSTALL}
 INSTALL_SCRIPT = ${INSTALL}
 INSTALL_STRIP_PROGRAM = $(install_sh) -c -s
-LDFLAGS = 
+LDFLAGS = -L/usr/local/hdf5-1.8.15-patch1/lib -L/usr/local/netcdf-4.3.3.1/lib -pthread
 LIBOBJS = 
 LIBS = -lnetcdf -lm 
 LN_S = cp -pR
 LTLIBOBJS = 
-MAKEINFO = makeinfo
+MAKEINFO = ${SHELL} /home/rsz/projects/nccmp/nccmp-code/missing makeinfo
 MKDIR_P = /bin/mkdir -p
 OBJEXT = o
 PACKAGE = nccmp
-PACKAGE_BUGREPORT = Remik.Ziemlinski_at_noaa.gov
+PACKAGE_BUGREPORT = Remik.Ziemlinski at noaa.gov
 PACKAGE_NAME = nccmp
-PACKAGE_STRING = nccmp 1.5.0
+PACKAGE_STRING = nccmp 1.7.4.0
 PACKAGE_TARNAME = nccmp
 PACKAGE_URL = 
-PACKAGE_VERSION = 1.5.0
+PACKAGE_VERSION = 1.7.4.0
 PATH_SEPARATOR = :
+PTHREAD_CC = gcc
+PTHREAD_CFLAGS = -pthread
+PTHREAD_LIBS = 
 SET_MAKE = 
 SHELL = /bin/bash
 STRIP = 
-VERSION = 1.5.0
+VERSION = 1.7.4.0
 abs_builddir = /home/rsz/projects/nccmp/nccmp-code/test
 abs_srcdir = /home/rsz/projects/nccmp/nccmp-code/test
 abs_top_builddir = /home/rsz/projects/nccmp/nccmp-code
@@ -429,15 +507,24 @@ am__leading_dot = .
 am__quote = 
 am__tar = $${TAR-tar} chof - "$$tardir"
 am__untar = $${TAR-tar} xf -
+ax_pthread_config = 
 bindir = ${exec_prefix}/bin
+build = x86_64-unknown-linux-gnu
 build_alias = 
+build_cpu = x86_64
+build_os = linux-gnu
+build_vendor = unknown
 builddir = .
 datadir = ${datarootdir}
 datarootdir = ${prefix}/share
 docdir = ${datarootdir}/doc/${PACKAGE_TARNAME}
 dvidir = ${docdir}
 exec_prefix = ${prefix}
+host = x86_64-unknown-linux-gnu
 host_alias = 
+host_cpu = x86_64
+host_os = linux-gnu
+host_vendor = unknown
 htmldir = ${docdir}
 includedir = ${prefix}/include
 infodir = ${datarootdir}/info
@@ -461,17 +548,54 @@ target_alias =
 top_build_prefix = ../
 top_builddir = ..
 top_srcdir = ..
-CLEANFILES = test??.nc test_nans*.nc stderr.tmp padded.nc unpadded.nc test_strlist missing_value*.nc _FillValue*.nc
-TESTS = nccmp_test.sh 
-EXTRA_DIST = nccmp_test.sh test1a.cdl test1b.cdl \
-test2a.cdl test2b.cdl test3a.cdl test3b.cdl \
-stderr1.txt stderr2.txt stderr3.txt stderr4.txt stderr5.txt \
-stderr6.txt stderr7.txt stderr8.txt missing_value*.cdl _FillValue*.cdl
+CLEANFILES = \
+    group*.nc                                                   \
+    make_big make_big.exe                                       \
+    make_compound_array_atomic make_compound_nest_atomic        \
+    make_compound_array_user_type                               \
+    make_compound*.nc make_compound*.exe                        \
+    make_compound_vlen_nest make_compound_vlen_nest*.exe        \
+    make_group make_group.exe                                   \
+    make_nans make_nans.exe missing_value*.nc                   \
+    make_nc4_encodings make_nc4_encodings.exe                   \
+    not_encoded.nc encoded.nc                                   \
+    padded.nc padheader padheader.exe                           \
+    stderr*.tmp test??.nc test???.nc test_nans*.nc              \
+    test_nccmp_odometer test_nccmp_odometer.exe                 \
+    test_nccmp_strlist test_nccmp_strlist.exe                   \
+    test_nccmp_user_type test_nccmp_user_type.exe               \
+    tmp*                                                        \
+    unpadded.nc                                                 \
+    _FillValue*.nc
+
+EXTRA_DIST = \
+    group*.cdl                                      \
+    missing_value*.cdl                              \
+    ncgen_formats.sh                                \
+    stderr*.txt                                     \
+    test*.cdl                                       \
+    test_*.sh                                       \
+    _FillValue*.cdl
 
 padheader_LDADD = -lnetcdf
-makenans_LDADD = -lnetcdf
-test_strlist_CPPFLAGS = -I../src
-test_strlist_LDADD = ../src/nccmp-xmalloc.o ../src/nccmp-strlist.o
+make_compound_array_atomic_LDADD = -lnetcdf
+make_compound_array_user_type_LDADD = -lnetcdf
+make_compound_nest_atomic_LDADD = -lnetcdf
+make_compound_vlen_nest = -lnetcdf
+make_big_LDADD = -lnetcdf
+make_nans_LDADD = -lnetcdf
+make_nc4_encodings_LDADD = -lnetcdf
+test_nccmp_odometer_CPPFLAGS = -I../src
+test_nccmp_odometer_LDADD = ../src/nccmp-nccmp_odometer.o
+test_nccmp_strlist_CPPFLAGS = -I../src
+test_nccmp_strlist_LDADD = ../src/nccmp-xmalloc.o ../src/nccmp-nccmp_strlist.o
+test_nccmp_user_type_CPPFLAGS = -I../src
+test_nccmp_user_type_LDADD = ../src/nccmp-log.o             \
+                             ../src/nccmp-nccmp_strlist.o   \
+                             ../src/nccmp-nccmp_user_type.o \
+                             ../src/nccmp-nccmp_utils.o     \
+                             ../src/nccmp-xmalloc.o 
+
 all: all-am
 
 .SUFFIXES:
@@ -510,17 +634,49 @@ $(am__aclocal_m4_deps):
 clean-checkPROGRAMS:
 	-test -z "$(check_PROGRAMS)" || rm -f $(check_PROGRAMS)
 
-makenans$(EXEEXT): $(makenans_OBJECTS) $(makenans_DEPENDENCIES) $(EXTRA_makenans_DEPENDENCIES) 
-	@rm -f makenans$(EXEEXT)
-	$(AM_V_CCLD)$(LINK) $(makenans_OBJECTS) $(makenans_LDADD) $(LIBS)
+make_big$(EXEEXT): $(make_big_OBJECTS) $(make_big_DEPENDENCIES) $(EXTRA_make_big_DEPENDENCIES) 
+	@rm -f make_big$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(make_big_OBJECTS) $(make_big_LDADD) $(LIBS)
+
+make_compound_array_atomic$(EXEEXT): $(make_compound_array_atomic_OBJECTS) $(make_compound_array_atomic_DEPENDENCIES) $(EXTRA_make_compound_array_atomic_DEPENDENCIES) 
+	@rm -f make_compound_array_atomic$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(make_compound_array_atomic_OBJECTS) $(make_compound_array_atomic_LDADD) $(LIBS)
+
+make_compound_array_user_type$(EXEEXT): $(make_compound_array_user_type_OBJECTS) $(make_compound_array_user_type_DEPENDENCIES) $(EXTRA_make_compound_array_user_type_DEPENDENCIES) 
+	@rm -f make_compound_array_user_type$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(make_compound_array_user_type_OBJECTS) $(make_compound_array_user_type_LDADD) $(LIBS)
+
+make_compound_nest_atomic$(EXEEXT): $(make_compound_nest_atomic_OBJECTS) $(make_compound_nest_atomic_DEPENDENCIES) $(EXTRA_make_compound_nest_atomic_DEPENDENCIES) 
+	@rm -f make_compound_nest_atomic$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(make_compound_nest_atomic_OBJECTS) $(make_compound_nest_atomic_LDADD) $(LIBS)
+
+make_compound_vlen_nest$(EXEEXT): $(make_compound_vlen_nest_OBJECTS) $(make_compound_vlen_nest_DEPENDENCIES) $(EXTRA_make_compound_vlen_nest_DEPENDENCIES) 
+	@rm -f make_compound_vlen_nest$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(make_compound_vlen_nest_OBJECTS) $(make_compound_vlen_nest_LDADD) $(LIBS)
+
+make_nans$(EXEEXT): $(make_nans_OBJECTS) $(make_nans_DEPENDENCIES) $(EXTRA_make_nans_DEPENDENCIES) 
+	@rm -f make_nans$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(make_nans_OBJECTS) $(make_nans_LDADD) $(LIBS)
+
+make_nc4_encodings$(EXEEXT): $(make_nc4_encodings_OBJECTS) $(make_nc4_encodings_DEPENDENCIES) $(EXTRA_make_nc4_encodings_DEPENDENCIES) 
+	@rm -f make_nc4_encodings$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(make_nc4_encodings_OBJECTS) $(make_nc4_encodings_LDADD) $(LIBS)
 
 padheader$(EXEEXT): $(padheader_OBJECTS) $(padheader_DEPENDENCIES) $(EXTRA_padheader_DEPENDENCIES) 
 	@rm -f padheader$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(padheader_OBJECTS) $(padheader_LDADD) $(LIBS)
 
-test_strlist$(EXEEXT): $(test_strlist_OBJECTS) $(test_strlist_DEPENDENCIES) $(EXTRA_test_strlist_DEPENDENCIES) 
-	@rm -f test_strlist$(EXEEXT)
-	$(AM_V_CCLD)$(LINK) $(test_strlist_OBJECTS) $(test_strlist_LDADD) $(LIBS)
+test_nccmp_odometer$(EXEEXT): $(test_nccmp_odometer_OBJECTS) $(test_nccmp_odometer_DEPENDENCIES) $(EXTRA_test_nccmp_odometer_DEPENDENCIES) 
+	@rm -f test_nccmp_odometer$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(test_nccmp_odometer_OBJECTS) $(test_nccmp_odometer_LDADD) $(LIBS)
+
+test_nccmp_strlist$(EXEEXT): $(test_nccmp_strlist_OBJECTS) $(test_nccmp_strlist_DEPENDENCIES) $(EXTRA_test_nccmp_strlist_DEPENDENCIES) 
+	@rm -f test_nccmp_strlist$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(test_nccmp_strlist_OBJECTS) $(test_nccmp_strlist_LDADD) $(LIBS)
+
+test_nccmp_user_type$(EXEEXT): $(test_nccmp_user_type_OBJECTS) $(test_nccmp_user_type_DEPENDENCIES) $(EXTRA_test_nccmp_user_type_DEPENDENCIES) 
+	@rm -f test_nccmp_user_type$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(test_nccmp_user_type_OBJECTS) $(test_nccmp_user_type_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -528,9 +684,17 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-include ./$(DEPDIR)/makenans.Po
+include ./$(DEPDIR)/make_big.Po
+include ./$(DEPDIR)/make_compound_array_atomic.Po
+include ./$(DEPDIR)/make_compound_array_user_type.Po
+include ./$(DEPDIR)/make_compound_nest_atomic.Po
+include ./$(DEPDIR)/make_compound_vlen_nest.Po
+include ./$(DEPDIR)/make_nans.Po
+include ./$(DEPDIR)/make_nc4_encodings.Po
 include ./$(DEPDIR)/padheader.Po
-include ./$(DEPDIR)/test_strlist-test_strlist.Po
+include ./$(DEPDIR)/test_nccmp_odometer-test_nccmp_odometer.Po
+include ./$(DEPDIR)/test_nccmp_strlist-test_nccmp_strlist.Po
+include ./$(DEPDIR)/test_nccmp_user_type-test_nccmp_user_type.Po
 
 .c.o:
 	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -546,19 +710,47 @@ include ./$(DEPDIR)/test_strlist-test_strlist.Po
 #	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
 #	$(AM_V_CC_no)$(COMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
 
-test_strlist-test_strlist.o: test_strlist.c
-	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_strlist_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT test_strlist-test_strlist.o -MD -MP -MF $(DEPDIR)/test_strlist-test_strlist.Tpo -c -o test_strlist-test_strlist.o `test -f 'test_strlist.c' || echo '$(srcdir)/'`test_strlist.c
-	$(AM_V_at)$(am__mv) $(DEPDIR)/test_strlist-test_strlist.Tpo $(DEPDIR)/test_strlist-test_strlist.Po
-#	$(AM_V_CC)source='test_strlist.c' object='test_strlist-test_strlist.o' libtool=no \
+test_nccmp_odometer-test_nccmp_odometer.o: test_nccmp_odometer.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_nccmp_odometer_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT test_nccmp_odometer-test_nccmp_odometer.o -MD -MP -MF $(DEPDIR)/test_nccmp_odometer-test_nccmp_odometer.Tpo -c -o test_nccmp_odometer-test_nccmp_odometer.o `test -f 'test_nccmp_odometer.c' || echo '$(srcdir)/'`test_nccmp_odometer.c
+	$(AM_V_at)$(am__mv) $(DEPDIR)/test_nccmp_odometer-test_nccmp_odometer.Tpo $(DEPDIR)/test_nccmp_odometer-test_nccmp_odometer.Po
+#	$(AM_V_CC)source='test_nccmp_odometer.c' object='test_nccmp_odometer-test_nccmp_odometer.o' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
-#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_strlist_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o test_strlist-test_strlist.o `test -f 'test_strlist.c' || echo '$(srcdir)/'`test_strlist.c
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_nccmp_odometer_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o test_nccmp_odometer-test_nccmp_odometer.o `test -f 'test_nccmp_odometer.c' || echo '$(srcdir)/'`test_nccmp_odometer.c
 
-test_strlist-test_strlist.obj: test_strlist.c
-	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_strlist_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT test_strlist-test_strlist.obj -MD -MP -MF $(DEPDIR)/test_strlist-test_strlist.Tpo -c -o test_strlist-test_strlist.obj `if test -f 'test_strlist.c'; then $(CYGPATH_W) 'test_strlist.c'; else $(CYGPATH_W) '$(srcdir)/test_strlist.c'; fi`
-	$(AM_V_at)$(am__mv) $(DEPDIR)/test_strlist-test_strlist.Tpo $(DEPDIR)/test_strlist-test_strlist.Po
-#	$(AM_V_CC)source='test_strlist.c' object='test_strlist-test_strlist.obj' libtool=no \
+test_nccmp_odometer-test_nccmp_odometer.obj: test_nccmp_odometer.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_nccmp_odometer_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT test_nccmp_odometer-test_nccmp_odometer.obj -MD -MP -MF $(DEPDIR)/test_nccmp_odometer-test_nccmp_odometer.Tpo -c -o test_nccmp_odometer-test_nccmp_odometer.obj `if test -f 'test_nccmp_odometer.c'; then $(CYGPATH_W) 'test_nccmp_odometer.c'; else $(CYGPATH_W) '$(srcdir)/test_nccmp_odometer.c'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/test_nccmp_odometer-test_nccmp_odometer.Tpo $(DEPDIR)/test_nccmp_odometer-test_nccmp_odometer.Po
+#	$(AM_V_CC)source='test_nccmp_odometer.c' object='test_nccmp_odometer-test_nccmp_odometer.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
-#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_strlist_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o test_strlist-test_strlist.obj `if test -f 'test_strlist.c'; then $(CYGPATH_W) 'test_strlist.c'; else $(CYGPATH_W) '$(srcdir)/test_strlist.c'; fi`
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_nccmp_odometer_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o test_nccmp_odometer-test_nccmp_odometer.obj `if test -f 'test_nccmp_odometer.c'; then $(CYGPATH_W) 'test_nccmp_odometer.c'; else $(CYGPATH_W) '$(srcdir)/test_nccmp_odometer.c'; fi`
+
+test_nccmp_strlist-test_nccmp_strlist.o: test_nccmp_strlist.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_nccmp_strlist_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT test_nccmp_strlist-test_nccmp_strlist.o -MD -MP -MF $(DEPDIR)/test_nccmp_strlist-test_nccmp_strlist.Tpo -c -o test_nccmp_strlist-test_nccmp_strlist.o `test -f 'test_nccmp_strlist.c' || echo '$(srcdir)/'`test_nccmp_strlist.c
+	$(AM_V_at)$(am__mv) $(DEPDIR)/test_nccmp_strlist-test_nccmp_strlist.Tpo $(DEPDIR)/test_nccmp_strlist-test_nccmp_strlist.Po
+#	$(AM_V_CC)source='test_nccmp_strlist.c' object='test_nccmp_strlist-test_nccmp_strlist.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_nccmp_strlist_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o test_nccmp_strlist-test_nccmp_strlist.o `test -f 'test_nccmp_strlist.c' || echo '$(srcdir)/'`test_nccmp_strlist.c
+
+test_nccmp_strlist-test_nccmp_strlist.obj: test_nccmp_strlist.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_nccmp_strlist_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT test_nccmp_strlist-test_nccmp_strlist.obj -MD -MP -MF $(DEPDIR)/test_nccmp_strlist-test_nccmp_strlist.Tpo -c -o test_nccmp_strlist-test_nccmp_strlist.obj `if test -f 'test_nccmp_strlist.c'; then $(CYGPATH_W) 'test_nccmp_strlist.c'; else $(CYGPATH_W) '$(srcdir)/test_nccmp_strlist.c'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/test_nccmp_strlist-test_nccmp_strlist.Tpo $(DEPDIR)/test_nccmp_strlist-test_nccmp_strlist.Po
+#	$(AM_V_CC)source='test_nccmp_strlist.c' object='test_nccmp_strlist-test_nccmp_strlist.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_nccmp_strlist_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o test_nccmp_strlist-test_nccmp_strlist.obj `if test -f 'test_nccmp_strlist.c'; then $(CYGPATH_W) 'test_nccmp_strlist.c'; else $(CYGPATH_W) '$(srcdir)/test_nccmp_strlist.c'; fi`
+
+test_nccmp_user_type-test_nccmp_user_type.o: test_nccmp_user_type.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_nccmp_user_type_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT test_nccmp_user_type-test_nccmp_user_type.o -MD -MP -MF $(DEPDIR)/test_nccmp_user_type-test_nccmp_user_type.Tpo -c -o test_nccmp_user_type-test_nccmp_user_type.o `test -f 'test_nccmp_user_type.c' || echo '$(srcdir)/'`test_nccmp_user_type.c
+	$(AM_V_at)$(am__mv) $(DEPDIR)/test_nccmp_user_type-test_nccmp_user_type.Tpo $(DEPDIR)/test_nccmp_user_type-test_nccmp_user_type.Po
+#	$(AM_V_CC)source='test_nccmp_user_type.c' object='test_nccmp_user_type-test_nccmp_user_type.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_nccmp_user_type_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o test_nccmp_user_type-test_nccmp_user_type.o `test -f 'test_nccmp_user_type.c' || echo '$(srcdir)/'`test_nccmp_user_type.c
+
+test_nccmp_user_type-test_nccmp_user_type.obj: test_nccmp_user_type.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_nccmp_user_type_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT test_nccmp_user_type-test_nccmp_user_type.obj -MD -MP -MF $(DEPDIR)/test_nccmp_user_type-test_nccmp_user_type.Tpo -c -o test_nccmp_user_type-test_nccmp_user_type.obj `if test -f 'test_nccmp_user_type.c'; then $(CYGPATH_W) 'test_nccmp_user_type.c'; else $(CYGPATH_W) '$(srcdir)/test_nccmp_user_type.c'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/test_nccmp_user_type-test_nccmp_user_type.Tpo $(DEPDIR)/test_nccmp_user_type-test_nccmp_user_type.Po
+#	$(AM_V_CC)source='test_nccmp_user_type.c' object='test_nccmp_user_type-test_nccmp_user_type.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_nccmp_user_type_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o test_nccmp_user_type-test_nccmp_user_type.obj `if test -f 'test_nccmp_user_type.c'; then $(CYGPATH_W) 'test_nccmp_user_type.c'; else $(CYGPATH_W) '$(srcdir)/test_nccmp_user_type.c'; fi`
 
 ID: $(am__tagged_files)
 	$(am__define_uniq_tagged_files); mkid -fID $$unique
@@ -753,9 +945,499 @@ recheck: all $(check_PROGRAMS)
 	        am__force_recheck=am--force-recheck \
 	        TEST_LOGS="$$log_list"; \
 	exit $$?
-nccmp_test.sh.log: nccmp_test.sh
-	@p='nccmp_test.sh'; \
-	b='nccmp_test.sh'; \
+test_nccmp_setup.sh.log: test_nccmp_setup.sh
+	@p='test_nccmp_setup.sh'; \
+	b='test_nccmp_setup.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test_nccmp_strlist.log: test_nccmp_strlist$(EXEEXT)
+	@p='test_nccmp_strlist$(EXEEXT)'; \
+	b='test_nccmp_strlist'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test_nccmp_odometer.log: test_nccmp_odometer$(EXEEXT)
+	@p='test_nccmp_odometer$(EXEEXT)'; \
+	b='test_nccmp_odometer'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test_nccmp_user_type.log: test_nccmp_user_type$(EXEEXT)
+	@p='test_nccmp_user_type$(EXEEXT)'; \
+	b='test_nccmp_user_type'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test_nccmp_01.sh.log: test_nccmp_01.sh
+	@p='test_nccmp_01.sh'; \
+	b='test_nccmp_01.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test_nccmp_02.sh.log: test_nccmp_02.sh
+	@p='test_nccmp_02.sh'; \
+	b='test_nccmp_02.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test_nccmp_03.sh.log: test_nccmp_03.sh
+	@p='test_nccmp_03.sh'; \
+	b='test_nccmp_03.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test_nccmp_04.sh.log: test_nccmp_04.sh
+	@p='test_nccmp_04.sh'; \
+	b='test_nccmp_04.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test_nccmp_05.sh.log: test_nccmp_05.sh
+	@p='test_nccmp_05.sh'; \
+	b='test_nccmp_05.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test_nccmp_06.sh.log: test_nccmp_06.sh
+	@p='test_nccmp_06.sh'; \
+	b='test_nccmp_06.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test_nccmp_07.sh.log: test_nccmp_07.sh
+	@p='test_nccmp_07.sh'; \
+	b='test_nccmp_07.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test_nccmp_08.sh.log: test_nccmp_08.sh
+	@p='test_nccmp_08.sh'; \
+	b='test_nccmp_08.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test_nccmp_09.sh.log: test_nccmp_09.sh
+	@p='test_nccmp_09.sh'; \
+	b='test_nccmp_09.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test_nccmp_10.sh.log: test_nccmp_10.sh
+	@p='test_nccmp_10.sh'; \
+	b='test_nccmp_10.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test_nccmp_11.sh.log: test_nccmp_11.sh
+	@p='test_nccmp_11.sh'; \
+	b='test_nccmp_11.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test_nccmp_12.sh.log: test_nccmp_12.sh
+	@p='test_nccmp_12.sh'; \
+	b='test_nccmp_12.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test_nccmp_13.sh.log: test_nccmp_13.sh
+	@p='test_nccmp_13.sh'; \
+	b='test_nccmp_13.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test_nccmp_14.sh.log: test_nccmp_14.sh
+	@p='test_nccmp_14.sh'; \
+	b='test_nccmp_14.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test_nccmp_15.sh.log: test_nccmp_15.sh
+	@p='test_nccmp_15.sh'; \
+	b='test_nccmp_15.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test_nccmp_16.sh.log: test_nccmp_16.sh
+	@p='test_nccmp_16.sh'; \
+	b='test_nccmp_16.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test_nccmp_17.sh.log: test_nccmp_17.sh
+	@p='test_nccmp_17.sh'; \
+	b='test_nccmp_17.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test_nccmp_18.sh.log: test_nccmp_18.sh
+	@p='test_nccmp_18.sh'; \
+	b='test_nccmp_18.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test_nccmp_19.sh.log: test_nccmp_19.sh
+	@p='test_nccmp_19.sh'; \
+	b='test_nccmp_19.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test_nccmp_20.sh.log: test_nccmp_20.sh
+	@p='test_nccmp_20.sh'; \
+	b='test_nccmp_20.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test_nccmp_21.sh.log: test_nccmp_21.sh
+	@p='test_nccmp_21.sh'; \
+	b='test_nccmp_21.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test_nccmp_22.sh.log: test_nccmp_22.sh
+	@p='test_nccmp_22.sh'; \
+	b='test_nccmp_22.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test_nccmp_23.sh.log: test_nccmp_23.sh
+	@p='test_nccmp_23.sh'; \
+	b='test_nccmp_23.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test_nccmp_24.sh.log: test_nccmp_24.sh
+	@p='test_nccmp_24.sh'; \
+	b='test_nccmp_24.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test_nccmp_25.sh.log: test_nccmp_25.sh
+	@p='test_nccmp_25.sh'; \
+	b='test_nccmp_25.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test_nccmp_26.sh.log: test_nccmp_26.sh
+	@p='test_nccmp_26.sh'; \
+	b='test_nccmp_26.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test_nccmp_27.sh.log: test_nccmp_27.sh
+	@p='test_nccmp_27.sh'; \
+	b='test_nccmp_27.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test_nccmp_28.sh.log: test_nccmp_28.sh
+	@p='test_nccmp_28.sh'; \
+	b='test_nccmp_28.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test_nccmp_29.sh.log: test_nccmp_29.sh
+	@p='test_nccmp_29.sh'; \
+	b='test_nccmp_29.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test_nccmp_30.sh.log: test_nccmp_30.sh
+	@p='test_nccmp_30.sh'; \
+	b='test_nccmp_30.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test_nccmp_31.sh.log: test_nccmp_31.sh
+	@p='test_nccmp_31.sh'; \
+	b='test_nccmp_31.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test_nccmp_32.sh.log: test_nccmp_32.sh
+	@p='test_nccmp_32.sh'; \
+	b='test_nccmp_32.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test_nccmp_33.sh.log: test_nccmp_33.sh
+	@p='test_nccmp_33.sh'; \
+	b='test_nccmp_33.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test_nccmp_34.sh.log: test_nccmp_34.sh
+	@p='test_nccmp_34.sh'; \
+	b='test_nccmp_34.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test_nccmp_35.sh.log: test_nccmp_35.sh
+	@p='test_nccmp_35.sh'; \
+	b='test_nccmp_35.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test_nccmp_36.sh.log: test_nccmp_36.sh
+	@p='test_nccmp_36.sh'; \
+	b='test_nccmp_36.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test_nccmp_37.sh.log: test_nccmp_37.sh
+	@p='test_nccmp_37.sh'; \
+	b='test_nccmp_37.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test_nccmp_38.sh.log: test_nccmp_38.sh
+	@p='test_nccmp_38.sh'; \
+	b='test_nccmp_38.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test_nccmp_39.sh.log: test_nccmp_39.sh
+	@p='test_nccmp_39.sh'; \
+	b='test_nccmp_39.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test_nccmp_40.sh.log: test_nccmp_40.sh
+	@p='test_nccmp_40.sh'; \
+	b='test_nccmp_40.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test_nccmp_41.sh.log: test_nccmp_41.sh
+	@p='test_nccmp_41.sh'; \
+	b='test_nccmp_41.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test_nccmp_42.sh.log: test_nccmp_42.sh
+	@p='test_nccmp_42.sh'; \
+	b='test_nccmp_42.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test_nccmp_43.sh.log: test_nccmp_43.sh
+	@p='test_nccmp_43.sh'; \
+	b='test_nccmp_43.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test_nccmp_44.sh.log: test_nccmp_44.sh
+	@p='test_nccmp_44.sh'; \
+	b='test_nccmp_44.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test_nccmp_45.sh.log: test_nccmp_45.sh
+	@p='test_nccmp_45.sh'; \
+	b='test_nccmp_45.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test_nccmp_46.sh.log: test_nccmp_46.sh
+	@p='test_nccmp_46.sh'; \
+	b='test_nccmp_46.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test_nccmp_47.sh.log: test_nccmp_47.sh
+	@p='test_nccmp_47.sh'; \
+	b='test_nccmp_47.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test_nccmp_48.sh.log: test_nccmp_48.sh
+	@p='test_nccmp_48.sh'; \
+	b='test_nccmp_48.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test_nccmp_49.sh.log: test_nccmp_49.sh
+	@p='test_nccmp_49.sh'; \
+	b='test_nccmp_49.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test_nccmp_50.sh.log: test_nccmp_50.sh
+	@p='test_nccmp_50.sh'; \
+	b='test_nccmp_50.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test_nccmp_51.sh.log: test_nccmp_51.sh
+	@p='test_nccmp_51.sh'; \
+	b='test_nccmp_51.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test_nccmp_52.sh.log: test_nccmp_52.sh
+	@p='test_nccmp_52.sh'; \
+	b='test_nccmp_52.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test_nccmp_53.sh.log: test_nccmp_53.sh
+	@p='test_nccmp_53.sh'; \
+	b='test_nccmp_53.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test_nccmp_54.sh.log: test_nccmp_54.sh
+	@p='test_nccmp_54.sh'; \
+	b='test_nccmp_54.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test_nccmp_55.sh.log: test_nccmp_55.sh
+	@p='test_nccmp_55.sh'; \
+	b='test_nccmp_55.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test_nccmp_56.sh.log: test_nccmp_56.sh
+	@p='test_nccmp_56.sh'; \
+	b='test_nccmp_56.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test_nccmp_57.sh.log: test_nccmp_57.sh
+	@p='test_nccmp_57.sh'; \
+	b='test_nccmp_57.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test_nccmp_58.sh.log: test_nccmp_58.sh
+	@p='test_nccmp_58.sh'; \
+	b='test_nccmp_58.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test_nccmp_59.sh.log: test_nccmp_59.sh
+	@p='test_nccmp_59.sh'; \
+	b='test_nccmp_59.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test_nccmp_60.sh.log: test_nccmp_60.sh
+	@p='test_nccmp_60.sh'; \
+	b='test_nccmp_60.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test_nccmp_61.sh.log: test_nccmp_61.sh
+	@p='test_nccmp_61.sh'; \
+	b='test_nccmp_61.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test_nccmp_62.sh.log: test_nccmp_62.sh
+	@p='test_nccmp_62.sh'; \
+	b='test_nccmp_62.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test_nccmp_63.sh.log: test_nccmp_63.sh
+	@p='test_nccmp_63.sh'; \
+	b='test_nccmp_63.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test_nccmp_64.sh.log: test_nccmp_64.sh
+	@p='test_nccmp_64.sh'; \
+	b='test_nccmp_64.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test_nccmp_65.sh.log: test_nccmp_65.sh
+	@p='test_nccmp_65.sh'; \
+	b='test_nccmp_65.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test_nccmp_66.sh.log: test_nccmp_66.sh
+	@p='test_nccmp_66.sh'; \
+	b='test_nccmp_66.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test_big.sh.log: test_big.sh
+	@p='test_big.sh'; \
+	b='test_big.sh'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \

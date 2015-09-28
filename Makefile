@@ -85,15 +85,17 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-am__append_1 = ncinfo
+build_triplet = x86_64-unknown-linux-gnu
+host_triplet = x86_64-unknown-linux-gnu
 subdir = .
 DIST_COMMON = INSTALL NEWS README AUTHORS ChangeLog \
 	$(srcdir)/Makefile.in $(srcdir)/Makefile.am \
 	$(top_srcdir)/configure $(am__configure_deps) \
-	$(srcdir)/config.h.in mkinstalldirs COPYING TODO compile \
-	depcomp install-sh missing
+	$(srcdir)/config.h.in mkinstalldirs COPYING compile \
+	config.guess config.sub depcomp install-sh missing
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/configure.ac
+am__aclocal_m4_deps = $(top_srcdir)/m4/ax_pthread.m4 \
+	$(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
@@ -158,7 +160,7 @@ am__define_uniq_tagged_files = \
 ETAGS = etags
 CTAGS = ctags
 CSCOPE = cscope
-DIST_SUBDIRS = src test ncinfo
+DIST_SUBDIRS = $(SUBDIRS)
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 distdir = $(PACKAGE)-$(VERSION)
 top_distdir = $(distdir)
@@ -201,17 +203,17 @@ distuninstallcheck_listfiles = find . -type f -print
 am__distuninstallcheck_listfiles = $(distuninstallcheck_listfiles) \
   | sed 's|^\./|$(prefix)/|' | grep -v '$(infodir)/dir$$'
 distcleancheck_listfiles = find . -type f -print
-ACLOCAL = aclocal-1.14
+ACLOCAL = ${SHELL} /home/rsz/projects/nccmp/nccmp-code/missing aclocal-1.14
 AMTAR = $${TAR-tar}
-AM_CFLAGS =  -I/home/rsz/projects/netcdf/netcdf-4.1.3/include -I/home/rsz/projects/netcdf/netcdf-4.1.3/libsrc4
+AM_CFLAGS =  -I/include -I/libsrc4
 AM_DEFAULT_VERBOSITY = 1
-AUTOCONF = autoconf
-AUTOHEADER = autoheader
-AUTOMAKE = automake-1.14
+AUTOCONF = ${SHELL} /home/rsz/projects/nccmp/nccmp-code/missing autoconf
+AUTOHEADER = ${SHELL} /home/rsz/projects/nccmp/nccmp-code/missing autoheader
+AUTOMAKE = ${SHELL} /home/rsz/projects/nccmp/nccmp-code/missing automake-1.14
 AWK = gawk
 CC = gcc
 CCDEPMODE = depmode=gcc3
-CFLAGS = -g -O2
+CFLAGS = -I/usr/local/hdf5-1.8.15-patch1/include -I/usr/local/netcdf-4.3.3.1/include -pthread
 CPP = gcc -E
 CPPFLAGS = 
 CYGPATH_W = echo
@@ -228,26 +230,29 @@ INSTALL_DATA = ${INSTALL} -m 644
 INSTALL_PROGRAM = ${INSTALL}
 INSTALL_SCRIPT = ${INSTALL}
 INSTALL_STRIP_PROGRAM = $(install_sh) -c -s
-LDFLAGS = 
+LDFLAGS = -L/usr/local/hdf5-1.8.15-patch1/lib -L/usr/local/netcdf-4.3.3.1/lib -pthread
 LIBOBJS = 
 LIBS = -lnetcdf -lm 
 LN_S = cp -pR
 LTLIBOBJS = 
-MAKEINFO = makeinfo
+MAKEINFO = ${SHELL} /home/rsz/projects/nccmp/nccmp-code/missing makeinfo
 MKDIR_P = /bin/mkdir -p
 OBJEXT = o
 PACKAGE = nccmp
-PACKAGE_BUGREPORT = Remik.Ziemlinski_at_noaa.gov
+PACKAGE_BUGREPORT = Remik.Ziemlinski at noaa.gov
 PACKAGE_NAME = nccmp
-PACKAGE_STRING = nccmp 1.5.0
+PACKAGE_STRING = nccmp 1.7.4.0
 PACKAGE_TARNAME = nccmp
 PACKAGE_URL = 
-PACKAGE_VERSION = 1.5.0
+PACKAGE_VERSION = 1.7.4.0
 PATH_SEPARATOR = :
+PTHREAD_CC = gcc
+PTHREAD_CFLAGS = -pthread
+PTHREAD_LIBS = 
 SET_MAKE = 
 SHELL = /bin/bash
 STRIP = 
-VERSION = 1.5.0
+VERSION = 1.7.4.0
 abs_builddir = /home/rsz/projects/nccmp/nccmp-code
 abs_srcdir = /home/rsz/projects/nccmp/nccmp-code
 abs_top_builddir = /home/rsz/projects/nccmp/nccmp-code
@@ -258,15 +263,24 @@ am__leading_dot = .
 am__quote = 
 am__tar = $${TAR-tar} chof - "$$tardir"
 am__untar = $${TAR-tar} xf -
+ax_pthread_config = 
 bindir = ${exec_prefix}/bin
+build = x86_64-unknown-linux-gnu
 build_alias = 
+build_cpu = x86_64
+build_os = linux-gnu
+build_vendor = unknown
 builddir = .
 datadir = ${datarootdir}
 datarootdir = ${prefix}/share
 docdir = ${datarootdir}/doc/${PACKAGE_TARNAME}
 dvidir = ${docdir}
 exec_prefix = ${prefix}
+host = x86_64-unknown-linux-gnu
 host_alias = 
+host_cpu = x86_64
+host_os = linux-gnu
+host_vendor = unknown
 htmldir = ${docdir}
 includedir = ${prefix}/include
 infodir = ${datarootdir}/info
@@ -291,7 +305,7 @@ top_build_prefix =
 top_builddir = .
 top_srcdir = .
 EXTRA_DIST = configure
-SUBDIRS = src test $(am__append_1)
+SUBDIRS = man src test
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 

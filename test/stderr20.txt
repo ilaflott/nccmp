@@ -1,2 +1,2 @@
-WARNING: Warning tag "blahblah" is unsupported and will be ignored.
 DIFFER : FILE FORMATS : NC_FORMAT_CLASSIC <> NC_FORMAT_NETCDF4
+Warning tag "blahblah" is unsupported and will be ignored.

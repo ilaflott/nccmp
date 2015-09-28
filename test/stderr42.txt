@@ -1,0 +1,14 @@
+DIFFER : Failed to find group /group2 in file "group1.nc"
+DIFFER : Failed to find group /group3 in file "group2.nc"
+DIFFER : Failed to find group /group/subgroup2 in file "group1.nc"
+DIFFER : LENGTHS : ATTRIBUTE : desc : VARIABLE : var3 : 1 <> 2 : VALUES : "2" : "2b"
+DIFFER : LENGTHS : ATTRIBUTE : desc : VARIABLE : var3 : 4 <> 5 : VALUES : "test" : "testb"
+DIFFER : LENGTHS : DIMENSION : dim2 : 4 <> 5
+DIFFER : LENGTHS : DIMENSION : dim2 : 4 <> 5
+DIFFER : LENGTHS : DIMENSION : dim3 : 4 <> 6
+DIFFER : VARIABLE : var1 : POSITION : [0] : VALUES : 1 <> 21
+DIFFER : VARIABLE : var1 : POSITION : [1] : VALUES : 2 <> 22
+DIFFER : VARIABLE : var1 : POSITION : [2] : VALUES : 3 <> 23
+DIFFER : VARIABLE : var1 : POSITION : [3] : VALUES : 4 <> 24
+DIFFER : VARIABLE : var3 : SIZE : 4 <> 5
+DIFFER : VARIABLE : var3 : SIZE : 4 <> 6

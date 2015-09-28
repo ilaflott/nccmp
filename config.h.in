@@ -1,5 +1,35 @@
 /* config.h.in.  Generated from configure.ac by autoheader.  */
 
+/* When built. */
+#undef BUILD_DATE
+
+/* Where built. */
+#undef BUILD_HOST
+
+/* Who built this. */
+#undef BUILD_USER
+
+/* Flags passed to configure. */
+#undef CONFIG_CC
+
+/* Flags passed to configure. */
+#undef CONFIG_CFLAGS
+
+/* Flags passed to configure. */
+#undef CONFIG_CPP
+
+/* Flags passed to configure. */
+#undef CONFIG_CPPFLAGS
+
+/* Flags passed after ./configure. */
+#undef CONFIG_FLAGS
+
+/* Flags passed to configure. */
+#undef CONFIG_LDFLAGS
+
+/* Flags passed to configure. */
+#undef CONFIG_LIBS
+
 /* Define to 1 if you have the <errno.h> header file. */
 #undef HAVE_ERRNO_H
 
@@ -24,8 +54,23 @@
 /* Define to 1 if you have the <memory.h> header file. */
 #undef HAVE_MEMORY_H
 
+/* Define to 1 if netcdf api sets the first usertype id. */
+#undef HAVE_NC_FIRSTUSERTYPEID
+
+/* Define to 1 if you have <nc.h> and <nc3internal.h>. */
+#undef HAVE_NC_H
+
+/* Set to 1 if netcdf library has nc_inq_path. */
+#undef HAVE_NC_INQ_PATH
+
 /* Define to 1 if you have the <netcdf.h> header file. */
 #undef HAVE_NETCDF_H
+
+/* Define to 1 if you have POSIX threads libraries and header files. */
+#undef HAVE_PTHREAD
+
+/* Have PTHREAD_PRIO_INHERIT. */
+#undef HAVE_PTHREAD_PRIO_INHERIT
 
 /* Define to 1 if you have the <stdbool.h> header file. */
 #undef HAVE_STDBOOL_H
@@ -74,6 +119,10 @@
 
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION
+
+/* Define to necessary symbol if this constant uses a non-standard name on
+   your system. */
+#undef PTHREAD_CREATE_JOINABLE
 
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS

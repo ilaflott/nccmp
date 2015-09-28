@@ -1,2 +1,0 @@
-DIFFER : VARIABLE : recdata : POSITION : 1 0 : VALUES : 4 <> -4
-DIFFER : TYPE OF VARIABLE "rec" : FLOAT <> INT

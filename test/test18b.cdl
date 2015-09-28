@@ -1,0 +1,21 @@
+netcdf test18b {
+types:
+  short enum enum1 {A = 1, B = 10, C = 11, D = 12} ;
+  compound comp1 {
+    enum1 e1;
+  };
+
+dimensions:
+        rec = unlimited;
+	dim1 = 2 ;
+	dim2 = 2 ;
+variables:
+	comp1 var1(dim1) ;
+	comp1 var2(dim1,dim2) ;	
+	comp1 var3(rec,dim2) ;		
+data:
+
+ var1 = {A}, {B} ;
+ var2 = {A}, {B}, {C}, {D} ;
+ var3 = {A}, {B}, {C}, {D} ;
+}

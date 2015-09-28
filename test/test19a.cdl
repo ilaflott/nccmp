@@ -1,0 +1,37 @@
+netcdf test19a {
+types:
+    int enum enum1 {FOO = -1, BAR = 0, SIC = 1, WUF = 2, ZYP = 3} ;
+    opaque(3) opaq1 ;
+    compound comp1 {
+		int i1;
+		short s1;
+    };
+    int(*)   vlen0 ;
+    enum1(*) vlen1 ;
+    opaq1(*) vlen2 ;
+    vlen1(*) vlen3 ;
+    comp1(*) vlen4 ;
+	vlen0(*) vlen5 ;
+    string(*) vlen6 ;
+    vlen6(*) vlen7 ;
+    vlen2(*) vlen8 ;	
+dimensions:
+    dim1 = 1 ;
+    dim2 = 1 ;
+variables:
+    vlen1 var1(dim1,dim2);
+    vlen2 var2(dim1,dim2);
+    vlen3 var3(dim1,dim2);	
+    vlen4 var4(dim1,dim2);	
+    vlen5 var5(dim1,dim2);	
+    vlen7 var6(dim1,dim2);	
+    vlen8 var7(dim1,dim2);	
+data:
+    var1 = {FOO, FOO, FOO} ;
+    var2 = {0x010203, 0x0A0B0C, 0x0D0E0F};
+    var3 = {{FOO}, {FOO, FOO}};
+    var4 = {{0,0}, {0,0}};
+    var5 = {{0}, {1, 2}};
+    var6 = {{"", "0"}, {"1", "2"}};
+    var7 = {{0x010203}, {0x040506, 0x070809}};
+}

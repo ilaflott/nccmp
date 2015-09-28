@@ -86,6 +86,8 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
+build_triplet = x86_64-unknown-linux-gnu
+host_triplet = x86_64-unknown-linux-gnu
 bin_PROGRAMS = nccmp$(EXEEXT)
 am__append_1 = 
 #am__append_2 = getopt.c getopt.h 
@@ -93,7 +95,8 @@ subdir = src
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
 	$(top_srcdir)/mkinstalldirs $(top_srcdir)/depcomp
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/configure.ac
+am__aclocal_m4_deps = $(top_srcdir)/m4/ax_pthread.m4 \
+	$(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
@@ -102,14 +105,29 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
-am__nccmp_SOURCES_DIST = common.h nccmp.c nccmp.h ncinfo.c ncinfo.h \
-	opt.c opt.h strlist.c strlist.h xmalloc.c xmalloc.h getopt.c \
-	getopt.h
+am__nccmp_SOURCES_DIST = common.h log.c log.h nccmp.c nccmp.h \
+	xmalloc.c xmalloc.h nccmp_data.c nccmp_data.h nccmp_dim.c \
+	nccmp_dim.h nccmp_error.h nccmp_format.c nccmp_format.h \
+	nccmp_group.c nccmp_group.h nccmp_io.c nccmp_io.h \
+	nccmp_metadata.c nccmp_metadata.h nccmp_nc_type.c \
+	nccmp_nc_type.h nccmp_ncinfo.c nccmp_ncinfo.h nccmp_nest.c \
+	nccmp_nest.h nccmp_odometer.c nccmp_odometer.h nccmp_opt.c \
+	nccmp_opt.h nccmp_state.c nccmp_state.h nccmp_strlist.c \
+	nccmp_strlist.h nccmp_thread.h nccmp_utils.c nccmp_utils.h \
+	nccmp_user_type.c nccmp_user_type.h nccmp_var.c nccmp_var.h \
+	getopt.c getopt.h
 am__objects_1 =
 #am__objects_2 = nccmp-getopt.$(OBJEXT)
-am_nccmp_OBJECTS = nccmp-nccmp.$(OBJEXT) nccmp-ncinfo.$(OBJEXT) \
-	nccmp-opt.$(OBJEXT) nccmp-strlist.$(OBJEXT) \
-	nccmp-xmalloc.$(OBJEXT) $(am__objects_1) $(am__objects_2)
+am_nccmp_OBJECTS = nccmp-log.$(OBJEXT) nccmp-nccmp.$(OBJEXT) \
+	nccmp-xmalloc.$(OBJEXT) nccmp-nccmp_data.$(OBJEXT) \
+	nccmp-nccmp_dim.$(OBJEXT) nccmp-nccmp_format.$(OBJEXT) \
+	nccmp-nccmp_group.$(OBJEXT) nccmp-nccmp_io.$(OBJEXT) \
+	nccmp-nccmp_metadata.$(OBJEXT) nccmp-nccmp_nc_type.$(OBJEXT) \
+	nccmp-nccmp_ncinfo.$(OBJEXT) nccmp-nccmp_nest.$(OBJEXT) \
+	nccmp-nccmp_odometer.$(OBJEXT) nccmp-nccmp_opt.$(OBJEXT) \
+	nccmp-nccmp_state.$(OBJEXT) nccmp-nccmp_strlist.$(OBJEXT) \
+	nccmp-nccmp_utils.$(OBJEXT) nccmp-nccmp_user_type.$(OBJEXT) \
+	nccmp-nccmp_var.$(OBJEXT) $(am__objects_1) $(am__objects_2)
 nccmp_OBJECTS = $(am_nccmp_OBJECTS)
 nccmp_DEPENDENCIES =
 nccmp_LINK = $(CCLD) $(nccmp_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
@@ -173,17 +191,17 @@ am__define_uniq_tagged_files = \
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
-ACLOCAL = aclocal-1.14
+ACLOCAL = ${SHELL} /home/rsz/projects/nccmp/nccmp-code/missing aclocal-1.14
 AMTAR = $${TAR-tar}
-AM_CFLAGS =  -I/home/rsz/projects/netcdf/netcdf-4.1.3/include -I/home/rsz/projects/netcdf/netcdf-4.1.3/libsrc4
+AM_CFLAGS =  -I/include -I/libsrc4
 AM_DEFAULT_VERBOSITY = 1
-AUTOCONF = autoconf
-AUTOHEADER = autoheader
-AUTOMAKE = automake-1.14
+AUTOCONF = ${SHELL} /home/rsz/projects/nccmp/nccmp-code/missing autoconf
+AUTOHEADER = ${SHELL} /home/rsz/projects/nccmp/nccmp-code/missing autoheader
+AUTOMAKE = ${SHELL} /home/rsz/projects/nccmp/nccmp-code/missing automake-1.14
 AWK = gawk
 CC = gcc
 CCDEPMODE = depmode=gcc3
-CFLAGS = -g -O2
+CFLAGS = -I/usr/local/hdf5-1.8.15-patch1/include -I/usr/local/netcdf-4.3.3.1/include -pthread
 CPP = gcc -E
 CPPFLAGS = 
 CYGPATH_W = echo
@@ -200,26 +218,29 @@ INSTALL_DATA = ${INSTALL} -m 644
 INSTALL_PROGRAM = ${INSTALL}
 INSTALL_SCRIPT = ${INSTALL}
 INSTALL_STRIP_PROGRAM = $(install_sh) -c -s
-LDFLAGS = 
+LDFLAGS = -L/usr/local/hdf5-1.8.15-patch1/lib -L/usr/local/netcdf-4.3.3.1/lib -pthread
 LIBOBJS = 
 LIBS = -lnetcdf -lm 
 LN_S = cp -pR
 LTLIBOBJS = 
-MAKEINFO = makeinfo
+MAKEINFO = ${SHELL} /home/rsz/projects/nccmp/nccmp-code/missing makeinfo
 MKDIR_P = /bin/mkdir -p
 OBJEXT = o
 PACKAGE = nccmp
-PACKAGE_BUGREPORT = Remik.Ziemlinski_at_noaa.gov
+PACKAGE_BUGREPORT = Remik.Ziemlinski at noaa.gov
 PACKAGE_NAME = nccmp
-PACKAGE_STRING = nccmp 1.5.0
+PACKAGE_STRING = nccmp 1.7.4.0
 PACKAGE_TARNAME = nccmp
 PACKAGE_URL = 
-PACKAGE_VERSION = 1.5.0
+PACKAGE_VERSION = 1.7.4.0
 PATH_SEPARATOR = :
+PTHREAD_CC = gcc
+PTHREAD_CFLAGS = -pthread
+PTHREAD_LIBS = 
 SET_MAKE = 
 SHELL = /bin/bash
 STRIP = 
-VERSION = 1.5.0
+VERSION = 1.7.4.0
 abs_builddir = /home/rsz/projects/nccmp/nccmp-code/src
 abs_srcdir = /home/rsz/projects/nccmp/nccmp-code/src
 abs_top_builddir = /home/rsz/projects/nccmp/nccmp-code
@@ -230,15 +251,24 @@ am__leading_dot = .
 am__quote = 
 am__tar = $${TAR-tar} chof - "$$tardir"
 am__untar = $${TAR-tar} xf -
+ax_pthread_config = 
 bindir = ${exec_prefix}/bin
+build = x86_64-unknown-linux-gnu
 build_alias = 
+build_cpu = x86_64
+build_os = linux-gnu
+build_vendor = unknown
 builddir = .
 datadir = ${datarootdir}
 datarootdir = ${prefix}/share
 docdir = ${datarootdir}/doc/${PACKAGE_TARNAME}
 dvidir = ${docdir}
 exec_prefix = ${prefix}
+host = x86_64-unknown-linux-gnu
 host_alias = 
+host_cpu = x86_64
+host_os = linux-gnu
+host_vendor = unknown
 htmldir = ${docdir}
 includedir = ${prefix}/include
 infodir = ${datarootdir}/info
@@ -262,11 +292,20 @@ target_alias =
 top_build_prefix = ../
 top_builddir = ..
 top_srcdir = ..
-nccmp_SOURCES = common.h nccmp.c nccmp.h ncinfo.c ncinfo.h opt.c opt.h \
-	strlist.c strlist.h xmalloc.c xmalloc.h $(am__append_1) \
+CLEANFILES = nccmp nccmp.exe
+nccmp_SOURCES = common.h log.c log.h nccmp.c nccmp.h xmalloc.c \
+	xmalloc.h nccmp_data.c nccmp_data.h nccmp_dim.c nccmp_dim.h \
+	nccmp_error.h nccmp_format.c nccmp_format.h nccmp_group.c \
+	nccmp_group.h nccmp_io.c nccmp_io.h nccmp_metadata.c \
+	nccmp_metadata.h nccmp_nc_type.c nccmp_nc_type.h \
+	nccmp_ncinfo.c nccmp_ncinfo.h nccmp_nest.c nccmp_nest.h \
+	nccmp_odometer.c nccmp_odometer.h nccmp_opt.c nccmp_opt.h \
+	nccmp_state.c nccmp_state.h nccmp_strlist.c nccmp_strlist.h \
+	nccmp_thread.h nccmp_utils.c nccmp_utils.h nccmp_user_type.c \
+	nccmp_user_type.h nccmp_var.c nccmp_var.h $(am__append_1) \
 	$(am__append_2)
 nccmp_CFLAGS = -I.. $(AM_CFLAGS)
-nccmp_LDADD = -lnetcdf -lm
+nccmp_LDADD = -lnetcdf -lm 
 all: all-am
 
 .SUFFIXES:
@@ -355,10 +394,24 @@ distclean-compile:
 	-rm -f *.tab.c
 
 include ./$(DEPDIR)/nccmp-getopt.Po
+include ./$(DEPDIR)/nccmp-log.Po
 include ./$(DEPDIR)/nccmp-nccmp.Po
-include ./$(DEPDIR)/nccmp-ncinfo.Po
-include ./$(DEPDIR)/nccmp-opt.Po
-include ./$(DEPDIR)/nccmp-strlist.Po
+include ./$(DEPDIR)/nccmp-nccmp_data.Po
+include ./$(DEPDIR)/nccmp-nccmp_dim.Po
+include ./$(DEPDIR)/nccmp-nccmp_format.Po
+include ./$(DEPDIR)/nccmp-nccmp_group.Po
+include ./$(DEPDIR)/nccmp-nccmp_io.Po
+include ./$(DEPDIR)/nccmp-nccmp_metadata.Po
+include ./$(DEPDIR)/nccmp-nccmp_nc_type.Po
+include ./$(DEPDIR)/nccmp-nccmp_ncinfo.Po
+include ./$(DEPDIR)/nccmp-nccmp_nest.Po
+include ./$(DEPDIR)/nccmp-nccmp_odometer.Po
+include ./$(DEPDIR)/nccmp-nccmp_opt.Po
+include ./$(DEPDIR)/nccmp-nccmp_state.Po
+include ./$(DEPDIR)/nccmp-nccmp_strlist.Po
+include ./$(DEPDIR)/nccmp-nccmp_user_type.Po
+include ./$(DEPDIR)/nccmp-nccmp_utils.Po
+include ./$(DEPDIR)/nccmp-nccmp_var.Po
 include ./$(DEPDIR)/nccmp-xmalloc.Po
 
 .c.o:
@@ -375,6 +428,20 @@ include ./$(DEPDIR)/nccmp-xmalloc.Po
 #	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
 #	$(AM_V_CC_no)$(COMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
 
+nccmp-log.o: log.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -MT nccmp-log.o -MD -MP -MF $(DEPDIR)/nccmp-log.Tpo -c -o nccmp-log.o `test -f 'log.c' || echo '$(srcdir)/'`log.c
+	$(AM_V_at)$(am__mv) $(DEPDIR)/nccmp-log.Tpo $(DEPDIR)/nccmp-log.Po
+#	$(AM_V_CC)source='log.c' object='nccmp-log.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -c -o nccmp-log.o `test -f 'log.c' || echo '$(srcdir)/'`log.c
+
+nccmp-log.obj: log.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -MT nccmp-log.obj -MD -MP -MF $(DEPDIR)/nccmp-log.Tpo -c -o nccmp-log.obj `if test -f 'log.c'; then $(CYGPATH_W) 'log.c'; else $(CYGPATH_W) '$(srcdir)/log.c'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/nccmp-log.Tpo $(DEPDIR)/nccmp-log.Po
+#	$(AM_V_CC)source='log.c' object='nccmp-log.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -c -o nccmp-log.obj `if test -f 'log.c'; then $(CYGPATH_W) 'log.c'; else $(CYGPATH_W) '$(srcdir)/log.c'; fi`
+
 nccmp-nccmp.o: nccmp.c
 	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -MT nccmp-nccmp.o -MD -MP -MF $(DEPDIR)/nccmp-nccmp.Tpo -c -o nccmp-nccmp.o `test -f 'nccmp.c' || echo '$(srcdir)/'`nccmp.c
 	$(AM_V_at)$(am__mv) $(DEPDIR)/nccmp-nccmp.Tpo $(DEPDIR)/nccmp-nccmp.Po
@@ -389,48 +456,6 @@ nccmp-nccmp.obj: nccmp.c
 #	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
 #	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -c -o nccmp-nccmp.obj `if test -f 'nccmp.c'; then $(CYGPATH_W) 'nccmp.c'; else $(CYGPATH_W) '$(srcdir)/nccmp.c'; fi`
 
-nccmp-ncinfo.o: ncinfo.c
-	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -MT nccmp-ncinfo.o -MD -MP -MF $(DEPDIR)/nccmp-ncinfo.Tpo -c -o nccmp-ncinfo.o `test -f 'ncinfo.c' || echo '$(srcdir)/'`ncinfo.c
-	$(AM_V_at)$(am__mv) $(DEPDIR)/nccmp-ncinfo.Tpo $(DEPDIR)/nccmp-ncinfo.Po
-#	$(AM_V_CC)source='ncinfo.c' object='nccmp-ncinfo.o' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
-#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -c -o nccmp-ncinfo.o `test -f 'ncinfo.c' || echo '$(srcdir)/'`ncinfo.c
-
-nccmp-ncinfo.obj: ncinfo.c
-	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -MT nccmp-ncinfo.obj -MD -MP -MF $(DEPDIR)/nccmp-ncinfo.Tpo -c -o nccmp-ncinfo.obj `if test -f 'ncinfo.c'; then $(CYGPATH_W) 'ncinfo.c'; else $(CYGPATH_W) '$(srcdir)/ncinfo.c'; fi`
-	$(AM_V_at)$(am__mv) $(DEPDIR)/nccmp-ncinfo.Tpo $(DEPDIR)/nccmp-ncinfo.Po
-#	$(AM_V_CC)source='ncinfo.c' object='nccmp-ncinfo.obj' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
-#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -c -o nccmp-ncinfo.obj `if test -f 'ncinfo.c'; then $(CYGPATH_W) 'ncinfo.c'; else $(CYGPATH_W) '$(srcdir)/ncinfo.c'; fi`
-
-nccmp-opt.o: opt.c
-	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -MT nccmp-opt.o -MD -MP -MF $(DEPDIR)/nccmp-opt.Tpo -c -o nccmp-opt.o `test -f 'opt.c' || echo '$(srcdir)/'`opt.c
-	$(AM_V_at)$(am__mv) $(DEPDIR)/nccmp-opt.Tpo $(DEPDIR)/nccmp-opt.Po
-#	$(AM_V_CC)source='opt.c' object='nccmp-opt.o' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
-#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -c -o nccmp-opt.o `test -f 'opt.c' || echo '$(srcdir)/'`opt.c
-
-nccmp-opt.obj: opt.c
-	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -MT nccmp-opt.obj -MD -MP -MF $(DEPDIR)/nccmp-opt.Tpo -c -o nccmp-opt.obj `if test -f 'opt.c'; then $(CYGPATH_W) 'opt.c'; else $(CYGPATH_W) '$(srcdir)/opt.c'; fi`
-	$(AM_V_at)$(am__mv) $(DEPDIR)/nccmp-opt.Tpo $(DEPDIR)/nccmp-opt.Po
-#	$(AM_V_CC)source='opt.c' object='nccmp-opt.obj' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
-#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -c -o nccmp-opt.obj `if test -f 'opt.c'; then $(CYGPATH_W) 'opt.c'; else $(CYGPATH_W) '$(srcdir)/opt.c'; fi`
-
-nccmp-strlist.o: strlist.c
-	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -MT nccmp-strlist.o -MD -MP -MF $(DEPDIR)/nccmp-strlist.Tpo -c -o nccmp-strlist.o `test -f 'strlist.c' || echo '$(srcdir)/'`strlist.c
-	$(AM_V_at)$(am__mv) $(DEPDIR)/nccmp-strlist.Tpo $(DEPDIR)/nccmp-strlist.Po
-#	$(AM_V_CC)source='strlist.c' object='nccmp-strlist.o' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
-#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -c -o nccmp-strlist.o `test -f 'strlist.c' || echo '$(srcdir)/'`strlist.c
-
-nccmp-strlist.obj: strlist.c
-	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -MT nccmp-strlist.obj -MD -MP -MF $(DEPDIR)/nccmp-strlist.Tpo -c -o nccmp-strlist.obj `if test -f 'strlist.c'; then $(CYGPATH_W) 'strlist.c'; else $(CYGPATH_W) '$(srcdir)/strlist.c'; fi`
-	$(AM_V_at)$(am__mv) $(DEPDIR)/nccmp-strlist.Tpo $(DEPDIR)/nccmp-strlist.Po
-#	$(AM_V_CC)source='strlist.c' object='nccmp-strlist.obj' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
-#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -c -o nccmp-strlist.obj `if test -f 'strlist.c'; then $(CYGPATH_W) 'strlist.c'; else $(CYGPATH_W) '$(srcdir)/strlist.c'; fi`
-
 nccmp-xmalloc.o: xmalloc.c
 	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -MT nccmp-xmalloc.o -MD -MP -MF $(DEPDIR)/nccmp-xmalloc.Tpo -c -o nccmp-xmalloc.o `test -f 'xmalloc.c' || echo '$(srcdir)/'`xmalloc.c
 	$(AM_V_at)$(am__mv) $(DEPDIR)/nccmp-xmalloc.Tpo $(DEPDIR)/nccmp-xmalloc.Po
@@ -444,6 +469,230 @@ nccmp-xmalloc.obj: xmalloc.c
 #	$(AM_V_CC)source='xmalloc.c' object='nccmp-xmalloc.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
 #	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -c -o nccmp-xmalloc.obj `if test -f 'xmalloc.c'; then $(CYGPATH_W) 'xmalloc.c'; else $(CYGPATH_W) '$(srcdir)/xmalloc.c'; fi`
+
+nccmp-nccmp_data.o: nccmp_data.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -MT nccmp-nccmp_data.o -MD -MP -MF $(DEPDIR)/nccmp-nccmp_data.Tpo -c -o nccmp-nccmp_data.o `test -f 'nccmp_data.c' || echo '$(srcdir)/'`nccmp_data.c
+	$(AM_V_at)$(am__mv) $(DEPDIR)/nccmp-nccmp_data.Tpo $(DEPDIR)/nccmp-nccmp_data.Po
+#	$(AM_V_CC)source='nccmp_data.c' object='nccmp-nccmp_data.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -c -o nccmp-nccmp_data.o `test -f 'nccmp_data.c' || echo '$(srcdir)/'`nccmp_data.c
+
+nccmp-nccmp_data.obj: nccmp_data.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -MT nccmp-nccmp_data.obj -MD -MP -MF $(DEPDIR)/nccmp-nccmp_data.Tpo -c -o nccmp-nccmp_data.obj `if test -f 'nccmp_data.c'; then $(CYGPATH_W) 'nccmp_data.c'; else $(CYGPATH_W) '$(srcdir)/nccmp_data.c'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/nccmp-nccmp_data.Tpo $(DEPDIR)/nccmp-nccmp_data.Po
+#	$(AM_V_CC)source='nccmp_data.c' object='nccmp-nccmp_data.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -c -o nccmp-nccmp_data.obj `if test -f 'nccmp_data.c'; then $(CYGPATH_W) 'nccmp_data.c'; else $(CYGPATH_W) '$(srcdir)/nccmp_data.c'; fi`
+
+nccmp-nccmp_dim.o: nccmp_dim.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -MT nccmp-nccmp_dim.o -MD -MP -MF $(DEPDIR)/nccmp-nccmp_dim.Tpo -c -o nccmp-nccmp_dim.o `test -f 'nccmp_dim.c' || echo '$(srcdir)/'`nccmp_dim.c
+	$(AM_V_at)$(am__mv) $(DEPDIR)/nccmp-nccmp_dim.Tpo $(DEPDIR)/nccmp-nccmp_dim.Po
+#	$(AM_V_CC)source='nccmp_dim.c' object='nccmp-nccmp_dim.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -c -o nccmp-nccmp_dim.o `test -f 'nccmp_dim.c' || echo '$(srcdir)/'`nccmp_dim.c
+
+nccmp-nccmp_dim.obj: nccmp_dim.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -MT nccmp-nccmp_dim.obj -MD -MP -MF $(DEPDIR)/nccmp-nccmp_dim.Tpo -c -o nccmp-nccmp_dim.obj `if test -f 'nccmp_dim.c'; then $(CYGPATH_W) 'nccmp_dim.c'; else $(CYGPATH_W) '$(srcdir)/nccmp_dim.c'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/nccmp-nccmp_dim.Tpo $(DEPDIR)/nccmp-nccmp_dim.Po
+#	$(AM_V_CC)source='nccmp_dim.c' object='nccmp-nccmp_dim.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -c -o nccmp-nccmp_dim.obj `if test -f 'nccmp_dim.c'; then $(CYGPATH_W) 'nccmp_dim.c'; else $(CYGPATH_W) '$(srcdir)/nccmp_dim.c'; fi`
+
+nccmp-nccmp_format.o: nccmp_format.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -MT nccmp-nccmp_format.o -MD -MP -MF $(DEPDIR)/nccmp-nccmp_format.Tpo -c -o nccmp-nccmp_format.o `test -f 'nccmp_format.c' || echo '$(srcdir)/'`nccmp_format.c
+	$(AM_V_at)$(am__mv) $(DEPDIR)/nccmp-nccmp_format.Tpo $(DEPDIR)/nccmp-nccmp_format.Po
+#	$(AM_V_CC)source='nccmp_format.c' object='nccmp-nccmp_format.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -c -o nccmp-nccmp_format.o `test -f 'nccmp_format.c' || echo '$(srcdir)/'`nccmp_format.c
+
+nccmp-nccmp_format.obj: nccmp_format.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -MT nccmp-nccmp_format.obj -MD -MP -MF $(DEPDIR)/nccmp-nccmp_format.Tpo -c -o nccmp-nccmp_format.obj `if test -f 'nccmp_format.c'; then $(CYGPATH_W) 'nccmp_format.c'; else $(CYGPATH_W) '$(srcdir)/nccmp_format.c'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/nccmp-nccmp_format.Tpo $(DEPDIR)/nccmp-nccmp_format.Po
+#	$(AM_V_CC)source='nccmp_format.c' object='nccmp-nccmp_format.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -c -o nccmp-nccmp_format.obj `if test -f 'nccmp_format.c'; then $(CYGPATH_W) 'nccmp_format.c'; else $(CYGPATH_W) '$(srcdir)/nccmp_format.c'; fi`
+
+nccmp-nccmp_group.o: nccmp_group.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -MT nccmp-nccmp_group.o -MD -MP -MF $(DEPDIR)/nccmp-nccmp_group.Tpo -c -o nccmp-nccmp_group.o `test -f 'nccmp_group.c' || echo '$(srcdir)/'`nccmp_group.c
+	$(AM_V_at)$(am__mv) $(DEPDIR)/nccmp-nccmp_group.Tpo $(DEPDIR)/nccmp-nccmp_group.Po
+#	$(AM_V_CC)source='nccmp_group.c' object='nccmp-nccmp_group.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -c -o nccmp-nccmp_group.o `test -f 'nccmp_group.c' || echo '$(srcdir)/'`nccmp_group.c
+
+nccmp-nccmp_group.obj: nccmp_group.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -MT nccmp-nccmp_group.obj -MD -MP -MF $(DEPDIR)/nccmp-nccmp_group.Tpo -c -o nccmp-nccmp_group.obj `if test -f 'nccmp_group.c'; then $(CYGPATH_W) 'nccmp_group.c'; else $(CYGPATH_W) '$(srcdir)/nccmp_group.c'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/nccmp-nccmp_group.Tpo $(DEPDIR)/nccmp-nccmp_group.Po
+#	$(AM_V_CC)source='nccmp_group.c' object='nccmp-nccmp_group.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -c -o nccmp-nccmp_group.obj `if test -f 'nccmp_group.c'; then $(CYGPATH_W) 'nccmp_group.c'; else $(CYGPATH_W) '$(srcdir)/nccmp_group.c'; fi`
+
+nccmp-nccmp_io.o: nccmp_io.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -MT nccmp-nccmp_io.o -MD -MP -MF $(DEPDIR)/nccmp-nccmp_io.Tpo -c -o nccmp-nccmp_io.o `test -f 'nccmp_io.c' || echo '$(srcdir)/'`nccmp_io.c
+	$(AM_V_at)$(am__mv) $(DEPDIR)/nccmp-nccmp_io.Tpo $(DEPDIR)/nccmp-nccmp_io.Po
+#	$(AM_V_CC)source='nccmp_io.c' object='nccmp-nccmp_io.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -c -o nccmp-nccmp_io.o `test -f 'nccmp_io.c' || echo '$(srcdir)/'`nccmp_io.c
+
+nccmp-nccmp_io.obj: nccmp_io.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -MT nccmp-nccmp_io.obj -MD -MP -MF $(DEPDIR)/nccmp-nccmp_io.Tpo -c -o nccmp-nccmp_io.obj `if test -f 'nccmp_io.c'; then $(CYGPATH_W) 'nccmp_io.c'; else $(CYGPATH_W) '$(srcdir)/nccmp_io.c'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/nccmp-nccmp_io.Tpo $(DEPDIR)/nccmp-nccmp_io.Po
+#	$(AM_V_CC)source='nccmp_io.c' object='nccmp-nccmp_io.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -c -o nccmp-nccmp_io.obj `if test -f 'nccmp_io.c'; then $(CYGPATH_W) 'nccmp_io.c'; else $(CYGPATH_W) '$(srcdir)/nccmp_io.c'; fi`
+
+nccmp-nccmp_metadata.o: nccmp_metadata.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -MT nccmp-nccmp_metadata.o -MD -MP -MF $(DEPDIR)/nccmp-nccmp_metadata.Tpo -c -o nccmp-nccmp_metadata.o `test -f 'nccmp_metadata.c' || echo '$(srcdir)/'`nccmp_metadata.c
+	$(AM_V_at)$(am__mv) $(DEPDIR)/nccmp-nccmp_metadata.Tpo $(DEPDIR)/nccmp-nccmp_metadata.Po
+#	$(AM_V_CC)source='nccmp_metadata.c' object='nccmp-nccmp_metadata.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -c -o nccmp-nccmp_metadata.o `test -f 'nccmp_metadata.c' || echo '$(srcdir)/'`nccmp_metadata.c
+
+nccmp-nccmp_metadata.obj: nccmp_metadata.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -MT nccmp-nccmp_metadata.obj -MD -MP -MF $(DEPDIR)/nccmp-nccmp_metadata.Tpo -c -o nccmp-nccmp_metadata.obj `if test -f 'nccmp_metadata.c'; then $(CYGPATH_W) 'nccmp_metadata.c'; else $(CYGPATH_W) '$(srcdir)/nccmp_metadata.c'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/nccmp-nccmp_metadata.Tpo $(DEPDIR)/nccmp-nccmp_metadata.Po
+#	$(AM_V_CC)source='nccmp_metadata.c' object='nccmp-nccmp_metadata.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -c -o nccmp-nccmp_metadata.obj `if test -f 'nccmp_metadata.c'; then $(CYGPATH_W) 'nccmp_metadata.c'; else $(CYGPATH_W) '$(srcdir)/nccmp_metadata.c'; fi`
+
+nccmp-nccmp_nc_type.o: nccmp_nc_type.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -MT nccmp-nccmp_nc_type.o -MD -MP -MF $(DEPDIR)/nccmp-nccmp_nc_type.Tpo -c -o nccmp-nccmp_nc_type.o `test -f 'nccmp_nc_type.c' || echo '$(srcdir)/'`nccmp_nc_type.c
+	$(AM_V_at)$(am__mv) $(DEPDIR)/nccmp-nccmp_nc_type.Tpo $(DEPDIR)/nccmp-nccmp_nc_type.Po
+#	$(AM_V_CC)source='nccmp_nc_type.c' object='nccmp-nccmp_nc_type.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -c -o nccmp-nccmp_nc_type.o `test -f 'nccmp_nc_type.c' || echo '$(srcdir)/'`nccmp_nc_type.c
+
+nccmp-nccmp_nc_type.obj: nccmp_nc_type.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -MT nccmp-nccmp_nc_type.obj -MD -MP -MF $(DEPDIR)/nccmp-nccmp_nc_type.Tpo -c -o nccmp-nccmp_nc_type.obj `if test -f 'nccmp_nc_type.c'; then $(CYGPATH_W) 'nccmp_nc_type.c'; else $(CYGPATH_W) '$(srcdir)/nccmp_nc_type.c'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/nccmp-nccmp_nc_type.Tpo $(DEPDIR)/nccmp-nccmp_nc_type.Po
+#	$(AM_V_CC)source='nccmp_nc_type.c' object='nccmp-nccmp_nc_type.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -c -o nccmp-nccmp_nc_type.obj `if test -f 'nccmp_nc_type.c'; then $(CYGPATH_W) 'nccmp_nc_type.c'; else $(CYGPATH_W) '$(srcdir)/nccmp_nc_type.c'; fi`
+
+nccmp-nccmp_ncinfo.o: nccmp_ncinfo.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -MT nccmp-nccmp_ncinfo.o -MD -MP -MF $(DEPDIR)/nccmp-nccmp_ncinfo.Tpo -c -o nccmp-nccmp_ncinfo.o `test -f 'nccmp_ncinfo.c' || echo '$(srcdir)/'`nccmp_ncinfo.c
+	$(AM_V_at)$(am__mv) $(DEPDIR)/nccmp-nccmp_ncinfo.Tpo $(DEPDIR)/nccmp-nccmp_ncinfo.Po
+#	$(AM_V_CC)source='nccmp_ncinfo.c' object='nccmp-nccmp_ncinfo.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -c -o nccmp-nccmp_ncinfo.o `test -f 'nccmp_ncinfo.c' || echo '$(srcdir)/'`nccmp_ncinfo.c
+
+nccmp-nccmp_ncinfo.obj: nccmp_ncinfo.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -MT nccmp-nccmp_ncinfo.obj -MD -MP -MF $(DEPDIR)/nccmp-nccmp_ncinfo.Tpo -c -o nccmp-nccmp_ncinfo.obj `if test -f 'nccmp_ncinfo.c'; then $(CYGPATH_W) 'nccmp_ncinfo.c'; else $(CYGPATH_W) '$(srcdir)/nccmp_ncinfo.c'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/nccmp-nccmp_ncinfo.Tpo $(DEPDIR)/nccmp-nccmp_ncinfo.Po
+#	$(AM_V_CC)source='nccmp_ncinfo.c' object='nccmp-nccmp_ncinfo.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -c -o nccmp-nccmp_ncinfo.obj `if test -f 'nccmp_ncinfo.c'; then $(CYGPATH_W) 'nccmp_ncinfo.c'; else $(CYGPATH_W) '$(srcdir)/nccmp_ncinfo.c'; fi`
+
+nccmp-nccmp_nest.o: nccmp_nest.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -MT nccmp-nccmp_nest.o -MD -MP -MF $(DEPDIR)/nccmp-nccmp_nest.Tpo -c -o nccmp-nccmp_nest.o `test -f 'nccmp_nest.c' || echo '$(srcdir)/'`nccmp_nest.c
+	$(AM_V_at)$(am__mv) $(DEPDIR)/nccmp-nccmp_nest.Tpo $(DEPDIR)/nccmp-nccmp_nest.Po
+#	$(AM_V_CC)source='nccmp_nest.c' object='nccmp-nccmp_nest.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -c -o nccmp-nccmp_nest.o `test -f 'nccmp_nest.c' || echo '$(srcdir)/'`nccmp_nest.c
+
+nccmp-nccmp_nest.obj: nccmp_nest.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -MT nccmp-nccmp_nest.obj -MD -MP -MF $(DEPDIR)/nccmp-nccmp_nest.Tpo -c -o nccmp-nccmp_nest.obj `if test -f 'nccmp_nest.c'; then $(CYGPATH_W) 'nccmp_nest.c'; else $(CYGPATH_W) '$(srcdir)/nccmp_nest.c'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/nccmp-nccmp_nest.Tpo $(DEPDIR)/nccmp-nccmp_nest.Po
+#	$(AM_V_CC)source='nccmp_nest.c' object='nccmp-nccmp_nest.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -c -o nccmp-nccmp_nest.obj `if test -f 'nccmp_nest.c'; then $(CYGPATH_W) 'nccmp_nest.c'; else $(CYGPATH_W) '$(srcdir)/nccmp_nest.c'; fi`
+
+nccmp-nccmp_odometer.o: nccmp_odometer.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -MT nccmp-nccmp_odometer.o -MD -MP -MF $(DEPDIR)/nccmp-nccmp_odometer.Tpo -c -o nccmp-nccmp_odometer.o `test -f 'nccmp_odometer.c' || echo '$(srcdir)/'`nccmp_odometer.c
+	$(AM_V_at)$(am__mv) $(DEPDIR)/nccmp-nccmp_odometer.Tpo $(DEPDIR)/nccmp-nccmp_odometer.Po
+#	$(AM_V_CC)source='nccmp_odometer.c' object='nccmp-nccmp_odometer.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -c -o nccmp-nccmp_odometer.o `test -f 'nccmp_odometer.c' || echo '$(srcdir)/'`nccmp_odometer.c
+
+nccmp-nccmp_odometer.obj: nccmp_odometer.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -MT nccmp-nccmp_odometer.obj -MD -MP -MF $(DEPDIR)/nccmp-nccmp_odometer.Tpo -c -o nccmp-nccmp_odometer.obj `if test -f 'nccmp_odometer.c'; then $(CYGPATH_W) 'nccmp_odometer.c'; else $(CYGPATH_W) '$(srcdir)/nccmp_odometer.c'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/nccmp-nccmp_odometer.Tpo $(DEPDIR)/nccmp-nccmp_odometer.Po
+#	$(AM_V_CC)source='nccmp_odometer.c' object='nccmp-nccmp_odometer.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -c -o nccmp-nccmp_odometer.obj `if test -f 'nccmp_odometer.c'; then $(CYGPATH_W) 'nccmp_odometer.c'; else $(CYGPATH_W) '$(srcdir)/nccmp_odometer.c'; fi`
+
+nccmp-nccmp_opt.o: nccmp_opt.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -MT nccmp-nccmp_opt.o -MD -MP -MF $(DEPDIR)/nccmp-nccmp_opt.Tpo -c -o nccmp-nccmp_opt.o `test -f 'nccmp_opt.c' || echo '$(srcdir)/'`nccmp_opt.c
+	$(AM_V_at)$(am__mv) $(DEPDIR)/nccmp-nccmp_opt.Tpo $(DEPDIR)/nccmp-nccmp_opt.Po
+#	$(AM_V_CC)source='nccmp_opt.c' object='nccmp-nccmp_opt.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -c -o nccmp-nccmp_opt.o `test -f 'nccmp_opt.c' || echo '$(srcdir)/'`nccmp_opt.c
+
+nccmp-nccmp_opt.obj: nccmp_opt.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -MT nccmp-nccmp_opt.obj -MD -MP -MF $(DEPDIR)/nccmp-nccmp_opt.Tpo -c -o nccmp-nccmp_opt.obj `if test -f 'nccmp_opt.c'; then $(CYGPATH_W) 'nccmp_opt.c'; else $(CYGPATH_W) '$(srcdir)/nccmp_opt.c'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/nccmp-nccmp_opt.Tpo $(DEPDIR)/nccmp-nccmp_opt.Po
+#	$(AM_V_CC)source='nccmp_opt.c' object='nccmp-nccmp_opt.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -c -o nccmp-nccmp_opt.obj `if test -f 'nccmp_opt.c'; then $(CYGPATH_W) 'nccmp_opt.c'; else $(CYGPATH_W) '$(srcdir)/nccmp_opt.c'; fi`
+
+nccmp-nccmp_state.o: nccmp_state.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -MT nccmp-nccmp_state.o -MD -MP -MF $(DEPDIR)/nccmp-nccmp_state.Tpo -c -o nccmp-nccmp_state.o `test -f 'nccmp_state.c' || echo '$(srcdir)/'`nccmp_state.c
+	$(AM_V_at)$(am__mv) $(DEPDIR)/nccmp-nccmp_state.Tpo $(DEPDIR)/nccmp-nccmp_state.Po
+#	$(AM_V_CC)source='nccmp_state.c' object='nccmp-nccmp_state.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -c -o nccmp-nccmp_state.o `test -f 'nccmp_state.c' || echo '$(srcdir)/'`nccmp_state.c
+
+nccmp-nccmp_state.obj: nccmp_state.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -MT nccmp-nccmp_state.obj -MD -MP -MF $(DEPDIR)/nccmp-nccmp_state.Tpo -c -o nccmp-nccmp_state.obj `if test -f 'nccmp_state.c'; then $(CYGPATH_W) 'nccmp_state.c'; else $(CYGPATH_W) '$(srcdir)/nccmp_state.c'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/nccmp-nccmp_state.Tpo $(DEPDIR)/nccmp-nccmp_state.Po
+#	$(AM_V_CC)source='nccmp_state.c' object='nccmp-nccmp_state.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -c -o nccmp-nccmp_state.obj `if test -f 'nccmp_state.c'; then $(CYGPATH_W) 'nccmp_state.c'; else $(CYGPATH_W) '$(srcdir)/nccmp_state.c'; fi`
+
+nccmp-nccmp_strlist.o: nccmp_strlist.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -MT nccmp-nccmp_strlist.o -MD -MP -MF $(DEPDIR)/nccmp-nccmp_strlist.Tpo -c -o nccmp-nccmp_strlist.o `test -f 'nccmp_strlist.c' || echo '$(srcdir)/'`nccmp_strlist.c
+	$(AM_V_at)$(am__mv) $(DEPDIR)/nccmp-nccmp_strlist.Tpo $(DEPDIR)/nccmp-nccmp_strlist.Po
+#	$(AM_V_CC)source='nccmp_strlist.c' object='nccmp-nccmp_strlist.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -c -o nccmp-nccmp_strlist.o `test -f 'nccmp_strlist.c' || echo '$(srcdir)/'`nccmp_strlist.c
+
+nccmp-nccmp_strlist.obj: nccmp_strlist.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -MT nccmp-nccmp_strlist.obj -MD -MP -MF $(DEPDIR)/nccmp-nccmp_strlist.Tpo -c -o nccmp-nccmp_strlist.obj `if test -f 'nccmp_strlist.c'; then $(CYGPATH_W) 'nccmp_strlist.c'; else $(CYGPATH_W) '$(srcdir)/nccmp_strlist.c'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/nccmp-nccmp_strlist.Tpo $(DEPDIR)/nccmp-nccmp_strlist.Po
+#	$(AM_V_CC)source='nccmp_strlist.c' object='nccmp-nccmp_strlist.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -c -o nccmp-nccmp_strlist.obj `if test -f 'nccmp_strlist.c'; then $(CYGPATH_W) 'nccmp_strlist.c'; else $(CYGPATH_W) '$(srcdir)/nccmp_strlist.c'; fi`
+
+nccmp-nccmp_utils.o: nccmp_utils.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -MT nccmp-nccmp_utils.o -MD -MP -MF $(DEPDIR)/nccmp-nccmp_utils.Tpo -c -o nccmp-nccmp_utils.o `test -f 'nccmp_utils.c' || echo '$(srcdir)/'`nccmp_utils.c
+	$(AM_V_at)$(am__mv) $(DEPDIR)/nccmp-nccmp_utils.Tpo $(DEPDIR)/nccmp-nccmp_utils.Po
+#	$(AM_V_CC)source='nccmp_utils.c' object='nccmp-nccmp_utils.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -c -o nccmp-nccmp_utils.o `test -f 'nccmp_utils.c' || echo '$(srcdir)/'`nccmp_utils.c
+
+nccmp-nccmp_utils.obj: nccmp_utils.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -MT nccmp-nccmp_utils.obj -MD -MP -MF $(DEPDIR)/nccmp-nccmp_utils.Tpo -c -o nccmp-nccmp_utils.obj `if test -f 'nccmp_utils.c'; then $(CYGPATH_W) 'nccmp_utils.c'; else $(CYGPATH_W) '$(srcdir)/nccmp_utils.c'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/nccmp-nccmp_utils.Tpo $(DEPDIR)/nccmp-nccmp_utils.Po
+#	$(AM_V_CC)source='nccmp_utils.c' object='nccmp-nccmp_utils.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -c -o nccmp-nccmp_utils.obj `if test -f 'nccmp_utils.c'; then $(CYGPATH_W) 'nccmp_utils.c'; else $(CYGPATH_W) '$(srcdir)/nccmp_utils.c'; fi`
+
+nccmp-nccmp_user_type.o: nccmp_user_type.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -MT nccmp-nccmp_user_type.o -MD -MP -MF $(DEPDIR)/nccmp-nccmp_user_type.Tpo -c -o nccmp-nccmp_user_type.o `test -f 'nccmp_user_type.c' || echo '$(srcdir)/'`nccmp_user_type.c
+	$(AM_V_at)$(am__mv) $(DEPDIR)/nccmp-nccmp_user_type.Tpo $(DEPDIR)/nccmp-nccmp_user_type.Po
+#	$(AM_V_CC)source='nccmp_user_type.c' object='nccmp-nccmp_user_type.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -c -o nccmp-nccmp_user_type.o `test -f 'nccmp_user_type.c' || echo '$(srcdir)/'`nccmp_user_type.c
+
+nccmp-nccmp_user_type.obj: nccmp_user_type.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -MT nccmp-nccmp_user_type.obj -MD -MP -MF $(DEPDIR)/nccmp-nccmp_user_type.Tpo -c -o nccmp-nccmp_user_type.obj `if test -f 'nccmp_user_type.c'; then $(CYGPATH_W) 'nccmp_user_type.c'; else $(CYGPATH_W) '$(srcdir)/nccmp_user_type.c'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/nccmp-nccmp_user_type.Tpo $(DEPDIR)/nccmp-nccmp_user_type.Po
+#	$(AM_V_CC)source='nccmp_user_type.c' object='nccmp-nccmp_user_type.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -c -o nccmp-nccmp_user_type.obj `if test -f 'nccmp_user_type.c'; then $(CYGPATH_W) 'nccmp_user_type.c'; else $(CYGPATH_W) '$(srcdir)/nccmp_user_type.c'; fi`
+
+nccmp-nccmp_var.o: nccmp_var.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -MT nccmp-nccmp_var.o -MD -MP -MF $(DEPDIR)/nccmp-nccmp_var.Tpo -c -o nccmp-nccmp_var.o `test -f 'nccmp_var.c' || echo '$(srcdir)/'`nccmp_var.c
+	$(AM_V_at)$(am__mv) $(DEPDIR)/nccmp-nccmp_var.Tpo $(DEPDIR)/nccmp-nccmp_var.Po
+#	$(AM_V_CC)source='nccmp_var.c' object='nccmp-nccmp_var.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -c -o nccmp-nccmp_var.o `test -f 'nccmp_var.c' || echo '$(srcdir)/'`nccmp_var.c
+
+nccmp-nccmp_var.obj: nccmp_var.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -MT nccmp-nccmp_var.obj -MD -MP -MF $(DEPDIR)/nccmp-nccmp_var.Tpo -c -o nccmp-nccmp_var.obj `if test -f 'nccmp_var.c'; then $(CYGPATH_W) 'nccmp_var.c'; else $(CYGPATH_W) '$(srcdir)/nccmp_var.c'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/nccmp-nccmp_var.Tpo $(DEPDIR)/nccmp-nccmp_var.Po
+#	$(AM_V_CC)source='nccmp_var.c' object='nccmp-nccmp_var.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -c -o nccmp-nccmp_var.obj `if test -f 'nccmp_var.c'; then $(CYGPATH_W) 'nccmp_var.c'; else $(CYGPATH_W) '$(srcdir)/nccmp_var.c'; fi`
 
 nccmp-getopt.o: getopt.c
 	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -MT nccmp-getopt.o -MD -MP -MF $(DEPDIR)/nccmp-getopt.Tpo -c -o nccmp-getopt.o `test -f 'getopt.c' || echo '$(srcdir)/'`getopt.c
@@ -570,6 +819,7 @@ install-strip:
 mostlyclean-generic:
 
 clean-generic:
+	-test -z "$(CLEANFILES)" || rm -f $(CLEANFILES)
 
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)

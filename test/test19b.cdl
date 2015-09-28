@@ -1,0 +1,37 @@
+netcdf test19b {
+types:
+    short enum enum1 {FOO = -1, BAR = 0, SIC = 1, WUF = 2, ZYP = 3} ;
+    opaque(3) opaq1 ;
+    compound comp1 {
+	int i1;
+	short s1;
+    };
+    int(*)   vlen0 ;
+    enum1(*) vlen1 ;
+    opaq1(*) vlen2 ;
+    vlen1(*) vlen3 ;
+    comp1(*) vlen4 ;
+    vlen0(*) vlen5 ;
+    string(*) vlen6 ;
+    vlen6(*) vlen7 ;
+    vlen2(*) vlen8 ;	    
+dimensions:
+    dim1 = 1 ;
+    dim2 = 1 ;
+variables:
+    vlen1 var1(dim1,dim2);
+    vlen2 var2(dim1,dim2);
+    vlen3 var3(dim1,dim2);	
+    vlen4 var4(dim1,dim2);	
+    vlen5 var5(dim1,dim2);
+    vlen7 var6(dim1,dim2);	
+    vlen8 var7(dim1,dim2);	    
+data:
+    var1 = {FOO, BAR, SIC, FOO} ;                     // [1] [2] diff
+    var2 = {0x010203, 0x1A1B1C, 0x1D1E1F, 0x000000};  // [1] [2] diff
+    var3 = {{FOO}, {WUF, ZYP, FOO}};                  // [1] difflen, [1][0,1] diff
+    var4 = {{-2,-1s}, {0, 0}};                        // [0].i1,s1 diff
+    var5 = {{0}, {11, 12, 13}};                       // [1] difflen, [1][0,1] diff
+    var6 = {{"", ""}, {"21", "22", "23"}};
+    var7 = {{0x010203}, {0x141516, 0x171819, 0x000000}};
+}

@@ -1,0 +1,53 @@
+netcdf test15a {
+types:
+  compound comp1 {
+    short s1 ;
+    int i1 ;
+  };
+  compound comp2 {
+    short s2 ;
+    int i2 ;
+    
+  };
+  compound comp3 {
+    short s3 ;
+    int i3 ;
+  };
+  compound comp4 {
+    short s4 ;
+    int i4 ;
+  };
+  compound comp5 {
+    short s5 ;
+    int i5 ;
+  };
+  compound comp6 {
+    short s6 ;
+    int i6 ;
+  };
+  compound comp8 {
+    string t8;
+  };  
+dimensions:
+	dim1 = 2 ;
+variables:
+	comp1 var1(dim1) ;
+	comp2 var2(dim1) ;
+	comp3 var3(dim1) ;	
+	comp4 var4(dim1) ;
+	comp5 var5(dim1) ;
+	comp6 var6(dim1) ;
+	comp8 var8(dim1) ;
+	comp8 var9(dim1) ;		
+data:
+
+ var1 = {1, 2}, {3, 4} ;
+ var2 = {1, 2}, {3, 4} ;
+ var3 = {1, 2}, {3, 4} ;
+ var4 = {1, 2}, {3, 4} ;
+ var5 = {1, 2}, {3, 4} ;
+ var6 = {1, 2}, {3, 4} ;
+ 
+ var8 = { "ab" }, { "cde" } ; 
+ var9 = { "fg" }, { "h" } ; 
+}

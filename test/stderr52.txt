@@ -1,0 +1,12 @@
+DIFFER : VARIABLE : byte_data : POSITION : [0] : VALUES : 0x01 <> 0x0B
+DIFFER : VARIABLE : byte_data : POSITION : [2] : VALUES : 0x03 <> 0x0D
+DIFFER : VARIABLE : int64_data : POSITION : [0] : VALUES : 1 <> 21
+DIFFER : VARIABLE : int64_data : POSITION : [2] : VALUES : 3 <> 23
+DIFFER : VARIABLE : ubyte_data : POSITION : [0] : VALUES : 0x01 <> 0x1F
+DIFFER : VARIABLE : ubyte_data : POSITION : [2] : VALUES : 0x03 <> 0x21
+DIFFER : VARIABLE : uint_data : POSITION : [0] : VALUES : 1 <> 41
+DIFFER : VARIABLE : uint_data : POSITION : [2] : VALUES : 3 <> 43
+DIFFER : VARIABLE : uint64_data : POSITION : [0] : VALUES : 1 <> 51
+DIFFER : VARIABLE : uint64_data : POSITION : [2] : VALUES : 3 <> 53
+DIFFER : VARIABLE : ushort_data : POSITION : [0] : VALUES : 1 <> 61
+DIFFER : VARIABLE : ushort_data : POSITION : [2] : VALUES : 3 <> 63

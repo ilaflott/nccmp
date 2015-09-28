@@ -24,18 +24,16 @@ II. Developer Tasks
 2. Packaging
 
   Run these commands to regenerate the autoconf scripts.
-    rm -rf autom4te.cache; aclocal; automake -a -c -Wno-portability; autoheader; autoconf
+    autoreconf -i
+    # Deprecated:
+    # rm -rf autom4te.cache && aclocal && automake -a -c -Wno-portability && autoheader && autoconf
   
   Versions that worked:
     aclocal/automake 1.11.3
     autoheader/autoconf 2.68
 
   And package it up into a tarball.
-    cd .. # From within nccmp-code/
-    ver=1.5.0
-    cp -r nccmp-code nccmp-$ver
-    tar zcvf nccmp-$ver.tgz nccmp-$ver/*
-    rm -rf nccmp-$ver
+    make -f Makefile.dev sdist VER=1.2.3
 
 3. Distribution
 

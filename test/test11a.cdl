@@ -1,0 +1,27 @@
+netcdf test10a {
+
+dimensions: 
+    dim1 = 4;
+
+variables:
+    byte  byte_data(dim1);
+        byte byte_data:att = 1,2,3,4;
+    int64  int64_data(dim1);
+        int64 int64_data:att = 1,2,3,4;
+    ubyte  ubyte_data(dim1);
+        ubyte ubyte_data:att = 1,2,3,4;
+    uint  uint_data(dim1);
+        uint uint_data:att = 1,2,3,4;
+    uint64  uint64_data(dim1);
+        uint64 uint64_data:att = 1,2,3,4;
+    ushort  ushort_data(dim1);
+        ushort ushort_data:att = 1,2,3,4;
+  
+data:
+    byte_data = 1, 2, 3, 4;
+    int64_data = 1, 2, 3, 4;
+    ubyte_data = 1, 2, 3, 4;
+    uint_data = 1, 2, 3, 4;
+    uint64_data = 1, 2, 3, 4;
+    ushort_data = 1, 2, 3, 4;
+}

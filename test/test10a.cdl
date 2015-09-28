@@ -1,0 +1,13 @@
+netcdf test10a {
+
+dimensions: 
+  dim1=5;
+
+variables:
+  string  StringArray(dim1);
+		string StringArray:att = "A", "BC" ;
+
+data:
+  StringArray="A","BC","DEF","GHJK1","QWER";
+
+}

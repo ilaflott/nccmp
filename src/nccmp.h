@@ -19,54 +19,11 @@
 
 #ifndef NCCMP_H
 #define NCCMP_H 1
-#include "opt.h"
-#include <netcdf.h>
-#include <math.h>
 
-typedef struct MISSING_STRUCT
-{
-  nc_type type;
-  union {
-    char c;
-    unsigned char b;
-    short s;
-    int i;
-    float f;
-    double d;
-  };
-} missing_struct;
+#include <nccmp_state.h>
 
-typedef struct VARSTRUCT
-{
-	char name[NC_MAX_NAME];
-	int varid;
-	off_t len; /* # elements per record (or overall if static). */
-	size_t dimlens[NC_MAX_VAR_DIMS];
-	nc_type type;
-	int ndims;
-	int dimids[NC_MAX_VAR_DIMS];
-	char hasrec; /* has record dimension? */
-	int natts;
-	char hasmissing;
-	missing_struct missing;
-} varstruct;
+int nccmp_main(int argc, const char** argv);
 
-typedef struct DIMSTRUCT
-{
-	int dimid;
-	size_t len;
-	char name[NC_MAX_NAME];
-} dimstruct;
+int nccmp_run(nccmp_state_t* state);
 
-int openfiles(nccmpopts* opts);
-int nccmp(nccmpopts* opts); 
-int nccmp_header_pad(nccmpopts* opts);
-int nccmpmetadata(nccmpopts* opts); 
-int nccmpdata(nccmpopts* opts); 
-void getvarinfo(int ncid, varstruct* vars, int* nvars, int debug);
-void type2string(nc_type type, char* str);
-int excludevars(int ncid1, int ncid2, char** finallist,
-                int nfinal, char** excludelist, int nexclude);
-
-
-#endif /* !NCCMP_H */
+#endif

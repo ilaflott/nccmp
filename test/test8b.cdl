@@ -1,0 +1,13 @@
+netcdf test8a {
+
+dimensions:
+	dim1 = 10;
+	
+variables:
+	double data1(dim1);  // test values
+	double data2(dim1);  
+	
+data:
+	data1 = 0, 1, 12, 13, 4, 15, 6, 17, 18, 19;
+	data2 = 20, 21, 222, 223, 24, 225, 26, 227, 228, 229;	
+}

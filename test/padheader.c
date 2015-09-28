@@ -39,7 +39,7 @@ int main(int argc, char *argv[])
 		pad = atoi(argv[2]);
 	} else
 	{
-		fprintf(stderr, "usage: %s <out.nc> <headerPadBytes>", argv[0]);
+		fprintf(stderr, "usage: %s <out.nc> <headerPadNumBytes>\n\n", argv[0]);
 		return 1;
 	}
 
@@ -63,10 +63,11 @@ int main(int argc, char *argv[])
 	status = nc_def_var(cdfid, "test2", NC_FLOAT, 2, dimids, &varid2);
 	handle_error(status);
 
-	if ( pad > 0 )
+	if ( pad > 0 ) {
 		status = nc__enddef(cdfid, pad, 4, 0, 4);
-	else
+	} else {
 		status = nc_enddef(cdfid);
+	}
 
 	handle_error(status);
 	

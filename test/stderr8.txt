@@ -1,3 +1,0 @@
-DIFFER : LENGTHS : DIMENSION : rec : 3 <> 2
-DIFFER : SIZE OF VARIABLE "recdata" : 3 <> 2
-DIFFER : SIZE OF VARIABLE "rec" : 3 <> 2

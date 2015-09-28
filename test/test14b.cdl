@@ -1,0 +1,22 @@
+netcdf test14b {
+types:
+  int(*) vlen1 ;
+  float(*) vlen2 ;     // diff base type
+  double(*) vlen3 ;
+  string(*) vlen4 ;  
+dimensions:
+  dim1 = 4 ;
+variables:
+  vlen1 var1(dim1) ;
+  vlen1 var2(dim1) ; // diff type
+  vlen3 var3(dim1) ;
+  vlen3 var4(dim1) ;
+  vlen4 var5(dim1) ;	
+data:
+
+ var1 = {0}, {0, 1}, {0, 1, 2}, {0, 1, 2, 3} ;
+ var2 = {0}, {0, 1}, {0, 1, 2}, {0, 1, 12, 3} ;   // 1 diff value despite different type
+ var3 = {0}, {0, 11}, {0, 1, 2}, {30, 1, 32, 3} ; // 3 diff values
+ var4 = {0}, {40, 1, 2}, {0, 1, 2}, {0, 41} ;     // diff lengths at pos 1,3
+ var5 = {"z"}, {"y", "xw"}, {"v", "u", "t"}, {"s", "r", "q", "pon", "A"} ; // diffs
+}

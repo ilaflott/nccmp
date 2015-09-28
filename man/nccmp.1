@@ -1,0 +1,140 @@
+.TH NCCMP 1
+
+.SH NAME
+nccmp \- Compare two NetCDF files
+
+.SH SYNOPSYS
+nccmp [OPTION]... FILE1 [FILE2]
+
+.SH DESCRIPTION
+nccmp compares two NetCDF files bitwise, semantically or with a user defined tolerance. Comparisons are done in local memory without requiring temporary files. 
+
+.SH OPTIONS
+.SS -A, --Attribute=att1[,...] 
+Ignore attribute(s) att1[,...] for all variables.
+
+.SS -b, --verbose              
+Print messages to show progress.
+
+.SS -c, --var-diff-count=CNT   
+Print messages up until CNT data differences per variable.
+
+.SS -C, --diff-count=CNT       
+Print messages up until CNT data differences total.
+
+.SS -d, --data  
+Compare data (variable values).
+
+.SS -D, --debug
+Prints verbose debug messages.
+
+.SS -e, --encoding
+Compare these variable encoding settings:
+checksum, chunk, deflate, endianness, shuffle, szip
+
+.SS -f, --force  
+Forcefully compare, do not stop after first difference.
+
+.SS -F, --fortran   
+Print position indices using Fortran style (1-based column major order), instead of C style (0-based row major).
+
+.SS -g, --global
+Compare global attributes. (auto enables -m)
+
+.SS -G, --globalex att1[,...]  
+Exclude global attributes att1[,...]. (auto enables -g)
+
+.SS -h, --history
+Compare global history attribute. (auto enables -g)
+  
+.SS -H, --help, --usage 
+Print usage message.
+
+.SS -i, --info
+Print file structure info for one or both files.
+
+.SS -m, --metadata
+Compare metadata. Use -g to include global attributes.
+  
+.SS -M, --missing
+Ignore difference between values that have different "missing_value" and/or "_FillValue" attributes. Attribute metadata differences are still reported.
+
+.SS -n, --threads=N
+Use N POSIX threads. Default is 1.
+
+.SS -N, --nans-are-equal
+Allow NaNs to be equal.
+
+.SS -p, --precision=FMT
+Global format precision of difference printing. Use '%x' to print bytes as hex string.
+.P
+FMT defaults differently per data type:
+    double '%g'
+    float  '%g'
+    int    '%d'
+    int64  '%lld'
+    schar  '0x%02X'
+    short  '%d'
+    text   '%c'
+    uchar  '0x%02X'
+    uint   '%d'
+    uint64 '%llu'
+    ushort '%d'
+
+.SS -P, --header-pad 
+Compare header padding in NetCDF3 classic and 64bit file formats.
+
+.SS -r, --group=group1[,...]
+Compare group(s) group1[,...] only. Group names can be full or short.
+"/" is the file root group. "/group1/subgroup2" is an example fullname, whereas "group1" and "subgroup2" are short names.
+
+.SS -s, --report-identical-files
+Report when files are the same.
+
+.SS -t, --tolerance=TOL
+Compare if absolute difference > TOL.
+
+.SS -T, --Tolerance=TOL
+Compare if relative percent difference > TOL.
+
+.SS -v, --variable=var1[,...]
+Compare variable(s) var1[,...] only.
+
+.SS -V, --version
+Print program version.
+
+.SS -x, --exclude=var1[,...]
+Exclude variable(s) var1[,...].
+
+.SS -w, --warn=tag[,...] 
+Selectively make certain differences exceptions, but still print messages. As warnings, these differences will not return exit code 1.
+.P
+Supported tags and their meanings:
+    all:    All differences.
+    format: File formats.
+    eos:    Extra attribute end-of-string nulls.
+
+.SH EXAMPLES
+.SS Print file structure info
+$ nccmp -i encoded.nc
+
+.SS Compare metadata and exclude specific variables
+$ nccmp -mf -x recdata,rec test1a.nc test1b.nc
+
+.SS Compare data and allow differences up to a threshold
+$ nccmp -df -t 1e-3 test4a.nc test4b.nc
+
+.SS Run in parallel and report up to 5 differences per variable
+$ nccmp -df --threads 4 -c 5 in1.nc in2.nc
+
+.SH BUGS
+No known bugs.
+
+Report bugs with bug tracker: <http://sourceforge.net/p/nccmp/bugs/>
+
+.SH AUTHOR
+Remik Ziemlinski
+
+.SH COPYRIGHT
+Copyright © 2004-2015 Remik Ziemlinski.  License GPLv2: GNU GPL version 2 <http://gnu.org/licenses/gpl.html>.
+This is free software: you are free to change and redistribute it.  There is NO WARRANTY, to the extent permitted by law.

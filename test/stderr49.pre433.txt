@@ -1,0 +1,1 @@
+DIFFER : LENGTHS : ATTRIBUTE : att : VARIABLE : StringArray : 2 <> 5 : VALUES : "A","BC" : "A","BC","DEFG","NIL",""

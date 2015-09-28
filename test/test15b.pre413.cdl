@@ -1,0 +1,57 @@
+netcdf test15b {
+types:
+  compound comp1 {
+    short s1 ;
+    int i1 ;
+  };
+  compound comp2 {
+    short s2 ;
+    int i2 ;
+    double d2 ;     // diff new field, num fields, byte size
+  };
+  compound comp3 {
+    short ss3 ;     // diff name
+    int i3 ;
+  };
+  compound comp4 {
+    int i4 ;        // diff offset
+    short s4 ;
+  };
+  compound comp5 { 
+    short s5 ;
+    float i5 ;      // diff type
+  };
+  compound comp6 {
+    short s6 ;
+    int i6 ;
+  };
+  compound comp7 {  // diff comp type not found
+    short s7 ;
+  };
+  compound comp8 {
+    string t8;
+  };
+dimensions:
+	dim1 = 2 ;
+variables:
+	comp1 var1(dim1) ;
+	comp2 var2(dim1) ;
+	comp3 var3(dim1) ;	
+	comp4 var4(dim1) ;
+	comp5 var5(dim1) ;
+	comp6 var6(dim1) ;
+	comp7 var7(dim1) ;
+	comp8 var8(dim1) ;
+	comp8 var9(dim1) ;
+data:
+
+ var1 = {1s, 2}, {3s, 4} ;
+ var2 = {1s, 2, 5.0}, {3s, 4, 6.0} ;
+ var3 = {1s, 2}, {3s, 24} ;          // diff last value
+ var4 = {2L, 1s}, {0, 0s} ;          // diff re-ordered last value
+ var5 = {1s, 2.0f}, {3s, 44.0f} ;    // diff last value
+ var6 = {1s, 2}, {3s, 54} ;          // diff last value
+ var7 = {1s}, {2s} ; 
+ var8 = { "ab" }, { "cd f" } ;       // diff last string.
+ var9 = { "fg" }, { "" } ;              // diff last string.
+}

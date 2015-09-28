@@ -1,9 +1,18 @@
 <html
 <head>
+
+<style>
+pre.code { background-color: lightgray; }
+.code.command { font-weight: bold; }
+.code.comment { color: green; }
+.code.error { color: darkred; }
+</style>
+
 <title>
 nccmp : NetCDF Compare
 </title>
 </head>
+
 <body>
 <p align=right>
 <table>
@@ -60,23 +69,14 @@ Usage</a>
 
 
 <li>
-<a href="#bugs">
-Bugs</a>
+<a href="#news">
+News</a>
 </li>
 
-<li>
-<a href="#wishlist">
-Wishlist</a>
-</li>
 
 <li>
 <a href="#references">
 References</a>
-</li>
-
-<li>
-<a href="#news">
-News</a>
 </li>
 
 </ol>
@@ -94,20 +94,49 @@ Overview
 </a>
 </h2>
 <p>
-nccmp compares two NetCDF files bitwise or with a user defined tolerance (absolute or relative percentage). Some logic is used so it isn't blind like regular cmp. Comparisons are done in local memory without requiring temporary files. Highly recommended for regression testing scientific models.
-<br><br>
-Prior to versions 1.0+, nccmp was implemented with MPI to allow for parallel comparisons. If you'd like parallel comparisons to return with MPI or OpenMP, please let the author know.
-
+nccmp compares two NetCDF files bitwise, semantically or with a user defined tolerance (absolute or relative percentage).  Parallel comparisons are done in local memory without requiring temporary files.  Highly recommended for regression testing scientific models or datasets in a test-driven development environment.
 <br>
+<br>
+Here's an incomplete list of reasons why you may want to check your data:
+<ul>
+<li>
+Change in architecture (hardware, bare-metal, virtualization, platform, operating system).
+</li>
+<li>
+Change in compiler, compiler options or dependent libraries.
+</li>
+<li>
+Code refactoring, language migration, algorithm evolution, replacement or optimization.
+</li>
+<li>
+Data type promotion or demotion, compression, shuffling, alignment, ordering, encoding, metadata, or schema change.
+</li>
+<li>
+Process model change (framework, order of execution, partitioning).
+</li>
+<li>
+Tuning model parameters.
+</li>
+<li>
+Up/down-sampling fitness.
+</li>
+</ul>
+
 <h3>
 Features
 </h3>
 <ul>
 <li>
+Multi-threaded if posix threads are supported on your system.
+</li>
+<li>
 Prints differences and their locations (C or Fortran indexing). Format precision is customizable and allows hex.
 </li>
 <li>
 Specific variable inclusion or exclusion.
+</li>
+<li>
+Specific groups by short or full (absolute) names, or all (including recursive groups).
 </li>
 <li>
 Metadata and/or data comparisons.
@@ -116,7 +145,7 @@ Metadata and/or data comparisons.
 Global attributes compared with or without the history attribute.
 </li>
 <li>
-Exits when first difference is found or optionally continues to process all variables and/or attributes.
+Exits when first difference is found or optionally continues to process all variables and/or attributes by force, or up to a global or per-variable count.
 </li>
 <li>
 Attribute exclusion when comparing metadata.
@@ -125,19 +154,54 @@ Attribute exclusion when comparing metadata.
 Bitwise compare or with tolerances (absolute or relative).
 </li>
 <li>
-Header padding comparisons for NetCDF3 classic/64bit file formats.
+Header padding contents and attribute comparisons for NetCDF3 classic/64bit file formats.
 </li>
 <li>
-NaN values can be treated as equal.
+NaN values can be treated as equal (in case you use NaN's as grid masks).
 </li>
 <li>
-MPI enabled for supported systems. (pre v1.0)
+Compare or dump encodings for one or both files: checksumming, chunking, compression, endianness, format, shuffling, and header-pad sizes.
 </li>
 <li>
-Script generation for previewing differences. (pre v1.0)
+Support all Netcdf4/HDF atomic types (char/text, schar, uchar, short, ushort, int, uint, int64, uint64, float, double, string) and user-defined types (enumeration, compound, opaque blob, variable-length array) and nesting.
+</li>
+<li>
+Compare asymmetric atomic data type values, within variable-length arrays too. For example, a variable can be uint in the first file, and int64 in the second.
+</li>
+<li>
+Compare similarly named compound fields and ignore differently named or missing fields, so compound schemas may have variation in field type, field order and field existence.
+</li>
+<li>
+Asymmetric enum value and datatype semantics. Enum identifiers are compared instead of their encoded values, so your dataset schema can evolve flexibly without worrying about enum order, size, type, or numeric values, although any metadata differences will be reported.
+</li>
+<li>
+Lightweight. Comparing multi-gigabyte files will only consume several megabytes of memory.
+</li>
+<li>
+Written in the most portable language, C.
 </li>
 </ul>
 
+<h3>
+<a name="multithreading">
+Multithreading
+</a>
+</h3>
+<p>
+Static scheduling is used for threads. Each thread will compare every time-varying variable
+over thread-strided record indices. Threading is optional, and configure will determine if POSIX threads are available.
+</p>
+
+<h3>
+<a name="headerpad">
+Header Pad
+</a>
+</h3>
+<p>
+In order to compare the contents of header pads, it is required to download the NetCDF
+source code and configure nccmp using --with-netcdf=dir in order to access the private netcdf API.
+This is optional, and nccmp can be built without this feature.
+</p>
 
 <p>
 <hr>
@@ -148,9 +212,27 @@ Script generation for previewing differences. (pre v1.0)
 Download
 </a>
 </h2>
+<h3>Binaries</h3>
+<h4>Ubuntu 12, 14, 15</h4>
 <p>
-Source Code: <a href="http://prdownloads.sourceforge.net/nccmp/nccmp-1.5.0.tgz?download">nccmp-1.5.0.tgz</a><br>
+<pre class="code">
+</span><span class="code command">$ sudo add-apt-repository ppa:remik-ziemlinski/nccmp && \
+  sudo apt-get update && \
+  sudo apt-get install nccmp
+</span>
+</pre>
+</p>
 
+<h3>Source</h3>
+<p>
+<a href="http://prdownloads.sourceforge.net/nccmp/nccmp-1.7.4.0.tar.gz?download">nccmp-1.7.4.0.tar.gz</a><br>
+
+<pre class="code">
+</span><span class="code command">$ cd /tmp && \
+  wget -nd -c http://prdownloads.sourceforge.net/nccmp/nccmp-1.7.4.0.tar.gz && \
+  tar zxvf nccmp-*.tar.gz
+</span>
+</pre>
 </p>
 
 <p>
@@ -166,49 +248,48 @@ Installation
 
 <h3>
 <a name="install_linux">
-Linux/Unix/MacPorts
+Linux/Unix/MacPorts/Anaconda
 </a>
 </h3>
 
 <p>
-<ol>
-<li>
-Download nccmp.
-</li>
+<pre class="code">
+<span class="code comment">
+# (Optional) Download the NetCDF source code to support header-pad comparisons.
+</span><span class="code command">$ cd /tmp && \
+  wget -nd -c http://www.unidata.ucar.edu/downloads/netcdf/ftp/netcdf-4.3.3.1.tar.gz && \
+  tar zxvf netcdf-*.tar.gz
+</span><span class="code comment">
+# Specify non-standard installation locations for HDF and NetCDF, 
+# if not auto-detected by configure (i.e. they're not in /usr/local/{include,lib}).
+</span><span class="code command">$ HDF=/usr/local/hdf5-1.8.15-patch1
+$ NC=/usr/local/netcdf-4.3.3.1
+$ export CFLAGS="-I$HDF/include -I$NC/include"
+$ export LDFLAGS="-L$HDF/lib -L$NC/lib"
 
-<li>
-Decompress with
-<pre>
-tar -zxvf nccmp-*gz
+$ tar zxvf nccmp-*.tgz && cd nccmp-*
+$ ./configure --with-netcdf=/tmp/netcdf-4.3.3.1 --enable-test-big
+</span>...
+configure:
+
+    CFLAGS             = -I/usr/local/hdf5-1.8.15-patch1/include -I/usr/local/netcdf-4.3.3.1/include -pthread
+    CPPFLAGS           = 
+    enable-test-big    = yes
+    HAVE_NC_H          = yes
+    HAVE_NC_INQ_PATH   = yes
+    HAVE_PTHREAD       = yes
+    LDFLAGS            = -L/usr/local/hdf5-1.8.15-patch1/lib -L/usr/local/netcdf-4.3.3.1/lib -pthread
+    LIBS               = -lnetcdf -lm 
+    with-netcdf        = /usr/local/netcdf-4.3.3.1/src
+
+<span class="code command">
+$ make
+$ make check
+$ make install-strip
+$ make clean
+$ man nccmp
+</span>
 </pre>
-</li>
-
-<li>
-<tt>./configure --with-netcdf=/home/rsz/source/netcdf-4.1.3
-</tt>
-</li>
-
-<li>
-<tt>make
-</tt>
-</li>
-
-<li>
-<tt>make check
-</tt>
-</li>
-
-<li>
-<tt>make install
-</tt>
-</li>
-
-<li>
-<tt>make clean
-</tt>
-</li>
-
-</ol>
 
 </p>
 
@@ -219,19 +300,21 @@ Cygwin
 </h3>
 
 <p>
-<pre>
+<pre class="code">
+<span class="code command">
 $ C:/cygwin/setup-x86.exe
-# Install these prebuilt binary cygwin packages:
-# All => Libs => libnetcdf7 v4.3.2-1
-#             => libnetcdf-devel v4.3.2-1
-# All => Devel => libhdf5_8 v1.8.12-1
-#     => Libs => libhdf5_8 v1.8.12-1
-
-$ ./configure --disable-ncinfo  --with-netcdf=/cygdrive/c/Temp/netcdf-4.3.2
+</span><span class="code comment">
+# Install these prebuilt binary cygwin packages via the setup GUI:
+# All => Libs  => libnetcdf7      v4.3.3.1-2
+#              => libnetcdf-devel v4.3.3.1-2
+#              => libhdf5_10      v1.8.15-1
+#        Devel => libhdf5-devel   v1.8.15-1
+</span><span class="code command">
+$ ./configure --with-netcdf=/cygdrive/c/Temp/netcdf-4.3.3.1
 $ make
 $ make check
 $ make install
-
+</span>
 </pre>
 </p>
 
@@ -242,7 +325,8 @@ Mac OSX Homebrew
 </h3>
 
 <p>
-<pre>
+<pre class="code">
+<span class="code command">
 $ brew tap homebrew/science
 $ brew install hdf5
 $ brew install netcdf
@@ -253,10 +337,55 @@ $ export CPPFLAGS="$CFLAGS"
 $ export LDFLAGS="-L$NC/lib"
 $ export DYLD_LIBRARY_PATH="$DYLD_LIBRARY_PATH":$NC/lib
 
-$ ./configure --disable-ncinfo --prefix=/Users/rsz/bin --with-netcdf=/Users/rsz/source/netcdf-4.3.2
+$ ./configure --with-netcdf=/Users/rsz/source/netcdf-4.3.2
 $ make
 $ make check
 $ make install
+</span>
+</pre>
+</p>
+
+<h2>
+<a name="testing">
+Testing
+</a>
+</h2>
+<p>
+
+<pre class="code">
+<span class="code command">
+$ make check
+</span>make  check-TESTS
+make[3]: Entering directory `/home/rsz/projects/nccmp/nccmp-code/test'
+PASS: test_nccmp_setup.sh
+PASS: test_nccmp_strlist
+PASS: test_nccmp_odometer
+PASS: test_nccmp_user_type
+PASS: test_nccmp_01.sh
+...
+PASS: test_nccmp_66.sh
+PASS: test_big.sh
+make[4]: Entering directory `/home/rsz/projects/nccmp/nccmp-code/test'
+make[4]: Nothing to be done for `all'.
+make[4]: Leaving directory `/home/rsz/projects/nccmp/nccmp-code/test'
+============================================================================
+Testsuite summary for nccmp 1.7.1
+============================================================================
+# TOTAL: 71
+# PASS:  71
+# SKIP:  0
+# XFAIL: 0
+# FAIL:  0
+# XPASS: 0
+# ERROR: 0
+</pre>
+
+Memory correctness is tested with valgrind. Leaks will print red colored errors.
+<pre class="code">
+<span class="code command">
+$ cd test
+$ ./memcheck.sh
+</span>
 </pre>
 </p>
 
@@ -269,90 +398,112 @@ $ make install
 Examples</a>
 </h2>
 <p>
-<pre>
-#############################################################
+There are 66 examples in the test/ directory.
+
+<pre class="code">
+</span><span class="code comment">
 # Compare metadata for non-record variables.
-nccmp  -mqf -x recdata,rec test1a.nc test1b.nc
-
-DIFFER : NUMBER OF DIMENSIONS IN FILES : 5 <> 4
+</span><span class="code command">$ nccmp -mf -x recdata,rec test1a.nc test1b.nc
+</span><span class="code error">DIFFER : NUMBER OF DIMENSIONS IN FILES : 5 <> 4
 DIFFER : LENGTHS : DIMENSION : dim3 : 2 <> 1
-DIFFER : NAME : DIMENSION : dim4 : DIMENSION DOESN'T EXIST IN "test1b.nc"
-DIFFER : NAME : VARIABLE : data3 : VARIABLE DOESN'T EXIST IN test1b.nc
-DIFFER : DIMENSION NAMES FOR VARIABLE data4 : dim4 <> dim2
-DIFFER : VARIABLE "data1" IS MISSING ATTRIBUTE WITH NAME "units" IN FILE test1b.nc
-DIFFER : LENGTHS : ATTRIBUTE : long_name : VARIABLE : data1 : 9 <> 10
-DIFFER : VALUES : ATTRIBUTE : valid_range : VARIABLE : data1
+DIFFER : DIMENSION : dim4 : DOES NOT EXIST IN "test1b.nc"
+DIFFER : VARIABLE : data3 : DOES NOT EXIST IN "test1b.nc"
+DIFFER : DIMENSION NAMES FOR VARIABLE "data4" : dim4 <> dim2
+DIFFER : VARIABLE "data1" IS MISSING ATTRIBUTE WITH NAME "units" IN FILE "test1b.nc"
+DIFFER : LENGTHS : ATTRIBUTE : long_name : VARIABLE : data1 : 9 <> 10 : VALUES : "test data" : "test data_"
+DIFFER : VARIABLE : data1 : ATTRIBUTE : valid_range : VALUES : 1,2 <> -2,1
 DIFFER : NUMBER OF ATTRIBUTES : VARIABLE : data1 : 3 <> 2
-
-#############################################################
+</span><span class="code comment">
 # Compare data using a tolerance threshold.
-nccmp -df -t 1e-3 test4a.nc test4b.nc
-
-DIFFER : VARIABLE : data1 : POSITION : 0 1 : VALUES : 2 <> 2.01 : PERCENT : 0.497512
-DIFFER : VARIABLE : data2 : POSITION : 0 1 : VALUES : 8 <> 7.99 : PERCENT : 0.125003
-DIFFER : VARIABLE : data3 : POSITION : 0 : VALUES : 9 <> 8 : PERCENT : 11.1111
-DIFFER : VARIABLE : data3 : POSITION : 1 : VALUES : 10 <> -10 : PERCENT : 200
-DIFFER : VARIABLE : data4 : POSITION : 0 : VALUES : 11 <> 110 : PERCENT : 90
-DIFFER : VARIABLE : recdata1 : POSITION : 0 1 : VALUES : 4 <> 0 : PERCENT : 100
-DIFFER : VARIABLE : recdata2 : POSITION : 0 0 : VALUES : 97 <> 99 : PERCENT : 2.0202
-DIFFER : VARIABLE : rec : POSITION : 1 : VALUES : 6 <> 6.1 : PERCENT : 1.63934
-
-##############################################################
+</span><span class="code command">$ nccmp -df -t 1e-3 test4a.nc test4b.nc
+</span><span class="code error">DIFFER : VARIABLE : data1 : POSITION : [0,1] : VALUES : 2 <> 2.01 : PERCENT : 0.497512
+DIFFER : VARIABLE : data2 : POSITION : [0,1] : VALUES : 8 <> 7.99 : PERCENT : 0.125003
+DIFFER : VARIABLE : data3 : POSITION : [0] : VALUES : 9 <> 8 : PERCENT : 11.1111
+DIFFER : VARIABLE : data3 : POSITION : [1] : VALUES : 10 <> -10 : PERCENT : 200
+DIFFER : VARIABLE : data4 : POSITION : [0] : VALUES : 11 <> 110 : PERCENT : 90
+DIFFER : VARIABLE : recdata1 : POSITION : [0,1] : VALUES : 4 <> 0 : PERCENT : 100
+DIFFER : VARIABLE : recdata2 : POSITION : [0,0] : VALUES : a <> c : PERCENT : 2.0202
+DIFFER : VARIABLE : rec : POSITION : [1] : VALUES : 6 <> 6.1 : PERCENT : 1.63934
+</span><span class="code comment">
 # Compare data written in different formats (classic vs. HDF).
-nccmp -dmgfb old.nc new.nc 
-
-INFO: Command-line options parsed.
-INFO: Opening input files.
-INFO: Creating variable comparison list.
-INFO: Using all variables.
-INFO: Variables to compare (11):
-lon, lat, tile_index, frac, glac, lake, soil, vegn, lwup, e_res_1, e_res_2
-INFO: Comparing file formats.
-DIFFER : FILE FORMATS : NC_FORMAT_NETCDF4_CLASSIC <> NC_FORMAT_64BIT
-INFO: Comparing global attributes.
-INFO: Collecting dimension information for first file.
-INFO: Collecting dimension information for second file.
-INFO: Collecting variable information for first file.
-INFO: Collecting variable information for second file.
-INFO: Comparing record information.
-INFO: Comparing metadata.
-INFO: Comparing number of dimensions.
-INFO: Getting record dimension names, if they exist.
-INFO: Comparing dimension lengths.
-INFO: Comparing variable datatypes and rank.
-INFO: Comparing variables' dimension names.
-INFO: Comparing variables' attributes.
-INFO: Comparing data.
-INFO: Comparing data for variable "lon".
-INFO: Comparing non-record data for variable "lon".
-INFO: Comparing data for variable "lat".
-INFO: Comparing non-record data for variable "lat".
-INFO: Comparing data for variable "tile_index".
-INFO: Comparing non-record data for variable "tile_index".
-INFO: Comparing data for variable "frac".
-INFO: Comparing non-record data for variable "frac".
-INFO: Comparing data for variable "glac".
-INFO: Comparing non-record data for variable "glac".
-INFO: Comparing data for variable "lake".
-INFO: Comparing non-record data for variable "lake".
-INFO: Comparing data for variable "soil".
-INFO: Comparing non-record data for variable "soil".
-INFO: Comparing data for variable "vegn".
-INFO: Comparing non-record data for variable "vegn".
-INFO: Comparing data for variable "lwup".
-INFO: Comparing non-record data for variable "lwup".
-INFO: Comparing data for variable "e_res_1".
-INFO: Comparing non-record data for variable "e_res_1".
-INFO: Comparing data for variable "e_res_2".
-INFO: Comparing non-record data for variable "e_res_2".
-INFO: Finished comparing data.
-INFO: Comparisons complete. Freeing memory.
-
-##############################################################
+</span><span class="code command">$ nccmp -dmgfb test1a.nc test1c.nc 
+</span>2015-09-11 16:42:16.955951 -0400 INFO nccmp.c:135 Command-line options parsed.
+2015-09-11 16:42:16.955951 -0400 INFO nccmp.c:43 Opening input files.
+2015-09-11 16:42:16.955951 -0400 INFO nccmp_state.c:130 Opening test1a.nc
+2015-09-11 16:42:16.955951 -0400 INFO nccmp_state.c:130 Opening test1c.nc
+2015-09-11 16:42:16.955951 -0400 INFO nccmp.c:81 Comparing file formats.
+</span><span class="code error">DIFFER : FILE FORMATS : NC_FORMAT_CLASSIC <> NC_FORMAT_NETCDF4</span>
+2015-09-11 16:42:16.955951 -0400 INFO nccmp.c:95 Comparing groups.
+2015-09-11 16:42:16.955951 -0400 INFO nccmp_group.c:50 Comparing groups "/" and "/".
+2015-09-11 16:42:16.955951 -0400 INFO nccmp_metadata.c:1458 Comparing global attributes.
+2015-09-11 16:42:16.955951 -0400 INFO nccmp_group.c:60 Collecting dimension information for first group.
+2015-09-11 16:42:16.955951 -0400 INFO nccmp_group.c:67 Collecting dimension information for second group.
+2015-09-11 16:42:16.955951 -0400 INFO nccmp_group.c:74 Collecting variable information for group id = 65536.
+2015-09-11 16:42:16.955951 -0400 INFO nccmp_var.c:338 "rec" missing value: 0 (float)
+2015-09-11 16:42:16.955951 -0400 INFO nccmp_group.c:81 Found 6 variables in first group.
+2015-09-11 16:42:16.955951 -0400 INFO nccmp_group.c:82 Collecting variable information for group id = 131072.
+2015-09-11 16:42:16.955951 -0400 INFO nccmp_var.c:338 "rec" missing value: 0 (float)
+2015-09-11 16:42:16.955951 -0400 INFO nccmp_group.c:89 Found 6 variables in second group.
+2015-09-11 16:42:16.955951 -0400 INFO nccmp_var.c:173 Using all variables.
+2015-09-11 16:42:16.965951 -0400 INFO nccmp_var.c:182 Variables to compare (6): data1, data2, data3, data4, recdata, rec
+2015-09-11 16:42:16.965951 -0400 INFO nccmp_metadata.c:1800 Comparing record information.
+2015-09-11 16:42:16.965951 -0400 INFO nccmp_metadata.c:245 Comparing metadata.
+2015-09-11 16:42:16.965951 -0400 INFO nccmp_metadata.c:304 Comparing number of dimensions.
+2015-09-11 16:42:16.965951 -0400 INFO nccmp_metadata.c:1403 Getting record dimension names, if they exist.
+2015-09-11 16:42:16.965951 -0400 INFO nccmp_metadata.c:327 Comparing dimension lengths.
+2015-09-11 16:42:16.965951 -0400 INFO nccmp_metadata.c:930 Comparing user defined types.
+2015-09-11 16:42:16.965951 -0400 INFO nccmp_metadata.c:987 Comparing variable datatypes and rank.
+2015-09-11 16:42:16.965951 -0400 INFO nccmp_metadata.c:1054 Comparing variable dimension names.
+2015-09-11 16:42:16.965951 -0400 INFO nccmp_metadata.c:1120 Comparing variables attributes.
+2015-09-11 16:42:16.965951 -0400 INFO nccmp_data.c:3522 Comparing data.
+2015-09-11 16:42:16.965951 -0400 INFO nccmp_var.c:232 Validating variable data1.
+2015-09-11 16:42:16.965951 -0400 INFO nccmp_var.c:232 Validating variable data2.
+2015-09-11 16:42:16.965951 -0400 INFO nccmp_var.c:232 Validating variable data3.
+2015-09-11 16:42:16.965951 -0400 INFO nccmp_var.c:232 Validating variable data4.
+2015-09-11 16:42:16.965951 -0400 INFO nccmp_var.c:232 Validating variable recdata.
+2015-09-11 16:42:16.965951 -0400 INFO nccmp_var.c:232 Validating variable rec.
+2015-09-11 16:42:16.965951 -0400 INFO nccmp_data.c:3441 Thread 0 comparing non-record data for variable data1.
+2015-09-11 16:42:16.965951 -0400 INFO nccmp_data.c:3441 Thread 0 comparing non-record data for variable data2.
+2015-09-11 16:42:16.965951 -0400 INFO nccmp_data.c:3441 Thread 0 comparing non-record data for variable data3.
+2015-09-11 16:42:16.965951 -0400 INFO nccmp_data.c:3441 Thread 0 comparing non-record data for variable data4.
+2015-09-11 16:42:16.965951 -0400 INFO nccmp_data.c:3443 Thread 0 comparing data for variable recdata at record 0.
+2015-09-11 16:42:16.965951 -0400 INFO nccmp_data.c:3443 Thread 0 comparing data for variable recdata at record 1.
+2015-09-11 16:42:16.965951 -0400 INFO nccmp_data.c:3443 Thread 0 comparing data for variable rec at record 0.
+2015-09-11 16:42:16.965951 -0400 INFO nccmp_data.c:3443 Thread 0 comparing data for variable rec at record 1.
+2015-09-11 16:42:16.965951 -0400 INFO nccmp_data.c:3443 Thread 0 comparing data for variable rec at record 1.
+2015-09-11 16:42:16.965951 -0400 INFO nccmp_data.c:3552 Finished comparing data.
+2015-09-11 16:42:16.965951 -0400 INFO nccmp_group.c:126 Group comparison complete.
+2015-09-11 16:42:16.965951 -0400 INFO nccmp.c:108 Comparisons complete.
+</span><span class="code comment">
 # Compare identical files.
-nccmp -dmgfs old.nc new.nc 
-Files "old.nc" and "new.nc" are identical.
-
+</span><span class="code command">$ nccmp -dmgfs test1a.nc test1a.nc 
+</span>Files "test1a.nc" and "test1a.nc" are identical.
+</span><span class="code comment">
+# Get some info on file structure internals.
+</span><span class="code command">$ nccmp -i encoded.nc
+</span>path=encoded.nc
+format=NC_FORMAT_NETCDF4
+header_size=0 bytes
+header_pad_size=0 bytes
+var=var1 checksum=NC_FLETCHER32 chunk=NC_CHUNKED chunksizes=[2] deflate=1 deflate_level=5 endian=NC_ENDIAN_BIG shuffle=1 szip_mask=0 szip_pixels_per_block=0
+</span><span class="code comment">
+# Compare opaque user defined type (3-byte blobs).
+</span><span class="code command">$ nccmp -mdf test13a.nc test13b.nc
+</span><span class="code error">DIFFER : TYPE : opaq2 : SIZE : 3 <> 4
+DIFFER : VARIABLE : var2 : POSITION : [1] : VALUES : 0x0A0B0C <> 0x0D0E0F
+DIFFER : VARIABLE : var3 : POSITION : [1,0] : VALUES : 0x000004 <> 0x040004
+DIFFER : VARIABLE : var3 : POSITION : [1,1] : VALUES : 0x000005 <> 0x000505
+DIFFER : VARIABLE : var3 : POSITION : [1,2] : VALUES : 0x000006 <> 0x000066
+</span><span class="code comment">
+# Compare nested compound field arrays of user types.
+</span><span class="code command">$ nccmp -df make_compound_array_user_type1.nc make_compound_array_user_type2.nc
+</span><span class="code error">DIFFER : VARIABLE : var1 : POSITION : [0,0,1,1,1,1,1] : FIELD : i : VALUES : 115 <> 215
+DIFFER : VARIABLE : var1 : POSITION : [0,0,1,1,0,1,1] : FIELD : myString : VALUES : bl <> cl
+DIFFER : VARIABLE : var1 : POSITION : [0,0,1,1,1,0,0] : FIELD : myEnum : VALUES : FOO <> BAR
+DIFFER : VARIABLE : var1 : POSITION : [0,0,0] : FIELD : myVlen[1,1,1,1] : VARIABLE LENGTH : 1 <> 2
+DIFFER : VARIABLE : var1 : POSITION : [0,0,0] : FIELD : myVlen[1,1,1,1][0] : VALUES : 16 <> 17
+DIFFER : VARIABLE : var1 : POSITION : [0,0,1] : FIELD : myComp[1,1,0,1].myLongLong[1,0,0,1] : VALUES : 1014009 <> 2014009
+</span>
 </pre>
 
 <p>
@@ -366,42 +517,62 @@ Files "old.nc" and "new.nc" are identical.
 Usage</a>
 </h2>
 <p>
-<pre>
+<pre class="code">
 Compare two NetCDF files.
-nccmp is silent when files are equivalent, otherwise it will echo 
-to STDERR whether metadata or a specific variable differs.  By
-default, comparing stops after the first difference.
+nccmp is silent when files are equivalent, otherwise it will echo to STDERR whether metadata or a specific variable differs.  By default, comparing stops after the first difference.
 
-Exit code 0 is returned for identical files, 1 for different files,
-and 2 for a fatal error.
+Exit code 0 is returned for identical files, 1 for different files, and 2 for a fatal error.
 
-Usage: nccmp [OPTION...] file1 file2
+Usage: nccmp [OPTION...] file1 [file2]
 
   -A, --Attribute=att1[,...] Ignore attribute(s) att1[,...]
                              for all variables.
   -b, --verbose              Print messages to show progress.
+  -c, --var-diff-count=CNT   Print messages up until CNT data differences
+                             per variable.
+  -C, --diff-count=CNT       Print messages up until CNT data differences total.
   -d, --data                 Compare data (variable values).
   -D, --debug                Prints verbose debug messages.
-  -f, --force                Forcefully compare, do not stop after first difference.
-  -F, --fortran              Print position indices using Fortran style (1-based reverse order).
+  -e, --encoding             Compare these variable encoding settings:
+                             checksum, chunk, deflate, endianness, shuffle, szip
+  -f, --force                Forcefully compare, do not stop after first
+                             difference.
+  -F, --fortran              Print position indices using Fortran style
+                             (1-based reverse order).
   -g, --global               Compare global attributes.
-                             (-m required)
+                             (auto enables -m)
   -G, --globalex att1[,...]  Exclude global attributes att1[,...].
-                             (-mg required)
+                             (auto enables -g)
   -h, --history              Compare global history attribute.
-                             (-mg required)
+                             (auto enables -g)
   -H, --help                 Give this usage message.
       --usage                
-  -m, --metadata             Compare metadata, excluding global attributes.
+  -i, --info                 Print file structure info for one or both files.
+  -m, --metadata             Compare metadata.
+                             Use -g to include global attributes.
   -M, --missing              Ignore difference between values that have
                              different missing_value and/or _FillValue.
                              Attribute differences are still reported.
+  -n, --threads=N            Use N POSIX threads. Default is 1.
   -N, --nans-are-equal       Allow NaNs to be equal.
-  -p, --precision='%.17g'    Precision of difference printing
-                             (default is '%g').
+  -p, --precision=FMT        Global precision of difference printing.
                              Use '%x' to print bytes.
+                             FMT defaults differently per data type:
+                                 double '%g'
+                                 float  '%g'
+                                 int    '%d'
+                                 int64  '%lld'
+                                 schar  '0x%02X'
+                                 short  '%d'
+                                 text   '%c'
+                                 uchar  '0x%02X'
+                                 uint   '%d'
+                                 uint64 '%llu'
+                                 ushort '%d'
   -P, --header-pad           Compare header padding in classic or 64bit
                              file formats.
+  -r, --group=group1[,...]   Compare group(s) group1[,...] only.
+                             Group names can be full or short.
   -s, --report-identical-files
                              Report when files are the same.
   -t, --tolerance=TOL        Compare if absolute difference > TOL.
@@ -412,72 +583,30 @@ Usage: nccmp [OPTION...] file1 file2
   -w, --warn=tag[,...]       Selectively make certain differences
                              exceptions, but still print messages.
                              Supported tags and their meanings:
-                             all: All differences.
-                             format: File formats.
-                             eos: Extra attribute end-of-string nulls.
+                                 all: All differences.
+                                 format: File formats.
+                                 eos: Extra attribute end-of-string nulls.
+
+Report bugs to Remik . Ziemlinski @ noaa . gov.
+nccmp 1.7.4.0
+
+Configuration
+Date    = Fri Sep 25 12:42:16 EDT 2015
+Host    = Linux mint 3.16.0-38-generic #52~14.04.1-Ubuntu SMP Fri May 8 09:43:57 UTC 2015 x86_64 x86_64 x86_64 GNU/Linux
+NetCDF  = 4.3.3.1 of Jul  8 2015 09:51:52 $
+User    = rsz
+Flags   = CC="gcc" \
+          CFLAGS="-I/usr/local/hdf5-1.8.15-patch1/include -I/usr/local/netcdf-4.3.3.1/include -pthread" \
+          CPP="gcc -E" \
+          CPPFLAGS="" \
+          LDFLAGS="-L/usr/local/hdf5-1.8.15-patch1/lib -L/usr/local/netcdf-4.3.3.1/lib -pthread" \
+          LIBS="-lnetcdf -lm " \
+          ./configure --with-netcdf=/usr/local/netcdf-4.3.3.1/src --enable-test-big
+
+Features
+header-pad = yes
+pthreads   = yes
 </pre>
-
-
-
-<p>
-<hr>
-</p>
-
-
-<h2>
-<a name="bugs">
-Bugs</a>
-</h2>
-<p>
-<ol>
-
-<li>
-Exit code isn't consistent for nccmpi.
-</li>
-
-</ol>
-</p>
-
-
-<p>
-<hr>
-</p>
-
-<h2>
-<a name="wishlist">
-Wishlist</a>
-</h2>
-<p>
-<ol>
-
-
-</ol>
-
-</p>
-
-<p>
-<hr>
-</p>
-
-<h2>
-<a name="references">
-References</a>
-</h2>
-<p>
-<ol>
-
-<li>
-<a href="http://www.unidata.ucar.edu/packages/netcdf/">
-NetCDF</a>
-
-Data Format
-</li>
-
-</ol>
-
-</p>
-
-
 
 <p>
 <hr>
@@ -489,6 +618,58 @@ News</a>
 </h2>
 <p>
 <pre>
+Version 1.7.4.0 (9/27/2015)
+
+1. Updated code and tests to support 32-bit (i386) architecture on Ubuntu.
+2. Created Ubuntu 12,14,15 PPAs.
+
+Version 1.7.3.0 (9/25/2015)
+
+1. Adapted code and tests to support older Netcdf 4.1.1 as found on Ubuntu 12.
+
+Version 1.7.2.0 (9/24/2015)
+
+1. Additional configuration info printed with --version.
+2. Fixed bug with handling group dimensions for NetCDF libraries before version 4.3.
+3. Make advanced NetCDF4 test data creation backwards compatible with ncgen before version 4.3.
+
+Version 1.7.1 (9/21/2015)
+
+1. Fixed bug in regression test and verified on Ubuntu 14 with Anaconda 2.3.0,
+   thanks to Matt Savoie (NSIDC) for pointing out `make check` failures.
+
+Version 1.7.0 (9/11/2015)
+
+1. For HDF formatted files, compare variable encoding parameters for
+   chunking, deflating, endianness, checksumming, shuffling and szip
+   (-e, --encoding).
+2. Support all new Netcdf4 atomic types:
+   ubyte, ushort, uint, int64, uint64, string.
+3. Support user-defined types and nesting of enums, compounds, variable-length, opaque blobs.
+4. Asymmetric type data comparisons. For example, you can compare a 
+   variable defined as integer in the first file, and float in the second.
+   Use --force if initial metadata variable type comparisons fail.
+5. Enable optional big file test when running `make check`
+   (./configure --enable-test-big).
+6. Fixed segfault, all memory leaks and cleaned up scripts,
+   thanks to testing by Emma Hogan (UK MetOffice).
+   
+Version 1.6.1 (7/29/2015)
+
+1. Added multithreading with posix threads 
+   (-n, --threads=N).
+2. Compare groups (and recursively) for all or by short or full name 
+   (-r, --group=group1[,...]).
+   Thanks to Sean W. Bailey (NASA) and Rick Healy (NASA) for the idea and contributing code.
+3. Dump file traits like shuffle, chunk, deflate, header-pad for one or 
+   both input files, with no need to do compare
+   (-i, --info).
+4. Limit comparisons and diff messages printed with global and/or per-variable count 
+   (-c, --var-diff-count=CNT, -C, --diff-count=CNT).
+   Thanks to Sean W. Bailey (NASA) and Rick Healy (NASA) for the idea and contributing code.
+5. Optionally build with header-pad and thread support, and print features enabled
+   with --version or --help.
+   
 Version 1.5.0 (11/30/2014)
 
 1. Added new -N, --nans-are-equal option.
@@ -633,7 +814,31 @@ Version 0.1
 <p>
 <hr>
 </p>
-Copyright (C) 2004-2014 Remik Ziemlinski<br>
+
+
+<h2>
+<a name="references">
+References</a>
+</h2>
+<p>
+<ol>
+
+<li>
+<a href="http://www.unidata.ucar.edu/packages/netcdf/">
+NetCDF</a>
+
+Data Format
+</li>
+
+</ol>
+
+</p>
+
+
+<p>
+<hr>
+</p>
+Copyright (C) 2004-2015 Remik Ziemlinski<br>
 Licensed under the terms of GPL.
 </body>
 </html>

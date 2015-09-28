@@ -1,3 +1,0 @@
-nccmp-getopt.o: getopt.c ../config.h
-
-../config.h:
