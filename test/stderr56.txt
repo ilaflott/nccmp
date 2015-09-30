@@ -1,6 +1,6 @@
 DIFFER : TYPE : vlen2 : BASE TYPE : SHORT <> FLOAT
-DIFFER : VARIABLE : var2 : TYPE : vlen2 <> vlen1
 DIFFER : VARIABLE : var2 : POSITION : [3,2] : VALUES : 2 <> 12
+DIFFER : VARIABLE : var2 : TYPE : vlen2 <> vlen1
 DIFFER : VARIABLE : var3 : POSITION : [1,1] : VALUES : 1 <> 11
 DIFFER : VARIABLE : var3 : POSITION : [3,0] : VALUES : 0 <> 30
 DIFFER : VARIABLE : var3 : POSITION : [3,2] : VALUES : 2 <> 32

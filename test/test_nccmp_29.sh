@@ -1,22 +1,25 @@
-#!/bin/sh
-echo "29. Nans differ."
-CMD="$(./nccmp.sh) -d -s test_nans1b.nc test_nans1c.nc"
-$CMD > stderr.tmp 2>&1
+#!/bin/bash
+I=29
+echo "$I. Nans differ."
+LOG=stderr$I.tmp
+CMD="$(./nccmp.sh) -d -s test_nans1b.$I.nc test_nans1c.$I.nc > $LOG 2>&1"
+
+./test_nccmp_setup.sh nan $I
+eval $CMD
 
 if test "$?" = "1"; then :; else
-    echo
     echo "Expected exit code 1."
+    echo "$CMD"
     exit 1
 fi
 
-grep 'nan <> nan' stderr.tmp > /dev/null
+CMD2="grep 'nan <> nan' $LOG > /dev/null"
+eval $CMD2
 
 if test "$?" = "0"; then :; else
-    echo
     echo "NaNs should not be equal."
     echo "Test that failed: "
-    echo "$CMD  > stderr.tmp 2>&1"
-    echo "grep '1 <> nan' stderr.tmp"
-    echo
+    echo "$CMD"
+    echo "$CMD2"
     exit 1
 fi

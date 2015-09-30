@@ -1,16 +1,24 @@
 #!/bin/bash
+
 # Determine the proper "-k" format options for `ncgen`.
+if [ $# -lt 1 ]; then
+    echo "Usage : $0 <test-id>"
+fi
+ID=$1
+IN=test01a.cdl
+OUT=test01f.$ID.nc
+CMD="ncgen -k nc4 -o $OUT $IN"
+eval $CMD
 
-ncgen -k nc4 -o test1a.nc test1a.cdl > /dev/null 2>&1
-
-if test "$?" = "0"; then 
+if test "$?" = "0"; then
     echo nc3 nc4
     exit
 fi
 
-ncgen -k hdf5 -o test1a.nc test1a.cdl
+CMD2="ncgen -k hdf5 -o $OUT $IN"
+eval $CMD2
 
-if test "$?" = "0"; then 
+if test "$?" = "0"; then
     echo 1 3
     exit
 fi

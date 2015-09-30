@@ -1,22 +1,26 @@
-#!/bin/sh
-echo "23. report-identical when files don't match"
-CMD="$(./nccmp.sh) -mdf -s test1a.nc test1b.nc"
-$CMD > stderr.tmp 2>&1
+#!/bin/bash
+I=23
+echo "$I. report-identical when files don't match"
+LOG=stderr$I.tmp
+CMD="$(./nccmp.sh) -mdf -s test01a.$I.nc test01b.$I.nc  > $LOG 2>&1"
+
+./test_nccmp_setup.sh 01 $I
+eval $CMD
 
 if test "$?" = "1"; then :; else
-    echo
     echo "Expected exit code 1."
+    echo "$CMD"
     exit 1
 fi
 
-grep 'are identical' stderr.tmp > /dev/null
+CMD2="grep 'are identical' $LOG > /dev/null"
+eval $CMD2
 
 if test "$?" = "1"; then :; else
-    echo
     echo "nccmp -s (report identical) failed on files that don't match."
     echo "Test that failed: "
-    echo "$CMD  > stderr.tmp 2>&1"
-    echo "grep 'are identical' stderr.tmp"
-    echo
+    echo "$CMD"
+    echo "$CMD2"
     exit 1
 fi
+

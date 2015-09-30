@@ -385,16 +385,13 @@ int nccmp_cmp_var_string(nccmp_state_t* state, int ncid1, int ncid2,
 
 recover:
     if (s1) {
-        for(i = 0; i < nitems; ++i) {
-            XFREE(s1[i]);
-        }
+		status = nc_free_string(nitems, s1);
+        HANDLE_NC_ERROR(status);
         XFREE(s1);
     }
-
     if (s2) {
-        for(i = 0; i < nitems; ++i) {
-            XFREE(s2[i]);
-        }
+		status = nc_free_string(nitems, s2);
+        HANDLE_NC_ERROR(status);
         XFREE(s2);
     }
 
@@ -407,7 +404,7 @@ int nccmp_cmp_var_user_type_compound_field_array_atomic_type_string(nccmp_state_
         void* items1, void* items2, nccmp_user_type_t *type1, nccmp_user_type_t *type2,
         int fieldid1, int fieldid2)
 {
-    int last_status = EXIT_SUCCESS;
+    int status, last_status = EXIT_SUCCESS;
     size_t array_size = 0;
     int array_i, i;
     char **strings1, **strings2;
@@ -470,10 +467,10 @@ recover:
     for(array_i = 0; array_i < narrays; ++array_i) {
         strings1 = (char**) ((unsigned char*)items1 + type1->root_size * array_i + type1->fields->items[fieldid1].offset);
         strings2 = (char**) ((unsigned char*)items2 + type2->root_size * array_i + type2->fields->items[fieldid2].offset);
-        for(i = 0; i < array_size; ++i) {
-            XFREE(strings1[i]);
-            XFREE(strings2[i]);
-        }
+		status = nc_free_string(array_size, strings1);
+        HANDLE_NC_ERROR(status);
+		status = nc_free_string(array_size, strings2);
+        HANDLE_NC_ERROR(status);
     }
 
     return last_status;
@@ -1015,7 +1012,7 @@ int nccmp_cmp_var_user_type_compound_field_nonarray_atomic_type_string(
         void* items1, void* items2, nccmp_user_type_t *type1, nccmp_user_type_t *type2,
         int fieldid1, int fieldid2)
 {
-    int last_status = EXIT_SUCCESS;
+    int status, last_status = EXIT_SUCCESS;
     char **s1, **s2;
     char idx_str[NC_MAX_NAME], field_path_str[NC_MAX_NAME];
     int i;
@@ -1076,13 +1073,16 @@ recover:
                                  type1->fields->items[fieldid1].offset,
                                  char*,
                                  i);
-        XFREE(s1[0]);
+		status = nc_free_string(1, s1);
+        HANDLE_NC_ERROR(status);
+
         s2 = COMPOUND_FIELD_PTR(items2,
                                  type2->root_size,
                                  type2->fields->items[fieldid2].offset,
                                  char*,
                                  i);
-        XFREE(s2[0]);
+		status = nc_free_string(1, s2);
+        HANDLE_NC_ERROR(status);
     }
 
     return last_status;
@@ -1787,7 +1787,7 @@ int nccmp_cmp_var_user_type_nest_atomic_string(nccmp_state_t* state,
         int varid1, int varid2, size_t* start,
         int item, void *data1, void *data2, nccmp_nest_t *nest)
 {
-    int last_status = EXIT_SUCCESS;
+    int status, last_status = EXIT_SUCCESS;
     char **s1, **s2;
     char idx_str[NC_MAX_NAME], nest_str[NC_MAX_NAME];
     int diff_count_status;
@@ -1820,15 +1820,16 @@ int nccmp_cmp_var_user_type_nest_atomic_string(nccmp_state_t* state,
 
         PRINT_DIFF(state->opts.debug, DIFF_MSG_FIELD,
                    state->vars1[varid1].name, idx_str, nest_str, s1[0], s2[0]);
-
         if ( (COUNT_EQUAL == diff_count_status) || !state->opts.force) {
             goto recover;
         }
     }
 
 recover:
-    XFREE(s1[0]);
-    XFREE(s2[0]);
+	status = nc_free_string(1, s1);
+	HANDLE_NC_ERROR(status);
+	status = nc_free_string(1, s2);
+	HANDLE_NC_ERROR(status);
 
     return last_status;
 }
@@ -1923,7 +1924,6 @@ int nccmp_cmp_var_user_type_nest_atomic_item(nccmp_state_t* state,
 
 #undef CMP_VLEN_TYPE_ONE
 #undef CMP_VLEN
-
 recover:
     return last_status;
 }
@@ -1953,7 +1953,6 @@ int nccmp_cmp_var_user_type_nest_atomic(nccmp_state_t* state,
         nccmp_cmp_var_user_type_nest_atomic_item(state, ncid1, ncid2,
                 varid1, varid2, start, item, data1, data2, nest);
     }
-
     return last_status;
 }
 
@@ -1983,7 +1982,6 @@ int nccmp_cmp_var_user_type_nest_compound_field(nccmp_state_t* state,
     last_status = nccmp_cmp_var_user_type_nest_select(state, ncid1, ncid2,
                         varid1, varid2, start, item, data1, data2,
                         nest_next);
-
     nccmp_destroy_nest(nest_next);
 
     return last_status;
@@ -2243,13 +2241,15 @@ recover:
     if (NC_STRING == nest_next->type1->type_id) {
         for(i = minlen; i < vlen1->len; ++i) {
             strings = (char**) vlen1->p + i;
-            XFREE(strings[0]);
+			status = nc_free_string(1, strings);
+			HANDLE_NC_ERROR(status);
         }
     }
     if (NC_STRING == nest_next->type2->type_id) {
         for(i = minlen; i < vlen2->len; ++i) {
             strings = (char**) vlen2->p + i;
-            XFREE(strings[0]);
+			status = nc_free_string(1, strings);
+			HANDLE_NC_ERROR(status);			
         }
     }
 
@@ -2636,12 +2636,10 @@ recover:
         for(i = 0; i < nitems; ++i) {
             s1 = (char**) items1[i].p;
             s2 = (char**) items2[i].p;
-            for(j = 0; j < items1[i].len; ++j) {
-                XFREE(s1[j]);
-            }
-            for(j = 0; j < items2[i].len; ++j) {
-                XFREE(s2[j]);
-            }
+			status = nc_free_string(items1[i].len, s1);
+			HANDLE_NC_ERROR(status);
+			status = nc_free_string(items2[i].len, s2);
+			HANDLE_NC_ERROR(status);
         }
     }
 

@@ -1,6 +1,6 @@
-DIFFER : Failed to find group /group2 in file "group1.nc"
-DIFFER : Failed to find group /group3 in file "group2.nc"
-DIFFER : Failed to find group /group/subgroup2 in file "group1.nc"
+DIFFER : Failed to find group /group2 in file "group1.42.nc"
+DIFFER : Failed to find group /group3 in file "group2.42.nc"
+DIFFER : Failed to find group /group/subgroup2 in file "group1.42.nc"
 DIFFER : LENGTHS : ATTRIBUTE : desc : VARIABLE : var3 : 1 <> 2 : VALUES : "2" : "2b"
 DIFFER : LENGTHS : ATTRIBUTE : desc : VARIABLE : var3 : 4 <> 5 : VALUES : "test" : "testb"
 DIFFER : LENGTHS : DIMENSION : dim2 : 4 <> 5

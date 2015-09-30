@@ -1,22 +1,8 @@
-#!/bin/sh
-echo "54. Netcdf4 user defined enum type diffs."
-
-CMD="$(./nccmp.sh) -mdf test12a.nc test12b.nc"
-$CMD > stderr.tmp 2>&1
-
-if test "$?" = "1"; then :; else
-    echo
-    echo "Expected exit code 1."
-    exit 1
-fi
-
-diff stderr54.txt stderr.tmp
-
-if test "$?" = "0"; then :; else
-    echo
-    echo "Expected enum diffs."
-    echo "Test that failed: "
-    echo "$CMD > stderr.tmp 2>&1"
-    echo
-    exit 1
-fi
+#!/bin/bash
+export I="54" 
+export ARGS="-mdf test12a.$I.nc test12b.$I.nc"
+export DATA=12
+export EXPECT=1
+export HELP="Netcdf4 user defined enum type diffs"
+export SORT="-d"
+./test_nccmp_template.sh

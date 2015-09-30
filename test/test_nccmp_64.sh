@@ -1,23 +1,8 @@
-#!/bin/sh
-i=64
-echo "$i. Netcdf4 nested vlen and compound types."
-
-CMD="$(./nccmp.sh) -df make_compound_vlen_nest1.nc make_compound_vlen_nest2.nc"
-$CMD > stderr$i.tmp 2>&1
-
-if test "$?" = "1"; then :; else
-    echo
-    echo "Expected exit code 1."
-    exit 1
-fi
-
-diff stderr$i.txt stderr$i.tmp
-
-if test "$?" = "0"; then :; else
-    echo
-    echo "Expected vlen data diffs."
-    echo "Test that failed: "
-    echo "$CMD > stderr$i.tmp 2>&1"
-    echo
-    exit 1
-fi
+#!/bin/bash
+export I="64" 
+export ARGS="-df make_compound_vlen_nest1.$I.nc make_compound_vlen_nest2.$I.nc"
+export DATA=compound
+export EXPECT=1
+export HELP="Netcdf4 nested vlen and compound types"
+export SORT="-d"
+./test_nccmp_template.sh

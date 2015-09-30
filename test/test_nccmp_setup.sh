@@ -1,5 +1,5 @@
 #!/bin/bash 
-#   Copyright (C) 2004-2007 Remik Ziemlinski @ noaa gov
+#   Copyright (C) 2004-2015 Remik Ziemlinski @ noaa gov
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -15,103 +15,118 @@
 #   along with this program; see the file COPYING.
 #   If not, write to the Free Software Foundation,
 #   59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  
-
-# Exit this script if any command fails.
-set -e -v
-
-# find 'ncgen' command
-export NCGEN=`which ncgen 2> /dev/null`
-
-if test "$?" = "0"; then :; else 
-    echo "ERROR: ncgen command not found. Aborting tests..."
+if [ $# -lt 2 ]
+then
+    echo "Usage : $0 [compound|encoding|group|missing|nan|NUMBER|pad] <id>"
     exit 1
 fi
+DATA=$1
+ID=$2
 
-NC_FORMATS=$(./ncgen_formats.sh)
-NC3=$(echo $NC_FORMATS | cut -f1 -d' ')
-NC4=$(echo $NC_FORMATS | cut -f2 -d' ')
-
-# check for nccmp executable in source tree
-export NCCMP=`which ../src/nccmp 2> /dev/null`
-
-if test "$?" = "0"; then :; else
-    echo "ERROR: nccmp not built or missing from ../src/"
-    exit 1
-fi
-
-NCGEN_VER=$(ncgen -v 2>&1 | grep -e version | cut -d' ' -f4)
-echo $NCGEN_VER
-
-######################################################################
-# create netcdf test files
-NCDL="19"
-FMT=(0 $NC3 $NC3 $NC3 $NC3 $NC3 $NC3 $NC3 $NC3 $NC3 $NC4 $NC4 $NC4 $NC4 $NC4 $NC4 $NC4 $NC4 $NC4 $NC4)
-ctr=1
-
-while test "$ctr" -le "$NCDL" 
-do
-    for SUFFIX in a b
-    do
-        fin=test${ctr}${SUFFIX}
-        # Check for backwards compatible test files. 
-        if [ ${NCGEN_VER:0:5} != "4.3.3" ]; then
-            if [ -e ${fin}.pre433.cdl ]; then
-                fin=${fin}.pre433
-            elif [ -e ${fin}.pre413.cdl ]; then
-                fin=${fin}.pre413
-            fi
-        fi
-        fin=${fin}.cdl
-        fout=test${ctr}${SUFFIX}.nc
-        echo Creating $fout
-        CMD="ncgen -k ${FMT[${ctr}]} -o $fout $fin"
-        echo "    $CMD"
-        $CMD || exit 1
-    done
+###############################################################################
+function format() {
+    if [ $# -lt 2 ]; then
+        echo "Usage : $0 <file-id> <unique-id>"
+        echo "<file-id>: double digit string like 01."
+        exit 1
+    fi
+    IDX=$1
+    ID=$2
+    let "index=10#${IDX}" # Ensure not octal when ID==08.
     
-    ctr=`expr $ctr + 1`
-done
+    NC_FORMATS=$(./ncgen_formats.sh $ID)
+    NC3=$(echo $NC_FORMATS | cut -f1 -d' ')
+    NC4=$(echo $NC_FORMATS | cut -f2 -d' ')
+    FMT=(0 $NC3 $NC3 $NC3 $NC3 $NC3 $NC3 $NC3 $NC3 $NC3 $NC4 $NC4 $NC4 $NC4 $NC4 $NC4 $NC4 $NC4 $NC4 $NC4)
+    
+    
+    echo ${FMT[${index}]}
+}
 
-echo Create file in nc4 format to test warning option.
-`ncgen -k $NC4 -o test1c.nc test1a.cdl` 
-if test "$?" = "0"; then :;	else
-	exit 1
+###############################################################################
+function ncgen_version() {
+    VER=$(ncgen -v 2>&1 | grep -e version | cut -d' ' -f4)
+    echo $VER
+}
+
+###############################################################################
+NCGEN=`which ncgen 2> /dev/null`
+if test "$?" = "0"; then :; else 
+    echo "ERROR: ncgen command not found."
+    exit 1
 fi
 
-echo Create two files with different missing_values.
-$NCGEN -o missing_value1.nc missing_value1.cdl 
-$NCGEN -o missing_value2.nc missing_value2.cdl 
-$NCGEN -o _FillValue1.nc _FillValue1.cdl 
+case "$DATA" in
+    compound)
+        echo For compound type with atomic arrays.
+        ./make_compound_array_atomic 0 make_compound_array_atomic1.$ID.nc
+        ./make_compound_array_atomic 1 make_compound_array_atomic2.$ID.nc
+        echo For compound type with user-type arrays.
+        ./make_compound_array_user_type 1 make_compound_array_user_type1.$ID.nc 
+        ./make_compound_array_user_type 2 make_compound_array_user_type2.$ID.nc
+        echo For compound type nested with atomics.
+        ./make_compound_nest_atomic 0 make_compound_nest_atomic1.$ID.nc
+        ./make_compound_nest_atomic 1 make_compound_nest_atomic2.$ID.nc
+        echo For compound/vlen nested types. ncgen cannot create these.
+        ./make_compound_vlen_nest 0 make_compound_vlen_nest1.$ID.nc
+        ./make_compound_vlen_nest 100 make_compound_vlen_nest2.$ID.nc
+        ;;
+    encoding)
+        echo To compare encoding features in hdf format.
+        ./make_nc4_encodings 0 not_encoded.$ID.nc
+        ./make_nc4_encodings 1 encoded.$ID.nc
+        ;;
+    group)
+        echo For group tests, require nc4.
+        fmt=$(format 10 $ID)
+        $NCGEN -k $fmt -o group1.$ID.nc -x group1.cdl
+        $NCGEN -k $fmt -o group2.$ID.nc -x group2.cdl
+        ;;
+    missing)
+        echo Create two files with different missing_values.
+        $NCGEN -o missing_value1.$ID.nc missing_value1.cdl 
+        $NCGEN -o missing_value2.$ID.nc missing_value2.cdl 
+        $NCGEN -o _FillValue1.$ID.nc _FillValue1.cdl
+        ;;
+    nan) 
+        echo Files for NaN features.
+        ./make_nans test_nans1a.$ID.nc 0 # Without nans.
+        ./make_nans test_nans1b.$ID.nc 1 # With nans.
+        ./make_nans test_nans1c.$ID.nc 1 # With nans. Just separate file from version 1b.
+        ;;
+    pad) 
+        echo Create the head pad test files for comparison of different lengths.
+        ./padheader unpadded.$ID.nc 0 
+        ./padheader padded.$ID.nc 2048
+        ;;
+    *) 
+        echo Create basic netcdf test files with ncgen.
+        for SUFFIX in a b; do
+            # Check for backwards compatible test files. 
+            PATCH=""
+            NCGEN_VER=$(ncgen_version)
+            if [ ${NCGEN_VER:0:5} != "4.3.3" ]; then
+                if [ -e test${DATA}${SUFFIX}.pre433.cdl ]; then
+                    PATCH=.pre433
+                elif [ -e test${DATA}${SUFFIX}.pre413.cdl ]; then
+                    PATCH=.pre413
+                fi
+            fi
+            fin=test${DATA}${SUFFIX}${PATCH}.cdl
+            fout=test${DATA}${SUFFIX}.$ID.nc
+            fmt=$(format $DATA $ID)
+            CMD="ncgen -k $fmt -o $fout $fin"
+            eval $CMD
+        done
+        if [ $DATA = "01" ] ; then
+            echo Create file in nc4 format.
+            fmt=$(format 10 $ID)
+            ncgen -k $fmt -o test${DATA}c.$ID.nc test${DATA}a.cdl 
+        fi
+        ;;
+esac
 
-echo Create the head pad test files for comparison of different lengths.
-./padheader unpadded.nc 0 
-./padheader padded.nc 2048 
 
-echo Files for NaN features.
-./make_nans test_nans1a.nc 0 # Without nans.
-./make_nans test_nans1b.nc 1 # With nans.
-./make_nans test_nans1c.nc 1 # With nans. Just separate file from version 1b.
-
-echo For group tests.
-$NCGEN -k $NC4 -o group1.nc -x group1.cdl
-$NCGEN -k $NC4 -o group2.nc -x group2.cdl
  
-echo To compare encoding features in hdf format.
-./make_nc4_encodings 0 not_encoded.nc
-./make_nc4_encodings 1 encoded.nc
 
-echo For compound type with atomic arrays.
-./make_compound_array_atomic 0 make_compound_array_atomic1.nc
-./make_compound_array_atomic 1 make_compound_array_atomic2.nc
 
-echo For compound type with user-type arrays.
-./make_compound_array_user_type 1 make_compound_array_user_type1.nc 
-./make_compound_array_user_type 2 make_compound_array_user_type2.nc
-
-echo For compound type nested with atomics.
-./make_compound_nest_atomic 0 make_compound_nest_atomic1.nc
-./make_compound_nest_atomic 1 make_compound_nest_atomic2.nc
-
-echo For compound/vlen nested types. ncgen cannot create these.
-./make_compound_vlen_nest 0 make_compound_vlen_nest1.nc
-./make_compound_vlen_nest 100 make_compound_vlen_nest2.nc

@@ -1,22 +1,8 @@
-#!/bin/sh
-echo "55. Netcdf4 user defined opaque type diffs."
-
-CMD="$(./nccmp.sh) -mdf test13a.nc test13b.nc"
-$CMD > stderr.tmp 2>&1
-
-if test "$?" = "1"; then :; else
-    echo
-    echo "Expected exit code 1."
-    exit 1
-fi
-
-diff stderr55.txt stderr.tmp
-
-if test "$?" = "0"; then :; else
-    echo
-    echo "Expected opaque type diffs."
-    echo "Test that failed: "
-    echo "$CMD > stderr.tmp 2>&1"
-    echo
-    exit 1
-fi
+#!/bin/bash
+export I="55" 
+export ARGS="-mdf test13a.$I.nc test13b.$I.nc"
+export DATA=13
+export EXPECT=1
+export HELP="Netcdf4 user defined opaque type diffs"
+export SORT="-d"
+./test_nccmp_template.sh

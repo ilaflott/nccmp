@@ -1,25 +1,8 @@
-#!/bin/sh
-
-echo "43. Specific group short name."
-LOG=stderr43.txt
-CMD="$(./nccmp.sh) -dmf -r subgroup group1.nc group2.nc"
-$CMD
-
-if test "$?" = "1"; then :; else
-    echo
-    echo "Expected exit code 1."
-    exit 1
-fi
-
-$CMD 2>&1 | sort > stderr.tmp
-diff stderr.tmp $LOG
-
-if test "$?" = "0"; then :; else
-    echo
-    echo "Expected group diffs."
-    echo "Test that failed: "
-    echo "$CMD  > stderr.tmp 2>&1"
-    echo "diff stderr.tmp $LOG"
-    echo
-    exit 1
-fi
+#!/bin/bash
+export I="43" 
+export ARGS="-dmf -r subgroup group1.$I.nc group2.$I.nc"
+export DATA=group
+export EXPECT=1
+export HELP="Specific group short name"
+export SORT="-d"
+./test_nccmp_template.sh

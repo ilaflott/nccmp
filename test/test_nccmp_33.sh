@@ -1,5 +1,7 @@
-#!/bin/sh
-echo "33. Header pads content difference (lengths are equal)."
+#!/bin/bash
+I=33
+echo "$I. Header pads content difference (lengths are equal)."
+LOG=stderr$I.tmp
 
 ../src/nccmp --version 2>&1 >/dev/null | grep 'header-pad = no'
 if test "$?" = "0"; 
@@ -8,22 +10,23 @@ then
     exit 0
 fi
 
-CMD="$(./nccmp.sh) -md -s -P -f test_pad1a.nc test_pad1b.nc"
-$CMD > stderr.tmp 2>&1
+./test_nccmp_setup.sh pad
+CMD="$(./nccmp.sh) -md -s -P -f pad1a.nc pad1b.nc > $LOG 2>&1"
+eval $CMD 
 
 if test "$?" = "1"; then :; else
-    echo
     echo "Expected exit code 1. Did not find header pad content diff."
+    echo "$CMD"
     exit 1
 fi
 
-test $(grep -c 'VALUES : HEADERPAD' stderr.tmp) -eq "3"
+CMD2="test $(grep -c 'VALUES : HEADERPAD' $LOG) -eq 3"
+eval $CMD2
 
 if test "$?" = "0"; then :; else
-    echo
     echo "nccmp should have found differing header pad contents with -P option."
     echo "Test that failed: "
-    echo "$CMD  > stderr.tmp 2>&1"
-    echo
+    echo "$CMD"
+    echo "$CMD2"
     exit 1
 fi

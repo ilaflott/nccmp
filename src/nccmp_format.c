@@ -197,28 +197,24 @@ void nccmp_pretty_print_att(int ncid, const char* varname,
     unsigned int       *pui = 0;
     unsigned long long *pull = 0;
     unsigned short     *pus = 0;
-
+	
     status = nc_inq_att(ncid, varid, name, &type, &len);
     if (status != NC_NOERR) {
         if (varid == NC_GLOBAL) {
-            fprintf(stderr, "ERROR : QUERYING GLOBAL ATTRIBUTE \"%s\"\n", name);
+            LOG_ERROR("Failed to query global attributes %s\n", name);
         } else {
-            fprintf(stderr, "ERROR : QUERYING ATTRIBUTE \"%s\" FOR VARIABLE \"%s\"\n", name, varname);
+            LOG_ERROR("Failed to query attribute %s for variable %s\n", name, varname);
         }
         return;
     }
-
     strcpy(result, "");
-
     if (len < 1) {
         return;
     }
-
     if (len > maxstrlen) {
         LOG_WARN("Attribute contents larger than string buffer for printing. Will truncate %s:%s.\n", varname, name);
         len = maxstrlen;
     }
-
     #define STRINGIFY(PTR, TYPE, FUN, FMT, DELIM) {                            \
         PTR = XMALLOC(TYPE, len);                                              \
         status = nc_get_att_##FUN(ncid, varid, name, PTR);                     \
@@ -252,7 +248,7 @@ void nccmp_pretty_print_att(int ncid, const char* varname,
     case NC_UINT64: STRINGIFY(pull, unsigned long long, ulonglong, "%llu",   ","); break;
     case NC_USHORT: STRINGIFY(pus,  unsigned short,     ushort,    "%d",     ","); break;
     case NC_STRING:
-        pst = XMALLOC(char*, len);
+        pst = XCALLOC(char*, len);
         /* Library will allocate each string's memory. We must free them though. */
         status = nc_get_att_string(ncid, varid, name, pst);
         if (status != NC_NOERR)    {
@@ -284,7 +280,6 @@ void nccmp_pretty_print_att(int ncid, const char* varname,
     }
 
     #undef STRINGIFY
-
     XFREE(pd);
     XFREE(pf);
     XFREE(pi);
@@ -296,13 +291,10 @@ void nccmp_pretty_print_att(int ncid, const char* varname,
     XFREE(pui);
     XFREE(pull);
     XFREE(pus);
-
     if (pst) {
         /* Release memory allocated by library. */
-        for(i = 0; i < len; ++i) {
-            XFREE(pst[i]);
-        }
+		status = nc_free_string(len, pst);
+		HANDLE_NC_ERROR(status);
     }
     XFREE(pst);
-
 }

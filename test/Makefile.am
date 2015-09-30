@@ -18,22 +18,20 @@ CLEANFILES =                                                    \
     make_group make_group.exe                                   \
     make_nans make_nans.exe missing_value*.nc                   \
     make_nc4_encodings make_nc4_encodings.exe                   \
-    not_encoded.nc encoded.nc                                   \
-    padded.nc padheader padheader.exe                           \
-    stderr*.tmp test??.nc test???.nc test_nans*.nc              \
+    not_encoded*.nc encoded*.nc                                 \
+    padded*.nc padheader padheader.exe                          \
+    stderr*.tmp test*.nc                                        \
     test_nccmp_odometer test_nccmp_odometer.exe                 \
     test_nccmp_strlist test_nccmp_strlist.exe                   \
     test_nccmp_user_type test_nccmp_user_type.exe               \
     tmp*                                                        \
-    unpadded.nc                                                 \
+    unpadded*.c unpadded*.nc                                    \
     _FillValue*.nc
 
 # Run in this order.
 TESTS =                                                                 \
-    test_nccmp_setup.sh                                                 \
     test_nccmp_strlist                                                  \
     test_nccmp_odometer                                                 \
-    test_nccmp_user_type                                                \
     test_nccmp_01.sh test_nccmp_02.sh test_nccmp_03.sh                  \
     test_nccmp_04.sh test_nccmp_05.sh test_nccmp_06.sh test_nccmp_07.sh \
     test_nccmp_08.sh test_nccmp_09.sh test_nccmp_10.sh test_nccmp_11.sh \

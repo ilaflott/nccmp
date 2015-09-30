@@ -191,5 +191,8 @@ int main(int argc, char** argv) {
 
     free(string);
 
+	stat = nc_close(ncid);
+    check_err(stat, __LINE__, __FILE__);
+
     return 0;
 }

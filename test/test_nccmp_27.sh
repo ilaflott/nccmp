@@ -1,23 +1,26 @@
-#!/bin/sh
-echo "27. Ignore different missing_value and _FillValue."
-CMD="$(./nccmp.sh) -d -s --missing missing_value1.nc _FillValue1.nc"
-$CMD > stderr.tmp 2>&1
+#!/bin/bash
+I=27
+echo "$I. Ignore different missing_value and _FillValue."
+LOG=stderr$I.tmp
+CMD="$(./nccmp.sh) -d -s --missing missing_value1.$I.nc _FillValue1.$I.nc > $LOG 2>&1"
+
+./test_nccmp_setup.sh missing $I
+eval $CMD 
 
 if test "$?" = "0"; then :; else
-    echo
     echo "Expected exit code 0."
+    echo "$CMD"
     exit 1
 fi
 
-grep 'are identical' stderr.tmp > /dev/null
+CMD2="grep 'are identical' $LOG > /dev/null"
+eval $CMD2
 
 if test "$?" = "0"; then :; else
-    echo
     echo "nccmp failed to ignore when files have different missing_value and _FillValue."
     echo "Test that failed: "
-    echo "$CMD  > stderr.tmp 2>&1"
-    echo "grep 'are identical' stderr.tmp"
-    echo
+    echo "$CMD"
+    echo "$CMD2"
     exit 1
 fi
 

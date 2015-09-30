@@ -3,7 +3,7 @@ dnl Process this file with `autoreconf -i` to produce a configure script.
 dnl Include additional scripts.
 AC_CONFIG_MACRO_DIR([m4])
 
-AC_INIT(nccmp, 1.7.4.0, [[Remik.Ziemlinski at noaa.gov]])
+AC_INIT(nccmp, 1.7.5.0, [[Remik.Ziemlinski at noaa.gov]])
 dnl Capture flags after ./configure.
 config_flags="$*"
  

@@ -1,0 +1,6 @@
+.cproject
+.project
+TODO
+autom4te.cache/
+src/.deps/
+test/.deps/

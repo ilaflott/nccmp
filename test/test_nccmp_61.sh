@@ -1,22 +1,8 @@
-#!/bin/sh
-echo "61. Netcdf4 user defined compound type enum field nonarray."
-
-CMD="$(./nccmp.sh) -df test18a.nc test18b.nc"
-$CMD > stderr.tmp 2>&1
-
-if test "$?" = "1"; then :; else
-    echo
-    echo "Expected exit code 1."
-    exit 1
-fi
-
-diff stderr61.txt stderr.tmp
-
-if test "$?" = "0"; then :; else
-    echo
-    echo "Expected compound type diffs."
-    echo "Test that failed: "
-    echo "$CMD > stderr.tmp 2>&1"
-    echo
-    exit 1
-fi
+#!/bin/bash
+export I="61" 
+export ARGS="-df test18a.$I.nc test18b.$I.nc"
+export DATA=18
+export EXPECT=1
+export HELP="Netcdf4 user defined compound type enum field nonarray"
+export SORT="-d"
+./test_nccmp_template.sh

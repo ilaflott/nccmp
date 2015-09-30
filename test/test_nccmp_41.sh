@@ -1,24 +1,8 @@
-#!/bin/sh
-
-echo "41. Print up to limit number of var diff messages with tolerance mode."
-LOG=stderr41.txt
-CMD="$(./nccmp.sh) -df -c 4 -t 1 test8a.nc test8b.nc"
-$CMD > stderr.tmp 2>&1
-
-if test "$?" = "1"; then :; else
-    echo
-    echo "Expected exit code 1."
-    exit 1
-fi
-
-diff stderr.tmp $LOG
-
-if test "$?" = "0"; then :; else
-    echo
-    echo "Expected only 4 diffs printed out of 6."
-    echo "Test that failed: "
-    echo "$CMD  > stderr.tmp 2>&1"
-    echo "diff stderr.tmp $LOG"
-    echo
-    exit 1
-fi
+#!/bin/bash
+export I="41" 
+export ARGS="-df -c 4 -t 1 test08a.$I.nc test08b.$I.nc"
+export DATA=08
+export EXPECT=1
+export HELP="Print up to limit number of var diff messages with tolerance mode"
+export SORT="-d"
+./test_nccmp_template.sh

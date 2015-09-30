@@ -87,8 +87,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-TESTS = test_nccmp_setup.sh test_nccmp_strlist$(EXEEXT) \
-	test_nccmp_odometer$(EXEEXT) test_nccmp_user_type$(EXEEXT) \
+TESTS = test_nccmp_strlist$(EXEEXT) test_nccmp_odometer$(EXEEXT) \
 	test_nccmp_01.sh test_nccmp_02.sh test_nccmp_03.sh \
 	test_nccmp_04.sh test_nccmp_05.sh test_nccmp_06.sh \
 	test_nccmp_07.sh test_nccmp_08.sh test_nccmp_09.sh \
@@ -558,14 +557,14 @@ CLEANFILES = \
     make_group make_group.exe                                   \
     make_nans make_nans.exe missing_value*.nc                   \
     make_nc4_encodings make_nc4_encodings.exe                   \
-    not_encoded.nc encoded.nc                                   \
-    padded.nc padheader padheader.exe                           \
-    stderr*.tmp test??.nc test???.nc test_nans*.nc              \
+    not_encoded*.nc encoded*.nc                                 \
+    padded*.nc padheader padheader.exe                          \
+    stderr*.tmp test*.nc                                        \
     test_nccmp_odometer test_nccmp_odometer.exe                 \
     test_nccmp_strlist test_nccmp_strlist.exe                   \
     test_nccmp_user_type test_nccmp_user_type.exe               \
     tmp*                                                        \
-    unpadded.nc                                                 \
+    unpadded*.c unpadded*.nc                                    \
     _FillValue*.nc
 
 EXTRA_DIST = \
@@ -945,13 +944,6 @@ recheck: all $(check_PROGRAMS)
 	        am__force_recheck=am--force-recheck \
 	        TEST_LOGS="$$log_list"; \
 	exit $$?
-test_nccmp_setup.sh.log: test_nccmp_setup.sh
-	@p='test_nccmp_setup.sh'; \
-	b='test_nccmp_setup.sh'; \
-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
-	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
-	"$$tst" $(AM_TESTS_FD_REDIRECT)
 test_nccmp_strlist.log: test_nccmp_strlist$(EXEEXT)
 	@p='test_nccmp_strlist$(EXEEXT)'; \
 	b='test_nccmp_strlist'; \
@@ -962,13 +954,6 @@ test_nccmp_strlist.log: test_nccmp_strlist$(EXEEXT)
 test_nccmp_odometer.log: test_nccmp_odometer$(EXEEXT)
 	@p='test_nccmp_odometer$(EXEEXT)'; \
 	b='test_nccmp_odometer'; \
-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
-	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
-	"$$tst" $(AM_TESTS_FD_REDIRECT)
-test_nccmp_user_type.log: test_nccmp_user_type$(EXEEXT)
-	@p='test_nccmp_user_type$(EXEEXT)'; \
-	b='test_nccmp_user_type'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \

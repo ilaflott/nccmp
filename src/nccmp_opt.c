@@ -427,7 +427,7 @@ int nccmp_opt_parse(int argc, const char** argv, nccmp_opt_t* popts)
     print_version();
     print_features();
     print_copyright();
-    status = EXIT_FATAL;
+    status = EXIT_SUCCESS;
     goto recover;
   }
 
@@ -436,7 +436,7 @@ int nccmp_opt_parse(int argc, const char** argv, nccmp_opt_t* popts)
     print_version();
     print_features();
     print_copyright();
-    status = EXIT_FATAL;
+    status = EXIT_SUCCESS;
     goto recover;
   }
 

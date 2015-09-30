@@ -212,26 +212,41 @@ This is optional, and nccmp can be built without this feature.
 Download
 </a>
 </h2>
+
 <h3>Binaries</h3>
 <h4>Ubuntu 12, 14, 15</h4>
 <p>
 <pre class="code">
 </span><span class="code command">$ sudo add-apt-repository ppa:remik-ziemlinski/nccmp && \
   sudo apt-get update && \
-  sudo apt-get install nccmp
-</span>
+  sudo apt-get install nccmp</span>
 </pre>
+</p>
+
+<h4>Windows</h4>
+<p>
+<pre class="code">
+<span class="code comment"># 64-bit
+</span><span class="code command">$ wget https://downloads.sourceforge.net/project/nccmp/windows/x86_64/nccmp-1.7.5.0-msys2-x86_64.zip</span>
+</pre>
+</p>
+
+<h4>Cygwin - Windows</h4>
+<p>Pending. Package submission is in review by cygwin-apps members.
+</p>
+
+<h4>Mac OSX Homebrew</h4>
+<p>Pending. Package pull request is in review at github.
 </p>
 
 <h3>Source</h3>
 <p>
-<a href="http://prdownloads.sourceforge.net/nccmp/nccmp-1.7.4.0.tar.gz?download">nccmp-1.7.4.0.tar.gz</a><br>
+<a href="http://prdownloads.sourceforge.net/nccmp/nccmp-1.7.5.0.tar.gz?download">nccmp-1.7.5.0.tar.gz</a><br>
 
 <pre class="code">
 </span><span class="code command">$ cd /tmp && \
-  wget -nd -c http://prdownloads.sourceforge.net/nccmp/nccmp-1.7.4.0.tar.gz && \
-  tar zxvf nccmp-*.tar.gz
-</span>
+  wget -nd -c http://prdownloads.sourceforge.net/nccmp/nccmp-1.7.5.0.tar.gz && \
+  tar zxvf nccmp-*.tar.gz</span>
 </pre>
 </p>
 
@@ -295,7 +310,7 @@ $ man nccmp
 
 <h3>
 <a name="install_cygwin">
-Cygwin
+Cygwin - Windows
 </a>
 </h3>
 
@@ -307,13 +322,50 @@ $ C:/cygwin/setup-x86.exe
 # Install these prebuilt binary cygwin packages via the setup GUI:
 # All => Libs  => libnetcdf7      v4.3.3.1-2
 #              => libnetcdf-devel v4.3.3.1-2
-#              => libhdf5_10      v1.8.15-1
-#        Devel => libhdf5-devel   v1.8.15-1
+#              => netcdf          v4.3.3.1-2
 </span><span class="code command">
 $ ./configure --with-netcdf=/cygdrive/c/Temp/netcdf-4.3.3.1
 $ make
 $ make check
 $ make install
+</span>
+</pre>
+</p>
+
+<h3>
+<a name="install_msys">
+MSYS2 - Windows
+</a>
+</h3>
+
+<p>
+<pre class="code">
+<span class="code command">
+$ pacman -S make man gcc diffutils
+</span><span class="code comment">
+# Download and run Netcdf Windows installer:
+# http://www.unidata.ucar.edu/software/netcdf/docs/winbin.html
+</span><span class="code command">
+$ NC=/d/netCDF-4.3.3.1/ 
+$ export PATH=$PATH:$NC/bin
+$ ./configure CFLAGS=-I$NC/include LDFLAGS=-L$NC/bin --enable-test-big
+$ make
+$ make check
+$ make install
+$ man nccmp
+$ nccmp --version
+Configuration
+Date    = Wed Sep 30 13:48:00 EDT 2015
+Host    = MSYS_NT-6.1 rszhp 2.3.0(0.290/5/3) 2015-09-15 09:39 x86_64 Msys
+NetCDF  = 4.3.1-rc4 of Apr 13 2014 18:53:57 $
+User    = rsz
+Flags   = CC="gcc" \
+          CFLAGS="-I/d/netCDF-4.3.3.1//include " \
+          CPP="gcc -E" \
+          CPPFLAGS="" \
+          LDFLAGS="-L/d/netCDF-4.3.3.1//bin " \
+          LIBS="-lnetcdf -lm " \
+          ./configure CFLAGS=-I/d/netCDF-4.3.3.1//include LDFLAGS=-L/d/netCDF-4.3.3.1//bin --enable-test-big
 </span>
 </pre>
 </p>
@@ -331,13 +383,13 @@ $ brew tap homebrew/science
 $ brew install hdf5
 $ brew install netcdf
 
-$ NC=/usr/local/Cellar/netcdf/4.3.2
+$ NC=/usr/local/Cellar/netcdf/4.3.3.1_1
 $ export CFLAGS="-I$NC/include"
 $ export CPPFLAGS="$CFLAGS"
 $ export LDFLAGS="-L$NC/lib"
 $ export DYLD_LIBRARY_PATH="$DYLD_LIBRARY_PATH":$NC/lib
 
-$ ./configure --with-netcdf=/Users/rsz/source/netcdf-4.3.2
+$ ./configure --with-netcdf=/Users/rsz/source/netcdf-4.3.3.1
 $ make
 $ make check
 $ make install
@@ -588,7 +640,7 @@ Usage: nccmp [OPTION...] file1 [file2]
                                  eos: Extra attribute end-of-string nulls.
 
 Report bugs to Remik . Ziemlinski @ noaa . gov.
-nccmp 1.7.4.0
+nccmp 1.7.4.1
 
 Configuration
 Date    = Fri Sep 25 12:42:16 EDT 2015
@@ -618,6 +670,16 @@ News</a>
 </h2>
 <p>
 <pre>
+Version 1.7.5.0 (9/30/2015)
+
+1. (MSYS Windows) Fix core dump from string-type deallocation and
+   close test data file handles.
+2. Replace config.guess with latest git version to support MSYS2.
+
+Version 1.7.4.1 (9/29/2015)
+
+1. Make build process parallel to conform to Homebrew build standards.
+
 Version 1.7.4.0 (9/27/2015)
 
 1. Updated code and tests to support 32-bit (i386) architecture on Ubuntu.

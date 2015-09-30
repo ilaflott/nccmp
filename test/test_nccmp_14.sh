@@ -1,5 +1,6 @@
 #!/bin/sh
-echo "14. test failure of trying header-pad option when not available"
+I=14
+echo "$I. test failure of trying header-pad option when not available"
 
 $(./nccmp.sh) --version 2>&1 >/dev/null | grep 'header-pad = yes'
 if test "$?" = "0"; 
@@ -8,15 +9,15 @@ then
     exit 0
 fi
 
-CMD="$(./nccmp.sh) -qdmf --header-pad padded.nc unpadded.nc"
-$CMD > stderr.tmp 2>&1
+./test_nccmp_setup.sh pad $I
+CMD="$(./nccmp.sh) -dmf --header-pad padded.$I.nc unpadded.$I.nc > stderr$I.tmp 2>&1"
+eval $CMD 
 
-grep 'pad feature unavailable' stderr.tmp
+grep 'pad feature unavailable' stderr$I.tmp
 
 if test "$?" = "0"; then :; else
-    echo
     echo "Expected no header pad support."
     echo "Test that failed: "
-    echo "$CMD > stderr.tmp 2>&1"
+    echo "$CMD"
     exit 1
 fi

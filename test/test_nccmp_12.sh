@@ -1,22 +1,8 @@
 #!/bin/sh
-echo "12. exclude var att test."
-LOG=stderr12.txt
-CMD="$(./nccmp.sh) -mf -A standard_name test5a.nc test5b.nc"
-$CMD  > stderr.tmp 2>&1
-
-if test "$?" = "1"; then :; else
-    echo
-    echo "Expected exit code 1."
-    exit 1
-fi
-
-diff stderr.tmp $LOG
-
-if test "$?" = "0"; then :; else
-    echo "nccmp comparison failed excluding variable attributes test."
-    echo "Test that failed: "
-    echo "$CMD  > stderr.tmp 2>&1"
-    echo "diff stderr.tmp $LOG"
-    echo
-    exit 1
-fi
+export I="12"
+export ARGS="-mf -A standard_name test05a.$I.nc test05b.$I.nc"
+export DATA=05
+export EXPECT=1
+export HELP="exclude var att test"
+export SORT="-d"
+./test_nccmp_template.sh

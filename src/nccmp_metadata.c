@@ -35,7 +35,6 @@ int nccmp_cmp_att(int ncid1, int ncid2, int varid1, int varid2,
         }
         return status;
     }
-
     ncstatus = nc_inq_att(ncid2, varid2, name, &type2, &lenp2);
     if (ncstatus != NC_NOERR) {
         PRINT_DIFF(opts->debug, "DIFFER : VARIABLE \"%s\" IS MISSING ATTRIBUTE WITH NAME \"%s\" IN FILE \"%s\"\n", varname, name, opts->file2);
@@ -45,7 +44,6 @@ int nccmp_cmp_att(int ncid1, int ncid2, int varid1, int varid2,
         }
         return status;
     }
-
     if (type1 != type2) {
         nccmp_nc_type_name_to_str(type1, typestr1, ncid1, opts->debug);
         nccmp_nc_type_name_to_str(type2, typestr2, ncid2, opts->debug);
@@ -60,9 +58,7 @@ int nccmp_cmp_att(int ncid1, int ncid2, int varid1, int varid2,
     if (lenp1 != lenp2) {
         nccmp_pretty_print_att(ncid1, varname, varid1, name, typestr1, MAX_STRLEN);
         nccmp_pretty_print_att(ncid2, varname, varid2, name, typestr2, MAX_STRLEN);
-
         PRINT_DIFF(opts->debug, "DIFFER : LENGTHS : ATTRIBUTE : %s : VARIABLE : %s : %lu <> %lu : VALUES : ", name, varname, (unsigned long)lenp1, (unsigned long)lenp2);
-
         switch(type1) {
         case NC_CHAR:
             /* Quote strings. */
@@ -87,7 +83,6 @@ int nccmp_cmp_att(int ncid1, int ncid2, int varid1, int varid2,
             break;
         }
     }
-
     if (nccmp_cmp_att_val(ncid1, ncid2, varid1, varid2, name, lenp1, lenp2, type1) != EXIT_SUCCESS) {
         nccmp_pretty_print_att(ncid1, varname, varid1, name, typestr1, MAX_STRLEN);
         nccmp_pretty_print_att(ncid2, varname, varid2, name, typestr2, MAX_STRLEN);
@@ -109,7 +104,6 @@ int nccmp_cmp_att(int ncid1, int ncid2, int varid1, int varid2,
             return status;
         }
     }
-
     return EXIT_SUCCESS;
 }
 
@@ -209,15 +203,13 @@ int nccmp_cmp_att_val(int nc1, int nc2, int varid1, int varid2, const char* name
     #undef CMP_ATT_VAL
 
     if (st1) {
-        for(i = 0; i < len1; ++i) {
-            XFREE(st1[i]);
-        }
+		status = nc_free_string(len1, st1);
+        HANDLE_NC_ERROR(status);
     }
 
     if (st2) {
-        for(i = 0; i < len2; ++i) {
-            XFREE(st2[i]);
-        }
+		status = nc_free_string(len2, st2);
+        HANDLE_NC_ERROR(status);
     }
 
     XFREE( c1);  XFREE( c2);
@@ -1175,12 +1167,10 @@ int nccmp_cmp_metadata_var_atts(nccmp_state_t *state, nccmp_strlist_t* varlist, 
                 }
                 if(state->opts.force) continue; else goto recover;
             }
-
             if (nccmp_exists_in_strlist(state->opts.excludeattlist, name1) ||
                     nccmp_exists_in_strlist(processed_atts, name1)) {
                 continue;
             }
-
             /* Log that this att was processed. */
             nccmp_add_to_strlist(processed_atts, name1);
             ++natts1;

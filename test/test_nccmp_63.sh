@@ -1,23 +1,8 @@
-#!/bin/sh
-i=63
-echo "$i. Netcdf4 user-type vlens."
-
-CMD="$(./nccmp.sh) -df test19a.nc test19b.nc"
-$CMD > stderr$i.tmp 2>&1
-
-if test "$?" = "1"; then :; else
-    echo
-    echo "Expected exit code 1."
-    exit 1
-fi
-
-diff stderr$i.txt stderr$i.tmp
-
-if test "$?" = "0"; then :; else
-    echo
-    echo "Expected vlen data diffs."
-    echo "Test that failed: "
-    echo "$CMD > stderr$i.tmp 2>&1"
-    echo
-    exit 1
-fi
+#!/bin/bash
+export I="63" 
+export ARGS="-df test19a.$I.nc test19b.$I.nc"
+export DATA=19
+export EXPECT=1
+export HELP="Netcdf4 user-type vlens"
+export SORT="-d"
+./test_nccmp_template.sh

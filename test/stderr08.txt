@@ -1,4 +1,4 @@
-DIFFER : LENGTHS OF RECORDS : rec (3) <> rec (2)
 DIFFER : LENGTHS : DIMENSION : rec : 3 <> 2
-DIFFER : VARIABLE : recdata : SIZE : 3 <> 2
+DIFFER : LENGTHS OF RECORDS : rec (3) <> rec (2)
 DIFFER : VARIABLE : rec : SIZE : 3 <> 2
+DIFFER : VARIABLE : recdata : SIZE : 3 <> 2
