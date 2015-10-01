@@ -236,7 +236,10 @@ Download
 </p>
 
 <h4>Mac OSX Homebrew</h4>
-<p>Pending. Package pull request is in review at github.
+<p><pre class="code"><span class="code command">$ brew tap homebrew/science
+$ brew install nccmp
+$ brew test nccmp</span>
+</pre>
 </p>
 
 <h3>Source</h3>
@@ -302,8 +305,7 @@ $ make
 $ make check
 $ make install-strip
 $ make clean
-$ man nccmp
-</span>
+$ man nccmp</span>
 </pre>
 
 </p>
@@ -327,8 +329,7 @@ $ C:/cygwin/setup-x86.exe
 $ ./configure --with-netcdf=/cygdrive/c/Temp/netcdf-4.3.3.1
 $ make
 $ make check
-$ make install
-</span>
+$ make install</span>
 </pre>
 </p>
 
@@ -365,8 +366,7 @@ Flags   = CC="gcc" \
           CPPFLAGS="" \
           LDFLAGS="-L/d/netCDF-4.3.3.1//bin " \
           LIBS="-lnetcdf -lm " \
-          ./configure CFLAGS=-I/d/netCDF-4.3.3.1//include LDFLAGS=-L/d/netCDF-4.3.3.1//bin --enable-test-big
-</span>
+          ./configure CFLAGS=-I/d/netCDF-4.3.3.1//include LDFLAGS=-L/d/netCDF-4.3.3.1//bin --enable-test-big</span>
 </pre>
 </p>
 
@@ -392,8 +392,7 @@ $ export DYLD_LIBRARY_PATH="$DYLD_LIBRARY_PATH":$NC/lib
 $ ./configure --with-netcdf=/Users/rsz/source/netcdf-4.3.3.1
 $ make
 $ make check
-$ make install
-</span>
+$ make install</span>
 </pre>
 </p>
 
@@ -435,9 +434,8 @@ Testsuite summary for nccmp 1.7.1
 Memory correctness is tested with valgrind. Leaks will print red colored errors.
 <pre class="code">
 <span class="code command">
-$ cd test
-$ ./memcheck.sh
-</span>
+$ cd test &&
+  ./memcheck.sh</span>
 </pre>
 </p>
 
