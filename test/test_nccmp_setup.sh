@@ -34,11 +34,10 @@ function format() {
     ID=$2
     let "index=10#${IDX}" # Ensure not octal when ID==08.
     
-    NC_FORMATS=$(./ncgen_formats.sh $ID)
+    NC_FORMATS=$($srcdir/ncgen_formats.sh $ID)
     NC3=$(echo $NC_FORMATS | cut -f1 -d' ')
     NC4=$(echo $NC_FORMATS | cut -f2 -d' ')
     FMT=(0 $NC3 $NC3 $NC3 $NC3 $NC3 $NC3 $NC3 $NC3 $NC3 $NC4 $NC4 $NC4 $NC4 $NC4 $NC4 $NC4 $NC4 $NC4 $NC4)
-    
     
     echo ${FMT[${index}]}
 }
@@ -79,14 +78,14 @@ case "$DATA" in
     group)
         echo For group tests, require nc4.
         fmt=$(format 10 $ID)
-        $NCGEN -k $fmt -o group1.$ID.nc -x group1.cdl
-        $NCGEN -k $fmt -o group2.$ID.nc -x group2.cdl
+        $NCGEN -k $fmt -o group1.$ID.nc -x $srcdir/group1.cdl
+        $NCGEN -k $fmt -o group2.$ID.nc -x $srcdir/group2.cdl
         ;;
     missing)
         echo Create two files with different missing_values.
-        $NCGEN -o missing_value1.$ID.nc missing_value1.cdl 
-        $NCGEN -o missing_value2.$ID.nc missing_value2.cdl 
-        $NCGEN -o _FillValue1.$ID.nc _FillValue1.cdl
+        $NCGEN -o missing_value1.$ID.nc $srcdir/missing_value1.cdl 
+        $NCGEN -o missing_value2.$ID.nc $srcdir/missing_value2.cdl 
+        $NCGEN -o _FillValue1.$ID.nc $srcdir/_FillValue1.cdl
         ;;
     nan) 
         echo Files for NaN features.
@@ -112,16 +111,17 @@ case "$DATA" in
                     PATCH=.pre413
                 fi
             fi
-            fin=test${DATA}${SUFFIX}${PATCH}.cdl
+            fin=$srcdir/test${DATA}${SUFFIX}${PATCH}.cdl            
             fout=test${DATA}${SUFFIX}.$ID.nc
             fmt=$(format $DATA $ID)
             CMD="ncgen -k $fmt -o $fout $fin"
+            echo $CMD
             eval $CMD
         done
         if [ $DATA = "01" ] ; then
             echo Create file in nc4 format.
             fmt=$(format 10 $ID)
-            ncgen -k $fmt -o test${DATA}c.$ID.nc test${DATA}a.cdl 
+            ncgen -k $fmt -o test${DATA}c.$ID.nc $srcdir/test${DATA}a.cdl 
         fi
         ;;
 esac

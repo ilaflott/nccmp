@@ -1,4 +1,5 @@
 #!/bin/bash
+
 I=48
 echo "$I. Posix threads."
 LOG=stderr$I.tmp
@@ -10,8 +11,8 @@ then
     exit 0
 fi
 
-./test_nccmp_setup.sh 09 $I
-CMD="$(./nccmp.sh) -df -c 3 -n 2 test09a.$I.nc test09b.$I.nc > $LOG 2>&1"
+$srcdir/test_nccmp_setup.sh 09 $I
+CMD="$($srcdir/nccmp.sh) -df -c 3 -n 2 test09a.$I.nc test09b.$I.nc > $LOG 2>&1"
 eval $CMD 
 
 if test "$?" = "1"; then :; else

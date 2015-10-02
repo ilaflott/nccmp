@@ -12,37 +12,34 @@ bin_PROGRAMS     = nccmp
 
 CLEANFILES       = nccmp nccmp.exe
 
-nccmp_SOURCES    =                              \
-    common.h                                    \
-    log.c log.h                                 \
-    nccmp.c             nccmp.h                 \
-    xmalloc.c           xmalloc.h               \
-    nccmp_data.c        nccmp_data.h            \
-    nccmp_dim.c         nccmp_dim.h             \
-    nccmp_error.h                               \
-    nccmp_format.c      nccmp_format.h          \
-    nccmp_group.c       nccmp_group.h           \
-    nccmp_io.c          nccmp_io.h              \
-    nccmp_metadata.c    nccmp_metadata.h        \
-    nccmp_nc_type.c     nccmp_nc_type.h         \
-    nccmp_ncinfo.c      nccmp_ncinfo.h          \
-    nccmp_nest.c        nccmp_nest.h            \
-    nccmp_odometer.c    nccmp_odometer.h        \
-    nccmp_opt.c         nccmp_opt.h             \
-    nccmp_state.c       nccmp_state.h           \
-    nccmp_strlist.c     nccmp_strlist.h         \
-    nccmp_thread.h                              \
-    nccmp_utils.c       nccmp_utils.h           \
-    nccmp_user_type.c   nccmp_user_type.h       \
-    nccmp_var.c         nccmp_var.h
+nccmp_SOURCES    =      \
+    log.c               \
+    nccmp.c             \
+    xmalloc.c           \
+    nccmp_data.c        \
+    nccmp_dim.c         \
+    nccmp_format.c      \
+    nccmp_group.c       \
+    nccmp_io.c          \
+    nccmp_metadata.c    \
+    nccmp_nc_type.c     \
+    nccmp_ncinfo.c      \
+    nccmp_nest.c        \
+    nccmp_odometer.c    \
+    nccmp_opt.c         \
+    nccmp_state.c       \
+    nccmp_strlist.c     \
+    nccmp_utils.c       \
+    nccmp_user_type.c   \
+    nccmp_var.c
 
 if SYSTEM_GETOPT
 nccmp_SOURCES += 
 else
-nccmp_SOURCES += getopt.c getopt.h 
+nccmp_SOURCES += getopt.c 
 endif
 
-nccmp_CFLAGS    = -I.. $(AM_CFLAGS)
+nccmp_CFLAGS    = -I$(top_srcdir) $(AM_CFLAGS)
 
 nccmp_LDADD     = -lnetcdf -lm 
 

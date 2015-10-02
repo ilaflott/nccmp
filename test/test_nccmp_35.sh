@@ -1,8 +1,9 @@
 #!/bin/bash
+
 I=35
 echo "$I. Format info."
 LOG=stderr$I.tmp
-CMD="$(./nccmp.sh) -i eos1.nc > $LOG 2>&1"
+CMD="$($srcdir/nccmp.sh) -i $srcdir/eos1.nc > $LOG 2>&1"
 eval $CMD
 
 if test "$?" = "0"; then :; else

@@ -1,10 +1,11 @@
 #!/bin/bash
+
 I=30
 echo "$I. Nans should be equal."
 LOG=stderr$I.tmp
-CMD="$(./nccmp.sh) -d -s -N test_nans1b.$I.nc test_nans1c.$I.nc > $LOG 2>&1"
+CMD="$($srcdir/nccmp.sh) -d -s -N test_nans1b.$I.nc test_nans1c.$I.nc > $LOG 2>&1"
 
-./test_nccmp_setup.sh nan $I
+$srcdir/test_nccmp_setup.sh nan $I
 eval $CMD
 
 if test "$?" = "0"; then :; else

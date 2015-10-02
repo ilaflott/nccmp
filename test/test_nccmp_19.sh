@@ -1,8 +1,9 @@
 #!/bin/bash
+
 export I="19" 
 export ARGS="-mdf -w format test01a.$I.nc test01c.$I.nc"
 export DATA=01
 export EXPECT=0
 export HELP="warning on file format difference"
 export SORT="-d"
-./test_nccmp_template.sh
+$srcdir/test_nccmp_template.sh

@@ -1,10 +1,11 @@
 #!/bin/bash
+
 I=23
 echo "$I. report-identical when files don't match"
 LOG=stderr$I.tmp
-CMD="$(./nccmp.sh) -mdf -s test01a.$I.nc test01b.$I.nc  > $LOG 2>&1"
+CMD="$($srcdir/nccmp.sh) -mdf -s test01a.$I.nc test01b.$I.nc  > $LOG 2>&1"
 
-./test_nccmp_setup.sh 01 $I
+$srcdir/test_nccmp_setup.sh 01 $I
 eval $CMD
 
 if test "$?" = "1"; then :; else

@@ -1,12 +1,13 @@
 #!/bin/bash
+
 I=20
 echo "$I. unknown warning tag, should print a warning and ignore."
 LOG=stderr$I.tmp
 LOG2=stderr${I}b.tmp
-TRUTH=stderr$I.txt
-CMD="$(./nccmp.sh) -mdf -w blahblah test01a.$I.nc test01c.$I.nc > $LOG2 2>&1"
+TRUTH=$srcdir/stderr$I.txt
+CMD="$($srcdir/nccmp.sh) -mdf -w blahblah test01a.$I.nc test01c.$I.nc > $LOG2 2>&1"
 
-./test_nccmp_setup.sh 01 $I
+$srcdir/test_nccmp_setup.sh 01 $I
 eval $CMD
 
 if test "$?" = "1"; then :; else

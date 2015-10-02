@@ -1,8 +1,9 @@
 #!/bin/bash
+
 export I="44" 
 export ARGS="-dmf --group /group/subgroup group1.$I.nc group2.$I.nc"
 export DATA=group
 export EXPECT=1
 export HELP="Specific group full name"
 export SORT="-d"
-./test_nccmp_template.sh
+$srcdir/test_nccmp_template.sh

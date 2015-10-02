@@ -3,7 +3,7 @@ dnl Process this file with `autoreconf -i` to produce a configure script.
 dnl Include additional scripts.
 AC_CONFIG_MACRO_DIR([m4])
 
-AC_INIT(nccmp, 1.7.5.0, [[Remik.Ziemlinski at noaa.gov]])
+AC_INIT(nccmp, 1.7.5.1, [[Remik.Ziemlinski at noaa.gov]])
 dnl Capture flags after ./configure.
 config_flags="$*"
  
@@ -20,12 +20,12 @@ AC_ARG_WITH( [netcdf],
              [ with_netcdf="$withval"
                AC_DEFINE(HAVE_NC_H,1,[Define to 1 if you have <nc.h> and <nc3internal.h>.])
                HAVE_NC_H="yes"
+               AM_CFLAGS="$AM_CFLAGS -I$with_netcdf/include -I$with_netcdf/libsrc4"
              ],
              [ AC_MSG_WARN([[NetCDF source package not set with --with-netcdf. Download from www.unidata.ucar.edu]])
                HAVE_NC_H="no"
              ]
             )
-AM_CFLAGS="$AM_CFLAGS -I$with_netcdf/include -I$with_netcdf/libsrc4"
 
 dnl For aggressive compiler checks during development.
 dnl AM_CFLAGS="$AM_CFLAGS -std=c99 -Wpedantic -Wall -Wclobbered -Wempty-body -Wignored-qualifiers -Wmissing-field-initializers -Wmissing-parameter-type -Wold-style-declaration -Woverride-init -Wtype-limits -Wuninitialized -Wunused-but-set-parameter -D_BSD_SOURCE"

@@ -1,4 +1,5 @@
 #!/bin/bash
+
 I=32
 echo "$I. Header pads length difference (ignore contents)."
 LOG=stderr$I.tmp
@@ -10,8 +11,8 @@ then
     exit 0
 fi
 
-./test_nccmp_setup.sh pad $I
-CMD="$(./nccmp.sh) -md -s -P unpadded.$I.nc padded.$I.nc > $LOG 2>&1"
+$srcdir/test_nccmp_setup.sh pad $I
+CMD="$($srcdir/nccmp.sh) -md -s -P unpadded.$I.nc padded.$I.nc > $LOG 2>&1"
 eval $CMD
 
 if test "$?" = "1"; then :; else

@@ -2,7 +2,7 @@
 
 echo $I. $HELP
 
-./test_nccmp_setup.sh $DATA $I
+$srcdir/test_nccmp_setup.sh $DATA $I
 
 NCGEN_VER=$(ncgen -v 2>&1 | grep -e version | cut -d' ' -f4)
 if [ ${NCGEN_VER:0:5} != "4.3.3" ]; then
@@ -13,7 +13,7 @@ fi
 
 LOG=stderr$I.tmp
 DIFF="diff $TRUTH $LOG"
-RUN="$(./nccmp.sh) $ARGS > $LOG 2>&1"
+RUN="$($srcdir/nccmp.sh) $ARGS > $LOG 2>&1"
 eval $RUN
 
 if test "$?" = "$EXPECT"; then :; else

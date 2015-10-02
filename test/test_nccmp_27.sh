@@ -1,10 +1,11 @@
 #!/bin/bash
+
 I=27
 echo "$I. Ignore different missing_value and _FillValue."
 LOG=stderr$I.tmp
-CMD="$(./nccmp.sh) -d -s --missing missing_value1.$I.nc _FillValue1.$I.nc > $LOG 2>&1"
+CMD="$($srcdir/nccmp.sh) -d -s --missing missing_value1.$I.nc _FillValue1.$I.nc > $LOG 2>&1"
 
-./test_nccmp_setup.sh missing $I
+$srcdir/test_nccmp_setup.sh missing $I
 eval $CMD 
 
 if test "$?" = "0"; then :; else

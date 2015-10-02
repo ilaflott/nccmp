@@ -1,8 +1,9 @@
-#!/bin/sh
+#!/bin/bash
+
 export I="06" 
 export ARGS="-df -v recdata,rec test01a.$I.nc test01b.$I.nc"
 export DATA=01
 export EXPECT=1
 export HELP="record var values"
 export SORT="-d"
-./test_nccmp_template.sh
+$srcdir/test_nccmp_template.sh

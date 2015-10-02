@@ -1,8 +1,9 @@
 #!/bin/bash
+
 I=24
 echo "$I. Fail on extra eos in var attribute."
 LOG=stderr$I.tmp
-CMD="$(./nccmp.sh) -m -s eos1.nc eos2.nc > $LOG 2>&1"
+CMD="$($srcdir/nccmp.sh) -m -s $srcdir/eos1.nc $srcdir/eos2.nc > $LOG 2>&1"
 
 eval $CMD
 

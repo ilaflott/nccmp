@@ -55,13 +55,13 @@ if ENABLE_TEST_BIG
     TESTS += test_big.sh
 endif
 
-EXTRA_DIST =                                        \
-    group*.cdl                                      \
-    missing_value*.cdl                              \
-    ncgen_formats.sh                                \
-    stderr*.txt                                     \
-    test*.cdl                                       \
-    test_*.sh                                       \
+EXTRA_DIST =                                                \
+    group*.cdl                                              \
+    missing_value*.cdl                                      \
+    ncgen_formats.sh                                        \
+    stderr*.txt                                             \
+    test*.cdl                                               \
+    test_*.sh                                               \
     _FillValue*.cdl
 
 check_PROGRAMS =                                            \
@@ -71,7 +71,9 @@ check_PROGRAMS =                                            \
      make_compound_vlen_nest                                \
      make_big make_nans                                     \
      make_nc4_encodings padheader                           \
-     test_nccmp_odometer test_nccmp_strlist test_nccmp_user_type
+     test_nccmp_odometer                                    \
+     test_nccmp_strlist                                     \
+     test_nccmp_user_type
 
 padheader_LDADD = -lnetcdf
 make_compound_array_atomic_LDADD = -lnetcdf
@@ -81,13 +83,17 @@ make_compound_vlen_nest = -lnetcdf
 make_big_LDADD = -lnetcdf
 make_nans_LDADD = -lnetcdf
 make_nc4_encodings_LDADD = -lnetcdf
-test_nccmp_odometer_CPPFLAGS = -I../src
-test_nccmp_odometer_LDADD = ../src/nccmp-nccmp_odometer.o
-test_nccmp_strlist_CPPFLAGS = -I../src
-test_nccmp_strlist_LDADD = ../src/nccmp-xmalloc.o ../src/nccmp-nccmp_strlist.o
-test_nccmp_user_type_CPPFLAGS = -I../src
-test_nccmp_user_type_LDADD = ../src/nccmp-log.o             \
-                             ../src/nccmp-nccmp_strlist.o   \
-                             ../src/nccmp-nccmp_user_type.o \
-                             ../src/nccmp-nccmp_utils.o     \
-                             ../src/nccmp-xmalloc.o 
+
+test_nccmp_odometer_CPPFLAGS = -I$(top_srcdir)/src
+test_nccmp_odometer_LDADD = $(top_builddir)/src/nccmp-nccmp_odometer.o
+
+test_nccmp_strlist_CPPFLAGS = -I$(top_srcdir)/src
+test_nccmp_strlist_LDADD = $(top_builddir)/src/nccmp-xmalloc.o           \
+                           $(top_builddir)/src/nccmp-nccmp_strlist.o
+
+test_nccmp_user_type_CPPFLAGS = -I$(top_srcdir)/src
+test_nccmp_user_type_LDADD = $(top_builddir)/src/nccmp-log.o             \
+                             $(top_builddir)/src/nccmp-nccmp_strlist.o   \
+                             $(top_builddir)/src/nccmp-nccmp_user_type.o \
+                             $(top_builddir)/src/nccmp-nccmp_utils.o     \
+                             $(top_builddir)/src/nccmp-xmalloc.o 

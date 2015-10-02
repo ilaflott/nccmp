@@ -1,10 +1,11 @@
 #!/bin/bash
+
 I=31
 echo "$I. Header pads ignored."
 LOG=stderr$I.tmp
-CMD="$(./nccmp.sh) -md -s unpadded.$I.nc padded.$I.nc > $LOG 2>&1"
+CMD="$($srcdir/nccmp.sh) -md -s unpadded.$I.nc padded.$I.nc > $LOG 2>&1"
 
-./test_nccmp_setup.sh pad $I
+$srcdir/test_nccmp_setup.sh pad $I
 eval $CMD
 
 if test "$?" = "0"; then :; else

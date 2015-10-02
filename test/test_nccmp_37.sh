@@ -1,4 +1,5 @@
 #!/bin/bash
+
 I=37
 echo "$I. Format info."
 LOG=stderr$I.tmp
@@ -10,8 +11,8 @@ then
     exit 0
 fi
 
-./test_nccmp_setup.sh pad $I
-CMD="$(./nccmp.sh) -i unpadded.$I.nc > $LOG 2>&1"
+$srcdir/test_nccmp_setup.sh pad $I
+CMD="$($srcdir/nccmp.sh) -i unpadded.$I.nc > $LOG 2>&1"
 eval $CMD
 
 if test "$?" = "0"; then :; else

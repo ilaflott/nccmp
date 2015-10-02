@@ -1,10 +1,11 @@
 #!/bin/bash
+
 I=34
 echo "$I. Format info."
 LOG=stderr$I.tmp
-CMD="$(./nccmp.sh) -i test01a.$I.nc > $LOG 2>&1"
+CMD="$($srcdir/nccmp.sh) -i test01a.$I.nc > $LOG 2>&1"
 
-./test_nccmp_setup.sh 01 $I
+$srcdir/test_nccmp_setup.sh 01 $I
 eval $CMD
 
 if test "$?" = "0"; then :; else

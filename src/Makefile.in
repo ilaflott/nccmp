@@ -90,7 +90,7 @@ build_triplet = @build@
 host_triplet = @host@
 bin_PROGRAMS = nccmp$(EXEEXT)
 @SYSTEM_GETOPT_TRUE@am__append_1 = 
-@SYSTEM_GETOPT_FALSE@am__append_2 = getopt.c getopt.h 
+@SYSTEM_GETOPT_FALSE@am__append_2 = getopt.c 
 subdir = src
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
 	$(top_srcdir)/mkinstalldirs $(top_srcdir)/depcomp
@@ -105,17 +105,11 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
-am__nccmp_SOURCES_DIST = common.h log.c log.h nccmp.c nccmp.h \
-	xmalloc.c xmalloc.h nccmp_data.c nccmp_data.h nccmp_dim.c \
-	nccmp_dim.h nccmp_error.h nccmp_format.c nccmp_format.h \
-	nccmp_group.c nccmp_group.h nccmp_io.c nccmp_io.h \
-	nccmp_metadata.c nccmp_metadata.h nccmp_nc_type.c \
-	nccmp_nc_type.h nccmp_ncinfo.c nccmp_ncinfo.h nccmp_nest.c \
-	nccmp_nest.h nccmp_odometer.c nccmp_odometer.h nccmp_opt.c \
-	nccmp_opt.h nccmp_state.c nccmp_state.h nccmp_strlist.c \
-	nccmp_strlist.h nccmp_thread.h nccmp_utils.c nccmp_utils.h \
-	nccmp_user_type.c nccmp_user_type.h nccmp_var.c nccmp_var.h \
-	getopt.c getopt.h
+am__nccmp_SOURCES_DIST = log.c nccmp.c xmalloc.c nccmp_data.c \
+	nccmp_dim.c nccmp_format.c nccmp_group.c nccmp_io.c \
+	nccmp_metadata.c nccmp_nc_type.c nccmp_ncinfo.c nccmp_nest.c \
+	nccmp_odometer.c nccmp_opt.c nccmp_state.c nccmp_strlist.c \
+	nccmp_utils.c nccmp_user_type.c nccmp_var.c getopt.c
 am__objects_1 =
 @SYSTEM_GETOPT_FALSE@am__objects_2 = nccmp-getopt.$(OBJEXT)
 am_nccmp_OBJECTS = nccmp-log.$(OBJEXT) nccmp-nccmp.$(OBJEXT) \
@@ -293,18 +287,12 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 CLEANFILES = nccmp nccmp.exe
-nccmp_SOURCES = common.h log.c log.h nccmp.c nccmp.h xmalloc.c \
-	xmalloc.h nccmp_data.c nccmp_data.h nccmp_dim.c nccmp_dim.h \
-	nccmp_error.h nccmp_format.c nccmp_format.h nccmp_group.c \
-	nccmp_group.h nccmp_io.c nccmp_io.h nccmp_metadata.c \
-	nccmp_metadata.h nccmp_nc_type.c nccmp_nc_type.h \
-	nccmp_ncinfo.c nccmp_ncinfo.h nccmp_nest.c nccmp_nest.h \
-	nccmp_odometer.c nccmp_odometer.h nccmp_opt.c nccmp_opt.h \
-	nccmp_state.c nccmp_state.h nccmp_strlist.c nccmp_strlist.h \
-	nccmp_thread.h nccmp_utils.c nccmp_utils.h nccmp_user_type.c \
-	nccmp_user_type.h nccmp_var.c nccmp_var.h $(am__append_1) \
-	$(am__append_2)
-nccmp_CFLAGS = -I.. $(AM_CFLAGS)
+nccmp_SOURCES = log.c nccmp.c xmalloc.c nccmp_data.c nccmp_dim.c \
+	nccmp_format.c nccmp_group.c nccmp_io.c nccmp_metadata.c \
+	nccmp_nc_type.c nccmp_ncinfo.c nccmp_nest.c nccmp_odometer.c \
+	nccmp_opt.c nccmp_state.c nccmp_strlist.c nccmp_utils.c \
+	nccmp_user_type.c nccmp_var.c $(am__append_1) $(am__append_2)
+nccmp_CFLAGS = -I$(top_srcdir) $(AM_CFLAGS)
 nccmp_LDADD = -lnetcdf -lm 
 all: all-am
 
