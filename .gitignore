@@ -4,3 +4,5 @@ TODO
 autom4te.cache/
 src/.deps/
 test/.deps/
+.idea
+CMakeCache.txt
