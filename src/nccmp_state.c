@@ -19,7 +19,10 @@ count_limit_type nccmp_inc_diff_count(nccmp_state_t* state, int varid)
     int delta = -1;
 
     #if HAVE_PTHREAD
-        pthread_mutex_lock(& state->mutex_diff_count);
+        if (state->opts.threads > 1) {
+            /* Lock only if parallel, otherwise avoid overhead. */
+            pthread_mutex_lock(& state->mutex_diff_count);
+        }
     #endif
     state->var_diff_counts[varid] += 1;
     state->global_diff_count += 1;
@@ -29,7 +32,9 @@ count_limit_type nccmp_inc_diff_count(nccmp_state_t* state, int varid)
         delta = state->global_diff_count - state->opts.diff_count;
     }
     #if HAVE_PTHREAD
-        pthread_mutex_unlock(& state->mutex_diff_count);
+        if (state->opts.threads > 1) {
+            pthread_mutex_unlock(& state->mutex_diff_count);
+        }
     #endif
 
     if (0 == delta) {
@@ -59,6 +64,8 @@ void nccmp_destroy_state(nccmp_state_t *state)
 {
     nccmp_destroy_state_groups(& state->thread_groups1, & state->nthread_groups1);
     nccmp_destroy_state_groups(& state->thread_groups2, & state->nthread_groups2);
+
+    nccmp_destroy_group_stats_array(state->stats);
 
     nccmp_opt_free(& state->opts);
 
@@ -108,7 +115,7 @@ void nccmp_init_state(nccmp_state_t *state)
 
     state->recid1 = -1;
     state->recid2 = -1;
-
+    state->stats = 0;
     state->global_diff_count = 0;
     state->var_diff_counts = 0;
 
@@ -117,6 +124,13 @@ void nccmp_init_state(nccmp_state_t *state)
     #if HAVE_PTHREAD
     pthread_mutex_init(& state->mutex_diff_count, NULL);
     #endif
+}
+
+void nccmp_init_state_stats(nccmp_state_t *state)
+{
+    int num_groups = nccmp_compute_num_groups(state->thread_groups1);
+    state->stats = nccmp_create_group_stats_array(num_groups);
+    nccmp_get_group_ids(state->thread_groups1, state->stats->group_ids);
 }
 
 int nccmp_open_file(nccmp_state_t* state, nccmp_group_t** groups,
@@ -163,7 +177,7 @@ recover:
     return status;
 }
 
-void var_diff_counts_init(nccmp_state_t* state)
+void nccmp_init_var_diff_counts(nccmp_state_t* state)
 {
     int max_nvars;
 
@@ -171,7 +185,33 @@ void var_diff_counts_init(nccmp_state_t* state)
         XFREE(state->var_diff_counts);
     }
 
-    max_nvars = nccmp_max(state->nvars1, state->nvars2);
+    max_nvars = nccmp_max_int(state->nvars1, state->nvars2);
     state->var_diff_counts = XMALLOC(int, max_nvars);
     memset(state->var_diff_counts, 0, max_nvars * sizeof(int));
+}
+
+void nccmp_update_stats(nccmp_state_t *state, int varid, double delta)
+{
+    nccmp_var_stats_t *stats = & state->current_var_stats->items[varid];
+
+#if HAVE_PTHREAD
+    if (state->opts.threads > 1) {
+        /* Lock only if parallel, otherwise avoid overhead. */
+        pthread_mutex_lock(& stats->lock);
+    }
+#endif
+    ++(stats->count);
+    stats->max = nccmp_max_double(stats->max, delta);
+    stats->min = nccmp_min_double(stats->min, delta);
+    stats->sum += delta;
+    stats->abs_sum += delta < 0 ? -delta : delta;
+    stats->sum_squares += delta * delta;
+    LOG_DEBUG("FIXME varid=%d delta=%g count=%d max=%g min=%g sum=%g abs=%g sumsq=%g\n",
+              varid, delta, stats->count, stats->max, stats->min, stats->sum, stats->abs_sum, stats->sum_squares);
+
+#if HAVE_PTHREAD
+    if (state->opts.threads > 1) {
+        pthread_mutex_unlock(& stats->lock);
+    }
+#endif
 }

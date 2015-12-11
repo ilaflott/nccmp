@@ -47,13 +47,12 @@ Usage: nccmp [OPTION...] file1 [file2]\n\
   -A, --Attribute=att1[,...] Ignore attribute(s) att1[,...]\n\
                              for all variables.\n\
   -b, --verbose              Print messages to show progress.\n\
-  -c, --var-diff-count=CNT   Print messages up until CNT data differences\n\
-                             per variable.\n\
-  -C, --diff-count=CNT       Print messages up until CNT data differences total.\n\
+  -c, --var-diff-count=COUNT Stop comparing a variable after COUNT data diffs.\n\
+  -C, --diff-count=COUNT     Stop comparing after COUNT data diffs total.\n\
   -d, --data                 Compare data (variable values).\n\
   -D, --debug                Prints verbose debug messages.\n\
   -e, --encoding             Compare these variable encoding settings:\n\
-                             checksum, chunk, deflate, endianness, shuffle, szip\n\
+                             checksum, chunk, deflate, endian, shuffle, szip\n\
   -f, --force                Forcefully compare, do not stop after first\n\
                              difference.\n\
   -F, --fortran              Print position indices using Fortran style\n\
@@ -90,10 +89,12 @@ Usage: nccmp [OPTION...] file1 [file2]\n\
                                  ushort '%%d'\n\
   -P, --header-pad           Compare header padding in classic or 64bit\n\
                              file formats.\n\
+  -q, --quiet                Do not print metadata or data differences.\n\
   -r, --group=group1[,...]   Compare group(s) group1[,...] only.\n\
                              Group names can be full or short.\n\
   -s, --report-identical-files\n\
                              Report when files are the same.\n\
+  -S, --statistics           Report data difference statistics.\n\
   -t, --tolerance=TOL        Compare if absolute difference > TOL.\n\
   -T, --Tolerance=TOL        Compare if relative percent difference > TOL.\n\
   -v, --variable=var1[,...]  Compare variable(s) var1[,...] only.\n\
@@ -117,15 +118,15 @@ typedef struct NCCMPOPTS
     int     diff_count;            /* stop printing differences after count for all vars. */
     int     encoding;              /* do variable encoding comparisons */
 	int     exclude;               /* exclude list given */
-	nccmp_strlist_t* excludeattlist;       /* variable attributes to exclude from comparisons */
-	nccmp_strlist_t* excludelist;          /* variables to exclude from comparison */
+	nccmp_strlist_t* excludeattlist; /* variable attributes to exclude from comparisons */
+	nccmp_strlist_t* excludelist;  /* variables to exclude from comparison */
 	char*   file1;                 /* two files to compare */
 	char*   file2;                 /*                      */
 	int     force;                 /* continue checking after 1st difference */
 	int     fortran;               /* fortran style index printing */
 	int     global;                /* compare global attributes */
-	nccmp_strlist_t* globalexclude;        /* list of global atts to exclude */
-	nccmp_strlist_t* groupnames;           /* list of group names to compare */
+	nccmp_strlist_t* globalexclude;/* list of global atts to exclude */
+	nccmp_strlist_t* groupnames;   /* list of group names to compare */
     char    header_pad;            /* Compare header padding in classic/64 formats. */
 	int     help;                  /* give usage insructions */
 	int     history;               /* compare global history attribute */
@@ -134,14 +135,16 @@ typedef struct NCCMPOPTS
     int     missing;               /* ignore different missing_value/_FillValues */
     char    nanequal;              /* Nans should be considered equal if compared. */
 	char*   precision;             /* print precision of values. */
+	char    quiet;                 /* If enabled, do not print diffs. */
     char    report_identical;      /* Print message if files match. */
+    char    statistics;            /* If should enable diff statistics gathering. */
     int     threads;               /* Number of threads to use. 0 implies number of cores. */
 	double  tolerance;             /* allowable difference tolerance */
-    int     var_diff_count;          /* stop printing differences after count for each var. */
+    int     var_diff_count;        /* stop printing differences after count for each var. */
 	int     variable;              /* variable list given */
 	int     verbose;               /* print messages to show progress */
 	int     version;               /* give program version */
-	nccmp_strlist_t*  variablelist;        /* specific variables to compare */
+	nccmp_strlist_t*  variablelist; /* specific variables to compare */
     char    warn[NCCMP_WARN_NUM_TAGS]; /* booleans if a warning is on/off */
 } nccmp_opt_t;
 

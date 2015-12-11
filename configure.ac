@@ -3,8 +3,8 @@ dnl Process this file with `autoreconf -i` to produce a configure script.
 dnl Include additional scripts.
 AC_CONFIG_MACRO_DIR([m4])
 
-AC_INIT(nccmp, 1.7.5.1, [[Remik.Ziemlinski at noaa.gov]])
-dnl Capture flags after ./configure.
+AC_INIT(nccmp, 1.7.6.0, [[Remik.Ziemlinski at noaa.gov]])
+dnl Capture flags after ./configure to embed into version message.
 config_flags="$*"
  
 AM_INIT_AUTOMAKE
@@ -28,7 +28,7 @@ AC_ARG_WITH( [netcdf],
             )
 
 dnl For aggressive compiler checks during development.
-dnl AM_CFLAGS="$AM_CFLAGS -std=c99 -Wpedantic -Wall -Wclobbered -Wempty-body -Wignored-qualifiers -Wmissing-field-initializers -Wmissing-parameter-type -Wold-style-declaration -Woverride-init -Wtype-limits -Wuninitialized -Wunused-but-set-parameter -D_BSD_SOURCE"
+AM_CFLAGS="$AM_CFLAGS -std=c99 -Wpedantic -Wall -Wclobbered -Wempty-body -Wignored-qualifiers -Wmissing-field-initializers -Wmissing-parameter-type -Wold-style-declaration -Woverride-init -Wtype-limits -Wuninitialized -Wunused-but-set-parameter -D_BSD_SOURCE"
 
 AC_SUBST([AM_CFLAGS])
 
@@ -71,7 +71,7 @@ AC_CHECK_DECL(  [NC_FIRSTUSERTYPEID],
 dnl Checks for header files.
 AC_HEADER_STDBOOL
 AC_HEADER_STDC
-AC_CHECK_HEADERS(netcdf.h fcntl.h getopt.h limits.h strings.h unistd.h string.h sys/types.h sys/stat.h errno.h memory.h stdbool.h)
+AC_CHECK_HEADERS(getopt.h errno.h fcntl.h limits.h memory.h netcdf.h strings.h string.h stdbool.h sys/stat.h sys/types.h unistd.h)
 
 AM_CONDITIONAL([SYSTEM_GETOPT], [test x$ac_cv_header_getopt_h = xyes])
 

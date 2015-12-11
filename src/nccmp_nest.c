@@ -57,6 +57,24 @@ void nccmp_build_nest_str(nccmp_nest_t *nest, int fortran, char *result)
     }
 }
 
+void nccmp_build_nest_str_no_index(nccmp_nest_t *nest, int fortran, char *result)
+{
+    if (!nest || !result) {
+        return;
+    }
+
+    if (nest->prev) {
+        nccmp_build_nest_str_no_index(nest->prev, fortran, result);
+    }
+
+    if (nccmp_is_user_type_field(nest->type1)) {
+        if (strlen(result)) {
+            strcat(result, ".");
+        }
+        strcat(result, nest->type1->name);
+    }
+}
+
 int nccmp_nest_cardinal_index(nccmp_nest_t *nest)
 {
     if (!nest) {

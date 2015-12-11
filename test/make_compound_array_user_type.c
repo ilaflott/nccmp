@@ -165,7 +165,7 @@ int main(int argc, char** argv) {
             string[0] = 'a' + fuzz + i;
             string[1] = 'a' + j;
             data1[i].t[j] = calloc(B, sizeof(char));
-            strcpy(data1[i].t[j], string);
+            strcpy( (char*)data1[i].t[j], string);
 
             data1[i].e[j] = (FOO + j + fuzz + i) % NUM_ENUM + UNK;
 

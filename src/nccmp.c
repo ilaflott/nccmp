@@ -25,6 +25,7 @@
 #include <nccmp_nc_type.h>
 #include <nccmp_ncinfo.h>
 #include <nccmp_opt.h>
+#include <nccmp_stats_print.h>
 #include <nccmp_user_type.h>
 #include <nccmp_utils.h>
 #include <nccmp_var.h>
@@ -95,6 +96,8 @@ int nccmp_run(nccmp_state_t* state)
         LOG_INFO("Comparing groups.\n");
     }
 
+    nccmp_init_state_stats(state);
+
     status = nccmp_cmp_groups(state);
     if (state->opts.debug) {
         LOG_DEBUG("status = %d\n", status);
@@ -106,6 +109,11 @@ int nccmp_run(nccmp_state_t* state)
 
     if (state->opts.verbose) {
       LOG_INFO("Comparisons complete.\n");
+    }
+
+    if (state->opts.statistics) {
+        nccmp_print_group_stats_array(
+                state->stats, & state->thread_groups1[0], state->vars1);
     }
 
 recover:

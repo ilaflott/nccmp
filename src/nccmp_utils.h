@@ -17,9 +17,17 @@ void nccmp_destroy_int_pairs(nccmp_int_pairs_t *pairs);
 
 nccmp_int_pairs_t* nccmp_create_int_pairs(size_t n);
 
-int nccmp_max(int a, int b);
+#define NCCMP_MAX(TYPE) TYPE nccmp_max_##TYPE(TYPE a, TYPE b);
+NCCMP_MAX(double)
+NCCMP_MAX(int)
+NCCMP_MAX(size_t)
+#undef NCCMP_MAX
 
-int nccmp_min(int a, int b);
+#define NCCMP_MIN(TYPE) TYPE nccmp_min_##TYPE(TYPE a, TYPE b);
+NCCMP_MIN(double)
+NCCMP_MIN(int)
+NCCMP_MIN(size_t)
+#undef NCCMP_MIN
 
 #define PRODUCT(TYPE) TYPE nccmp_product_##TYPE(TYPE *items, TYPE first, TYPE last);
 PRODUCT(int)

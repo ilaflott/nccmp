@@ -366,14 +366,15 @@ int nccmp_cmp_var_string(nccmp_state_t* state, int ncid1, int ncid2,
                     last_status = EXIT_DIFFER;
                 }
 
-                nccmp_get_index_str_size_t(v1->ndims, start, i, idx_str, state->opts.fortran);
 
                 diff_count_status = nccmp_inc_diff_count(state, idx1);
                 if (COUNT_OVER == diff_count_status) {
                     goto recover;
                 }
-
-                PRINT_DIFF(state->opts.debug, DIFF_MSG, v1->name, idx_str, s1[i], s2[i]);
+                if (!state->opts.quiet) {
+                    nccmp_get_index_str_size_t(v1->ndims, start, i, idx_str, state->opts.fortran);
+                    PRINT_DIFF(state->opts.debug, DIFF_MSG, v1->name, idx_str, s1[i], s2[i]);
+                }
                 if ( (COUNT_EQUAL == diff_count_status) || !state->opts.force ) {
                     goto recover;
                 }
@@ -436,25 +437,27 @@ int nccmp_cmp_var_user_type_compound_field_array_atomic_type_string(nccmp_state_
                 if (!state->opts.warn[NCCMP_W_ALL]) {
                   last_status = EXIT_DIFFER;
                 }
-                nccmp_get_index_str_size_t(v1->ndims, start, array_i, root_idx_str,
-                                     state->opts.fortran);
-                nccmp_get_product_index_str_int(type1->fields->items[fieldid1].num_dims,
-                                          type1->fields->items[fieldid1].dim_sizes,
-                                          i, array_idx_str,
-                                          state->opts.fortran);
-                if (state->opts.fortran) {
-                    sprintf(idx_str, "%s,%s", array_idx_str, root_idx_str);
-                } else {
-                    sprintf(idx_str, "%s,%s", root_idx_str, array_idx_str);
-                }
                 diff_count_status = nccmp_inc_diff_count(state, varid1);
                 if (COUNT_OVER == diff_count_status) {
                     goto recover;
                 }
-                field_path_str[0] = 0;
-                nccmp_build_user_type_field_path_str(& type1->fields->items[fieldid1], field_path_str);
-                PRINT_DIFF(state->opts.debug, DIFF_MSG_FIELD, v1->name, idx_str,
-                      field_path_str, strings1[i], strings2[i]);
+                if (!state->opts.quiet) {
+                    nccmp_get_index_str_size_t(v1->ndims, start, array_i, root_idx_str,
+                                         state->opts.fortran);
+                    nccmp_get_product_index_str_int(type1->fields->items[fieldid1].num_dims,
+                                              type1->fields->items[fieldid1].dim_sizes,
+                                              i, array_idx_str,
+                                              state->opts.fortran);
+                    if (state->opts.fortran) {
+                        sprintf(idx_str, "%s,%s", array_idx_str, root_idx_str);
+                    } else {
+                        sprintf(idx_str, "%s,%s", root_idx_str, array_idx_str);
+                    }
+                    field_path_str[0] = 0;
+                    nccmp_build_user_type_field_path_str(& type1->fields->items[fieldid1], field_path_str);
+                    PRINT_DIFF(state->opts.debug, DIFF_MSG_FIELD, v1->name, idx_str,
+                               field_path_str, strings1[i], strings2[i]);
+                }
                 if ( (COUNT_EQUAL == diff_count_status) || !state->opts.force) {
                     goto recover;
                 }
@@ -526,47 +529,47 @@ int nccmp_cmp_var_user_type_compound_field_array_atomic_type(nccmp_state_t* stat
             } else {                                                           \
               last_status = EXIT_SUCCESS;                                      \
             }                                                                  \
-                                                                               \
-            nccmp_get_index_str_size_t(v1->ndims, start, array_i, root_idxstr, \
-                                 state->opts.fortran);                         \
-            nccmp_get_product_index_str_int(type1->fields->items[fieldid1].num_dims,     \
-                                      type1->fields->items[fieldid1].dim_sizes,\
-                                      diff_offset, array_idxstr,               \
-                                      state->opts.fortran);                    \
-            if (state->opts.fortran) {                                         \
-                sprintf(idx_str, "%s,%s", array_idxstr, root_idxstr);          \
-            } else {                                                           \
-                sprintf(idx_str, "%s,%s", root_idxstr, array_idxstr);          \
-            }                                                                  \
             diff_count_status = nccmp_inc_diff_count(state, varid1);           \
             if (COUNT_OVER == diff_count_status) {                             \
                 goto recover;                                                  \
             }                                                                  \
-            item1.m_##NAME1 = COMPOUND_FIELD_ARRAY_VALUE(items1, type1->root_size,       \
-                type1->fields->items[fieldid1].offset, TYPE1, array_i, diff_offset);     \
-            item2.m_##NAME2 = COMPOUND_FIELD_ARRAY_VALUE(items2, type2->root_size,       \
-                type2->fields->items[fieldid2].offset, TYPE2, array_i, diff_offset);     \
-            if (print_hex) {                                                   \
-                nccmp_##NAME1##_to_hex(item1.m_##NAME1, str1);                 \
-                nccmp_##NAME2##_to_hex(item2.m_##NAME2, str2);                 \
-            } else {                                                           \
-                nccmp_##NAME1##_to_str(item1.m_##NAME1, str1, state->opts.precision);    \
-                nccmp_##NAME2##_to_str(item2.m_##NAME2, str2, state->opts.precision);    \
-            }                                                                  \
-                                                                               \
-            field_path_str[0] = 0;                                             \
-            nccmp_build_user_type_field_path_str(& type1->fields->items[fieldid1], field_path_str);\
-            PRINT_DIFF(state->opts.debug, DIFF_MSG_FIELD, v1->name, idx_str,   \
-                  field_path_str, str1, str2);                                 \
-            if ( (COUNT_EQUAL == diff_count_status) || !state->opts.force) {   \
-                goto recover;                                                  \
-            }                                                                  \
-        }                                                                      \
+            if (!state->opts.quiet) {                                          \
+                nccmp_get_index_str_size_t(v1->ndims, start, array_i, root_idxstr,           \
+                                     state->opts.fortran);                                   \
+                nccmp_get_product_index_str_int(type1->fields->items[fieldid1].num_dims,     \
+                                          type1->fields->items[fieldid1].dim_sizes,          \
+                                          diff_offset, array_idxstr,                         \
+                                          state->opts.fortran);                              \
+                if (state->opts.fortran) {                                                   \
+                    sprintf(idx_str, "%s,%s", array_idxstr, root_idxstr);                    \
+                } else {                                                                     \
+                    sprintf(idx_str, "%s,%s", root_idxstr, array_idxstr);                    \
+                }                                                                            \
+                item1.m_##NAME1 = COMPOUND_FIELD_ARRAY_VALUE(items1, type1->root_size,       \
+                    type1->fields->items[fieldid1].offset, TYPE1, array_i, diff_offset);     \
+                item2.m_##NAME2 = COMPOUND_FIELD_ARRAY_VALUE(items2, type2->root_size,       \
+                    type2->fields->items[fieldid2].offset, TYPE2, array_i, diff_offset);     \
+                if (print_hex) {                                                             \
+                    nccmp_##NAME1##_to_hex(item1.m_##NAME1, str1);                           \
+                    nccmp_##NAME2##_to_hex(item2.m_##NAME2, str2);                           \
+                } else {                                                                     \
+                    nccmp_##NAME1##_to_str(item1.m_##NAME1, str1, state->opts.precision);    \
+                    nccmp_##NAME2##_to_str(item2.m_##NAME2, str2, state->opts.precision);    \
+                }                                                                            \
+                field_path_str[0] = 0;                                                       \
+                nccmp_build_user_type_field_path_str(& type1->fields->items[fieldid1], field_path_str);\
+                PRINT_DIFF(state->opts.debug, DIFF_MSG_FIELD, v1->name, idx_str,             \
+                      field_path_str, str1, str2);                                           \
+            }                                                                                \
+            if ( (COUNT_EQUAL == diff_count_status) || !state->opts.force) {                 \
+                goto recover;                                                                \
+            }                                                                                \
+        }                                                                                    \
     }
 
 #define CMP_FIELD_ATOMIC_ARRAY_SELECT(...)                                     \
     if (state->opts.tolerance) {                                               \
-        /* CMP_FIELD_ATOMIC_ARRAY_TOL(__VA_ARGS__);                         */ \
+        /* TODO: CMP_FIELD_ATOMIC_ARRAY_TOL(__VA_ARGS__);                   */ \
     } else {                                                                   \
         CMP_FIELD_ATOMIC_ARRAY(__VA_ARGS__);                                   \
     }
@@ -621,6 +624,7 @@ int nccmp_cmp_var_user_type_compound_field_array_atomic_type(nccmp_state_t* stat
         break;
     }
 
+#undef CMP_FIELD_ATOMIC_ARRAY
 #undef CMP_FIELD_ATOMIC_ARRAY_TYPE
 #undef CMP_FIELD_ATOMIC_ARRAY_SELECT
 
@@ -742,24 +746,26 @@ int nccmp_cmp_var_user_type_compound_field_array_user_type_enum(nccmp_state_t* s
                 if (!state->opts.warn[NCCMP_W_ALL]) {                          \
                     last_status = EXIT_DIFFER;                                 \
                 }                                                              \
-                nccmp_get_index_str_size_t(v1->ndims, start, array_i, root_idx_str, state->opts.fortran);    \
-                nccmp_get_product_index_str_int(type1->fields->items[fieldid1].num_dims, \
-                                          type1->fields->items[fieldid1].dim_sizes,      \
-                                          i, array_idx_str,                    \
-                                          state->opts.fortran);                \
-                if (state->opts.fortran) {                                     \
-                    sprintf(idx_str, "%s,%s", array_idx_str, root_idx_str);    \
-                } else {                                                       \
-                    sprintf(idx_str, "%s,%s", root_idx_str, array_idx_str);    \
-                }                                                              \
                 diff_count_status = nccmp_inc_diff_count(state, varid1);       \
                 if (COUNT_OVER == diff_count_status) {                         \
                     goto recover;                                              \
                 }                                                              \
-                field_path_str[0] = 0;                                         \
-                nccmp_build_user_type_field_path_str(& type1->fields->items[fieldid1], field_path_str);      \
-                PRINT_DIFF(state->opts.debug, DIFF_MSG_FIELD, v1->name, idx_str,         \
-                        field_path_str, str1, str2);                           \
+                if (!state->opts.quiet) {                                      \
+                    nccmp_get_index_str_size_t(v1->ndims, start, array_i, root_idx_str, state->opts.fortran);    \
+                    nccmp_get_product_index_str_int(type1->fields->items[fieldid1].num_dims,                     \
+                                              type1->fields->items[fieldid1].dim_sizes,                          \
+                                              i, array_idx_str,                                                  \
+                                              state->opts.fortran);                                              \
+                    if (state->opts.fortran) {                                                                   \
+                        sprintf(idx_str, "%s,%s", array_idx_str, root_idx_str);                                  \
+                    } else {                                                                                     \
+                        sprintf(idx_str, "%s,%s", root_idx_str, array_idx_str);                                  \
+                    }                                                                                            \
+                    field_path_str[0] = 0;                                                                       \
+                    nccmp_build_user_type_field_path_str(& type1->fields->items[fieldid1], field_path_str);      \
+                    PRINT_DIFF(state->opts.debug, DIFF_MSG_FIELD, v1->name, idx_str,                             \
+                            field_path_str, str1, str2);                                                         \
+                }                                                                                                \
                 if ( (COUNT_EQUAL == diff_count_status) || !state->opts.force) {         \
                     goto recover;                                              \
                 }                                                              \
@@ -846,30 +852,32 @@ int nccmp_cmp_var_user_type_compound_field_array_user_type_opaque(nccmp_state_t*
                 if (!state->opts.warn[NCCMP_W_ALL]) {
                     last_status = EXIT_DIFFER;
                 }
-                nccmp_get_index_str_size_t(ndims, start, array_i, root_idx_str, state->opts.fortran);
-                nccmp_get_product_index_str_int(type1->fields->items[fieldid1].num_dims,
-                                          type1->fields->items[fieldid1].dim_sizes,
-                                          i, array_idx_str,
-                                          state->opts.fortran);
-                if (state->opts.fortran) {
-                    sprintf(idx_str, "%s,%s", array_idx_str, root_idx_str);
-                } else {
-                    sprintf(idx_str, "%s,%s", root_idx_str, array_idx_str);
-                }
                 diff_count_status = nccmp_inc_diff_count(state, varid1);
                 if (COUNT_OVER == diff_count_status) {
                     goto recover;
                 }
-                str1 = nccmp_realloc_bytes_hex_str(str1, nbytes);
-                str2 = nccmp_realloc_bytes_hex_str(str2, nbytes);
-                nccmp_bytes_to_hex_str(bytes1, nbytes, str1);
-                nccmp_bytes_to_hex_str(bytes2, nbytes, str2);
-                field_path_str[0] = 0;
-                nccmp_build_user_type_field_path_str(& type1->fields->items[fieldid1],
-                        field_path_str);
-                PRINT_DIFF(state->opts.debug, DIFF_MSG_FIELD,
-                        state->vars1[varid1].name, idx_str,
-                        field_path_str, str1, str2);
+                if (!state->opts.quiet) {
+                    nccmp_get_index_str_size_t(ndims, start, array_i, root_idx_str, state->opts.fortran);
+                    nccmp_get_product_index_str_int(type1->fields->items[fieldid1].num_dims,
+                                              type1->fields->items[fieldid1].dim_sizes,
+                                              i, array_idx_str,
+                                              state->opts.fortran);
+                    if (state->opts.fortran) {
+                        sprintf(idx_str, "%s,%s", array_idx_str, root_idx_str);
+                    } else {
+                        sprintf(idx_str, "%s,%s", root_idx_str, array_idx_str);
+                    }
+                    str1 = nccmp_realloc_bytes_hex_str(str1, nbytes);
+                    str2 = nccmp_realloc_bytes_hex_str(str2, nbytes);
+                    nccmp_bytes_to_hex_str(bytes1, nbytes, str1);
+                    nccmp_bytes_to_hex_str(bytes2, nbytes, str2);
+                    field_path_str[0] = 0;
+                    nccmp_build_user_type_field_path_str(& type1->fields->items[fieldid1],
+                            field_path_str);
+                    PRINT_DIFF(state->opts.debug, DIFF_MSG_FIELD,
+                               state->vars1[varid1].name, idx_str,
+                               field_path_str, str1, str2);
+                }
                 if ( (COUNT_EQUAL == diff_count_status) || !state->opts.force) {
                     goto recover;
                 }
@@ -1048,17 +1056,16 @@ int nccmp_cmp_var_user_type_compound_field_nonarray_atomic_type_string(
                 last_status = EXIT_DIFFER;
             }
             // NB: No tolerance is checked for strings. Could use string distance in future.
-
-            nccmp_get_index_str_size_t(v1->ndims, start, i, idx_str, state->opts.fortran);
-            strcpy(field_path_str, "");
-            nccmp_build_user_type_field_path_str(& type1->fields->items[fieldid1], field_path_str);
-
             diff_count_status = nccmp_inc_diff_count(state, varid1);
             if (COUNT_OVER == diff_count_status) {
                 goto recover;
             }
-
-            PRINT_DIFF(state->opts.debug, DIFF_MSG_FIELD, v1->name, idx_str, field_path_str, s1[0], s2[0]);
+            if (!state->opts.quiet) {
+                nccmp_get_index_str_size_t(v1->ndims, start, i, idx_str, state->opts.fortran);
+                strcpy(field_path_str, "");
+                nccmp_build_user_type_field_path_str(& type1->fields->items[fieldid1], field_path_str);
+                PRINT_DIFF(state->opts.debug, DIFF_MSG_FIELD, v1->name, idx_str, field_path_str, s1[0], s2[0]);
+            }
             if ( (COUNT_EQUAL == diff_count_status) || !state->opts.force ) {
                 goto recover;
             }
@@ -1152,33 +1159,32 @@ int nccmp_cmp_var_user_type_compound_field_nonarray_atomic_type(nccmp_state_t* s
         } else {                                                               \
           last_status = EXIT_SUCCESS;                                          \
         }                                                                      \
-                                                                               \
-        nccmp_get_index_str_size_t(v1->ndims, start, diff_offset, idx_str, state->opts.fortran);   \
-                                                                               \
         diff_count_status = nccmp_inc_diff_count(state, varid1);               \
         if (COUNT_OVER == diff_count_status) {                                 \
             break;                                                             \
         }                                                                      \
-        item1.m_##NAME1 = COMPOUND_FIELD_VALUE(items1, comp_type1->root_size,  \
-            comp_type1->fields->items[fieldid1].offset, TYPE1, diff_offset);   \
-        item2.m_##NAME2 = COMPOUND_FIELD_VALUE(items2, comp_type2->root_size,  \
-            comp_type2->fields->items[fieldid2].offset, TYPE2, diff_offset);   \
-        if (print_hex) {                                                       \
-            nccmp_##NAME1##_to_hex(item1.m_##NAME1, str1);                     \
-            nccmp_##NAME2##_to_hex(item2.m_##NAME2, str2);                     \
-        } else {                                                               \
-            nccmp_##NAME1##_to_str(item1.m_##NAME1, str1, state->opts.precision);        \
-            nccmp_##NAME2##_to_str(item2.m_##NAME2, str2, state->opts.precision);        \
-        }                                                                      \
-                                                                               \
-        strcpy(field_path_str, "");                                            \
-        nccmp_build_user_type_field_path_str(& comp_type1->fields->items[fieldid1], field_path_str);         \
-        PRINT_DIFF(state->opts.debug, DIFF_MSG_FIELD, v1->name, idx_str,       \
-              field_path_str, str1, str2);                                     \
-        /* Print only up to count of desired diffs. */                         \
-        if ( (COUNT_EQUAL == diff_count_status) || !state->opts.force) {       \
-            break;                                                             \
-        }                                                                      \
+        if (!state->opts.quiet) {                                              \
+            nccmp_get_index_str_size_t(v1->ndims, start, diff_offset, idx_str, state->opts.fortran); \
+            item1.m_##NAME1 = COMPOUND_FIELD_VALUE(items1, comp_type1->root_size,       \
+                comp_type1->fields->items[fieldid1].offset, TYPE1, diff_offset);        \
+            item2.m_##NAME2 = COMPOUND_FIELD_VALUE(items2, comp_type2->root_size,       \
+                comp_type2->fields->items[fieldid2].offset, TYPE2, diff_offset);        \
+            if (print_hex) {                                                            \
+                nccmp_##NAME1##_to_hex(item1.m_##NAME1, str1);                          \
+                nccmp_##NAME2##_to_hex(item2.m_##NAME2, str2);                          \
+            } else {                                                                    \
+                nccmp_##NAME1##_to_str(item1.m_##NAME1, str1, state->opts.precision);   \
+                nccmp_##NAME2##_to_str(item2.m_##NAME2, str2, state->opts.precision);   \
+            }                                                                           \
+            strcpy(field_path_str, "");                                                 \
+            nccmp_build_user_type_field_path_str(& comp_type1->fields->items[fieldid1], field_path_str); \
+            PRINT_DIFF(state->opts.debug, DIFF_MSG_FIELD, v1->name, idx_str,            \
+                  field_path_str, str1, str2);                                          \
+        }                                                                               \
+        /* Print only up to count of desired diffs. */                                  \
+        if ( (COUNT_EQUAL == diff_count_status) || !state->opts.force) {                \
+            break;                                                                      \
+        }                                                                               \
     }
 
 #define CMP_FIELD_ATOMIC_TOL(NAME1, TYPE1, NAME2, TYPE2, NANEQUAL)             \
@@ -1202,35 +1208,36 @@ int nccmp_cmp_var_user_type_compound_field_nonarray_atomic_type(nccmp_state_t* s
             } else {                                                           \
                 last_status = EXIT_SUCCESS;                                    \
             }                                                                  \
-            if ((v1->ndims == 1)  && (v1->has_rec_dim)) {                      \
-                nccmp_get_index_str_size_t(v1->ndims, start, rec, idx_str, state->opts.fortran);   \
-            } else {                                                           \
-                nccmp_get_index_str_size_t(v1->ndims, start, i, idx_str, state->opts.fortran);     \
-            }                                                                  \
             diff_count_status = nccmp_inc_diff_count(state, varid1);           \
             if (COUNT_OVER == diff_count_status) {                             \
                 break;                                                         \
             }                                                                  \
-            if (print_hex) {                                                   \
-                nccmp_##NAME1##_to_hex(item1.m_##NAME1, str1);                 \
-                nccmp_##NAME2##_to_hex(item2.m_##NAME2, str2);                 \
-            } else {                                                           \
-                nccmp_##NAME1##_to_str(item1.m_##NAME1, str1, state->opts.precision);    \
-                nccmp_##NAME2##_to_str(item2.m_##NAME2, str2, state->opts.precision);    \
-            }                                                                  \
-            pct = (double)absdelta * 100.0 /                                   \
-                (fabs((double)item1.m_##NAME1) > fabs((double)item2.m_##NAME2) ?         \
-                    fabs((double)item1.m_##NAME1) :                            \
-                    fabs((double)item2.m_##NAME2));                            \
-            strcpy(field_path_str, "");                                        \
-            nccmp_build_user_type_field_path_str(& comp_type1->fields->items[fieldid1], field_path_str);     \
-            PRINT_DIFF(state->opts.debug, DIFF_MSG_PCT_FIELD, v1->name, idx_str,         \
-                field_path_str, str1, str2, pct );                             \
-                                                                               \
-            if ( (COUNT_EQUAL ==  diff_count_status) || !state->opts.force ) { \
-                break;                                                         \
-            }                                                                  \
-        }                                                                      \
+            if (!state->opts.quiet) {                                          \
+                if ((v1->ndims == 1)  && (v1->has_rec_dim)) {                                           \
+                    nccmp_get_index_str_size_t(v1->ndims, start, rec, idx_str, state->opts.fortran);    \
+                } else {                                                                                \
+                    nccmp_get_index_str_size_t(v1->ndims, start, i, idx_str, state->opts.fortran);      \
+                }                                                                                       \
+                if (print_hex) {                                                                        \
+                    nccmp_##NAME1##_to_hex(item1.m_##NAME1, str1);                                      \
+                    nccmp_##NAME2##_to_hex(item2.m_##NAME2, str2);                                      \
+                } else {                                                                                \
+                    nccmp_##NAME1##_to_str(item1.m_##NAME1, str1, state->opts.precision);               \
+                    nccmp_##NAME2##_to_str(item2.m_##NAME2, str2, state->opts.precision);               \
+                }                                                                                       \
+                pct = (double)absdelta * 100.0 /                                                        \
+                      (fabs((double)item1.m_##NAME1) > fabs((double)item2.m_##NAME2) ?                  \
+                        fabs((double)item1.m_##NAME1) :                                                 \
+                        fabs((double)item2.m_##NAME2));                                                 \
+                strcpy(field_path_str, "");                                                             \
+                nccmp_build_user_type_field_path_str(& comp_type1->fields->items[fieldid1], field_path_str); \
+                PRINT_DIFF(state->opts.debug, DIFF_MSG_PCT_FIELD, v1->name, idx_str,                    \
+                           field_path_str, str1, str2, pct );                                           \
+            }                                                                                           \
+            if ( (COUNT_EQUAL ==  diff_count_status) || !state->opts.force ) {                          \
+                break;                                                                                  \
+            }                                                                                           \
+        }                                                                                               \
     }
 
 #define CMP_FIELD_ATOMIC_SELECT(...)                                           \
@@ -1365,12 +1372,14 @@ int nccmp_cmp_var_user_type_compound_field_nonarray_user_type_enum(nccmp_state_t
             if (!state->opts.warn[NCCMP_W_ALL]) {                              \
                 last_status = EXIT_DIFFER;                                     \
             }                                                                  \
-            nccmp_get_index_str_size_t(state->vars1[varid1].ndims, start, item_i, idx_str, state->opts.fortran);       \
             diff_count_status = nccmp_inc_diff_count(state, varid1);           \
             if (COUNT_OVER == diff_count_status) {                             \
                 goto recover;                                                  \
             }                                                                  \
-            PRINT_DIFF(state->opts.debug, DIFF_MSG, state->vars1[varid1].name, idx_str, str1, str2);         \
+            if (!state->opts.quiet) {                                          \
+                nccmp_get_index_str_size_t(state->vars1[varid1].ndims, start, item_i, idx_str, state->opts.fortran); \
+                PRINT_DIFF(state->opts.debug, DIFF_MSG, state->vars1[varid1].name, idx_str, str1, str2);             \
+            }                                                                  \
             if ( (COUNT_EQUAL == diff_count_status) || !state->opts.force) {   \
                 goto recover;                                                  \
             }                                                                  \
@@ -1450,16 +1459,18 @@ int nccmp_cmp_var_user_type_compound_field_nonarray_user_type_opaque(nccmp_state
             if (!state->opts.warn[NCCMP_W_ALL]) {
                 last_status = EXIT_DIFFER;
             }
-            nccmp_get_index_str_size_t(ndims, start, item_i, idx_str, state->opts.fortran);
             diff_count_status = nccmp_inc_diff_count(state, varid1);
             if (COUNT_OVER == diff_count_status) {
                 goto recover;
             }
-            str1 = nccmp_realloc_bytes_hex_str(str1, nbytes);
-            str2 = nccmp_realloc_bytes_hex_str(str2, nbytes);
-            nccmp_bytes_to_hex_str(bytes1, nbytes, str1);
-            nccmp_bytes_to_hex_str(bytes2, nbytes, str2);
-            PRINT_DIFF(state->opts.debug, DIFF_MSG, state->vars1[varid1].name, idx_str, str1, str2);
+            if (!state->opts.quiet) {
+                nccmp_get_index_str_size_t(ndims, start, item_i, idx_str, state->opts.fortran);
+                str1 = nccmp_realloc_bytes_hex_str(str1, nbytes);
+                str2 = nccmp_realloc_bytes_hex_str(str2, nbytes);
+                nccmp_bytes_to_hex_str(bytes1, nbytes, str1);
+                nccmp_bytes_to_hex_str(bytes2, nbytes, str2);
+                PRINT_DIFF(state->opts.debug, DIFF_MSG, state->vars1[varid1].name, idx_str, str1, str2);
+            }
             if ( (COUNT_EQUAL == diff_count_status) || !state->opts.force) {
                 goto recover;
             }
@@ -1721,16 +1732,15 @@ int nccmp_cmp_var_user_type_enum(nccmp_state_t* state, int ncid1, int ncid2,
                 if (!state->opts.warn[NCCMP_W_ALL]) {                          \
                     last_status = EXIT_DIFFER;                                 \
                 }                                                              \
-                                                                               \
-                nccmp_get_index_str_size_t(v1->ndims, start, item_i, idx_str, state->opts.fortran);\
-                                                                               \
                 diff_count_status = nccmp_inc_diff_count(state, varid1);       \
                 if (COUNT_OVER == diff_count_status) {                         \
                     goto recover_##NAME1##_##NAME2;                            \
                 }                                                              \
-                                                                               \
-                PRINT_DIFF(state->opts.debug, DIFF_MSG, v1->name, idx_str, str1, str2);  \
-                if ( (COUNT_EQUAL == diff_count_status) || !state->opts.force) {         \
+                if (!state->opts.quiet) {                                      \
+                    nccmp_get_index_str_size_t(v1->ndims, start, item_i, idx_str, state->opts.fortran); \
+                    PRINT_DIFF(state->opts.debug, DIFF_MSG, v1->name, idx_str, str1, str2);             \
+                }                                                                                       \
+                if ( (COUNT_EQUAL == diff_count_status) || !state->opts.force) {                        \
                     goto recover_##NAME1##_##NAME2;                            \
                 }                                                              \
             }                                                                  \
@@ -1807,19 +1817,18 @@ int nccmp_cmp_var_user_type_nest_atomic_string(nccmp_state_t* state,
         if (!state->opts.warn[NCCMP_W_ALL]) {
             last_status = EXIT_DIFFER;
         }
-
-        idx_str[0] = 0;
-        nccmp_get_index_str_size_t(state->vars1[varid1].ndims, start, item, idx_str, state->opts.fortran);
-        nest_str[0] = 0;
-        nccmp_build_nest_str(nest, state->opts.fortran, nest_str);
         diff_count_status = nccmp_inc_diff_count(state, varid1);
-
         if (COUNT_OVER == diff_count_status) {
             goto recover;
         }
-
-        PRINT_DIFF(state->opts.debug, DIFF_MSG_FIELD,
-                   state->vars1[varid1].name, idx_str, nest_str, s1[0], s2[0]);
+        if (!state->opts.quiet) {
+            idx_str[0] = 0;
+            nccmp_get_index_str_size_t(state->vars1[varid1].ndims, start, item, idx_str, state->opts.fortran);
+            nest_str[0] = 0;
+            nccmp_build_nest_str(nest, state->opts.fortran, nest_str);
+            PRINT_DIFF(state->opts.debug, DIFF_MSG_FIELD,
+                       state->vars1[varid1].name, idx_str, nest_str, s1[0], s2[0]);
+        }
         if ( (COUNT_EQUAL == diff_count_status) || !state->opts.force) {
             goto recover;
         }
@@ -1861,18 +1870,19 @@ int nccmp_cmp_var_user_type_nest_atomic_item(nccmp_state_t* state,
         if (!state->opts.warn[NCCMP_W_ALL]) {                                  \
             last_status = EXIT_DIFFER;                                         \
         }                                                                      \
-        nest_str[0] = 0;                                                       \
-        nccmp_get_index_str_size_t(state->vars1[varid1].ndims, start, item, idx_str, state->opts.fortran);   \
-        nccmp_build_nest_str(nest, state->opts.fortran, nest_str);             \
         diff_count_status = nccmp_inc_diff_count(state, varid1);               \
         if (COUNT_OVER == diff_count_status) {                                 \
             goto recover;                                                      \
         }                                                                      \
-        nccmp_##NAME1##_to_str(value1.m_##NAME1, str1, state->opts.precision); \
-        nccmp_##NAME2##_to_str(value2.m_##NAME2, str2, state->opts.precision); \
-        PRINT_DIFF(state->opts.debug, DIFF_MSG_FIELD,                          \
-                   state->vars1[varid1].name, idx_str, nest_str, str1, str2);  \
-                                                                               \
+        if (!state->opts.quiet) {                                              \
+            nest_str[0] = 0;                                                                                    \
+            nccmp_get_index_str_size_t(state->vars1[varid1].ndims, start, item, idx_str, state->opts.fortran);  \
+            nccmp_build_nest_str(nest, state->opts.fortran, nest_str);                                          \
+            nccmp_##NAME1##_to_str(value1.m_##NAME1, str1, state->opts.precision);                              \
+            nccmp_##NAME2##_to_str(value2.m_##NAME2, str2, state->opts.precision);                              \
+            PRINT_DIFF(state->opts.debug, DIFF_MSG_FIELD,                                                       \
+                       state->vars1[varid1].name, idx_str, nest_str, str1, str2);                               \
+        }                                                                                                       \
         if ( (COUNT_EQUAL == diff_count_status) || !state->opts.force) {       \
             goto recover;                                                      \
         }                                                                      \
@@ -2060,15 +2070,17 @@ int nccmp_cmp_var_user_type_nest_enum(nccmp_state_t* state,
             if (!state->opts.warn[NCCMP_W_ALL]) {                              \
                 last_status = EXIT_DIFFER;                                     \
             }                                                                  \
-            nccmp_get_index_str_size_t(state->vars1[varid1].ndims, start, item, idx_str, state->opts.fortran);         \
             diff_count_status = nccmp_inc_diff_count(state, varid1);           \
             if (COUNT_OVER == diff_count_status) {                             \
                 goto recover;                                                  \
             }                                                                  \
-            nest_str[0] = 0;                                                   \
-            nccmp_build_nest_str(nest, state->opts.fortran, nest_str);         \
-            PRINT_DIFF(state->opts.debug, DIFF_MSG_FIELD, state->vars1[varid1].name,     \
-                    idx_str, nest_str, str1, str2);                            \
+            if (!state->opts.quiet) {                                          \
+                nccmp_get_index_str_size_t(state->vars1[varid1].ndims, start, item, idx_str, state->opts.fortran);  \
+                nest_str[0] = 0;                                                                                    \
+                nccmp_build_nest_str(nest, state->opts.fortran, nest_str);                                          \
+                PRINT_DIFF(state->opts.debug, DIFF_MSG_FIELD, state->vars1[varid1].name,                            \
+                           idx_str, nest_str, str1, str2);                                                          \
+            }                                                                                                       \
             if ( (COUNT_EQUAL == diff_count_status) || !state->opts.force) {   \
                 goto recover;                                                  \
             }                                                                  \
@@ -2137,19 +2149,21 @@ int nccmp_cmp_var_user_type_nest_opaque(nccmp_state_t* state,
         if (!state->opts.warn[NCCMP_W_ALL]) {
             last_status = EXIT_DIFFER;
         }
-        nccmp_get_index_str_size_t(state->vars1[varid1].ndims, start, item, idx_str, state->opts.fortran);
         diff_count_status = nccmp_inc_diff_count(state, varid1);
         if (COUNT_OVER == diff_count_status) {
             goto recover;
         }
-        str1 = nccmp_realloc_bytes_hex_str(str1, nbytes);
-        str2 = nccmp_realloc_bytes_hex_str(str2, nbytes);
-        nccmp_bytes_to_hex_str(bytes1, nbytes, str1);
-        nccmp_bytes_to_hex_str(bytes2, nbytes, str2);
-        nest_str[0] = 0;
-        nccmp_build_nest_str(nest, state->opts.fortran, nest_str);
-        PRINT_DIFF(state->opts.debug, DIFF_MSG_FIELD, state->vars1[varid1].name,
-                idx_str, nest_str, str1, str2);
+        if (!state->opts.quiet) {
+            nccmp_get_index_str_size_t(state->vars1[varid1].ndims, start, item, idx_str, state->opts.fortran);
+            str1 = nccmp_realloc_bytes_hex_str(str1, nbytes);
+            str2 = nccmp_realloc_bytes_hex_str(str2, nbytes);
+            nccmp_bytes_to_hex_str(bytes1, nbytes, str1);
+            nccmp_bytes_to_hex_str(bytes2, nbytes, str2);
+            nest_str[0] = 0;
+            nccmp_build_nest_str(nest, state->opts.fortran, nest_str);
+            PRINT_DIFF(state->opts.debug, DIFF_MSG_FIELD, state->vars1[varid1].name,
+                       idx_str, nest_str, str1, str2);
+        }
         if ( (COUNT_EQUAL == diff_count_status) || !state->opts.force) {
             goto recover;
         }
@@ -2189,18 +2203,18 @@ int nccmp_cmp_var_user_type_nest_vlen(nccmp_state_t* state,
         if (!state->opts.warn[NCCMP_W_ALL]) {
             last_status = EXIT_DIFFER;
         }
-        nccmp_get_index_str_size_t(state->vars1[varid1].ndims, start, item, idx_str, state->opts.fortran);
-
         diff_count_status = nccmp_inc_diff_count(state, varid1);
         if (COUNT_OVER == diff_count_status) {
             goto recover;
         }
-        nest_str[0] = 0;
-        nccmp_build_nest_str(nest, state->opts.fortran, nest_str);
-        PRINT_DIFF(state->opts.debug, DIFF_MSG_FIELD_VLEN,
-                   state->vars1[varid1].name, idx_str, nest_str,
-                   vlen1->len, vlen2->len);
-
+        if (!state->opts.quiet) {
+            nccmp_get_index_str_size_t(state->vars1[varid1].ndims, start, item, idx_str, state->opts.fortran);
+            nest_str[0] = 0;
+            nccmp_build_nest_str(nest, state->opts.fortran, nest_str);
+            PRINT_DIFF(state->opts.debug, DIFF_MSG_FIELD_VLEN,
+                       state->vars1[varid1].name, idx_str, nest_str,
+                       vlen1->len, vlen2->len);
+        }
         if ( (COUNT_EQUAL == diff_count_status) || !state->opts.force) {
             goto recover;
         }
@@ -2225,7 +2239,7 @@ int nccmp_cmp_var_user_type_nest_vlen(nccmp_state_t* state,
     }
     nest_next->prev = nest;
     nest_next->num_dims = 1;
-    minlen = nccmp_min(vlen1->len, vlen2->len);
+    minlen = nccmp_min_size_t(vlen1->len, vlen2->len);
     for(vlen_i = 0; vlen_i < minlen; ++vlen_i) {
         nest_next->index[0] = vlen_i;
         last_status = nccmp_cmp_var_user_type_nest_select(state, ncid1, ncid2,
@@ -2360,23 +2374,23 @@ int nccmp_cmp_var_user_type_nest_vlen_start(nccmp_state_t* state, int ncid1, int
         if (!state->opts.warn[NCCMP_W_ALL]) {
             last_status = EXIT_DIFFER;
         }
-        nccmp_get_index_str_size_t(state->vars1[varid1].ndims, start, item, idx_str, state->opts.fortran);
-
         diff_count_status = nccmp_inc_diff_count(state, varid1);
         if (COUNT_OVER == diff_count_status) {
             goto recover;
         }
-        nest_str[0] = 0;
-        nccmp_build_nest_str(nest, state->opts.fortran, nest_str);
-        PRINT_DIFF(state->opts.debug, DIFF_MSG_FIELD_VLEN,
-                state->vars1[varid1].name, idx_str, nest_str, vlen1->len, vlen2->len);
-
+        if (!state->opts.quiet) {
+            nccmp_get_index_str_size_t(state->vars1[varid1].ndims, start, item, idx_str, state->opts.fortran);
+            nest_str[0] = 0;
+            nccmp_build_nest_str(nest, state->opts.fortran, nest_str);
+            PRINT_DIFF(state->opts.debug, DIFF_MSG_FIELD_VLEN,
+                       state->vars1[varid1].name, idx_str, nest_str, vlen1->len, vlen2->len);
+        }
         if ( (COUNT_EQUAL == diff_count_status) || !state->opts.force) {
             goto recover;
         }
     }
 
-    minlen = nccmp_min(vlen1->len, vlen2->len);
+    minlen = nccmp_min_size_t(vlen1->len, vlen2->len);
 
     for(vlen_i = 0; vlen_i < minlen; ++vlen_i) {
         nest_next->index[0] = vlen_i;
@@ -2521,16 +2535,16 @@ int nccmp_cmp_var_user_type_opaque(nccmp_state_t* state, int ncid1, int ncid2,
             } else {
                 last_status = EXIT_SUCCESS;
             }
-
-            nccmp_get_index_str_size_t(v1->ndims, start, (offset-base_size)/base_size, idx_str, state->opts.fortran);
-
             diff_count_status = nccmp_inc_diff_count(state, varid1);
             if (COUNT_OVER == diff_count_status) {
                 goto recover;
             }
-            nccmp_bytes_to_hex_str(items1 + offset - base_size, base_size, str1);
-            nccmp_bytes_to_hex_str(items2 + offset - base_size, base_size, str2);
-            PRINT_DIFF(state->opts.debug, DIFF_MSG, v1->name, idx_str, str1, str2);
+            if (!state->opts.quiet) {
+                nccmp_get_index_str_size_t(v1->ndims, start, (offset-base_size)/base_size, idx_str, state->opts.fortran);
+                nccmp_bytes_to_hex_str(items1 + offset - base_size, base_size, str1);
+                nccmp_bytes_to_hex_str(items2 + offset - base_size, base_size, str2);
+                PRINT_DIFF(state->opts.debug, DIFF_MSG, v1->name, idx_str, str1, str2);
+            }
             if ( (COUNT_EQUAL == diff_count_status) || !state->opts.force) {
                 goto recover;
             }
@@ -2578,17 +2592,16 @@ int nccmp_cmp_var_user_type_vlen_atomic_string(nccmp_state_t* state, int ncid1, 
                 if (!state->opts.warn[NCCMP_W_ALL]) {
                     last_status = EXIT_DIFFER;
                 }
-                nccmp_get_index_str_size_t(v1->ndims, start, i, idx_str, state->opts.fortran);
-
                 diff_count_status = nccmp_inc_diff_count(state, varid1);
                 if (COUNT_OVER == diff_count_status) {
                     should_exit = 1;
                     goto recover;
                 }
-
-                PRINT_DIFF(state->opts.debug, "DIFFER : VARIABLE : %s : POSITION : [%s] : VARIABLE LENGTH : %zu <> %zu\n",
-                      v1->name, idx_str, items1[i].len, items2[i].len);
-
+                if (!state->opts.quiet) {
+                    nccmp_get_index_str_size_t(v1->ndims, start, i, idx_str, state->opts.fortran);
+                    PRINT_DIFF(state->opts.debug, "DIFFER : VARIABLE : %s : POSITION : [%s] : VARIABLE LENGTH : %zu <> %zu\n",
+                               v1->name, idx_str, items1[i].len, items2[i].len);
+                }
                 if ( (COUNT_EQUAL == diff_count_status) || !state->opts.force) {
                     should_exit = 1;
                     goto recover;
@@ -2597,7 +2610,7 @@ int nccmp_cmp_var_user_type_vlen_atomic_string(nccmp_state_t* state, int ncid1, 
 
             s1 = (char**) items1[i].p;
             s2 = (char**) items2[i].p;
-            minlen = nccmp_min(items1[i].len, items2[i].len);
+            minlen = nccmp_min_size_t(items1[i].len, items2[i].len);
             for(j = 0; j < minlen; ++j) {
                 if ( ( s1[j] && !s2[j]) ||
                      (!s1[j] &&  s2[j]) ||
@@ -2606,23 +2619,20 @@ int nccmp_cmp_var_user_type_vlen_atomic_string(nccmp_state_t* state, int ncid1, 
                     if (!state->opts.warn[NCCMP_W_ALL]) {
                         last_status = EXIT_DIFFER;
                     }
-
-                    nccmp_get_index_str_size_t(v1->ndims, start, i, idx_str, state->opts.fortran);
-
                     diff_count_status = nccmp_inc_diff_count(state, varid1);
                     if (COUNT_OVER == diff_count_status) {
                         should_exit = 1;
                         goto recover;
                     }
-
-                    sprintf(j_str, "%d", state->opts.fortran ? j + 1 : j);
-
-                    PRINT_DIFF(state->opts.debug, "DIFFER : VARIABLE : %s : POSITION : [%s,%s] : VALUES : %s <> %s\n",
-                          v1->name,
-                          state->opts.fortran ? j_str : idx_str,
-                          state->opts.fortran ? idx_str : j_str,
-                          s1[j], s2[j]);
-
+                    if (!state->opts.quiet) {
+                        nccmp_get_index_str_size_t(v1->ndims, start, i, idx_str, state->opts.fortran);
+                        sprintf(j_str, "%d", state->opts.fortran ? j + 1 : j);
+                        PRINT_DIFF(state->opts.debug, "DIFFER : VARIABLE : %s : POSITION : [%s,%s] : VALUES : %s <> %s\n",
+                                   v1->name,
+                                   state->opts.fortran ? j_str : idx_str,
+                                   state->opts.fortran ? idx_str : j_str,
+                                   s1[j], s2[j]);
+                    }
                     if ( (COUNT_EQUAL == diff_count_status) || !state->opts.force ) {
                         should_exit = 1;
                         goto recover;
@@ -2687,44 +2697,44 @@ int nccmp_cmp_var_user_type_vlen_atomic(nccmp_state_t* state, int ncid1, int nci
                 if (!state->opts.warn[NCCMP_W_ALL]) {                          \
                     last_status = EXIT_DIFFER;                                 \
                 }                                                              \
-                nccmp_get_index_str_size_t(v1->ndims, start, i, idx_str, state->opts.fortran);     \
-                                                                               \
                 diff_count_status = nccmp_inc_diff_count(state, varid1);       \
                 if (COUNT_OVER == diff_count_status) {                         \
                     goto recover;                                              \
                 }                                                              \
-                PRINT_DIFF(state->opts.debug, "DIFFER : VARIABLE : %s : POSITION : [%s] : VARIABLE LENGTH : %zu <> %zu\n",       \
-                      v1->name, idx_str, items1[i].len, items2[i].len);        \
-                                                                               \
-                if ( (COUNT_EQUAL == diff_count_status) || !state->opts.force) {         \
+                if (!state->opts.quiet) {                                      \
+                    nccmp_get_index_str_size_t(v1->ndims, start, i, idx_str, state->opts.fortran);                              \
+                    PRINT_DIFF(state->opts.debug, "DIFFER : VARIABLE : %s : POSITION : [%s] : VARIABLE LENGTH : %zu <> %zu\n",  \
+                               v1->name, idx_str, items1[i].len, items2[i].len);                                                \
+                }                                                                                                               \
+                if ( (COUNT_EQUAL == diff_count_status) || !state->opts.force) {                                                \
                     goto recover;                                              \
                 }                                                              \
             }                                                                  \
                                                                                \
             list1.p_##NAME1 = (TYPE1*) items1[i].p;                            \
             list2.p_##NAME2 = (TYPE2*) items2[i].p;                            \
-            minlen = nccmp_min(items1[i].len, items2[i].len);                  \
+            minlen = nccmp_min_size_t(items1[i].len, items2[i].len);           \
             for(j = 0; j < minlen; ++j) {                                      \
                 if ( *(list1.p_##NAME1 + j) != *(list2.p_##NAME2 + j)) {       \
                     if (!state->opts.warn[NCCMP_W_ALL]) {                      \
                         last_status = EXIT_DIFFER;                             \
                     }                                                          \
-                    nccmp_get_index_str_size_t(v1->ndims, start, i, idx_str, state->opts.fortran); \
-                                                                               \
                     diff_count_status = nccmp_inc_diff_count(state, varid1);   \
                     if (COUNT_OVER == diff_count_status) {                     \
                         goto recover;                                          \
                     }                                                          \
-                    nccmp_##NAME1##_to_str(*(list1.p_##NAME1 + j), str1, state->opts.precision);   \
-                    nccmp_##NAME2##_to_str(*(list2.p_##NAME2 + j), str2, state->opts.precision);   \
-                    sprintf(j_str, "%d", state->opts.fortran ? j + 1 : j);     \
-                    PRINT_DIFF(state->opts.debug, "DIFFER : VARIABLE : %s : POSITION : [%s,%s] : VALUES : %s <> %s\n", \
-                            v1->name,                                          \
-                            state->opts.fortran ? j_str : idx_str,             \
-                            state->opts.fortran ? idx_str : j_str,             \
-                            str1, str2);                                       \
-                                                                               \
-                    if ( (COUNT_EQUAL == diff_count_status) || !state->opts.force) {     \
+                    if (!state->opts.quiet) {                                                                               \
+                        nccmp_get_index_str_size_t(v1->ndims, start, i, idx_str, state->opts.fortran);                      \
+                        nccmp_##NAME1##_to_str(*(list1.p_##NAME1 + j), str1, state->opts.precision);                        \
+                        nccmp_##NAME2##_to_str(*(list2.p_##NAME2 + j), str2, state->opts.precision);                        \
+                        sprintf(j_str, "%d", state->opts.fortran ? j + 1 : j);                                              \
+                        PRINT_DIFF(state->opts.debug, "DIFFER : VARIABLE : %s : POSITION : [%s,%s] : VALUES : %s <> %s\n",  \
+                                v1->name,                                                                                   \
+                                state->opts.fortran ? j_str : idx_str,                                                      \
+                                state->opts.fortran ? idx_str : j_str,                                                      \
+                                str1, str2);                                                                                \
+                    }                                                                                                       \
+                    if ( (COUNT_EQUAL == diff_count_status) || !state->opts.force) {                                        \
                         goto recover;                                          \
                     }                                                          \
                 }                                                              \
@@ -2843,24 +2853,23 @@ int nccmp_cmp_var_user_type_vlen_enum(nccmp_state_t* state, int ncid1, int ncid2
                 if (!state->opts.warn[NCCMP_W_ALL]) {                          \
                     last_status = EXIT_DIFFER;                                 \
                 }                                                              \
-                nccmp_get_index_str_size_t(v1->ndims, start, i, idx_str, state->opts.fortran);     \
-                                                                               \
                 diff_count_status = nccmp_inc_diff_count(state, varid1);       \
                 if (COUNT_OVER == diff_count_status) {                         \
                     goto recover;                                              \
                 }                                                              \
-                                                                               \
-                PRINT_DIFF(state->opts.debug, "DIFFER : VARIABLE : %s : POSITION : [%s] : VARIABLE LENGTH : %zu <> %zu\n",       \
-                      v1->name, idx_str, items1[i].len, items2[i].len);        \
-                                                                               \
-                if ( (COUNT_EQUAL == diff_count_status) || !state->opts.force) {         \
+                if (!state->opts.quiet) {                                                                                           \
+                    nccmp_get_index_str_size_t(v1->ndims, start, i, idx_str, state->opts.fortran);                                  \
+                    PRINT_DIFF(state->opts.debug, "DIFFER : VARIABLE : %s : POSITION : [%s] : VARIABLE LENGTH : %zu <> %zu\n",      \
+                               v1->name, idx_str, items1[i].len, items2[i].len);                                                    \
+                }                                                                                                                   \
+                if ( (COUNT_EQUAL == diff_count_status) || !state->opts.force) {                                                    \
                     goto recover;                                              \
                 }                                                              \
             }                                                                  \
                                                                                \
             list1.p_##NAME1 = (TYPE1*) items1[i].p;                            \
             list2.p_##NAME2 = (TYPE2*) items2[i].p;                            \
-            minlen = nccmp_min(items1[i].len, items2[i].len);                  \
+            minlen = nccmp_min_size_t(items1[i].len, items2[i].len);           \
             for(j = 0; j < minlen; ++j) {                                      \
                 status = nc_inq_enum_ident(ncid1, vlen_base_type1, (long long) list1.p_##NAME1[j], str1);    \
                 HANDLE_NC_ERROR(status);                                       \
@@ -2870,20 +2879,20 @@ int nccmp_cmp_var_user_type_vlen_enum(nccmp_state_t* state, int ncid1, int ncid2
                     if (!state->opts.warn[NCCMP_W_ALL]) {                      \
                         last_status = EXIT_DIFFER;                             \
                     }                                                          \
-                    nccmp_get_index_str_size_t(v1->ndims, start, i, idx_str, state->opts.fortran); \
-                                                                               \
                     diff_count_status = nccmp_inc_diff_count(state, varid1);   \
                     if (COUNT_OVER == diff_count_status) {                     \
                         goto recover;                                          \
                     }                                                          \
-                    sprintf(j_str, "%d", state->opts.fortran ? j + 1 : j);     \
-                    PRINT_DIFF(state->opts.debug, "DIFFER : VARIABLE : %s : POSITION : [%s,%s] : VALUES : %s <> %s\n", \
-                            v1->name,                                          \
-                            state->opts.fortran ? j_str : idx_str,             \
-                            state->opts.fortran ? idx_str : j_str,             \
-                            str1, str2);                                       \
-                                                                               \
-                    if ( (COUNT_EQUAL == diff_count_status) || !state->opts.force) {     \
+                    if (!state->opts.quiet) {                                  \
+                        nccmp_get_index_str_size_t(v1->ndims, start, i, idx_str, state->opts.fortran);                      \
+                        sprintf(j_str, "%d", state->opts.fortran ? j + 1 : j);                                              \
+                        PRINT_DIFF(state->opts.debug, "DIFFER : VARIABLE : %s : POSITION : [%s,%s] : VALUES : %s <> %s\n",  \
+                                   v1->name,                                                                                \
+                                   state->opts.fortran ? j_str : idx_str,                                                   \
+                                   state->opts.fortran ? idx_str : j_str,                                                   \
+                                   str1, str2);                                                                             \
+                    }                                                                                                       \
+                    if ( (COUNT_EQUAL == diff_count_status) || !state->opts.force) {                                        \
                         goto recover;                                          \
                     }                                                          \
                 }                                                              \
@@ -2986,21 +2995,20 @@ int nccmp_cmp_var_user_type_vlen_opaque(nccmp_state_t* state, int ncid1, int nci
                 if (!state->opts.warn[NCCMP_W_ALL]) {
                     last_status = EXIT_DIFFER;
                 }
-                nccmp_get_index_str_size_t(v1->ndims, start, vlen_i, idx_str, state->opts.fortran);
-
                 diff_count_status = nccmp_inc_diff_count(state, varid1);
                 if (COUNT_OVER == diff_count_status) {
                     goto recover;
                 }
-
-                PRINT_DIFF(state->opts.debug, "DIFFER : VARIABLE : %s : POSITION : [%s] : VARIABLE LENGTH : %zu <> %zu\n",       \
-                      v1->name, idx_str, vlens1[vlen_i].len, vlens2[vlen_i].len);
-
+                if (!state->opts.quiet) {
+                    nccmp_get_index_str_size_t(v1->ndims, start, vlen_i, idx_str, state->opts.fortran);
+                    PRINT_DIFF(state->opts.debug, "DIFFER : VARIABLE : %s : POSITION : [%s] : VARIABLE LENGTH : %zu <> %zu\n",
+                               v1->name, idx_str, vlens1[vlen_i].len, vlens2[vlen_i].len);
+                }
                 if ( (COUNT_EQUAL == diff_count_status) || !state->opts.force) {
                     goto recover;
                 }
             }
-            num_opaq_min = nccmp_min(vlens1[vlen_i].len, vlens2[vlen_i].len);
+            num_opaq_min = nccmp_min_size_t(vlens1[vlen_i].len, vlens2[vlen_i].len);
             for(opaq_i = 0; opaq_i < num_opaq_min; ++opaq_i) {
                 opaq1 = vlens1[vlen_i].p;
                 opaq2 = vlens2[vlen_i].p;
@@ -3011,27 +3019,27 @@ int nccmp_cmp_var_user_type_vlen_opaque(nccmp_state_t* state, int ncid1, int nci
                         if (!state->opts.warn[NCCMP_W_ALL]) {
                             last_status = EXIT_DIFFER;
                         }
-                        // Example: Z Y X
-                        nccmp_get_index_str_size_t(v1->ndims, start, vlen_i, idx_str, state->opts.fortran);
-                        if (state->opts.fortran) {
-                            sprintf(vlen_idx_str, "%d,", opaq_i);
-                            strcat(vlen_idx_str, idx_str);
-                        } else {
-                            sprintf(vlen_idx_str, ",%d", opaq_i);
-                            strcat(idx_str, vlen_idx_str);
-                        }
-
                         diff_count_status = nccmp_inc_diff_count(state, varid1);
                         if (COUNT_OVER == diff_count_status) {
                             goto recover;
                         }
-                        nccmp_bytes_to_hex_str(bytes1, num_bytes, str1);
-                        nccmp_bytes_to_hex_str(bytes2, num_bytes, str2);
-                        PRINT_DIFF(state->opts.debug, DIFF_MSG, v1->name, idx_str, str1, str2);
+                        if (!state->opts.quiet) {
+                            // Example: Z Y X
+                            nccmp_get_index_str_size_t(v1->ndims, start, vlen_i, idx_str, state->opts.fortran);
+                            if (state->opts.fortran) {
+                                sprintf(vlen_idx_str, "%d,", opaq_i);
+                                strcat(vlen_idx_str, idx_str);
+                            } else {
+                                sprintf(vlen_idx_str, ",%d", opaq_i);
+                                strcat(idx_str, vlen_idx_str);
+                            }
+                            nccmp_bytes_to_hex_str(bytes1, num_bytes, str1);
+                            nccmp_bytes_to_hex_str(bytes2, num_bytes, str2);
+                            PRINT_DIFF(state->opts.debug, DIFF_MSG, v1->name, idx_str, str1, str2);
+                        }
                         if ( (COUNT_EQUAL == diff_count_status) || !state->opts.force) {
                             goto recover;
                         }
-
                         // Stop comparing rest of opaque blob if one byte differs.
                         break;
                     }
@@ -3200,7 +3208,7 @@ int nccmp_cmp_var_atomic_type(nccmp_state_t* state,  int ncid1, int ncid2,
     nccmp_nc_type_t item1, item2;
     nccmp_nc_type_ptr_t items1, items2;
     nc_type type1, type2;
-    
+
     char print_hex = nccmp_is_precision_hex(& state->opts);
     char do_missing = 0;
     count_limit_type diff_count_status;
@@ -3261,24 +3269,26 @@ int nccmp_cmp_var_atomic_type(nccmp_state_t* state,  int ncid1, int ncid2,
             } else {                                                           \
               last_status = EXIT_SUCCESS;                                      \
             }                                                                  \
-                                                                               \
-            nccmp_get_index_str_size_t(v1->ndims, start, offset-1, idx_str, state->opts.fortran);  \
-                                                                               \
+            item1.m_##NAME1 = items1.p_##NAME1[offset-1];                      \
+            item2.m_##NAME2 = items2.p_##NAME2[offset-1];                      \
+            if (state->opts.statistics) {                                      \
+                nccmp_update_stats(state, varid1, (double)item1.m_##NAME1 - (double)item2.m_##NAME2); \
+            }                                                                  \
             diff_count_status = nccmp_inc_diff_count(state, varid1);           \
             if (COUNT_OVER == diff_count_status) {                             \
                 goto recover_cmp_##NAME1##_##NAME2;                            \
             }                                                                  \
-            item1.m_##NAME1 = items1.p_##NAME1[offset-1];                      \
-            item2.m_##NAME2 = items2.p_##NAME2[offset-1];                      \
-            if (print_hex) {                                                   \
-                nccmp_##NAME1##_to_hex(item1.m_##NAME1, str1);                 \
-                nccmp_##NAME2##_to_hex(item2.m_##NAME2, str2);                 \
-            } else {                                                           \
-                nccmp_##NAME1##_to_str(item1.m_##NAME1, str1, state->opts.precision);    \
-                nccmp_##NAME2##_to_str(item2.m_##NAME2, str2, state->opts.precision);    \
+            if (!state->opts.quiet) {                                          \
+                nccmp_get_index_str_size_t(v1->ndims, start, offset-1, idx_str, state->opts.fortran);   \
+                if (print_hex) {                                                                        \
+                    nccmp_##NAME1##_to_hex(item1.m_##NAME1, str1);                                      \
+                    nccmp_##NAME2##_to_hex(item2.m_##NAME2, str2);                                      \
+                } else {                                                                                \
+                    nccmp_##NAME1##_to_str(item1.m_##NAME1, str1, state->opts.precision);               \
+                    nccmp_##NAME2##_to_str(item2.m_##NAME2, str2, state->opts.precision);               \
+                }                                                                                       \
+                PRINT_DIFF(state->opts.debug, DIFF_MSG, v1->name, idx_str, str1, str2);                 \
             }                                                                  \
-                                                                               \
-            PRINT_DIFF(state->opts.debug, DIFF_MSG, v1->name, idx_str, str1, str2);      \
             /* Print only up to count of desired diffs. */                     \
             if ( (COUNT_EQUAL == diff_count_status) || !state->opts.force) {   \
                 goto recover_cmp_##NAME1##_##NAME2;                            \
@@ -3316,44 +3326,48 @@ int nccmp_cmp_var_atomic_type(nccmp_state_t* state,  int ncid1, int ncid2,
                         (double)absdelta*100./(fabs((double)items1.p_##NAME1[i]) > fabs((double)items2.p_##NAME2[i]) ? \
                                                    fabs((double)items1.p_##NAME1[i]) :   \
                                                    fabs((double)items2.p_##NAME2[i])) > state->opts.tolerance)         \
-                {                                                              \
-                      if (!state->opts.warn[NCCMP_W_ALL]) {                    \
-                          last_status = EXIT_DIFFER;                           \
-                      } else {                                                 \
-                          last_status = EXIT_SUCCESS;                          \
-                      }                                                        \
-                      if ((v1->ndims == 1)  && (v1->has_rec_dim)) {            \
-                          nccmp_get_index_str_size_t(v1->ndims, start, rec, idx_str, state->opts.fortran);   \
-                      } else {                                                 \
-                          nccmp_get_index_str_size_t(v1->ndims, start, i, idx_str, state->opts.fortran);     \
-                      }                                                        \
-                      diff_count_status = nccmp_inc_diff_count(state, varid1); \
-                      if (COUNT_OVER == diff_count_status) {                   \
-                          goto recover_tol_##NAME1##_##NAME2;                  \
-                      }                                                        \
-                      item1.m_##NAME1 = items1.p_##NAME1[i];                   \
-                      item2.m_##NAME2 = items2.p_##NAME2[i];                   \
-                    if (print_hex) {                                           \
-                        nccmp_##NAME1##_to_hex(item1.m_##NAME1, str1);         \
-                        nccmp_##NAME2##_to_hex(item2.m_##NAME2, str2);         \
-                    } else {                                                   \
-                        nccmp_##NAME1##_to_str(item1.m_##NAME1, str1, state->opts.precision);      \
-                        nccmp_##NAME2##_to_str(item2.m_##NAME2, str2, state->opts.precision);      \
-                    }                                                          \
-                    pct = (double)absdelta*100./(fabs((double)items1.p_##NAME1[i]) > fabs((double)items2.p_##NAME2[i]) ? fabs((double)items1.p_##NAME1[i]) : fabs((double)items2.p_##NAME2[i]));       \
-                    PRINT_DIFF(state->opts.debug, DIFF_MSG_PCT, v1->name, idx_str, str1, str2, pct);         \
-                                                                               \
-                    if ( (COUNT_EQUAL ==  diff_count_status) || !state->opts.force ) {   \
-                        goto recover_tol_##NAME1##_##NAME2;                    \
-                    }                                                          \
-                } /* diff */                                                   \
-            } /* for nitems */                                                 \
+                {                                                                   \
+                    if (!state->opts.warn[NCCMP_W_ALL]) {                           \
+                        last_status = EXIT_DIFFER;                                  \
+                    } else {                                                        \
+                        last_status = EXIT_SUCCESS;                                 \
+                    }                                                               \
+                    item1.m_##NAME1 = items1.p_##NAME1[i];                          \
+                    item2.m_##NAME2 = items2.p_##NAME2[i];                          \
+                    if (state->opts.statistics) {                                   \
+                        nccmp_update_stats(state, varid1, (double)item1.m_##NAME1 - (double)item2.m_##NAME2); \
+                    }                                                               \
+                    diff_count_status = nccmp_inc_diff_count(state, varid1);        \
+                    if (COUNT_OVER == diff_count_status) {                          \
+                        goto recover_tol_##NAME1##_##NAME2;                         \
+                    }                                                               \
+                    if (!state->opts.quiet) {                                       \
+                        if ((v1->ndims == 1)  && (v1->has_rec_dim)) {               \
+                            nccmp_get_index_str_size_t(v1->ndims, start, rec, idx_str, state->opts.fortran); \
+                        } else {                                                    \
+                            nccmp_get_index_str_size_t(v1->ndims, start, i, idx_str, state->opts.fortran);   \
+                        }                                                           \
+                        if (print_hex) {                                            \
+                            nccmp_##NAME1##_to_hex(item1.m_##NAME1, str1);          \
+                            nccmp_##NAME2##_to_hex(item2.m_##NAME2, str2);          \
+                        } else {                                                    \
+                            nccmp_##NAME1##_to_str(item1.m_##NAME1, str1, state->opts.precision);       \
+                            nccmp_##NAME2##_to_str(item2.m_##NAME2, str2, state->opts.precision);       \
+                        }                                                                               \
+                        pct = (double)absdelta*100./(fabs((double)items1.p_##NAME1[i]) > fabs((double)items2.p_##NAME2[i]) ? fabs((double)items1.p_##NAME1[i]) : fabs((double)items2.p_##NAME2[i]));       \
+                        PRINT_DIFF(state->opts.debug, DIFF_MSG_PCT, v1->name, idx_str, str1, str2, pct);\
+                    }                                                                                   \
+                    if ( (COUNT_EQUAL ==  diff_count_status) || !state->opts.force ) {                  \
+                        goto recover_tol_##NAME1##_##NAME2;                         \
+                    }                                                               \
+                } /* diff */                                                        \
+            } /* for nitems */                                                      \
         loop_done = nccmp_odometer(start, limits, (int) (rec >= 0), v1->ndims-2) == 0;   \
-    } /* while not done */                                                     \
-                                                                               \
-    recover_tol_##NAME1##_##NAME2:                                             \
-      free(items1.p_##NAME1);                                                  \
-      free(items2.p_##NAME2);                                                  \
+    } /* while not done */                                                          \
+                                                                                    \
+    recover_tol_##NAME1##_##NAME2:                                                  \
+      free(items1.p_##NAME1);                                                       \
+      free(items2.p_##NAME2);                                                       \
 } /* end CMP_VAR_TOL */
 
 #define CMP(...) if (state->opts.tolerance) { CMP_VAR_TOL(__VA_ARGS__); } else { CMP_VAR(__VA_ARGS__); }
@@ -3475,8 +3489,9 @@ int nccmp_cmp_var(nccmp_state_t* state, const char* name, int ncid1,
     }
 
     if (v1->len != v2->len) {
-        PRINT_DIFF(state->opts.debug, "DIFFER : VARIABLE : %s : SIZE : %d <> %d\n", name, (int)v1->len, (int)v2->len);
-
+        if (!state->opts.quiet) {
+            PRINT_DIFF(state->opts.debug, "DIFFER : VARIABLE : %s : SIZE : %d <> %d\n", name, (int)v1->len, (int)v2->len);
+        }
         if (!state->opts.warn[NCCMP_W_ALL]) {
             last_status = EXIT_DIFFER;
         }
@@ -3559,7 +3574,9 @@ int nccmp_data(nccmp_state_t* state, nccmp_strlist_t* var_names,
         goto recover;
     }
 
-    var_diff_counts_init(state);
+    nccmp_init_var_diff_counts(state);
+    nccmp_init_group_stats(state->stats, group1->id, state->nvars1);
+    state->current_var_stats = nccmp_find_group_var_stats_array(state->stats, group1->id);
 
     nccmp_destroy_user_types(state->types1);
     state->types1 = nccmp_load_user_types(group1->id, state->opts.debug);
@@ -3611,13 +3628,13 @@ int nccmp_data_start_pthreads(nccmp_state_t* state, nccmp_strlist_t* var_names,
             LOG_DEBUG("Creating thread %d\n", thread);
         }
 
-        group1 = nccmp_find_group(& state->thread_groups1[thread], group_name1);
+        group1 = nccmp_find_group_by_name(& state->thread_groups1[thread], group_name1);
         if (!group1) {
             LOG_ERROR("Failed to find group %s\n", group_name1);
             last_status = EXIT_FATAL;
             goto recover;
         }
-        group2 = nccmp_find_group(& state->thread_groups2[thread], group_name2);
+        group2 = nccmp_find_group_by_name(& state->thread_groups2[thread], group_name2);
         if (!group2) {
             LOG_ERROR("Failed to find group %s\n", group_name2);
             last_status = EXIT_FATAL;
@@ -3669,8 +3686,8 @@ int nccmp_data_start_threads(nccmp_state_t* state, nccmp_strlist_t* var_names,
         return nccmp_data_start_pthreads(state, var_names, group_name1, group_name2);
         #endif
     } else {
-        group1 = nccmp_find_group(& state->thread_groups1[0], group_name1);
-        group2 = nccmp_find_group(& state->thread_groups2[0], group_name2);
+        group1 = nccmp_find_group_by_name(& state->thread_groups1[0], group_name1);
+        group2 = nccmp_find_group_by_name(& state->thread_groups2[0], group_name2);
 
         if (group1 && group2) {
             return nccmp_cmp_vars(state, var_names, group1->id, group2->id, 0);

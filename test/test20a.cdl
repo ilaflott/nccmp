@@ -1,0 +1,39 @@
+netcdf test20a {
+
+dimensions:
+    dim1 = 2, dim2 = 3, rec = unlimited ;
+
+variables:
+    byte   b(dim1,   dim2);
+    double d(dim1,   dim2);
+    float  f(dim1,   dim2);
+    int    i(dim1,   dim2);
+    int64  ll(dim1,  dim2);
+    short  s(dim1,   dim2);
+    ubyte  ub(dim1,  dim2);
+    uint   ui(dim1,  dim2);
+    uint64 ull(dim1, dim2);
+    ushort us(dim1,  dim2);
+    double dr(rec, dim1, dim2);
+    float  fr(rec, dim1, dim2);
+    int    ir(rec, dim1, dim2);
+    short  sr(rec, dim1, dim2);
+    
+    i:units = "none";
+    
+data:
+   b   = 1, 2, 3, 4, 5, 6 ;
+   d   = 1, 2, 3, 4, 5, 6 ;
+   f   = 1, 2, 3, 4, 5, 6 ;
+   i   = 1, 2, 3, 4, 5, 6 ;
+   ll  = 1, 2, 3, 4, 5, 6 ;
+   s   = 1, 2, 3, 4, 5, 6 ;
+   ub  = 1, 2, 3, 4, 5, 6 ;
+   ui  = 1, 2, 3, 4, 5, 6 ;
+   ull = 1, 2, 3, 4, 5, 6 ;
+   us  = 1, 2, 3, 4, 5, 6 ;
+   dr  = 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 ;
+   fr  = 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 ;
+   ir  = 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 ;
+   sr  = 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 ;
+}

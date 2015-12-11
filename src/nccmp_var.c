@@ -239,8 +239,10 @@ int validate_var_names(nccmp_opt_t* opts, nccmp_strlist_t* names, nccmp_strlist_
 
         if (idx1 < 0) {
             if (! opts->metadata) { /* This gets reported in cmpmeta. */
-                PRINT_DIFF(opts->debug, "DIFFER : Failed to find variable %s in file \"%s\".\n",
-                        names->items[i], opts->file1);
+                if (!opts->quiet) {
+                    PRINT_DIFF(opts->debug, "DIFFER : Failed to find variable %s in file \"%s\".\n",
+                               names->items[i], opts->file1);
+                }
             }
             if (!opts->warn[NCCMP_W_ALL]) {
                 status = EXIT_DIFFER;
@@ -254,8 +256,10 @@ int validate_var_names(nccmp_opt_t* opts, nccmp_strlist_t* names, nccmp_strlist_
 
         if (idx2 < 0) {
             if (! opts->metadata) { /* This gets reported in cmpmeta. */
-                PRINT_DIFF(opts->debug, "DIFFER : Failed to find variable %s in file \"%s\".\n",
-                        names->items[i], opts->file2);
+                if (!opts->quiet) {
+                    PRINT_DIFF(opts->debug, "DIFFER : Failed to find variable %s in file \"%s\".\n",
+                               names->items[i], opts->file2);
+                }
             }
             if (!opts->warn[NCCMP_W_ALL]) {
                 status = EXIT_DIFFER;
@@ -268,10 +272,11 @@ int validate_var_names(nccmp_opt_t* opts, nccmp_strlist_t* names, nccmp_strlist_
         }
 
         if (vars1[idx1].len != vars2[idx2].len) {
-            PRINT_DIFF(opts->debug, "DIFFER : VARIABLE : %s : SIZE : %d <> %d\n",
-                    names->items[i], (int)vars1[idx1].len,
-                    (int)vars2[idx2].len);
-
+            if (!opts->quiet) {
+                PRINT_DIFF(opts->debug, "DIFFER : VARIABLE : %s : SIZE : %d <> %d\n",
+                           names->items[i], (int)vars1[idx1].len,
+                           (int)vars2[idx2].len);
+            }
             if (!opts->warn[NCCMP_W_ALL]) {
                 status = EXIT_DIFFER;
             }

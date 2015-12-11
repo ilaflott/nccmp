@@ -19,15 +19,19 @@ void nccmp_destroy_int_pairs(nccmp_int_pairs_t *pairs)
     XFREE(pairs);
 }
 
-int nccmp_max(int a, int b)
-{
-    return a > b ? a : b;
-}
+#define NCCMP_MAX(TYPE) \
+TYPE nccmp_max_##TYPE(TYPE a, TYPE b) { return a > b ? a : b; }
+NCCMP_MAX(double)
+NCCMP_MAX(int)
+NCCMP_MAX(size_t)
+#undef NCCMP_MAX
 
-int nccmp_min(int a, int b)
-{
-    return a > b ? b : a;
-}
+#define NCCMP_MIN(TYPE) \
+TYPE nccmp_min_##TYPE(TYPE a, TYPE b) { return a > b ? b : a; }
+NCCMP_MIN(double)
+NCCMP_MIN(int)
+NCCMP_MIN(size_t)
+#undef NCCMP_MIN
 
 #define PRODUCT(TYPE) \
 TYPE nccmp_product_##TYPE(TYPE *items, TYPE first, TYPE last) \

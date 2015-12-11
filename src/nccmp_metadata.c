@@ -28,8 +28,9 @@ int nccmp_cmp_att(int ncid1, int ncid2, int varid1, int varid2,
     status = EXIT_SUCCESS;
     ncstatus = nc_inq_att(ncid1, varid1, name, &type1, &lenp1);
     if (ncstatus != NC_NOERR) {
-        PRINT_DIFF(opts->debug, "DIFFER : VARIABLE \"%s\" IS MISSING ATTRIBUTE WITH NAME \"%s\" IN FILE \"%s\"\n", varname, name, opts->file1);
-
+        if (!opts->quiet) {
+            PRINT_DIFF(opts->debug, "DIFFER : VARIABLE \"%s\" IS MISSING ATTRIBUTE WITH NAME \"%s\" IN FILE \"%s\"\n", varname, name, opts->file1);
+        }
         if (!opts->warn[NCCMP_W_ALL]) {
             status = EXIT_DIFFER;
         }
@@ -37,18 +38,20 @@ int nccmp_cmp_att(int ncid1, int ncid2, int varid1, int varid2,
     }
     ncstatus = nc_inq_att(ncid2, varid2, name, &type2, &lenp2);
     if (ncstatus != NC_NOERR) {
-        PRINT_DIFF(opts->debug, "DIFFER : VARIABLE \"%s\" IS MISSING ATTRIBUTE WITH NAME \"%s\" IN FILE \"%s\"\n", varname, name, opts->file2);
-
+        if (!opts->quiet) {
+            PRINT_DIFF(opts->debug, "DIFFER : VARIABLE \"%s\" IS MISSING ATTRIBUTE WITH NAME \"%s\" IN FILE \"%s\"\n", varname, name, opts->file2);
+        }
         if (!opts->warn[NCCMP_W_ALL]) {
             status = EXIT_DIFFER;
         }
         return status;
     }
     if (type1 != type2) {
-        nccmp_nc_type_name_to_str(type1, typestr1, ncid1, opts->debug);
-        nccmp_nc_type_name_to_str(type2, typestr2, ncid2, opts->debug);
-        PRINT_DIFF(opts->debug, "DIFFER : TYPES : ATTRIBUTE : %s : VARIABLE : %s : %s <> %s\n", name, varname, typestr1, typestr2);
-
+        if (!opts->quiet) {
+            nccmp_nc_type_name_to_str(type1, typestr1, ncid1, opts->debug);
+            nccmp_nc_type_name_to_str(type2, typestr2, ncid2, opts->debug);
+            PRINT_DIFF(opts->debug, "DIFFER : TYPES : ATTRIBUTE : %s : VARIABLE : %s : %s <> %s\n", name, varname, typestr1, typestr2);
+        }
         if (!opts->warn[NCCMP_W_ALL]) {
             status = EXIT_DIFFER;
         }
@@ -56,13 +59,17 @@ int nccmp_cmp_att(int ncid1, int ncid2, int varid1, int varid2,
     }
 
     if (lenp1 != lenp2) {
-        nccmp_pretty_print_att(ncid1, varname, varid1, name, typestr1, MAX_STRLEN);
-        nccmp_pretty_print_att(ncid2, varname, varid2, name, typestr2, MAX_STRLEN);
-        PRINT_DIFF(opts->debug, "DIFFER : LENGTHS : ATTRIBUTE : %s : VARIABLE : %s : %lu <> %lu : VALUES : ", name, varname, (unsigned long)lenp1, (unsigned long)lenp2);
+        if (!opts->quiet) {
+            nccmp_pretty_print_att(ncid1, varname, varid1, name, typestr1, MAX_STRLEN);
+            nccmp_pretty_print_att(ncid2, varname, varid2, name, typestr2, MAX_STRLEN);
+            PRINT_DIFF(opts->debug, "DIFFER : LENGTHS : ATTRIBUTE : %s : VARIABLE : %s : %lu <> %lu : VALUES : ", name, varname, (unsigned long)lenp1, (unsigned long)lenp2);
+        }
         switch(type1) {
         case NC_CHAR:
-            /* Quote strings. */
-            fprintf(stderr, "\"%s\" : \"%s\"\n", typestr1, typestr2);
+            if (!opts->quiet) {
+                /* Quote strings. */
+                fprintf(stderr, "\"%s\" : \"%s\"\n", typestr1, typestr2);
+            }
             if (strcmp(typestr1,typestr2) == 0) {
                 /* Same text, but invisible trailing nulls because lengths differ. */
                 if (opts->warn[NCCMP_W_EOS] || opts->warn[NCCMP_W_ALL]) {
@@ -74,8 +81,10 @@ int nccmp_cmp_att(int ncid1, int ncid2, int varid1, int varid2,
             }
             break;
         default:
-            /* Unquoted. */
-            fprintf(stderr, "%s : %s\n", typestr1, typestr2);
+            if (!opts->quiet) {
+                /* Unquoted. */
+                fprintf(stderr, "%s : %s\n", typestr1, typestr2);
+            }
             if (!opts->warn[NCCMP_W_ALL]) {
                 status = EXIT_DIFFER;
                 return status;
@@ -84,21 +93,22 @@ int nccmp_cmp_att(int ncid1, int ncid2, int varid1, int varid2,
         }
     }
     if (nccmp_cmp_att_val(ncid1, ncid2, varid1, varid2, name, lenp1, lenp2, type1) != EXIT_SUCCESS) {
-        nccmp_pretty_print_att(ncid1, varname, varid1, name, typestr1, MAX_STRLEN);
-        nccmp_pretty_print_att(ncid2, varname, varid2, name, typestr2, MAX_STRLEN);
-        PRINT_DIFF(opts->debug, "DIFFER : VARIABLE : %s : ATTRIBUTE : %s : VALUES : ", varname, name);
+        if (!opts->quiet) {
+            nccmp_pretty_print_att(ncid1, varname, varid1, name, typestr1, MAX_STRLEN);
+            nccmp_pretty_print_att(ncid2, varname, varid2, name, typestr2, MAX_STRLEN);
+            PRINT_DIFF(opts->debug, "DIFFER : VARIABLE : %s : ATTRIBUTE : %s : VALUES : ", varname, name);
 
-        switch(type1) {
-        case NC_CHAR:
-            /* Quote strings. */
-            fprintf(stderr, "\"%s\" <> \"%s\"\n", typestr1, typestr2);
-            break;
-        default:
-            /* Unquoted. */
-            fprintf(stderr, "%s <> %s\n", typestr1, typestr2);
-            break;
+            switch(type1) {
+            case NC_CHAR:
+                /* Quote strings. */
+                fprintf(stderr, "\"%s\" <> \"%s\"\n", typestr1, typestr2);
+                break;
+            default:
+                /* Unquoted. */
+                fprintf(stderr, "%s <> %s\n", typestr1, typestr2);
+                break;
+            }
         }
-
         if (!opts->warn[NCCMP_W_ALL]) {
             status = EXIT_DIFFER;
             return status;
@@ -125,7 +135,7 @@ int nccmp_cmp_att_val(int nc1, int nc2, int varid1, int varid2, const char* name
 
     int status, last_status = EXIT_SUCCESS;
     int i;
-    int minlen = nccmp_min(len1, len2);
+    int minlen = nccmp_min_int(len1, len2);
 
     if (name == NULL) {
         return NC_EINVAL;
@@ -301,9 +311,11 @@ int nccmp_cmp_metadata_dim_count(nccmp_state_t *state)
     }
 
     if (state->ndims1 != state->ndims2) {
-        PRINT_DIFF(state->opts.debug,
-                   "DIFFER : NUMBER OF DIMENSIONS IN FILES : %d <> %d\n",
-                   state->ndims1, state->ndims2);
+        if (!state->opts.quiet) {
+            PRINT_DIFF(state->opts.debug,
+                       "DIFFER : NUMBER OF DIMENSIONS IN FILES : %d <> %d\n",
+                       state->ndims1, state->ndims2);
+        }
         if (!state->opts.warn[NCCMP_W_ALL]) {
             last_status = EXIT_DIFFER;
         }
@@ -337,9 +349,10 @@ int nccmp_cmp_metadata_dim_lens(nccmp_state_t *state, int ncid1, int ncid2)
 
         status = nc_inq_dimid(ncid2, name1, & dimid2);
         if (status != NC_NOERR) {
-            PRINT_DIFF(state->opts.debug, "DIFFER : DIMENSION : %s : DOES NOT EXIST IN \"%s\"\n",
-                    name1, state->opts.file2);
-
+            if (!state->opts.quiet) {
+                PRINT_DIFF(state->opts.debug, "DIFFER : DIMENSION : %s : DOES NOT EXIST IN \"%s\"\n",
+                           name1, state->opts.file2);
+            }
             if (!state->opts.warn[NCCMP_W_ALL]) {
                 last_status = EXIT_DIFFER;
             }
@@ -357,9 +370,10 @@ int nccmp_cmp_metadata_dim_lens(nccmp_state_t *state, int ncid1, int ncid2)
         }
 
         if (len1 != len2) {
-            PRINT_DIFF(state->opts.debug, "DIFFER : LENGTHS : DIMENSION : %s : %lu <> %lu\n", name1,
-                    (unsigned long)len1, (unsigned long)len2);
-
+            if (!state->opts.quiet) {
+                PRINT_DIFF(state->opts.debug, "DIFFER : LENGTHS : DIMENSION : %s : %lu <> %lu\n", name1,
+                           (unsigned long)len1, (unsigned long)len2);
+            }
             if (!state->opts.warn[NCCMP_W_ALL]) {
                 last_status = EXIT_DIFFER;
             }
@@ -395,8 +409,10 @@ int nccmp_cmp_metadata_user_type_enum_values(nccmp_opt_t *opts, int ncid1, int n
         HANDLE_NC_ERROR(status);                                               \
         status2 = nc_inq_enum_ident(ncid2, typeid2, V, name2);                 \
         if (NC_EINVAL == status2) {                                            \
-            PRINT_DIFF(opts->debug, "DIFFER : %s ENUM VALUE %lld NOT FOUND in \"%s\"\n", \
-                    typename, (long long int)V, file2);                        \
+            if (!opts->quiet) {                                                \
+                PRINT_DIFF(opts->debug, "DIFFER : %s ENUM VALUE %lld NOT FOUND in \"%s\"\n", \
+                           typename, (long long int)V, file2);                               \
+            }                                                                  \
             if (!opts->warn[NCCMP_W_ALL]) {                                    \
                 last_status = EXIT_DIFFER;                                     \
             }                                                                  \
@@ -405,10 +421,12 @@ int nccmp_cmp_metadata_user_type_enum_values(nccmp_opt_t *opts, int ncid1, int n
             HANDLE_NC_ERROR(status2);                                          \
         }                                                                      \
         if (strcmp(name1, name2)) {                                            \
-            PRINT_DIFF(opts->debug, "DIFFER : %s ENUM VALUE %lld IDENTIFIERS : \"%s\" <> \"%s\"\n",\
-                    typename, (long long int)V,                                \
-                    left_vs_right ? name1 : name2,                             \
-                    left_vs_right ? name2 : name1);                            \
+            if (!opts->quiet) {                                                \
+                PRINT_DIFF(opts->debug, "DIFFER : %s ENUM VALUE %lld IDENTIFIERS : \"%s\" <> \"%s\"\n",\
+                           typename, (long long int)V,                         \
+                           left_vs_right ? name1 : name2,                      \
+                           left_vs_right ? name2 : name1);                     \
+            }                                                                  \
             if (!opts->warn[NCCMP_W_ALL]) {                                    \
                 last_status = EXIT_DIFFER;                                     \
             }                                                                  \
@@ -475,8 +493,10 @@ int nccmp_cmp_metadata_user_type_enum(nccmp_opt_t *opts, int ncid1, int ncid2,
         status = nc_inq_typeid(ncid1, name, & typeid1);
         if (status) {
             if (NC_EBADTYPE == status) {
-                PRINT_DIFF(opts->debug, "DIFFER : ENUM TYPE %s DOES NOT EXIST IN \"%s\"\n",
-                        name, opts->file1);
+                if (!opts->quiet) {
+                    PRINT_DIFF(opts->debug, "DIFFER : ENUM TYPE %s DOES NOT EXIST IN \"%s\"\n",
+                               name, opts->file1);
+                }
                 if (!opts->warn[NCCMP_W_ALL]) {
                     last_status = EXIT_DIFFER;
                 }
@@ -498,8 +518,10 @@ int nccmp_cmp_metadata_user_type_enum(nccmp_opt_t *opts, int ncid1, int ncid2,
         status = nc_inq_typeid(ncid2, name, & typeid2);
         if (status) {
             if (NC_EBADTYPE == status) {
-                PRINT_DIFF(opts->debug, "DIFFER : ENUM TYPE %s DOES NOT EXIST IN \"%s\"\n",
-                        name, opts->file2);
+                if (!opts->quiet) {
+                    PRINT_DIFF(opts->debug, "DIFFER : ENUM TYPE %s DOES NOT EXIST IN \"%s\"\n",
+                               name, opts->file2);
+                }
                 if (!opts->warn[NCCMP_W_ALL]) {
                     last_status = EXIT_DIFFER;
                 }
@@ -519,10 +541,12 @@ int nccmp_cmp_metadata_user_type_enum(nccmp_opt_t *opts, int ncid1, int ncid2,
         }
 
         if (base_nc_type1 != base_nc_type2) {
-            nccmp_nc_type_name_to_str(base_nc_type1, tmpstr1, ncid1, opts->debug);
-            nccmp_nc_type_name_to_str(base_nc_type2, tmpstr2, ncid2, opts->debug);
-            PRINT_DIFF(opts->debug, "DIFFER : TYPE : %s : ENUM BASETYPE : %s <> %s\n",
-                                    name, tmpstr1, tmpstr2);
+            if (!opts->quiet) {
+                nccmp_nc_type_name_to_str(base_nc_type1, tmpstr1, ncid1, opts->debug);
+                nccmp_nc_type_name_to_str(base_nc_type2, tmpstr2, ncid2, opts->debug);
+                PRINT_DIFF(opts->debug, "DIFFER : TYPE : %s : ENUM BASETYPE : %s <> %s\n",
+                                        name, tmpstr1, tmpstr2);
+            }
             if (!opts->warn[NCCMP_W_ALL]) {
                 last_status = EXIT_DIFFER;
             }
@@ -530,8 +554,10 @@ int nccmp_cmp_metadata_user_type_enum(nccmp_opt_t *opts, int ncid1, int ncid2,
         }
 
         if (base_size1 != base_size2) {
-            PRINT_DIFF(opts->debug, "DIFFER : TYPE : %s : SIZE : %zu <> %zu\n",
-                                    name, base_size1, base_size2);
+            if (!opts->quiet) {
+                PRINT_DIFF(opts->debug, "DIFFER : TYPE : %s : SIZE : %zu <> %zu\n",
+                           name, base_size1, base_size2);
+            }
             if (!opts->warn[NCCMP_W_ALL]) {
                 last_status = EXIT_DIFFER;
             }
@@ -539,8 +565,10 @@ int nccmp_cmp_metadata_user_type_enum(nccmp_opt_t *opts, int ncid1, int ncid2,
         }
 
         if (num_members1 != num_members2) {
-            PRINT_DIFF(opts->debug, "DIFFER : TYPE : %s : NUMBER OF ENUM MEMBERS : %zu <> %zu\n",
-                                    name, num_members1, num_members2);
+            if (!opts->quiet) {
+                PRINT_DIFF(opts->debug, "DIFFER : TYPE : %s : NUMBER OF ENUM MEMBERS : %zu <> %zu\n",
+                           name, num_members1, num_members2);
+            }
             if (!opts->warn[NCCMP_W_ALL]) {
                 last_status = EXIT_DIFFER;
             }
@@ -590,8 +618,10 @@ int nccmp_cmp_metadata_user_type_opaque(nccmp_opt_t *opts, int ncid1, int ncid2,
         status = nc_inq_typeid(ncid1, name, & typeid1);
         if (status) {
             if (NC_EBADTYPE == status) {
-                PRINT_DIFF(opts->debug, "DIFFER : OPAQUE TYPE %s DOES NOT EXIST IN \"%s\"\n",
-                        name, opts->file1);
+                if (!opts->quiet) {
+                    PRINT_DIFF(opts->debug, "DIFFER : OPAQUE TYPE %s DOES NOT EXIST IN \"%s\"\n",
+                               name, opts->file1);
+                }
                 if (!opts->warn[NCCMP_W_ALL]) {
                     last_status = EXIT_DIFFER;
                 }
@@ -611,8 +641,10 @@ int nccmp_cmp_metadata_user_type_opaque(nccmp_opt_t *opts, int ncid1, int ncid2,
         status = nc_inq_typeid(ncid2, name, & typeid2);
         if (status) {
             if (NC_EBADTYPE == status) {
-                PRINT_DIFF(opts->debug, "DIFFER : OPAQUE TYPE %s DOES NOT EXIST IN \"%s\"\n",
-                        name, opts->file2);
+                if (!opts->quiet) {
+                    PRINT_DIFF(opts->debug, "DIFFER : OPAQUE TYPE %s DOES NOT EXIST IN \"%s\"\n",
+                               name, opts->file2);
+                }
                 if (!opts->warn[NCCMP_W_ALL]) {
                     last_status = EXIT_DIFFER;
                 }
@@ -630,8 +662,10 @@ int nccmp_cmp_metadata_user_type_opaque(nccmp_opt_t *opts, int ncid1, int ncid2,
         }
 
         if (base_size1 != base_size2) {
-            PRINT_DIFF(opts->debug, "DIFFER : TYPE : %s : SIZE : %zu <> %zu\n",
-                                    name, base_size1, base_size2);
+            if (!opts->quiet) {
+                PRINT_DIFF(opts->debug, "DIFFER : TYPE : %s : SIZE : %zu <> %zu\n",
+                           name, base_size1, base_size2);
+            }
             if (!opts->warn[NCCMP_W_ALL]) {
                 last_status = EXIT_DIFFER;
             }
@@ -664,8 +698,10 @@ int nccmp_cmp_metadata_user_type_vlen(nccmp_opt_t *opts, int ncid1, int ncid2,
         status = nc_inq_typeid(ncid1, name, & typeid1);
         if (status) {
             if (NC_EBADTYPE == status) {
-                PRINT_DIFF(opts->debug, "DIFFER : VLEN TYPE %s DOES NOT EXIST IN \"%s\"\n",
-                        name, opts->file1);
+                if (!opts->quiet) {
+                    PRINT_DIFF(opts->debug, "DIFFER : VLEN TYPE %s DOES NOT EXIST IN \"%s\"\n",
+                               name, opts->file1);
+                }
                 if (!opts->warn[NCCMP_W_ALL]) {
                     last_status = EXIT_DIFFER;
                 }
@@ -686,8 +722,10 @@ int nccmp_cmp_metadata_user_type_vlen(nccmp_opt_t *opts, int ncid1, int ncid2,
         status = nc_inq_typeid(ncid2, name, & typeid2);
         if (status) {
             if (NC_EBADTYPE == status) {
-                PRINT_DIFF(opts->debug, "DIFFER : VLEN TYPE %s DOES NOT EXIST IN \"%s\"\n",
-                        name, opts->file2);
+                if (!opts->quiet) {
+                    PRINT_DIFF(opts->debug, "DIFFER : VLEN TYPE %s DOES NOT EXIST IN \"%s\"\n",
+                               name, opts->file2);
+                }
                 if (!opts->warn[NCCMP_W_ALL]) {
                     last_status = EXIT_DIFFER;
                 }
@@ -706,10 +744,12 @@ int nccmp_cmp_metadata_user_type_vlen(nccmp_opt_t *opts, int ncid1, int ncid2,
         }
 
         if (base_type1 != base_type2) {
-            nccmp_nc_type_name_to_str(base_type1, tmpstr1, ncid1, opts->debug);
-            nccmp_nc_type_name_to_str(base_type2, tmpstr2, ncid2, opts->debug);
-            PRINT_DIFF(opts->debug, "DIFFER : TYPE : %s : BASE TYPE : %s <> %s\n",
-                                    name, tmpstr1, tmpstr2);
+            if (!opts->quiet) {
+                nccmp_nc_type_name_to_str(base_type1, tmpstr1, ncid1, opts->debug);
+                nccmp_nc_type_name_to_str(base_type2, tmpstr2, ncid2, opts->debug);
+                PRINT_DIFF(opts->debug, "DIFFER : TYPE : %s : BASE TYPE : %s <> %s\n",
+                           name, tmpstr1, tmpstr2);
+            }
             if (!opts->warn[NCCMP_W_ALL]) {
                 last_status = EXIT_DIFFER;
             }
@@ -738,8 +778,10 @@ int nccmp_cmp_metadata_user_type_compound_field(nccmp_opt_t *opts, int ncid1, in
 
     status = nc_inq_compound_fieldindex(ncid1, typeid1, fieldname, & fieldid1);
     if (NC_EBADFIELD == status) {
-        PRINT_DIFF(opts->debug, "DIFFER : TYPE : %s : FIELD : %s : DOES NOT EXIST IN \"%s\"\n",
-                name, fieldname, opts->file1);
+        if (!opts->quiet) {
+            PRINT_DIFF(opts->debug, "DIFFER : TYPE : %s : FIELD : %s : DOES NOT EXIST IN \"%s\"\n",
+                       name, fieldname, opts->file1);
+        }
         if (!opts->warn[NCCMP_W_ALL]) {
             last_status = EXIT_DIFFER;
         }
@@ -750,8 +792,10 @@ int nccmp_cmp_metadata_user_type_compound_field(nccmp_opt_t *opts, int ncid1, in
 
     status = nc_inq_compound_fieldindex(ncid2, typeid2, fieldname, & fieldid2);
     if (NC_EBADFIELD == status) {
-        PRINT_DIFF(opts->debug, "DIFFER : TYPE : %s : FIELD : %s : DOES NOT EXIST IN \"%s\"\n",
-                name, fieldname, opts->file2);
+        if (!opts->quiet) {
+            PRINT_DIFF(opts->debug, "DIFFER : TYPE : %s : FIELD : %s : DOES NOT EXIST IN \"%s\"\n",
+                       name, fieldname, opts->file2);
+        }
         if (!opts->warn[NCCMP_W_ALL]) {
             last_status = EXIT_DIFFER;
         }
@@ -771,8 +815,10 @@ int nccmp_cmp_metadata_user_type_compound_field(nccmp_opt_t *opts, int ncid1, in
     }
 
     if (offset1 != offset2 && (-1 < fieldid1) && (-1 < fieldid2)) {
-        PRINT_DIFF(opts->debug, "DIFFER : TYPE : %s : FIELD : %s : OFFSET : %zu <> %zu\n",
-                name, fieldname, offset1, offset2);
+        if (!opts->quiet) {
+            PRINT_DIFF(opts->debug, "DIFFER : TYPE : %s : FIELD : %s : OFFSET : %zu <> %zu\n",
+                       name, fieldname, offset1, offset2);
+        }
         if (!opts->warn[NCCMP_W_ALL]) {
             last_status = EXIT_DIFFER;
         }
@@ -790,10 +836,12 @@ int nccmp_cmp_metadata_user_type_compound_field(nccmp_opt_t *opts, int ncid1, in
     }
 
     if (type1 != type2 && (-1 < fieldid1) && (-1 < fieldid2)) {
-        nccmp_nc_type_name_to_str(type1, str1, ncid1, opts->debug);
-        nccmp_nc_type_name_to_str(type2, str2, ncid2, opts->debug);
-        PRINT_DIFF(opts->debug, "DIFFER : TYPE : %s : FIELD : %s : TYPE : %s <> %s\n",
-                name, fieldname, str1, str2);
+        if (!opts->quiet) {
+            nccmp_nc_type_name_to_str(type1, str1, ncid1, opts->debug);
+            nccmp_nc_type_name_to_str(type2, str2, ncid2, opts->debug);
+            PRINT_DIFF(opts->debug, "DIFFER : TYPE : %s : FIELD : %s : TYPE : %s <> %s\n",
+                       name, fieldname, str1, str2);
+        }
         if (!opts->warn[NCCMP_W_ALL]) {
             last_status = EXIT_DIFFER;
         }
@@ -817,8 +865,10 @@ int nccmp_cmp_metadata_user_type_compound_fields(nccmp_opt_t *opts, int ncid1, i
     status = nc_inq_typeid(ncid1, name, & typeid1);
     if (status) {
         if (NC_EBADTYPE == status) {
-            PRINT_DIFF(opts->debug, "DIFFER : TYPE : %s : DOES NOT EXIST IN \"%s\"\n",
-                    name, opts->file1);
+            if (!opts->quiet) {
+                PRINT_DIFF(opts->debug, "DIFFER : TYPE : %s : DOES NOT EXIST IN \"%s\"\n",
+                           name, opts->file1);
+            }
             if (!opts->warn[NCCMP_W_ALL]) {
                 last_status = EXIT_DIFFER;
             }
@@ -839,8 +889,10 @@ int nccmp_cmp_metadata_user_type_compound_fields(nccmp_opt_t *opts, int ncid1, i
     status = nc_inq_typeid(ncid2, name, & typeid2);
     if (status) {
         if (NC_EBADTYPE == status) {
-            PRINT_DIFF(opts->debug, "DIFFER : : TYPE : %s : DOES NOT EXIST IN \"%s\"\n",
-                    name, opts->file2);
+            if (!opts->quiet) {
+                PRINT_DIFF(opts->debug, "DIFFER : : TYPE : %s : DOES NOT EXIST IN \"%s\"\n",
+                           name, opts->file2);
+            }
             if (!opts->warn[NCCMP_W_ALL]) {
                 last_status = EXIT_DIFFER;
             }
@@ -859,8 +911,10 @@ int nccmp_cmp_metadata_user_type_compound_fields(nccmp_opt_t *opts, int ncid1, i
     }
 
     if (base_size1 != base_size2 && typeid1 && typeid2) {
-        PRINT_DIFF(opts->debug, "DIFFER : TYPE : %s : SIZE : %zu <> %zu\n",
-                name, base_size1, base_size2);
+        if (!opts->quiet) {
+            PRINT_DIFF(opts->debug, "DIFFER : TYPE : %s : SIZE : %zu <> %zu\n",
+                       name, base_size1, base_size2);
+        }
         if (!opts->warn[NCCMP_W_ALL]) {
             last_status = EXIT_DIFFER;
         }
@@ -868,8 +922,10 @@ int nccmp_cmp_metadata_user_type_compound_fields(nccmp_opt_t *opts, int ncid1, i
     }
 
     if (num_fields1 != num_fields2 && typeid1 && typeid2) {
-        PRINT_DIFF(opts->debug, "DIFFER : TYPE : %s : NUMBER OF FIELDS : %zu <> %zu\n",
-                name, num_fields1, num_fields2);
+        if (!opts->quiet) {
+            PRINT_DIFF(opts->debug, "DIFFER : TYPE : %s : NUMBER OF FIELDS : %zu <> %zu\n",
+                       name, num_fields1, num_fields2);
+        }
         if (!opts->warn[NCCMP_W_ALL]) {
             last_status = EXIT_DIFFER;
         }
@@ -932,8 +988,10 @@ int nccmp_cmp_metadata_user_types(nccmp_opt_t *opts, int ncid1, int ncid2)
     HANDLE_NC_ERROR(status);
 
     if (ntypes1 != ntypes2) {
-        PRINT_DIFF(opts->debug, "DIFFER : NUMBER OF USER DEFINED TYPES : %d <> %d\n",
-                ntypes1, ntypes2);
+        if (!opts->quiet) {
+            PRINT_DIFF(opts->debug, "DIFFER : NUMBER OF USER DEFINED TYPES : %d <> %d\n",
+                       ntypes1, ntypes2);
+        }
         if (!opts->warn[NCCMP_W_ALL]) {
             last_status = EXIT_DIFFER;
         }
@@ -989,9 +1047,10 @@ int nccmp_cmp_metadata_var_types(nccmp_state_t *state, nccmp_strlist_t* varlist,
         is_diff_types = 0;
         var1 = nccmp_find_var_by_name(state->vars1, state->nvars1, varlist->items[i]);
         if (!var1) {
-            PRINT_DIFF(state->opts.debug, "DIFFER : VARIABLE : %s : DOES NOT EXIST IN \"%s\"\n",
-                       varlist->items[i], state->opts.file1);
-
+            if (!state->opts.quiet) {
+                PRINT_DIFF(state->opts.debug, "DIFFER : VARIABLE : %s : DOES NOT EXIST IN \"%s\"\n",
+                           varlist->items[i], state->opts.file1);
+            }
             if (!state->opts.warn[NCCMP_W_ALL]) {
                 last_status = EXIT_DIFFER;
             }
@@ -1000,9 +1059,10 @@ int nccmp_cmp_metadata_var_types(nccmp_state_t *state, nccmp_strlist_t* varlist,
 
         var2 = nccmp_find_var_by_name(state->vars2, state->nvars2, varlist->items[i]);
         if (!var2) {
-            PRINT_DIFF(state->opts.debug, "DIFFER : VARIABLE : %s : DOES NOT EXIST IN \"%s\"\n",
-                       varlist->items[i], state->opts.file2);
-
+            if (!state->opts.quiet) {
+                PRINT_DIFF(state->opts.debug, "DIFFER : VARIABLE : %s : DOES NOT EXIST IN \"%s\"\n",
+                           varlist->items[i], state->opts.file2);
+            }
             if (!state->opts.warn[NCCMP_W_ALL]) {
                 last_status = EXIT_DIFFER;
             }
@@ -1034,9 +1094,10 @@ int nccmp_cmp_metadata_var_types(nccmp_state_t *state, nccmp_strlist_t* varlist,
             }
             
             if (is_diff_types) {
-                PRINT_DIFF(state->opts.debug, "DIFFER : VARIABLE : %s : TYPE : %s <> %s\n",
-                           varlist->items[i], typestr1, typestr2);
-
+                if (!state->opts.quiet) {
+                    PRINT_DIFF(state->opts.debug, "DIFFER : VARIABLE : %s : TYPE : %s <> %s\n",
+                               varlist->items[i], typestr1, typestr2);
+                }
                 if (!state->opts.warn[NCCMP_W_ALL]) {
                     last_status = EXIT_DIFFER;
                 }
@@ -1045,9 +1106,10 @@ int nccmp_cmp_metadata_var_types(nccmp_state_t *state, nccmp_strlist_t* varlist,
         }
 
         if(var1->ndims != var2->ndims) {
-            PRINT_DIFF(state->opts.debug, "DIFFER : NUMBER : DIMENSIONS : VARIABLE : %s : %d <> %d\n",
-                       varlist->items[i], var1->ndims, var2->ndims);
-
+            if (!state->opts.quiet) {
+                PRINT_DIFF(state->opts.debug, "DIFFER : NUMBER : DIMENSIONS : VARIABLE : %s : %d <> %d\n",
+                           varlist->items[i], var1->ndims, var2->ndims);
+            }
             if (!state->opts.warn[NCCMP_W_ALL]) {
                 last_status = EXIT_DIFFER;
             }
@@ -1092,9 +1154,10 @@ int nccmp_cmp_metadata_var_dim_names(const nccmp_state_t *state, nccmp_strlist_t
             }
 
             if (strcmp(dim1->name, dim2->name) != 0) {
-                PRINT_DIFF(state->opts.debug, "DIFFER : VARIABLE : %s : DIMENSION : %s <> %s\n",
-                        varlist->items[i], dim1->name, dim2->name);
-
+                if (!state->opts.quiet) {
+                    PRINT_DIFF(state->opts.debug, "DIFFER : VARIABLE : %s : DIMENSION : %s <> %s\n",
+                               varlist->items[i], dim1->name, dim2->name);
+                }
                 if (!state->opts.warn[NCCMP_W_ALL]) {
                     last_status = EXIT_DIFFER;
                 }
@@ -1105,19 +1168,21 @@ int nccmp_cmp_metadata_var_dim_names(const nccmp_state_t *state, nccmp_strlist_t
             cmp2 = strcmp(dim2->name, recname2);
 
             if (!cmp1 && cmp2) {
-                PRINT_DIFF(state->opts.debug,
-                        "DIFFER : VARIABLE : %s : DIMENSION %s IS RECORD IN FILE \"%s\" BUT NOT IN \"%s\"\n",
-                        var1->name, dim1->name, state->opts.file1, state->opts.file2);
-
+                if (!state->opts.quiet) {
+                    PRINT_DIFF(state->opts.debug,
+                               "DIFFER : VARIABLE : %s : DIMENSION %s IS RECORD IN FILE \"%s\" BUT NOT IN \"%s\"\n",
+                               var1->name, dim1->name, state->opts.file1, state->opts.file2);
+                }
                 if (!state->opts.warn[NCCMP_W_ALL]) {
                     last_status = EXIT_DIFFER;
                 }
                 if(state->opts.force) continue; else goto recover;
             } else if (cmp1 && !cmp2) {
-                PRINT_DIFF(state->opts.debug,
-                        "DIFFER : VARIABLE : %s : DIMENSION %s IS RECORD IN FILE \"%s\" BUT NOT IN \"%s\"\n",
-                        var1->name, dim2->name, state->opts.file2, state->opts.file1);
-
+                if (!state->opts.quiet) {
+                    PRINT_DIFF(state->opts.debug,
+                               "DIFFER : VARIABLE : %s : DIMENSION %s IS RECORD IN FILE \"%s\" BUT NOT IN \"%s\"\n",
+                               var1->name, dim2->name, state->opts.file2, state->opts.file1);
+                }
                 if (!state->opts.warn[NCCMP_W_ALL]) {
                     last_status = EXIT_DIFFER;
                 }
@@ -1217,9 +1282,11 @@ int nccmp_cmp_metadata_var_atts(nccmp_state_t *state, nccmp_strlist_t* varlist, 
         }
 
         if(natts1 != natts2) {
-            PRINT_DIFF(state->opts.debug,
-                    "DIFFER : NUMBER OF ATTRIBUTES : VARIABLE : %s : %d <> %d\n",
-                    varlist->items[i], natts1, natts2);
+            if (!state->opts.quiet) {
+                PRINT_DIFF(state->opts.debug,
+                           "DIFFER : NUMBER OF ATTRIBUTES : VARIABLE : %s : %d <> %d\n",
+                           varlist->items[i], natts1, natts2);
+            }
             if (!state->opts.warn[NCCMP_W_ALL]) {
                 last_status = EXIT_DIFFER;
             }
@@ -1474,8 +1541,9 @@ int nccmp_file_formats(nccmp_opt_t* opts, int ncid1, int ncid2)
     HANDLE_NC_ERROR(status);
 
     if (fmt1 != fmt2) {
-        PRINT_DIFF(opts->debug, "DIFFER : FILE FORMATS : %s <> %s\n", NCFORMATSTR(fmt1), NCFORMATSTR(fmt2));
-
+        if (!opts->quiet) {
+            PRINT_DIFF(opts->debug, "DIFFER : FILE FORMATS : %s <> %s\n", NCFORMATSTR(fmt1), NCFORMATSTR(fmt2));
+        }
         if (!opts->warn[NCCMP_W_ALL] && !opts->warn[NCCMP_W_FORMAT]) {
             return EXIT_DIFFER;
         }
@@ -1538,8 +1606,9 @@ int nccmp_global_atts(nccmp_opt_t* opts, int ncid1, int ncid2)
     }
 
     if(nattsex1 != nattsex2) {
-        PRINT_DIFF(opts->debug, "DIFFER : NUMBER OF GLOBAL ATTRIBUTES : %d <> %d\n", nattsex1, nattsex2);
-
+        if (!opts->quiet) {
+            PRINT_DIFF(opts->debug, "DIFFER : NUMBER OF GLOBAL ATTRIBUTES : %d <> %d\n", nattsex1, nattsex2);
+        }
         if (!opts->warn[NCCMP_W_ALL]) {
             status2 = EXIT_DIFFER;
         }
@@ -1575,7 +1644,9 @@ int nccmp_global_atts(nccmp_opt_t* opts, int ncid1, int ncid2)
 
         status = nc_inq_att(ncid2, NC_GLOBAL, name1, &type2, &len2);
         if (status != NC_NOERR) {
-            PRINT_DIFF(opts->debug, "DIFFER : NAME OF GLOBAL ATTRIBUTE : %s : GLOBAL ATTRIBUTE DOESN'T EXIST IN \"%s\"\n", name1, opts->file2);
+            if (!opts->quiet) {
+                PRINT_DIFF(opts->debug, "DIFFER : NAME OF GLOBAL ATTRIBUTE : %s : GLOBAL ATTRIBUTE DOESN'T EXIST IN \"%s\"\n", name1, opts->file2);
+            }
             if (!opts->warn[NCCMP_W_ALL]) {
                 status2 = EXIT_DIFFER;
             }
@@ -1583,9 +1654,11 @@ int nccmp_global_atts(nccmp_opt_t* opts, int ncid1, int ncid2)
         }
 
         if (type1 != type2)  {
-            nccmp_nc_type_name_to_str(type1, typestr1, ncid1, opts->debug);
-            nccmp_nc_type_name_to_str(type2, typestr2, ncid2, opts->debug);
-            PRINT_DIFF(opts->debug, "DIFFER : GLOBAL ATTRIBUTE TYPES : %s : %s <> %s\n", name1, typestr1, typestr2);
+            if (!opts->quiet) {
+                nccmp_nc_type_name_to_str(type1, typestr1, ncid1, opts->debug);
+                nccmp_nc_type_name_to_str(type2, typestr2, ncid2, opts->debug);
+                PRINT_DIFF(opts->debug, "DIFFER : GLOBAL ATTRIBUTE TYPES : %s : %s <> %s\n", name1, typestr1, typestr2);
+            }
             if (!opts->warn[NCCMP_W_ALL]) {
                 status2 = EXIT_DIFFER;
             }
@@ -1593,10 +1666,12 @@ int nccmp_global_atts(nccmp_opt_t* opts, int ncid1, int ncid2)
         }
 
         if (len1 != len2)   {
-            nccmp_pretty_print_att(ncid1, NULL, NC_GLOBAL, name1, typestr1, MAX_STRLEN);
-            nccmp_pretty_print_att(ncid2, NULL, NC_GLOBAL, name1, typestr2, MAX_STRLEN);
-            PRINT_DIFF(opts->debug, "DIFFER : LENGTHS OF GLOBAL ATTRIBUTE : %s : %lu <> %lu : VALUES : %s <> %s\n", name1,
-                    (unsigned long)len1, (unsigned long)len2, typestr1, typestr2);
+            if (!opts->quiet) {
+                nccmp_pretty_print_att(ncid1, NULL, NC_GLOBAL, name1, typestr1, MAX_STRLEN);
+                nccmp_pretty_print_att(ncid2, NULL, NC_GLOBAL, name1, typestr2, MAX_STRLEN);
+                PRINT_DIFF(opts->debug, "DIFFER : LENGTHS OF GLOBAL ATTRIBUTE : %s : %lu <> %lu : VALUES : %s <> %s\n", name1,
+                           (unsigned long)len1, (unsigned long)len2, typestr1, typestr2);
+            }
             if (!opts->warn[NCCMP_W_ALL]) {
                 status2 = EXIT_DIFFER;
             }
@@ -1604,10 +1679,12 @@ int nccmp_global_atts(nccmp_opt_t* opts, int ncid1, int ncid2)
         }
 
         if (nccmp_cmp_att_val(ncid1,ncid2,NC_GLOBAL,NC_GLOBAL,name1,len1,len2,type1) != NC_NOERR) {
-            /* Pretty print values. */
-            nccmp_pretty_print_att(ncid1, NULL, NC_GLOBAL, name1, typestr1, MAX_STRLEN);
-            nccmp_pretty_print_att(ncid2, NULL, NC_GLOBAL, name1, typestr2, MAX_STRLEN);
-            PRINT_DIFF(opts->debug, "DIFFER : VALUES OF GLOBAL ATTRIBUTE : %s : %s <> %s\n", name1, typestr1, typestr2);
+            if (!opts->quiet) {
+                /* Pretty print values. */
+                nccmp_pretty_print_att(ncid1, NULL, NC_GLOBAL, name1, typestr1, MAX_STRLEN);
+                nccmp_pretty_print_att(ncid2, NULL, NC_GLOBAL, name1, typestr2, MAX_STRLEN);
+                PRINT_DIFF(opts->debug, "DIFFER : VALUES OF GLOBAL ATTRIBUTE : %s : %s <> %s\n", name1, typestr1, typestr2);
+            }
             if (!opts->warn[NCCMP_W_ALL]) {
                 status2 = EXIT_DIFFER;
             }
@@ -1644,7 +1721,9 @@ int nccmp_global_atts(nccmp_opt_t* opts, int ncid1, int ncid2)
 
         status = nc_inq_att(ncid1, NC_GLOBAL, name2, &type1, &len1);
         if (status != NC_NOERR) {
-            PRINT_DIFF(opts->debug, "DIFFER : NAME OF GLOBAL ATTRIBUTE : %s : GLOBAL ATTRIBUTE DOESN'T EXIST IN %s\n", name2, opts->file1);
+            if (!opts->quiet) {
+                PRINT_DIFF(opts->debug, "DIFFER : NAME OF GLOBAL ATTRIBUTE : %s : GLOBAL ATTRIBUTE DOESN'T EXIST IN %s\n", name2, opts->file1);
+            }
             if (!opts->warn[NCCMP_W_ALL]) {
                 status2 = EXIT_DIFFER;
             }
@@ -1652,9 +1731,11 @@ int nccmp_global_atts(nccmp_opt_t* opts, int ncid1, int ncid2)
         }
 
         if (type1 != type2) {
-            nccmp_nc_type_name_to_str(type1, typestr1, ncid1, opts->debug);
-            nccmp_nc_type_name_to_str(type2, typestr2, ncid2, opts->debug);
-            PRINT_DIFF(opts->debug, "DIFFER : GLOBAL ATTRIBUTE TYPE : %s : %s <> %s\n", name1, typestr1, typestr2);
+            if (!opts->quiet) {
+                nccmp_nc_type_name_to_str(type1, typestr1, ncid1, opts->debug);
+                nccmp_nc_type_name_to_str(type2, typestr2, ncid2, opts->debug);
+                PRINT_DIFF(opts->debug, "DIFFER : GLOBAL ATTRIBUTE TYPE : %s : %s <> %s\n", name1, typestr1, typestr2);
+            }
             if (!opts->warn[NCCMP_W_ALL]) {
                 status2 = EXIT_DIFFER;
             }
@@ -1662,15 +1743,17 @@ int nccmp_global_atts(nccmp_opt_t* opts, int ncid1, int ncid2)
         }
 
         if (len1 != len2)  {
-            nccmp_pretty_print_att(ncid1, NULL, NC_GLOBAL, name1, typestr1, MAX_STRLEN);
-            nccmp_pretty_print_att(ncid2, NULL, NC_GLOBAL, name1, typestr2, MAX_STRLEN);
-
-            PRINT_DIFF(opts->debug, "DIFFER : LENGTHS OF GLOBAL ATTRIBUTE : %s : %lu <> %lu : VALUES : ", name1, (unsigned long)len1, (unsigned long)len2);
-
+            if (!opts->quiet) {
+                nccmp_pretty_print_att(ncid1, NULL, NC_GLOBAL, name1, typestr1, MAX_STRLEN);
+                nccmp_pretty_print_att(ncid2, NULL, NC_GLOBAL, name1, typestr2, MAX_STRLEN);
+                PRINT_DIFF(opts->debug, "DIFFER : LENGTHS OF GLOBAL ATTRIBUTE : %s : %lu <> %lu : VALUES : ", name1, (unsigned long)len1, (unsigned long)len2);
+            }
             switch(type1) {
             case NC_CHAR:
-                /* Quote strings. */
-                fprintf(stderr, "\"%s\" : \"%s\"\n", typestr1, typestr2);
+                if (!opts->quiet) {
+                    /* Quote strings. */
+                    fprintf(stderr, "\"%s\" : \"%s\"\n", typestr1, typestr2);
+                }
                 if (strcmp(typestr1,typestr2) == 0) {
                     /* Same text, but invisible trailing nulls because lengths differ. */
                     if (opts->warn[NCCMP_W_EOS] || opts->warn[NCCMP_W_ALL]) {
@@ -1682,8 +1765,10 @@ int nccmp_global_atts(nccmp_opt_t* opts, int ncid1, int ncid2)
                 }
                 break;
             default:
-                /* No quotes. */
-                fprintf(stderr, "%s : %s\n", typestr1, typestr2);
+                if (!opts->quiet) {
+                    /* No quotes. */
+                    fprintf(stderr, "%s : %s\n", typestr1, typestr2);
+                }
                 if (!opts->warn[NCCMP_W_ALL]) {
                     status2 = EXIT_DIFFER;
                     if(opts->force) continue; else goto recover;
@@ -1693,10 +1778,12 @@ int nccmp_global_atts(nccmp_opt_t* opts, int ncid1, int ncid2)
         }
 
         if (nccmp_cmp_att_val(ncid1,ncid2,NC_GLOBAL,NC_GLOBAL,name1,len1,len2,type1) != NC_NOERR) {
-            /* Pretty print values. */
-            nccmp_pretty_print_att(ncid1, NULL, NC_GLOBAL, name1, typestr1, MAX_STRLEN);
-            nccmp_pretty_print_att(ncid2, NULL, NC_GLOBAL, name1, typestr2, MAX_STRLEN);
-            PRINT_DIFF(opts->debug, "DIFFER : VALUES OF GLOBAL ATTRIBUTE : %s : %s <> %s\n", name1, typestr1, typestr2);
+            if (!opts->quiet) {
+                /* Pretty print values. */
+                nccmp_pretty_print_att(ncid1, NULL, NC_GLOBAL, name1, typestr1, MAX_STRLEN);
+                nccmp_pretty_print_att(ncid2, NULL, NC_GLOBAL, name1, typestr2, MAX_STRLEN);
+                PRINT_DIFF(opts->debug, "DIFFER : VALUES OF GLOBAL ATTRIBUTE : %s : %s <> %s\n", name1, typestr1, typestr2);
+            }
             if (!opts->warn[NCCMP_W_ALL]) {
                 status2 = EXIT_DIFFER;
             }
@@ -1869,7 +1956,9 @@ int nccmp_cmp_rec_info(nccmp_state_t* state, nccmp_strlist_t* varnames, int ncid
     }
 
     if (strcmp(name1, name2)) {
-        PRINT_DIFF(state->opts.debug, "DIFFER : NAMES OF RECORDS : %s <> %s\n", name1, name2);
+        if (!state->opts.quiet) {
+            PRINT_DIFF(state->opts.debug, "DIFFER : NAMES OF RECORDS : %s <> %s\n", name1, name2);
+        }
         if (!state->opts.warn[NCCMP_W_ALL])
             status = EXIT_DIFFER;
 
@@ -1877,8 +1966,10 @@ int nccmp_cmp_rec_info(nccmp_state_t* state, nccmp_strlist_t* varnames, int ncid
     }
 
     if (state->nrecs1 != state->nrecs2) {
-        PRINT_DIFF(state->opts.debug, "DIFFER : LENGTHS OF RECORDS : %s (%d) <> %s (%d)\n",
-                name1, (int)state->nrecs1, name2, (int)state->nrecs2);
+        if (!state->opts.quiet) {
+            PRINT_DIFF(state->opts.debug, "DIFFER : LENGTHS OF RECORDS : %s (%d) <> %s (%d)\n",
+                       name1, (int)state->nrecs1, name2, (int)state->nrecs2);
+        }
         if (!state->opts.warn[NCCMP_W_ALL])
             status = EXIT_DIFFER;
 
@@ -1925,13 +2016,15 @@ int nccmp_var_encoding(nccmp_state_t *state, nccmp_strlist_t* varlist, int ncid1
         HANDLE_NC_ERROR(status);
 
         if (checksum1 != checksum2) {
-            nccmp_checksum_to_str(checksum1, tmpstr1);
-            nccmp_checksum_to_str(checksum2, tmpstr2);
-            PRINT_DIFF(state->opts.debug,
-                    "DIFFER : VARIABLE : %s : CHECKSUM FILTER : %s <> %s\n",
-                    state->vars1[idx1].name,
-                    tmpstr1,
-                    tmpstr2);
+            if (!state->opts.quiet) {
+                nccmp_checksum_to_str(checksum1, tmpstr1);
+                nccmp_checksum_to_str(checksum2, tmpstr2);
+                PRINT_DIFF(state->opts.debug,
+                        "DIFFER : VARIABLE : %s : CHECKSUM FILTER : %s <> %s\n",
+                        state->vars1[idx1].name,
+                        tmpstr1,
+                        tmpstr2);
+            }
             if (!state->opts.warn[NCCMP_W_ALL]) {
                 last_status = EXIT_DIFFER;
             }
@@ -1946,13 +2039,15 @@ int nccmp_var_encoding(nccmp_state_t *state, nccmp_strlist_t* varlist, int ncid1
         HANDLE_NC_ERROR(status);
 
         if (chunk_storage1 != chunk_storage2) {
-            nccmp_chunk_storage_to_str(chunk_storage1, tmpstr1);
-            nccmp_chunk_storage_to_str(chunk_storage2, tmpstr2);
-            PRINT_DIFF(state->opts.debug,
-                    "DIFFER : VARIABLE : %s : CHUNK STORAGE : %s <> %s\n",
-                    state->vars1[idx1].name,
-                    tmpstr1,
-                    tmpstr2);
+            if (!state->opts.quiet) {
+                nccmp_chunk_storage_to_str(chunk_storage1, tmpstr1);
+                nccmp_chunk_storage_to_str(chunk_storage2, tmpstr2);
+                PRINT_DIFF(state->opts.debug,
+                        "DIFFER : VARIABLE : %s : CHUNK STORAGE : %s <> %s\n",
+                        state->vars1[idx1].name,
+                        tmpstr1,
+                        tmpstr2);
+            }
             if (!state->opts.warn[NCCMP_W_ALL]) {
                 last_status = EXIT_DIFFER;
             }
@@ -1963,10 +2058,12 @@ int nccmp_var_encoding(nccmp_state_t *state, nccmp_strlist_t* varlist, int ncid1
 
         for(dimi = 0; dimi < state->vars1[idx1].ndims; ++dimi) {
             if (chunk_sizes1[dimi] != chunk_sizes2[dimi]) {
-                nccmp_size_t_array_to_str(chunk_sizes1, state->vars1[idx1].ndims, tmpstr1, " ");
-                nccmp_size_t_array_to_str(chunk_sizes2, state->vars1[idx1].ndims, tmpstr2, " ");
-                PRINT_DIFF(state->opts.debug, "DIFFER : VARIABLE : %s : CHUNK SIZES : %s <> %s\n",
-                        state->vars1[idx1].name, tmpstr1, tmpstr2);
+                if (!state->opts.quiet) {
+                    nccmp_size_t_array_to_str(chunk_sizes1, state->vars1[idx1].ndims, tmpstr1, " ");
+                    nccmp_size_t_array_to_str(chunk_sizes2, state->vars1[idx1].ndims, tmpstr2, " ");
+                    PRINT_DIFF(state->opts.debug, "DIFFER : VARIABLE : %s : CHUNK SIZES : %s <> %s\n",
+                               state->vars1[idx1].name, tmpstr1, tmpstr2);
+                }
                 if (!state->opts.warn[NCCMP_W_ALL]) {
                     last_status = EXIT_DIFFER;
                 }
@@ -1982,8 +2079,10 @@ int nccmp_var_encoding(nccmp_state_t *state, nccmp_strlist_t* varlist, int ncid1
         HANDLE_NC_ERROR(status);
 
         if (shuffle1 != shuffle2) {
-            PRINT_DIFF(state->opts.debug, "DIFFER : VARIABLE : %s : SHUFFLE : %d <> %d\n",
-                    state->vars1[idx1].name, shuffle1, shuffle2);
+            if (!state->opts.quiet) {
+                PRINT_DIFF(state->opts.debug, "DIFFER : VARIABLE : %s : SHUFFLE : %d <> %d\n",
+                           state->vars1[idx1].name, shuffle1, shuffle2);
+            }
             if (!state->opts.warn[NCCMP_W_ALL]) {
                 last_status = EXIT_DIFFER;
             }
@@ -1993,8 +2092,10 @@ int nccmp_var_encoding(nccmp_state_t *state, nccmp_strlist_t* varlist, int ncid1
         }
 
         if (deflate1 != deflate2) {
-            PRINT_DIFF(state->opts.debug, "DIFFER : VARIABLE : %s : DEFLATE : %d <> %d\n",
-                    state->vars1[idx1].name, deflate1, deflate2);
+            if (!state->opts.quiet) {
+                PRINT_DIFF(state->opts.debug, "DIFFER : VARIABLE : %s : DEFLATE : %d <> %d\n",
+                           state->vars1[idx1].name, deflate1, deflate2);
+            }
             if (!state->opts.warn[NCCMP_W_ALL]) {
                 last_status = EXIT_DIFFER;
             }
@@ -2004,8 +2105,10 @@ int nccmp_var_encoding(nccmp_state_t *state, nccmp_strlist_t* varlist, int ncid1
         }
 
         if (deflate_level1 != deflate_level2) {
-            PRINT_DIFF(state->opts.debug, "DIFFER : VARIABLE : %s : DEFLATE LEVEL : %d <> %d\n",
-                    state->vars1[idx1].name, deflate_level1, deflate_level2);
+            if (!state->opts.quiet) {
+                PRINT_DIFF(state->opts.debug, "DIFFER : VARIABLE : %s : DEFLATE LEVEL : %d <> %d\n",
+                           state->vars1[idx1].name, deflate_level1, deflate_level2);
+            }
             if (!state->opts.warn[NCCMP_W_ALL]) {
                 last_status = EXIT_DIFFER;
             }
@@ -2020,10 +2123,12 @@ int nccmp_var_encoding(nccmp_state_t *state, nccmp_strlist_t* varlist, int ncid1
         HANDLE_NC_ERROR(status);
 
         if (endian1 != endian2) {
-            nccmp_endian_to_str(endian1, tmpstr1);
-            nccmp_endian_to_str(endian2, tmpstr2);
-            PRINT_DIFF(state->opts.debug, "DIFFER : VARIABLE : %s : ENDIAN : %s <> %s\n",
-                    state->vars1[idx1].name, tmpstr1, tmpstr2);
+            if (!state->opts.quiet) {
+                nccmp_endian_to_str(endian1, tmpstr1);
+                nccmp_endian_to_str(endian2, tmpstr2);
+                PRINT_DIFF(state->opts.debug, "DIFFER : VARIABLE : %s : ENDIAN : %s <> %s\n",
+                           state->vars1[idx1].name, tmpstr1, tmpstr2);
+            }
             if (!state->opts.warn[NCCMP_W_ALL]) {
                 last_status = EXIT_DIFFER;
             }
@@ -2038,8 +2143,10 @@ int nccmp_var_encoding(nccmp_state_t *state, nccmp_strlist_t* varlist, int ncid1
         HANDLE_NC_ERROR(status);
 
         if (szip_mask1 != szip_mask2) {
-            PRINT_DIFF(state->opts.debug, "DIFFER : VARIABLE : %s : SZIP MASK : %d <> %d\n",
-                    state->vars1[idx1].name, szip_mask1, szip_mask2);
+            if (!state->opts.quiet) {
+                PRINT_DIFF(state->opts.debug, "DIFFER : VARIABLE : %s : SZIP MASK : %d <> %d\n",
+                           state->vars1[idx1].name, szip_mask1, szip_mask2);
+            }
             if (!state->opts.warn[NCCMP_W_ALL]) {
                 last_status = EXIT_DIFFER;
             }
@@ -2049,8 +2156,10 @@ int nccmp_var_encoding(nccmp_state_t *state, nccmp_strlist_t* varlist, int ncid1
         }
 
         if (szip_pixels_per_block1 != szip_pixels_per_block2) {
-            PRINT_DIFF(state->opts.debug, "DIFFER : VARIABLE : %s : SZIP PIXELS PER BLOCK : %d <> %d\n",
-                    state->vars1[idx1].name, szip_pixels_per_block1, szip_pixels_per_block2);
+            if (!state->opts.quiet) {
+                PRINT_DIFF(state->opts.debug, "DIFFER : VARIABLE : %s : SZIP PIXELS PER BLOCK : %d <> %d\n",
+                           state->vars1[idx1].name, szip_pixels_per_block1, szip_pixels_per_block2);
+            }
             if (!state->opts.warn[NCCMP_W_ALL]) {
                 last_status = EXIT_DIFFER;
             }

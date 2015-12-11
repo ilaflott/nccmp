@@ -108,8 +108,9 @@ PROGRAMS = $(bin_PROGRAMS)
 am__nccmp_SOURCES_DIST = log.c nccmp.c xmalloc.c nccmp_data.c \
 	nccmp_dim.c nccmp_format.c nccmp_group.c nccmp_io.c \
 	nccmp_metadata.c nccmp_nc_type.c nccmp_ncinfo.c nccmp_nest.c \
-	nccmp_odometer.c nccmp_opt.c nccmp_state.c nccmp_strlist.c \
-	nccmp_utils.c nccmp_user_type.c nccmp_var.c getopt.c
+	nccmp_odometer.c nccmp_opt.c nccmp_state.c nccmp_stats.c \
+	nccmp_stats_print.c nccmp_strlist.c nccmp_utils.c \
+	nccmp_user_type.c nccmp_var.c getopt.c
 am__objects_1 =
 @SYSTEM_GETOPT_FALSE@am__objects_2 = nccmp-getopt.$(OBJEXT)
 am_nccmp_OBJECTS = nccmp-log.$(OBJEXT) nccmp-nccmp.$(OBJEXT) \
@@ -119,9 +120,11 @@ am_nccmp_OBJECTS = nccmp-log.$(OBJEXT) nccmp-nccmp.$(OBJEXT) \
 	nccmp-nccmp_metadata.$(OBJEXT) nccmp-nccmp_nc_type.$(OBJEXT) \
 	nccmp-nccmp_ncinfo.$(OBJEXT) nccmp-nccmp_nest.$(OBJEXT) \
 	nccmp-nccmp_odometer.$(OBJEXT) nccmp-nccmp_opt.$(OBJEXT) \
-	nccmp-nccmp_state.$(OBJEXT) nccmp-nccmp_strlist.$(OBJEXT) \
-	nccmp-nccmp_utils.$(OBJEXT) nccmp-nccmp_user_type.$(OBJEXT) \
-	nccmp-nccmp_var.$(OBJEXT) $(am__objects_1) $(am__objects_2)
+	nccmp-nccmp_state.$(OBJEXT) nccmp-nccmp_stats.$(OBJEXT) \
+	nccmp-nccmp_stats_print.$(OBJEXT) \
+	nccmp-nccmp_strlist.$(OBJEXT) nccmp-nccmp_utils.$(OBJEXT) \
+	nccmp-nccmp_user_type.$(OBJEXT) nccmp-nccmp_var.$(OBJEXT) \
+	$(am__objects_1) $(am__objects_2)
 nccmp_OBJECTS = $(am_nccmp_OBJECTS)
 nccmp_DEPENDENCIES =
 nccmp_LINK = $(CCLD) $(nccmp_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
@@ -290,8 +293,9 @@ CLEANFILES = nccmp nccmp.exe
 nccmp_SOURCES = log.c nccmp.c xmalloc.c nccmp_data.c nccmp_dim.c \
 	nccmp_format.c nccmp_group.c nccmp_io.c nccmp_metadata.c \
 	nccmp_nc_type.c nccmp_ncinfo.c nccmp_nest.c nccmp_odometer.c \
-	nccmp_opt.c nccmp_state.c nccmp_strlist.c nccmp_utils.c \
-	nccmp_user_type.c nccmp_var.c $(am__append_1) $(am__append_2)
+	nccmp_opt.c nccmp_state.c nccmp_stats.c nccmp_stats_print.c \
+	nccmp_strlist.c nccmp_utils.c nccmp_user_type.c nccmp_var.c \
+	$(am__append_1) $(am__append_2)
 nccmp_CFLAGS = -I$(top_srcdir) $(AM_CFLAGS)
 nccmp_LDADD = -lnetcdf -lm 
 all: all-am
@@ -396,6 +400,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/nccmp-nccmp_odometer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/nccmp-nccmp_opt.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/nccmp-nccmp_state.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/nccmp-nccmp_stats.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/nccmp-nccmp_stats_print.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/nccmp-nccmp_strlist.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/nccmp-nccmp_user_type.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/nccmp-nccmp_utils.Po@am__quote@
@@ -625,6 +631,34 @@ nccmp-nccmp_state.obj: nccmp_state.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='nccmp_state.c' object='nccmp-nccmp_state.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -c -o nccmp-nccmp_state.obj `if test -f 'nccmp_state.c'; then $(CYGPATH_W) 'nccmp_state.c'; else $(CYGPATH_W) '$(srcdir)/nccmp_state.c'; fi`
+
+nccmp-nccmp_stats.o: nccmp_stats.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -MT nccmp-nccmp_stats.o -MD -MP -MF $(DEPDIR)/nccmp-nccmp_stats.Tpo -c -o nccmp-nccmp_stats.o `test -f 'nccmp_stats.c' || echo '$(srcdir)/'`nccmp_stats.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/nccmp-nccmp_stats.Tpo $(DEPDIR)/nccmp-nccmp_stats.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='nccmp_stats.c' object='nccmp-nccmp_stats.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -c -o nccmp-nccmp_stats.o `test -f 'nccmp_stats.c' || echo '$(srcdir)/'`nccmp_stats.c
+
+nccmp-nccmp_stats.obj: nccmp_stats.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -MT nccmp-nccmp_stats.obj -MD -MP -MF $(DEPDIR)/nccmp-nccmp_stats.Tpo -c -o nccmp-nccmp_stats.obj `if test -f 'nccmp_stats.c'; then $(CYGPATH_W) 'nccmp_stats.c'; else $(CYGPATH_W) '$(srcdir)/nccmp_stats.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/nccmp-nccmp_stats.Tpo $(DEPDIR)/nccmp-nccmp_stats.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='nccmp_stats.c' object='nccmp-nccmp_stats.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -c -o nccmp-nccmp_stats.obj `if test -f 'nccmp_stats.c'; then $(CYGPATH_W) 'nccmp_stats.c'; else $(CYGPATH_W) '$(srcdir)/nccmp_stats.c'; fi`
+
+nccmp-nccmp_stats_print.o: nccmp_stats_print.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -MT nccmp-nccmp_stats_print.o -MD -MP -MF $(DEPDIR)/nccmp-nccmp_stats_print.Tpo -c -o nccmp-nccmp_stats_print.o `test -f 'nccmp_stats_print.c' || echo '$(srcdir)/'`nccmp_stats_print.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/nccmp-nccmp_stats_print.Tpo $(DEPDIR)/nccmp-nccmp_stats_print.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='nccmp_stats_print.c' object='nccmp-nccmp_stats_print.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -c -o nccmp-nccmp_stats_print.o `test -f 'nccmp_stats_print.c' || echo '$(srcdir)/'`nccmp_stats_print.c
+
+nccmp-nccmp_stats_print.obj: nccmp_stats_print.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -MT nccmp-nccmp_stats_print.obj -MD -MP -MF $(DEPDIR)/nccmp-nccmp_stats_print.Tpo -c -o nccmp-nccmp_stats_print.obj `if test -f 'nccmp_stats_print.c'; then $(CYGPATH_W) 'nccmp_stats_print.c'; else $(CYGPATH_W) '$(srcdir)/nccmp_stats_print.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/nccmp-nccmp_stats_print.Tpo $(DEPDIR)/nccmp-nccmp_stats_print.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='nccmp_stats_print.c' object='nccmp-nccmp_stats_print.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -c -o nccmp-nccmp_stats_print.obj `if test -f 'nccmp_stats_print.c'; then $(CYGPATH_W) 'nccmp_stats_print.c'; else $(CYGPATH_W) '$(srcdir)/nccmp_stats_print.c'; fi`
 
 nccmp-nccmp_strlist.o: nccmp_strlist.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nccmp_CFLAGS) $(CFLAGS) -MT nccmp-nccmp_strlist.o -MD -MP -MF $(DEPDIR)/nccmp-nccmp_strlist.Tpo -c -o nccmp-nccmp_strlist.o `test -f 'nccmp_strlist.c' || echo '$(srcdir)/'`nccmp_strlist.c

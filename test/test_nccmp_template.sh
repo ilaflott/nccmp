@@ -6,9 +6,9 @@ $srcdir/test_nccmp_setup.sh $DATA $I
 
 NCGEN_VER=$(ncgen -v 2>&1 | grep -e version | cut -d' ' -f4)
 if [ ${NCGEN_VER:0:5} != "4.3.3" ]; then
-    TRUTH=stderr$I.pre433.txt
+    TRUTH=$srcdir/stderr$I.pre433.txt
 else
-    TRUTH=stderr$I.txt
+    TRUTH=$srcdir/stderr$I.txt
 fi
 
 LOG=stderr$I.tmp
@@ -39,4 +39,7 @@ if [ -e "$TRUTH" ]; then
         echo "$DIFF"
         exit 1
     fi
+else
+    echo "ERROR: $TRUTH does not exist."
+    exit 1
 fi

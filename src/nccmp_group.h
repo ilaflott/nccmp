@@ -17,7 +17,11 @@ typedef struct nccmp_group_t {
 /* Compare all groups selected. */
 int nccmp_cmp_groups(nccmp_state_t* state);
 
-nccmp_group_t* nccmp_find_group(nccmp_group_t* groups, const char* name);
+int nccmp_compute_num_groups(nccmp_group_t *group);
+
+nccmp_group_t* nccmp_find_group_by_name(nccmp_group_t* groups, const char* name);
+
+nccmp_group_t* nccmp_find_group_by_id(nccmp_group_t* groups, const int id);
 
 nccmp_group_t* nccmp_create_group();
 
@@ -29,5 +33,8 @@ void nccmp_destroy_groups(nccmp_group_t** data, int* ngroups);
 
 /* @param group[out]: Must be pre-allocated pointer. */
 int nccmp_get_group_info(int ncid, nccmp_group_t* group);
+
+/* Assumes ids array is pre-allocated to hold all children ids and parent's. */
+void nccmp_get_group_ids(nccmp_group_t *group, int *ids);
 
 #endif

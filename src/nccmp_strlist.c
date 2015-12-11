@@ -98,6 +98,23 @@ int nccmp_clear_strlist(nccmp_strlist_t* list)
     return EXIT_SUCCESS;
 }
 
+int* nccmp_compute_strlist_lengths(nccmp_strlist_t* list)
+{
+    int *result = NULL;
+    int i;
+
+    if (!list) {
+        return result;
+    }
+
+    result = XCALLOC(int, list->size);
+    for(i = 0; i < list->size; ++i) {
+        result[i] = strlen(list->items[i]);
+    }
+
+    return result;
+}
+
 int nccmp_deep_copy_strlist(nccmp_strlist_t* src, nccmp_strlist_t* dst)
 {
     int i, status;

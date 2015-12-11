@@ -136,6 +136,51 @@ recover:
     return result;
 }
 
+int test_compute_strlist_lengths()
+{
+    int result = PASS;
+    nccmp_strlist_t* list = nccmp_new_strlist(10);
+    int *lens = XCALLOC(int, 10);
+
+    if (!nccmp_is_strlist_valid(list)) {
+        PRINT("Failed to allocate list.");
+        result = FAIL;
+        goto recover;
+    }
+
+    const char * str1 = "foo";
+    nccmp_add_to_strlist(list, str1);
+
+    const char * str2 = "barz";
+    nccmp_add_to_strlist(list, str2);
+
+    lens = nccmp_compute_strlist_lengths(list);
+
+    if (3 != lens[0]) {
+        PRINT("Expected lens[0] = 3");
+        result = FAIL;
+        goto recover;
+    }
+
+    if (4 != lens[1]) {
+        PRINT("Expected lens[1] = 4");
+        result = FAIL;
+        goto recover;
+    }
+
+    if (0 != lens[2]) {
+        PRINT("Expected lens[0] = 0");
+        result = FAIL;
+        goto recover;
+    }
+
+recover:
+    XFREE(lens);
+    nccmp_free_strlist(& list);
+
+    return result;
+}
+
 int test_deep_copy_strlist()
 {
     int result = PASS, status;
@@ -511,6 +556,7 @@ int main(int argc, char* argv[])
     TEST(test_index_in_strlist);
     TEST(test_split_strlist_by_delim);
     TEST(test_union_strlist);
+    TEST(test_compute_strlist_lengths);
 
     return failures;
 }

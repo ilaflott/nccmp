@@ -42,6 +42,9 @@ int nccmp_append_to_strlist(nccmp_strlist_t** list, const char* string);
 /* Frees memory for each string, but not list of strings. Returns 0 if success. */
 int nccmp_clear_strlist(nccmp_strlist_t* list);
 
+/* Compute string lengths and return new array. Caller must free the result array. */
+int* nccmp_compute_strlist_lengths(nccmp_strlist_t* list);
+
 /* Deep copy. Requires 'dst' capacity greater than or equal to 'src'.
    Strings in 'listdst' after 'nsrc' position are left intact.*/
 int nccmp_deep_copy_strlist(nccmp_strlist_t* src, nccmp_strlist_t* dst);

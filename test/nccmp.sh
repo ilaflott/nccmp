@@ -3,7 +3,7 @@
 # Has option to run memory checker.
 
 if test "$MEMCHECK" = "1"; then 
-	echo valgrind --tool=memcheck --leak-check=full --show-reachable=yes --log-file=tmp.valgrind --num-callers=20 --track-origins=yes --expensive-definedness-checks=yes --freelist-vol=100000000 --freelist-big-blocks=10000000 --malloc-fill=A --free-fill=F ../src/nccmp
+    echo valgrind --tool=memcheck --leak-check=full --show-reachable=yes --log-file=tmp.valgrind --num-callers=20 --track-origins=yes --freelist-vol=100000000 --freelist-big-blocks=10000000 --malloc-fill=A --free-fill=F ../src/nccmp
 else 
-	echo ../src/nccmp
+    echo ../src/nccmp
 fi

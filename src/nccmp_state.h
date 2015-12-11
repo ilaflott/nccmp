@@ -4,6 +4,7 @@
 #include <netcdf.h>
 #include <nccmp_dim.h>
 #include <nccmp_opt.h>
+#include <nccmp_stats.h>
 #include <nccmp_user_type.h>
 #include <nccmp_var.h>
 
@@ -28,9 +29,14 @@ typedef struct nccmp_state_t {
     int                 recid1;
     int                 recid2;
     nccmp_opt_t         opts;
+
     #if HAVE_PTHREAD
     pthread_mutex_t     mutex_diff_count;
     #endif
+
+    nccmp_group_stats_array_t *stats;
+    nccmp_var_stats_array_t *current_var_stats;
+
     nccmp_user_types_t  *types1;
     nccmp_user_types_t  *types2;
     nccmp_var_t         *vars1;
@@ -52,9 +58,13 @@ count_limit_type nccmp_inc_diff_count(nccmp_state_t* state, int varid);
 
 void nccmp_init_state(nccmp_state_t *state);
 
+void nccmp_init_state_stats(nccmp_state_t *state);
+
+void nccmp_init_var_diff_counts(nccmp_state_t* state);
+
 /* Should only be called once per program instance. */
 int nccmp_open_files(nccmp_state_t* state);
 
-void var_diff_counts_init(nccmp_state_t* state);
+void nccmp_update_stats(nccmp_state_t *state, int varid, double delta);
 
 #endif

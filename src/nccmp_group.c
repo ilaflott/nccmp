@@ -39,8 +39,10 @@ int nccmp_cmp_group(nccmp_state_t* state, nccmp_group_t* group1, nccmp_group_t* 
     }
 
     if (group1->nchildren != group1->nchildren) {
-        PRINT_DIFF(state->opts.debug, "DIFFER : NUMBER OF GROUPS : %zu (\"%s\") <> %zu (\"%s\")\n",
-                group1->nchildren, group1->fullname, group2->nchildren, group2->fullname);
+        if (!state->opts.quiet) {
+            PRINT_DIFF(state->opts.debug, "DIFFER : NUMBER OF GROUPS : %zu (\"%s\") <> %zu (\"%s\")\n",
+                       group1->nchildren, group1->fullname, group2->nchildren, group2->fullname);
+        }
         last_status = EXIT_DIFFER;
         if (!state->opts.force) {
             goto recover;
@@ -80,7 +82,7 @@ int nccmp_cmp_group(nccmp_state_t* state, nccmp_group_t* group1, nccmp_group_t* 
     if (state->opts.debug) {
         nccmp_print_vars(state->vars1, state->nvars1);
     }
-    
+
     if (state->opts.verbose) {
         LOG_INFO("Found %d variables in first group.\n", state->nvars1);
         LOG_INFO("Collecting variable information for group id = %d.\n", group2->id);
@@ -91,7 +93,7 @@ int nccmp_cmp_group(nccmp_state_t* state, nccmp_group_t* group1, nccmp_group_t* 
     if (state->opts.debug) {
         nccmp_print_vars(state->vars2, state->nvars2);
     }
-    
+
     if (state->opts.verbose) {
         LOG_INFO("Found %d variables in second group.\n", state->nvars2);
     }
@@ -138,6 +140,21 @@ recover:
     return last_status;
 }
 
+int nccmp_compute_num_groups(nccmp_group_t *group)
+{
+    int result = 0;
+    int i;
+
+    if (group) {
+        result = 1;
+        for(i = 0; i < group->nchildren; ++i) {
+            result += nccmp_compute_num_groups(group->children[i]);
+        }
+    }
+
+    return result;
+}
+
 nccmp_group_t* nccmp_create_group()
 {
     nccmp_group_t *result = XCALLOC(nccmp_group_t, 1);
@@ -150,7 +167,7 @@ nccmp_group_t* nccmp_create_groups(size_t n)
     return result;
 }
 
-nccmp_group_t* nccmp_find_group(nccmp_group_t* groups, const char* name)
+nccmp_group_t* nccmp_find_group_by_name(nccmp_group_t* groups, const char* name)
 {
     nccmp_group_t* result = 0;
     int i;
@@ -166,13 +183,57 @@ nccmp_group_t* nccmp_find_group(nccmp_group_t* groups, const char* name)
 
     for(i = 0; i < groups->nchildren; ++i)
     {
-        result = nccmp_find_group(groups->children[i], name);
+        result = nccmp_find_group_by_name(groups->children[i], name);
         if (result) {
             return result;
         }
     }
 
     return 0;
+}
+
+nccmp_group_t* nccmp_find_group_by_id(nccmp_group_t* groups, const int id)
+{
+    nccmp_group_t* result = 0;
+    int i;
+
+    if (! groups) {
+        return 0;
+    }
+
+    if (id == groups->id) {
+        return groups;
+    }
+
+    for(i = 0; i < groups->nchildren; ++i)
+    {
+        result = nccmp_find_group_by_id(groups->children[i], id);
+        if (result) {
+            return result;
+        }
+    }
+
+    return 0;
+}
+
+void nccmp_get_group_ids_recurse(nccmp_group_t *group, int *ids, int *index)
+{
+    int i;
+    if (!group || !ids) {
+        return;
+    }
+
+    ids[*index] = group->id;
+    ++(*index);
+    for(i = 0; i < group->nchildren; ++i) {
+        nccmp_get_group_ids_recurse(group->children[i], ids, index);
+    }
+}
+
+void nccmp_get_group_ids(nccmp_group_t *group, int *ids)
+{
+    int index = 0;
+    nccmp_get_group_ids_recurse(group, ids, & index);
 }
 
 void nccmp_destroy_group(nccmp_group_t* data)
@@ -286,19 +347,23 @@ int nccmp_cmp_groups(nccmp_state_t* state)
     }
 
     for(i = 0; i < group_names_to_process->size; ++i) {
-        child1 = nccmp_find_group(state->thread_groups1, group_names_to_process->items[i]);
+        child1 = nccmp_find_group_by_name(state->thread_groups1, group_names_to_process->items[i]);
         if (! child1) {
-            PRINT_DIFF(state->opts.debug, "DIFFER : Failed to find group %s in file \"%s\"\n",
-                    group_names_to_process->items[i], state->opts.file1);
+            if (!state->opts.quiet) {
+                PRINT_DIFF(state->opts.debug, "DIFFER : Failed to find group %s in file \"%s\"\n",
+                           group_names_to_process->items[i], state->opts.file1);
+            }
             last_status = EXIT_DIFFER;
             if (!state->opts.force) {
                 goto recover;
             }
         }
-        child2 = nccmp_find_group(state->thread_groups2, group_names_to_process->items[i]);
+        child2 = nccmp_find_group_by_name(state->thread_groups2, group_names_to_process->items[i]);
         if (! child2) {
-            PRINT_DIFF(state->opts.debug, "DIFFER : Failed to find group %s in file \"%s\"\n",
-                    group_names_to_process->items[i], state->opts.file2);
+            if (!state->opts.quiet) {
+                PRINT_DIFF(state->opts.debug, "DIFFER : Failed to find group %s in file \"%s\"\n",
+                           group_names_to_process->items[i], state->opts.file2);
+            }
             last_status = EXIT_DIFFER;
             if (!state->opts.force) {
                 goto recover;

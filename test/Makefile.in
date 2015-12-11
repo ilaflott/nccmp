@@ -88,28 +88,29 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 TESTS = test_nccmp_strlist$(EXEEXT) test_nccmp_odometer$(EXEEXT) \
-	test_nccmp_01.sh test_nccmp_02.sh test_nccmp_03.sh \
-	test_nccmp_04.sh test_nccmp_05.sh test_nccmp_06.sh \
-	test_nccmp_07.sh test_nccmp_08.sh test_nccmp_09.sh \
-	test_nccmp_10.sh test_nccmp_11.sh test_nccmp_12.sh \
-	test_nccmp_13.sh test_nccmp_14.sh test_nccmp_15.sh \
-	test_nccmp_16.sh test_nccmp_17.sh test_nccmp_18.sh \
-	test_nccmp_19.sh test_nccmp_20.sh test_nccmp_21.sh \
-	test_nccmp_22.sh test_nccmp_23.sh test_nccmp_24.sh \
-	test_nccmp_25.sh test_nccmp_26.sh test_nccmp_27.sh \
-	test_nccmp_28.sh test_nccmp_29.sh test_nccmp_30.sh \
-	test_nccmp_31.sh test_nccmp_32.sh test_nccmp_33.sh \
-	test_nccmp_34.sh test_nccmp_35.sh test_nccmp_36.sh \
-	test_nccmp_37.sh test_nccmp_38.sh test_nccmp_39.sh \
-	test_nccmp_40.sh test_nccmp_41.sh test_nccmp_42.sh \
-	test_nccmp_43.sh test_nccmp_44.sh test_nccmp_45.sh \
-	test_nccmp_46.sh test_nccmp_47.sh test_nccmp_48.sh \
-	test_nccmp_49.sh test_nccmp_50.sh test_nccmp_51.sh \
-	test_nccmp_52.sh test_nccmp_53.sh test_nccmp_54.sh \
-	test_nccmp_55.sh test_nccmp_56.sh test_nccmp_57.sh \
-	test_nccmp_58.sh test_nccmp_59.sh test_nccmp_60.sh \
-	test_nccmp_61.sh test_nccmp_62.sh test_nccmp_63.sh \
-	test_nccmp_64.sh test_nccmp_65.sh test_nccmp_66.sh \
+	test_nccmp_stats$(EXEEXT) test_nccmp_01.sh test_nccmp_02.sh \
+	test_nccmp_03.sh test_nccmp_04.sh test_nccmp_05.sh \
+	test_nccmp_06.sh test_nccmp_07.sh test_nccmp_08.sh \
+	test_nccmp_09.sh test_nccmp_10.sh test_nccmp_11.sh \
+	test_nccmp_12.sh test_nccmp_13.sh test_nccmp_14.sh \
+	test_nccmp_15.sh test_nccmp_16.sh test_nccmp_17.sh \
+	test_nccmp_18.sh test_nccmp_19.sh test_nccmp_20.sh \
+	test_nccmp_21.sh test_nccmp_22.sh test_nccmp_23.sh \
+	test_nccmp_24.sh test_nccmp_25.sh test_nccmp_26.sh \
+	test_nccmp_27.sh test_nccmp_28.sh test_nccmp_29.sh \
+	test_nccmp_30.sh test_nccmp_31.sh test_nccmp_32.sh \
+	test_nccmp_33.sh test_nccmp_34.sh test_nccmp_35.sh \
+	test_nccmp_36.sh test_nccmp_37.sh test_nccmp_38.sh \
+	test_nccmp_39.sh test_nccmp_40.sh test_nccmp_41.sh \
+	test_nccmp_42.sh test_nccmp_43.sh test_nccmp_44.sh \
+	test_nccmp_45.sh test_nccmp_46.sh test_nccmp_47.sh \
+	test_nccmp_48.sh test_nccmp_49.sh test_nccmp_50.sh \
+	test_nccmp_51.sh test_nccmp_52.sh test_nccmp_53.sh \
+	test_nccmp_54.sh test_nccmp_55.sh test_nccmp_56.sh \
+	test_nccmp_57.sh test_nccmp_58.sh test_nccmp_59.sh \
+	test_nccmp_60.sh test_nccmp_61.sh test_nccmp_62.sh \
+	test_nccmp_63.sh test_nccmp_64.sh test_nccmp_65.sh \
+	test_nccmp_66.sh test_nccmp_67.sh test_nccmp_68.sh \
 	$(am__append_1)
 @ENABLE_TEST_BIG_TRUE@am__append_1 = test_big.sh
 check_PROGRAMS = make_compound_array_atomic$(EXEEXT) \
@@ -118,7 +119,8 @@ check_PROGRAMS = make_compound_array_atomic$(EXEEXT) \
 	make_compound_vlen_nest$(EXEEXT) make_big$(EXEEXT) \
 	make_nans$(EXEEXT) make_nc4_encodings$(EXEEXT) \
 	padheader$(EXEEXT) test_nccmp_odometer$(EXEEXT) \
-	test_nccmp_strlist$(EXEEXT) test_nccmp_user_type$(EXEEXT)
+	test_nccmp_stats$(EXEEXT) test_nccmp_strlist$(EXEEXT) \
+	test_nccmp_user_type$(EXEEXT)
 subdir = test
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
 	$(top_srcdir)/mkinstalldirs $(top_srcdir)/depcomp \
@@ -165,6 +167,12 @@ test_nccmp_odometer_OBJECTS =  \
 	test_nccmp_odometer-test_nccmp_odometer.$(OBJEXT)
 test_nccmp_odometer_DEPENDENCIES =  \
 	$(top_builddir)/src/nccmp-nccmp_odometer.o
+test_nccmp_stats_SOURCES = test_nccmp_stats.c
+test_nccmp_stats_OBJECTS =  \
+	test_nccmp_stats-test_nccmp_stats.$(OBJEXT)
+test_nccmp_stats_DEPENDENCIES = $(top_builddir)/src/nccmp-log.o \
+	$(top_builddir)/src/nccmp-nccmp_stats.o \
+	$(top_builddir)/src/nccmp-xmalloc.o
 test_nccmp_strlist_SOURCES = test_nccmp_strlist.c
 test_nccmp_strlist_OBJECTS =  \
 	test_nccmp_strlist-test_nccmp_strlist.$(OBJEXT)
@@ -213,13 +221,13 @@ am__v_CCLD_1 =
 SOURCES = make_big.c make_compound_array_atomic.c \
 	make_compound_array_user_type.c make_compound_nest_atomic.c \
 	make_compound_vlen_nest.c make_nans.c make_nc4_encodings.c \
-	padheader.c test_nccmp_odometer.c test_nccmp_strlist.c \
-	test_nccmp_user_type.c
+	padheader.c test_nccmp_odometer.c test_nccmp_stats.c \
+	test_nccmp_strlist.c test_nccmp_user_type.c
 DIST_SOURCES = make_big.c make_compound_array_atomic.c \
 	make_compound_array_user_type.c make_compound_nest_atomic.c \
 	make_compound_vlen_nest.c make_nans.c make_nc4_encodings.c \
-	padheader.c test_nccmp_odometer.c test_nccmp_strlist.c \
-	test_nccmp_user_type.c
+	padheader.c test_nccmp_odometer.c test_nccmp_stats.c \
+	test_nccmp_strlist.c test_nccmp_user_type.c
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -564,6 +572,7 @@ CLEANFILES = \
     padded*.nc padheader padheader.exe                          \
     stderr*.tmp test*.nc                                        \
     test_nccmp_odometer test_nccmp_odometer.exe                 \
+    test_nccmp_stats test_nccmp_stats.exe                       \
     test_nccmp_strlist test_nccmp_strlist.exe                   \
     test_nccmp_user_type test_nccmp_user_type.exe               \
     tmp*                                                        \
@@ -589,6 +598,11 @@ make_nans_LDADD = -lnetcdf
 make_nc4_encodings_LDADD = -lnetcdf
 test_nccmp_odometer_CPPFLAGS = -I$(top_srcdir)/src
 test_nccmp_odometer_LDADD = $(top_builddir)/src/nccmp-nccmp_odometer.o
+test_nccmp_stats_CPPFLAGS = -I$(top_srcdir)/src
+test_nccmp_stats_LDADD = $(top_builddir)/src/nccmp-log.o                 \
+                         $(top_builddir)/src/nccmp-nccmp_stats.o         \
+                         $(top_builddir)/src/nccmp-xmalloc.o
+
 test_nccmp_strlist_CPPFLAGS = -I$(top_srcdir)/src
 test_nccmp_strlist_LDADD = $(top_builddir)/src/nccmp-xmalloc.o           \
                            $(top_builddir)/src/nccmp-nccmp_strlist.o
@@ -674,6 +688,10 @@ test_nccmp_odometer$(EXEEXT): $(test_nccmp_odometer_OBJECTS) $(test_nccmp_odomet
 	@rm -f test_nccmp_odometer$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(test_nccmp_odometer_OBJECTS) $(test_nccmp_odometer_LDADD) $(LIBS)
 
+test_nccmp_stats$(EXEEXT): $(test_nccmp_stats_OBJECTS) $(test_nccmp_stats_DEPENDENCIES) $(EXTRA_test_nccmp_stats_DEPENDENCIES) 
+	@rm -f test_nccmp_stats$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(test_nccmp_stats_OBJECTS) $(test_nccmp_stats_LDADD) $(LIBS)
+
 test_nccmp_strlist$(EXEEXT): $(test_nccmp_strlist_OBJECTS) $(test_nccmp_strlist_DEPENDENCIES) $(EXTRA_test_nccmp_strlist_DEPENDENCIES) 
 	@rm -f test_nccmp_strlist$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(test_nccmp_strlist_OBJECTS) $(test_nccmp_strlist_LDADD) $(LIBS)
@@ -697,6 +715,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/make_nc4_encodings.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/padheader.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_nccmp_odometer-test_nccmp_odometer.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_nccmp_stats-test_nccmp_stats.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_nccmp_strlist-test_nccmp_strlist.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_nccmp_user_type-test_nccmp_user_type.Po@am__quote@
 
@@ -727,6 +746,20 @@ test_nccmp_odometer-test_nccmp_odometer.obj: test_nccmp_odometer.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='test_nccmp_odometer.c' object='test_nccmp_odometer-test_nccmp_odometer.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_nccmp_odometer_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o test_nccmp_odometer-test_nccmp_odometer.obj `if test -f 'test_nccmp_odometer.c'; then $(CYGPATH_W) 'test_nccmp_odometer.c'; else $(CYGPATH_W) '$(srcdir)/test_nccmp_odometer.c'; fi`
+
+test_nccmp_stats-test_nccmp_stats.o: test_nccmp_stats.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_nccmp_stats_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT test_nccmp_stats-test_nccmp_stats.o -MD -MP -MF $(DEPDIR)/test_nccmp_stats-test_nccmp_stats.Tpo -c -o test_nccmp_stats-test_nccmp_stats.o `test -f 'test_nccmp_stats.c' || echo '$(srcdir)/'`test_nccmp_stats.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/test_nccmp_stats-test_nccmp_stats.Tpo $(DEPDIR)/test_nccmp_stats-test_nccmp_stats.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='test_nccmp_stats.c' object='test_nccmp_stats-test_nccmp_stats.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_nccmp_stats_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o test_nccmp_stats-test_nccmp_stats.o `test -f 'test_nccmp_stats.c' || echo '$(srcdir)/'`test_nccmp_stats.c
+
+test_nccmp_stats-test_nccmp_stats.obj: test_nccmp_stats.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_nccmp_stats_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT test_nccmp_stats-test_nccmp_stats.obj -MD -MP -MF $(DEPDIR)/test_nccmp_stats-test_nccmp_stats.Tpo -c -o test_nccmp_stats-test_nccmp_stats.obj `if test -f 'test_nccmp_stats.c'; then $(CYGPATH_W) 'test_nccmp_stats.c'; else $(CYGPATH_W) '$(srcdir)/test_nccmp_stats.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/test_nccmp_stats-test_nccmp_stats.Tpo $(DEPDIR)/test_nccmp_stats-test_nccmp_stats.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='test_nccmp_stats.c' object='test_nccmp_stats-test_nccmp_stats.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_nccmp_stats_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o test_nccmp_stats-test_nccmp_stats.obj `if test -f 'test_nccmp_stats.c'; then $(CYGPATH_W) 'test_nccmp_stats.c'; else $(CYGPATH_W) '$(srcdir)/test_nccmp_stats.c'; fi`
 
 test_nccmp_strlist-test_nccmp_strlist.o: test_nccmp_strlist.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_nccmp_strlist_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT test_nccmp_strlist-test_nccmp_strlist.o -MD -MP -MF $(DEPDIR)/test_nccmp_strlist-test_nccmp_strlist.Tpo -c -o test_nccmp_strlist-test_nccmp_strlist.o `test -f 'test_nccmp_strlist.c' || echo '$(srcdir)/'`test_nccmp_strlist.c
@@ -959,6 +992,13 @@ test_nccmp_strlist.log: test_nccmp_strlist$(EXEEXT)
 test_nccmp_odometer.log: test_nccmp_odometer$(EXEEXT)
 	@p='test_nccmp_odometer$(EXEEXT)'; \
 	b='test_nccmp_odometer'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test_nccmp_stats.log: test_nccmp_stats$(EXEEXT)
+	@p='test_nccmp_stats$(EXEEXT)'; \
+	b='test_nccmp_stats'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
@@ -1421,6 +1461,20 @@ test_nccmp_65.sh.log: test_nccmp_65.sh
 test_nccmp_66.sh.log: test_nccmp_66.sh
 	@p='test_nccmp_66.sh'; \
 	b='test_nccmp_66.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test_nccmp_67.sh.log: test_nccmp_67.sh
+	@p='test_nccmp_67.sh'; \
+	b='test_nccmp_67.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test_nccmp_68.sh.log: test_nccmp_68.sh
+	@p='test_nccmp_68.sh'; \
+	b='test_nccmp_68.sh'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
