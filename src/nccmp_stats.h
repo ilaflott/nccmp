@@ -1,6 +1,8 @@
 #ifndef NCCMP_STATS_H
 #define NCCMP_STATS_H 1
 
+#include <config.h>
+
 #if HAVE_PTHREAD
     #include <pthread.h>
 #endif
@@ -19,31 +21,30 @@ typedef struct nccmp_var_stats_t {
     #endif
 } nccmp_var_stats_t;
 
-/* Container for array of var stats for a group. */
-typedef struct nccmp_var_stats_array_t {
-    int num_items;
-    nccmp_var_stats_t *items; /* Index into array is varid in the group. */
-} nccmp_var_stats_array_t;
-
 /* Contains var stats arrays for all groups in a file. */
-typedef struct nccmp_group_stats_array_t {
-    int num_items;
-    int *group_ids; /* Has length num_items, one item per group. */
-    nccmp_var_stats_array_t *items;
-} nccmp_group_stats_array_t;
+typedef struct nccmp_group_stats_t {
+    int num_groups;
+    int *group_ids; /* Has length num_groups. */
+    int *num_vars;  /* Number of vars each group has. */
+    nccmp_var_stats_t groups[50][50];
+} nccmp_group_stats_t;
 
 double nccmp_compute_var_stats_mean(nccmp_var_stats_t *data);
 
 double nccmp_compute_var_stats_stdev(nccmp_var_stats_t *data);
 
-void nccmp_clear_var_stats_array(nccmp_var_stats_array_t *array);
+void nccmp_clear_var_stats_array(nccmp_var_stats_t *array, int n);
 
-nccmp_group_stats_array_t* nccmp_create_group_stats_array(int num_groups);
+nccmp_group_stats_t* nccmp_create_group_stats_array(int num_groups);
 
-void nccmp_init_group_stats(nccmp_group_stats_array_t *group_array, int groupid, int num_vars);
+void nccmp_init_group_stats(nccmp_group_stats_t *group_array, int groupid, int num_vars);
 
-nccmp_var_stats_array_t* nccmp_find_group_var_stats_array(nccmp_group_stats_array_t *array, int group_id);
+nccmp_var_stats_t* nccmp_find_var_stats_array(nccmp_group_stats_t *group_stats, int group_id);
 
-void nccmp_destroy_group_stats_array(nccmp_group_stats_array_t *array);
+void nccmp_destroy_group_stats(nccmp_group_stats_t *array);
+
+void nccmp_print_var_stat_pointers(nccmp_var_stats_t *stats, int groupid, int num_vars);
+
+void nccmp_update_stats(nccmp_var_stats_t *stats, double delta);
 
 #endif

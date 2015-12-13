@@ -65,7 +65,7 @@ void nccmp_destroy_state(nccmp_state_t *state)
     nccmp_destroy_state_groups(& state->thread_groups1, & state->nthread_groups1);
     nccmp_destroy_state_groups(& state->thread_groups2, & state->nthread_groups2);
 
-    nccmp_destroy_group_stats_array(state->stats);
+    //FIXME nccmp_destroy_group_stats(state->stats);
 
     nccmp_opt_free(& state->opts);
 
@@ -190,28 +190,19 @@ void nccmp_init_var_diff_counts(nccmp_state_t* state)
     memset(state->var_diff_counts, 0, max_nvars * sizeof(int));
 }
 
-void nccmp_update_stats(nccmp_state_t *state, int varid, double delta)
+void nccmp_update_state_var_stats(nccmp_state_t *state, int varid, double delta)
 {
-    nccmp_var_stats_t *stats = & state->current_var_stats->items[varid];
-
+    nccmp_var_stats_t *stat = & state->current_var_stats[varid];
 #if HAVE_PTHREAD
     if (state->opts.threads > 1) {
         /* Lock only if parallel, otherwise avoid overhead. */
-        pthread_mutex_lock(& stats->lock);
+        pthread_mutex_lock(& stat->lock);
     }
 #endif
-    ++(stats->count);
-    stats->max = nccmp_max_double(stats->max, delta);
-    stats->min = nccmp_min_double(stats->min, delta);
-    stats->sum += delta;
-    stats->abs_sum += delta < 0 ? -delta : delta;
-    stats->sum_squares += delta * delta;
-    LOG_DEBUG("FIXME varid=%d delta=%g count=%d max=%g min=%g sum=%g abs=%g sumsq=%g\n",
-              varid, delta, stats->count, stats->max, stats->min, stats->sum, stats->abs_sum, stats->sum_squares);
-
+    nccmp_update_stats(stat, delta);
 #if HAVE_PTHREAD
     if (state->opts.threads > 1) {
-        pthread_mutex_unlock(& stats->lock);
+        pthread_mutex_unlock(& stat->lock);
     }
 #endif
 }

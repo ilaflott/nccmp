@@ -31,11 +31,13 @@ typedef struct nccmp_state_t {
     nccmp_opt_t         opts;
 
     #if HAVE_PTHREAD
-    pthread_mutex_t     mutex_diff_count;
+        pthread_mutex_t     mutex_diff_count;
     #endif
 
-    nccmp_group_stats_array_t *stats;
-    nccmp_var_stats_array_t *current_var_stats;
+    nccmp_group_stats_t *stats;
+
+    /* Var stats array to update while comparing a group per thread batch. */
+    nccmp_var_stats_t *current_var_stats;
 
     nccmp_user_types_t  *types1;
     nccmp_user_types_t  *types2;
@@ -65,6 +67,6 @@ void nccmp_init_var_diff_counts(nccmp_state_t* state);
 /* Should only be called once per program instance. */
 int nccmp_open_files(nccmp_state_t* state);
 
-void nccmp_update_stats(nccmp_state_t *state, int varid, double delta);
+void nccmp_update_state_var_stats(nccmp_state_t *state, int varid, double delta);
 
 #endif

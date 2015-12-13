@@ -3272,7 +3272,10 @@ int nccmp_cmp_var_atomic_type(nccmp_state_t* state,  int ncid1, int ncid2,
             item1.m_##NAME1 = items1.p_##NAME1[offset-1];                      \
             item2.m_##NAME2 = items2.p_##NAME2[offset-1];                      \
             if (state->opts.statistics) {                                      \
-                nccmp_update_stats(state, varid1, (double)item1.m_##NAME1 - (double)item2.m_##NAME2); \
+                /*nccmp_print_var_stat_pointers(state->current_var_stats, ncid1, state->nvars1);*/ \
+                LOG_DEBUG("FIXME CMP stats=%p stat=%p varid=%d\n", \
+                          state->current_var_stats, &state->current_var_stats[varid1], varid1); \
+                nccmp_update_state_var_stats(state, varid1, (double)item1.m_##NAME1 - (double)item2.m_##NAME2); \
             }                                                                  \
             diff_count_status = nccmp_inc_diff_count(state, varid1);           \
             if (COUNT_OVER == diff_count_status) {                             \
@@ -3335,7 +3338,7 @@ int nccmp_cmp_var_atomic_type(nccmp_state_t* state,  int ncid1, int ncid2,
                     item1.m_##NAME1 = items1.p_##NAME1[i];                          \
                     item2.m_##NAME2 = items2.p_##NAME2[i];                          \
                     if (state->opts.statistics) {                                   \
-                        nccmp_update_stats(state, varid1, (double)item1.m_##NAME1 - (double)item2.m_##NAME2); \
+                        nccmp_update_state_var_stats(state, varid1, (double)item1.m_##NAME1 - (double)item2.m_##NAME2); \
                     }                                                               \
                     diff_count_status = nccmp_inc_diff_count(state, varid1);        \
                     if (COUNT_OVER == diff_count_status) {                          \
@@ -3576,7 +3579,12 @@ int nccmp_data(nccmp_state_t* state, nccmp_strlist_t* var_names,
 
     nccmp_init_var_diff_counts(state);
     nccmp_init_group_stats(state->stats, group1->id, state->nvars1);
-    state->current_var_stats = nccmp_find_group_var_stats_array(state->stats, group1->id);
+    state->current_var_stats = nccmp_find_var_stats_array(state->stats, group1->id);
+    LOG_DEBUG("FIXME nccmp_data current_var_stats=%p stats[0]=%p stats[1]=%p\n",
+              (void*) state->current_var_stats,
+              (void*) state->current_var_stats,
+              (void*) (state->current_var_stats + 1) );
+    nccmp_print_var_stat_pointers(state->current_var_stats, group1->id, 2/*state->nvars1*/);
 
     nccmp_destroy_user_types(state->types1);
     state->types1 = nccmp_load_user_types(group1->id, state->opts.debug);

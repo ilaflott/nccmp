@@ -23,15 +23,15 @@ void nccmp_compute_stats_column_widths(nccmp_strlist_t *strings, int *widths)
     }
 }
 
-void nccmp_print_group_stats_array(nccmp_group_stats_array_t *array,
-        nccmp_group_t *groups, nccmp_var_t *vars)
+void nccmp_print_group_stats(nccmp_group_stats_t *array,
+        nccmp_group_t *groups, nccmp_var_t *vars, int num_vars)
 {
     int i, col;
     nccmp_strlist_t *strings = NULL;
     int *widths = NULL;
     int max_widths[NCCMP_NUM_STATS_COLUMNS];
 
-    strings = nccmp_stringify_group_stats_array(array, groups, vars);
+    strings = nccmp_stringify_group_stats(array, groups, vars, num_vars);
     if (!strings) {
         return;
     }
@@ -104,13 +104,14 @@ void nccmp_print_pad(char c, int num)
     }
 }
 
-nccmp_strlist_t* nccmp_stringify_group_stats_array(
-        nccmp_group_stats_array_t *array,
+nccmp_strlist_t* nccmp_stringify_group_stats(
+        nccmp_group_stats_t *group_stats,
         nccmp_group_t *groups,
-        nccmp_var_t *vars
+        nccmp_var_t *vars,
+        int num_vars
         )
 {
-    int num_vars = 0;
+    int num_valid_vars = 0;
     char tmpstr[NCCMP_MAX_STRINGS];
     nccmp_strlist_t *result = NULL;
     int groupi;
@@ -120,23 +121,23 @@ nccmp_strlist_t* nccmp_stringify_group_stats_array(
 
     memset(tmpstr, 0, NCCMP_MAX_STRINGS);
 
-    if (!array || (0 == array->num_items) ) {
+    if (!group_stats || (0 == group_stats->num_groups) ) {
         return result;
     }
 
     /* Count vars with diffs. */
-    for(groupi = 0; groupi < array->num_items; ++groupi) {
-        if (!array->items[groupi].items) {
+    for(groupi = 0; groupi < group_stats->num_groups; ++groupi) {
+        if (!group_stats->groups[groupi]) {
             continue;
         }
-        for(vari = 0; vari < array->items[groupi].num_items; ++vari) {
-            if (0 < array->items[groupi].items[vari].count) {
-                ++num_vars;
+        for(vari = 0; vari < num_valid_vars; ++vari) {
+            if (0 < group_stats->groups[groupi][vari].count) {
+                ++num_valid_vars;
             }
         }
     }
 
-    result = nccmp_new_strlist(num_vars * NCCMP_NUM_STATS_COLUMNS);
+    result = nccmp_new_strlist(num_valid_vars * NCCMP_NUM_STATS_COLUMNS);
 
     #define APPEND(S) \
         if (nccmp_add_to_strlist(result, S)) { \
@@ -144,21 +145,25 @@ nccmp_strlist_t* nccmp_stringify_group_stats_array(
             goto recover; \
         }
 
-    for(groupi = 0; groupi < array->num_items; ++groupi) {
-        if (!array->items[groupi].items) {
+    for(groupi = 0; groupi < group_stats->num_groups; ++groupi) {
+        if (!group_stats->groups[groupi]) {
             continue;
         }
-        for(vari = 0; vari < array->items[groupi].num_items; ++vari) {
-            stat = & array->items[groupi].items[vari];
+        for(vari = 0; vari < num_vars; ++vari) {
+            stat = & (group_stats->groups[groupi][vari]);
 
             if (0 < stat->count) {
                 APPEND(vars[vari].name);
 
-                group = nccmp_find_group_by_id(groups, array->group_ids[groupi]);
+                group = nccmp_find_group_by_id(groups, group_stats->group_ids[groupi]);
                 if (group) {
                     APPEND(group->fullname);
                 }
 
+                printf("FIXME count=%d sum=%g absum=%g min=%g max=%g mean=%g std=%g stat=%p\n",
+                       stat->count, stat->sum, stat->abs_sum, stat->min, stat->max,
+                       nccmp_compute_var_stats_mean(stat),
+                       nccmp_compute_var_stats_stdev(stat), (void*)stat);
                 snprintf(tmpstr, NCCMP_MAX_STRINGS, "%d", stat->count);
                 APPEND(tmpstr);
                 snprintf(tmpstr, NCCMP_MAX_STRINGS, "%g", stat->sum);
