@@ -117,7 +117,7 @@ nccmp_strlist_t* nccmp_stringify_group_stats(
     int groupi;
     nccmp_group_t *group;
     int vari;
-    nccmp_var_stats_t *stat;
+    nccmp_stats_t *stat;
 
     memset(tmpstr, 0, NCCMP_MAX_STRINGS);
 
@@ -127,11 +127,11 @@ nccmp_strlist_t* nccmp_stringify_group_stats(
 
     /* Count vars with diffs. */
     for(groupi = 0; groupi < group_stats->num_groups; ++groupi) {
-        if (!group_stats->groups[groupi]) {
+        if (!group_stats->var_stats[groupi]) {
             continue;
         }
-        for(vari = 0; vari < num_valid_vars; ++vari) {
-            if (0 < group_stats->groups[groupi][vari].count) {
+        for(vari = 0; vari < num_vars; ++vari) {
+            if (0 < group_stats->var_stats[groupi][vari].count) {
                 ++num_valid_vars;
             }
         }
@@ -146,11 +146,11 @@ nccmp_strlist_t* nccmp_stringify_group_stats(
         }
 
     for(groupi = 0; groupi < group_stats->num_groups; ++groupi) {
-        if (!group_stats->groups[groupi]) {
+        if (!group_stats->var_stats[groupi]) {
             continue;
         }
         for(vari = 0; vari < num_vars; ++vari) {
-            stat = & (group_stats->groups[groupi][vari]);
+            stat = & (group_stats->var_stats[groupi][vari]);
 
             if (0 < stat->count) {
                 APPEND(vars[vari].name);
@@ -159,11 +159,6 @@ nccmp_strlist_t* nccmp_stringify_group_stats(
                 if (group) {
                     APPEND(group->fullname);
                 }
-
-                printf("FIXME count=%d sum=%g absum=%g min=%g max=%g mean=%g std=%g stat=%p\n",
-                       stat->count, stat->sum, stat->abs_sum, stat->min, stat->max,
-                       nccmp_compute_var_stats_mean(stat),
-                       nccmp_compute_var_stats_stdev(stat), (void*)stat);
                 snprintf(tmpstr, NCCMP_MAX_STRINGS, "%d", stat->count);
                 APPEND(tmpstr);
                 snprintf(tmpstr, NCCMP_MAX_STRINGS, "%g", stat->sum);

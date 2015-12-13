@@ -65,7 +65,7 @@ void nccmp_destroy_state(nccmp_state_t *state)
     nccmp_destroy_state_groups(& state->thread_groups1, & state->nthread_groups1);
     nccmp_destroy_state_groups(& state->thread_groups2, & state->nthread_groups2);
 
-    //FIXME nccmp_destroy_group_stats(state->stats);
+    nccmp_destroy_group_stats(state->stats);
 
     nccmp_opt_free(& state->opts);
 
@@ -192,7 +192,7 @@ void nccmp_init_var_diff_counts(nccmp_state_t* state)
 
 void nccmp_update_state_var_stats(nccmp_state_t *state, int varid, double delta)
 {
-    nccmp_var_stats_t *stat = & state->current_var_stats[varid];
+    nccmp_stats_t *stat = & state->current_var_stats[varid];
 #if HAVE_PTHREAD
     if (state->opts.threads > 1) {
         /* Lock only if parallel, otherwise avoid overhead. */

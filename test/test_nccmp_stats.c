@@ -7,7 +7,7 @@ int test_nccmp_compute_var_stats_mean()
 {
     int result = PASS;
     double mean;
-    nccmp_var_stats_t data;
+    nccmp_stats_t data;
     const double expected = 50.0;
 
     data.count = 10;
@@ -28,7 +28,7 @@ int test_nccmp_compute_var_stats_stdev()
 {
     int result = PASS;
     double stdev;
-    nccmp_var_stats_t data;
+    nccmp_stats_t data;
     const double expected = 3.0276503540974917;
 
     data.count = 10;
@@ -49,12 +49,12 @@ recover:
 int test_nccmp_init_group_stats()
 {
     int result = PASS;
-    nccmp_var_stats_t *found = NULL;
+    nccmp_stats_t *found = NULL;
     nccmp_group_stats_t *group_stats = nccmp_create_group_stats_array(2);
     group_stats->group_ids[0] = 1;
     group_stats->group_ids[1] = 2;
-    nccmp_init_group_stats(group_stats, 1, 1);
-    nccmp_init_group_stats(group_stats, 2, 2);
+    nccmp_init_group_stats(group_stats, 1, 1, 0);
+    nccmp_init_group_stats(group_stats, 2, 2, 0);
 
     found = nccmp_find_var_stats_array(group_stats, 1);
     if (!found) {
@@ -98,15 +98,15 @@ recover:
 int test_nccmp_update_stats()
 {
     int result = PASS;
-    nccmp_var_stats_t *stats = NULL;
+    nccmp_stats_t *stats = NULL;
     nccmp_group_stats_t *group_stats = nccmp_create_group_stats_array(2);
     group_stats->group_ids[0] = 1;
     group_stats->group_ids[1] = 2;
-    nccmp_init_group_stats(group_stats, 1, 1);
-    nccmp_init_group_stats(group_stats, 2, 2);
+    nccmp_init_group_stats(group_stats, 1, 1, 0);
+    nccmp_init_group_stats(group_stats, 2, 2, 0);
     int expect;
 
-    stats = & group_stats->groups[0][0];
+    stats = & group_stats->var_stats[0][0];
     nccmp_update_stats(stats, 1);
     nccmp_update_stats(stats, 2);
     expect = 2;
@@ -134,7 +134,7 @@ int test_nccmp_update_stats()
         goto recover;
     }
 
-    stats = & group_stats->groups[1][1];
+    stats = & group_stats->var_stats[1][1];
     nccmp_update_stats(stats, 1);
     nccmp_update_stats(stats, 2);
     expect = 2;

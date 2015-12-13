@@ -37,7 +37,8 @@ typedef struct nccmp_state_t {
     nccmp_group_stats_t *stats;
 
     /* Var stats array to update while comparing a group per thread batch. */
-    nccmp_var_stats_t *current_var_stats;
+    nccmp_stats_t *current_var_stats;
+    nccmp_stats_t *current_field_stats;
 
     nccmp_user_types_t  *types1;
     nccmp_user_types_t  *types2;
