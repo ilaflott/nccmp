@@ -68,6 +68,8 @@ void nccmp_init_var_diff_counts(nccmp_state_t* state);
 /* Should only be called once per program instance. */
 int nccmp_open_files(nccmp_state_t* state);
 
-void nccmp_update_state_var_stats(nccmp_state_t *state, int varid, double delta);
+void nccmp_update_state_field_stats(nccmp_state_t *state, int id, double delta);
+
+void nccmp_update_state_var_stats(nccmp_state_t *state, int id, double delta);
 
 #endif

@@ -3575,7 +3575,10 @@ int nccmp_data(nccmp_state_t* state, nccmp_strlist_t* var_names,
     }
 
     nccmp_init_var_diff_counts(state);
-    nccmp_init_group_stats(state->stats, group1->id, state->nvars1, 0);
+    nccmp_init_group_stats(state->stats,
+            group1->id,
+            state->nvars1,
+            nccmp_find_max_user_type_unique_id(state->types1) + 1);
     state->current_var_stats = nccmp_find_var_stats_array(state->stats, group1->id);
 
     nccmp_destroy_user_types(state->types1);

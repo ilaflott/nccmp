@@ -113,7 +113,10 @@ int nccmp_run(nccmp_state_t* state)
 
     if (state->opts.statistics) {
         nccmp_print_group_stats(
-                state->stats, & state->thread_groups1[0], state->vars1,
+                state->stats,
+                & state->thread_groups1[0],
+                state->vars1,
+                state->types1,
                 state->nvars1);
     }
 

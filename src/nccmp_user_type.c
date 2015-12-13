@@ -19,6 +19,83 @@ void nccmp_build_user_type_field_path_str(nccmp_user_type_t *type, char *result)
     }
 }
 
+void nccmp_build_user_type_tree_name(nccmp_user_type_t *type, char *result)
+{
+    nccmp_user_type_t *parent = type;
+    if (! type) {
+        return;
+    }
+
+    /* Get root var name. */
+    while (NULL != parent->parent) {
+        parent = parent->parent;
+    }
+    strcpy(result, parent->name);
+    /* Only insert dot if root has children. */
+    if (parent != type) {
+        strcat(result, ".");
+    }
+
+    /* Concat fields tree. */
+    nccmp_build_user_type_field_path_str(type, result);
+
+    /* Optimize string length. */
+    result = realloc(result, strlen(result));
+    if (NULL == result) {
+        LOG_ERROR("Failed to realloc string.\n");
+    }
+}
+
+int nccmp_find_max_user_type_unique_id(nccmp_user_types_t* types)
+{
+    int i, result = -1;
+    nccmp_user_type_t *item;
+
+    if (types) {
+        for(i = 0; i < types->num_items; ++i) {
+            item = & types->items[i];
+            result = nccmp_max_int(item->unique_id, result);
+
+            if (nccmp_is_user_type_compound_with_fields(item)) {
+                result = nccmp_max_int(result,
+                                       nccmp_find_max_user_type_unique_id(item->fields));
+            }
+        }
+    }
+
+    return result;
+}
+
+nccmp_user_type_t* nccmp_find_field_by_unique_id(nccmp_user_types_t* types, int id)
+{
+    int i;
+    nccmp_user_type_t *result = NULL;
+    nccmp_user_type_t *item;
+
+    if (types) {
+        for(i = 0; i < types->num_items; ++i) {
+            item = & types->items[i];
+            if (id == item->unique_id) {
+                result = item;
+                break;
+            }
+            if (nccmp_is_user_type_compound_with_fields(item)) {
+                result = nccmp_find_field_by_unique_id(item->fields, id);
+                if (result) {
+                    break;
+                }
+            }
+        }
+    }
+
+    return result;
+}
+
+int nccmp_is_user_type_compound_with_fields(nccmp_user_type_t *type)
+{
+    return type && type->fields && (NC_COMPOUND == type->user_class);
+}
+
 nccmp_user_type_t* nccmp_get_user_type_by_id(nccmp_user_type_t* items, int num_items, int id)
 {
     int idx = id - NC_FIRSTUSERTYPEID;
@@ -215,6 +292,7 @@ void nccmp_destroy_user_type_members(nccmp_user_type_t *item)
 
     nccmp_destroy_user_types(item->fields);
     XFREE(item->name);
+    XFREE(item->tree_name);
 }
 
 void nccmp_destroy_user_types(nccmp_user_types_t *types)
@@ -252,12 +330,14 @@ void nccmp_shallow_copy_user_type(nccmp_user_type_t *to, nccmp_user_type_t *from
     memcpy(to->dim_sizes, from->dim_sizes, sizeof(from->dim_sizes));
     to->field_index = from->field_index;
     strcpy(to->name,  from->name);
+    strcpy(to->tree_name,  from->tree_name);
     to->num_dims    = from->num_dims;
     to->num_enums   = from->num_enums;
     to->offset      = from->offset;
     to->root_size   = from->root_size;
     to->size        = from->size;
     to->type_id     = from->type_id;
+    to->unique_id   = from->unique_id;
     to->user_class  = from->user_class;
 }
 
@@ -344,6 +424,7 @@ void nccmp_load_user_type_compound_tree(int ncid, nccmp_user_types_t* types,
 {
     int i, j, id;
     nccmp_user_type_t *type;
+    int unique_id = 0;
 
     if (!types) {
         return;
@@ -352,18 +433,21 @@ void nccmp_load_user_type_compound_tree(int ncid, nccmp_user_types_t* types,
     for(i = 0; i < types->num_items; ++i) {
         id = typeids[i];
         type = nccmp_get_user_type_by_id(types->items, types->num_items, id);
+        type->unique_id = unique_id++;
 
         if (type && type->fields && (NC_COMPOUND == type->user_class)) {
             for(j = 0; j < type->fields->num_items; ++j) {
                 nccmp_load_user_type_compound_tree_field(ncid, types,
-                        & type->fields->items[j]);
+                        & type->fields->items[j], & unique_id);
             }
         }
+
+        nccmp_build_user_type_tree_name(type, type->tree_name);
     }
 }
 
 void nccmp_load_user_type_compound_tree_field(int ncid,
-        nccmp_user_types_t* types, nccmp_user_type_t* field)
+        nccmp_user_types_t* types, nccmp_user_type_t* field, int *unique_id)
 {
     int i, status;
     nccmp_user_type_t *type_info = 0, *child = 0;
@@ -374,6 +458,7 @@ void nccmp_load_user_type_compound_tree_field(int ncid,
 
     field->offset += field->parent->offset;
     field->root_size = field->parent->root_size;
+    field->unique_id = (*unique_id)++;
 
     switch(field->type_id) {
     case NC_BYTE:
@@ -413,10 +498,13 @@ void nccmp_load_user_type_compound_tree_field(int ncid,
                 nccmp_load_user_type_compound_tree_field(
                         ncid,
                         types,
-                        child);
+                        child,
+                        unique_id);
             }
         }
     }
+
+    nccmp_build_user_type_tree_name(field, field->tree_name);
 }
 
 void nccmp_init_user_type(nccmp_user_type_t *item)
@@ -428,6 +516,12 @@ void nccmp_init_user_type(nccmp_user_type_t *item)
     item->name = XCALLOC(char, NC_MAX_NAME);
     if (! item->name) {
         LOG_ERROR("Failed to allocate user type name.\n");
+        exit(EXIT_FATAL);
+    }
+
+    item->tree_name = XCALLOC(char, NC_MAX_NAME);
+    if (! item->tree_name) {
+        LOG_ERROR("Failed to allocate user type dotname.\n");
         exit(EXIT_FATAL);
     }
 
@@ -513,19 +607,21 @@ void nccmp_user_type_to_str(nccmp_user_type_t* type, char *result, int num_inden
     }
 
     sprintf(tmpstr, "base_type=%d class=%d field_index=%d is_field=%d name=%s"
-               " num_dims=%d num_enums=%zu num_fields=%zu offset=%zu"
-               " size=%zu type_id=%d\n",
+               " tree_name=%s num_dims=%d num_enums=%zu num_fields=%zu offset=%zu"
+               " size=%zu type_id=%d unique_id=%d\n",
                type->base_type,
                type->user_class,
                type->field_index,
                nccmp_is_user_type_field(type),
                type->name,
+               type->tree_name,
                type->num_dims,
                type->num_enums,
                nccmp_get_num_user_type_fields(type),
                type->offset,
                type->size,
-               type->type_id);
+               type->type_id,
+               type->unique_id);
      strcat(result, tmpstr);
 
      if (type->fields) {

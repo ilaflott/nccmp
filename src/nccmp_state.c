@@ -122,7 +122,7 @@ void nccmp_init_state(nccmp_state_t *state)
     nccmp_opt_init(& state->opts);
 
     #if HAVE_PTHREAD
-    pthread_mutex_init(& state->mutex_diff_count, NULL);
+        pthread_mutex_init(& state->mutex_diff_count, NULL);
     #endif
 }
 
@@ -190,9 +190,26 @@ void nccmp_init_var_diff_counts(nccmp_state_t* state)
     memset(state->var_diff_counts, 0, max_nvars * sizeof(int));
 }
 
-void nccmp_update_state_var_stats(nccmp_state_t *state, int varid, double delta)
+void nccmp_update_state_field_stats(nccmp_state_t *state, int id, double delta)
 {
-    nccmp_stats_t *stat = & state->current_var_stats[varid];
+    nccmp_stats_t *stat = & state->current_field_stats[id];
+#if HAVE_PTHREAD
+    if (state->opts.threads > 1) {
+        /* Lock only if parallel, otherwise avoid overhead. */
+        pthread_mutex_lock(& stat->lock);
+    }
+#endif
+    nccmp_update_stats(stat, delta);
+#if HAVE_PTHREAD
+    if (state->opts.threads > 1) {
+        pthread_mutex_unlock(& stat->lock);
+    }
+#endif
+}
+
+void nccmp_update_state_var_stats(nccmp_state_t *state, int id, double delta)
+{
+    nccmp_stats_t *stat = & state->current_var_stats[id];
 #if HAVE_PTHREAD
     if (state->opts.threads > 1) {
         /* Lock only if parallel, otherwise avoid overhead. */
