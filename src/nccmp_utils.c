@@ -47,3 +47,17 @@ TYPE nccmp_product_##TYPE(TYPE *items, TYPE first, TYPE last) \
 PRODUCT(int)
 PRODUCT(size_t)
 #undef PRODUCT
+
+void nccmp_replace_delimited_prefix(const char *old_str, char *new_prefix, char delim, char **result)
+{
+    char tmp[NC_MAX_NAME];
+    strcpy(tmp, new_prefix);
+
+    // Find location of first delim to trim old prefix.
+    char *substring = strchr(old_str, delim);
+    if (substring) {
+        strcat(tmp, substring);
+    }
+    *result = XMALLOC(char, strlen(tmp) + 1);
+    strcpy(*result, tmp);
+}

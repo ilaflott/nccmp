@@ -4,7 +4,7 @@
 #include <nccmp_stats_print.h>
 #include <nccmp_utils.h>
 
-const char *NCCMP_STATS_COLUMNS[] = {"Variable", "Group", "Count", "Sum", "AbsSum", "Min", "Max", "Mean", "StdDev"};
+const char *NCCMP_STATS_COLUMNS[] = {"Variable", "Group", "Count", "Sum", "AbsSum", "Min", "Max", "Range", "Mean", "StdDev"};
 
 void nccmp_compute_stats_column_widths(nccmp_strlist_t *strings, int *widths)
 {
@@ -23,27 +23,26 @@ void nccmp_compute_stats_column_widths(nccmp_strlist_t *strings, int *widths)
     }
 }
 
-void nccmp_print_group_stats(nccmp_group_stats_t *array,
-        nccmp_group_t *groups, nccmp_var_t *vars,
-        nccmp_user_types_t *fields, int num_vars)
+void nccmp_print_group_stats(nccmp_group_stats_t *group_stats)
 {
     int i, col;
     nccmp_strlist_t *strings = NULL;
     int *widths = NULL;
     int max_widths[NCCMP_NUM_STATS_COLUMNS];
 
-    strings = nccmp_stringify_group_stats(array, groups, vars, fields, num_vars);
+    strings = nccmp_stringify_group_stats(group_stats);
     if (!strings) {
         return;
     }
 
+    LOG_DEBUG("\n");
     widths = nccmp_compute_strlist_lengths(strings);
     if (!widths) {
         return;
     }
-
+    LOG_DEBUG("\n");
     nccmp_compute_stats_column_widths(strings, max_widths);
-
+    LOG_DEBUG("\n");
     /* Header */
     #define PRINT_PAD1() nccmp_print_pad(' ', (max_widths[col] - strlen(NCCMP_STATS_COLUMNS[col])));
     #define PRINT_STR1() printf("%s", NCCMP_STATS_COLUMNS[col])
@@ -105,89 +104,79 @@ void nccmp_print_pad(char c, int num)
     }
 }
 
-nccmp_strlist_t* nccmp_stringify_group_stats(
-        nccmp_group_stats_t *group_stats,
-        nccmp_group_t *groups,
-        nccmp_var_t *vars,
-        nccmp_user_types_t *fields,
-        int num_vars
-        )
+nccmp_strlist_t* nccmp_stringify_group_stats(nccmp_group_stats_t *group_stats)
 {
-    int num_valid_rows = 0;
-    char tmpstr[NCCMP_MAX_STRINGS];
+    int num_non_empty_stats = 0, group_i = 0, stat_i = 0, var_i = 0;
     nccmp_strlist_t *result = NULL;
-    int groupi;
-    nccmp_group_t *group;
-    int stati;
-    nccmp_stats_t *stat;
 
-    memset(tmpstr, 0, NCCMP_MAX_STRINGS);
-
-    if (!group_stats || (0 == group_stats->num_groups) ) {
+    if (!group_stats || !group_stats->num_groups) {
         return result;
     }
 
     /* Count items with diffs. */
-    for(groupi = 0; groupi < group_stats->num_groups; ++groupi) {
-        for(stati = 0; stati < group_stats->num_vars[groupi]; ++stati) {
-            if (0 < group_stats->var_stats[groupi][stati].count) {
-                ++num_valid_rows;
-            }
-        }
-        for(stati = 0; stati < group_stats->num_fields[groupi]; ++stati) {
-            if (0 < group_stats->field_stats[groupi][stati].count) {
-                ++num_valid_rows;
+    for(group_i = 0; group_i < group_stats->num_groups; ++group_i) {
+        for(var_i = 0; var_i < group_stats->num_vars[group_i]; ++var_i) {
+            for(stat_i = 0; stat_i < group_stats->num_stats[group_i][var_i]; ++stat_i) {
+                if (0 < group_stats->stats[group_i][var_i][stat_i].count) {
+                    ++num_non_empty_stats;
+                }
             }
         }
     }
 
-    result = nccmp_new_strlist(num_valid_rows * NCCMP_NUM_STATS_COLUMNS);
-
-    #define APPEND(S)                                                           \
-        if (nccmp_add_to_strlist(result, S)) {                                  \
-            LOG_ERROR("Failed to add string to statistics output.\n");          \
-            goto recover;                                                       \
-        }
-
-    #define GET_VAR_NAME(I) vars[I].name
-    #define GET_FIELD_NAME(I) nccmp_find_field_by_unique_id(fields, I)->tree_name
-
-    #define APPEND_ITEMS(STATS, NUM_STATS, GET_NAME)                                \
-        for(stati = 0; stati < NUM_STATS; ++stati) {                                \
-            stat = & (STATS[groupi][stati]);                                        \
-            if (0 > stat->count) {                                                  \
-                continue;                                                           \
-            }                                                                       \
-            APPEND(GET_NAME(stati));                                                \
-            APPEND(group->fullname);                                                \
-            snprintf(tmpstr, NCCMP_MAX_STRINGS, "%d", stat->count);                 \
-            APPEND(tmpstr);                                                         \
-            snprintf(tmpstr, NCCMP_MAX_STRINGS, "%g", stat->sum);                   \
-            APPEND(tmpstr);                                                         \
-            snprintf(tmpstr, NCCMP_MAX_STRINGS, "%g", stat->abs_sum);               \
-            APPEND(tmpstr);                                                         \
-            snprintf(tmpstr, NCCMP_MAX_STRINGS, "%g", stat->min);                   \
-            APPEND(tmpstr);                                                         \
-            snprintf(tmpstr, NCCMP_MAX_STRINGS, "%g", stat->max);                   \
-            APPEND(tmpstr);                                                         \
-            snprintf(tmpstr, NCCMP_MAX_STRINGS, "%g", nccmp_compute_var_stats_mean(stat));  \
-            APPEND(tmpstr);                                                                 \
-            snprintf(tmpstr, NCCMP_MAX_STRINGS, "%g", nccmp_compute_var_stats_stdev(stat)); \
-            APPEND(tmpstr);                                                                 \
-        }
-
-    for(groupi = 0; groupi < group_stats->num_groups; ++groupi) {
-        group = nccmp_find_group_by_id(groups, group_stats->group_ids[groupi]);
-        APPEND_ITEMS(group_stats->var_stats,   group_stats->num_vars[groupi],   GET_VAR_NAME);
-        APPEND_ITEMS(group_stats->field_stats, group_stats->num_fields[groupi], GET_FIELD_NAME);
+    if (!num_non_empty_stats) {
+        return result;
     }
 
-recover:
-    #undef APPEND
-    #undef APPEND_STAT
-    #undef GET_FIELD_NAME
-    #undef GET_VAR_NAME
+    result = nccmp_new_strlist(num_non_empty_stats * NCCMP_NUM_STATS_COLUMNS);
+
+    for(group_i = 0; group_i < group_stats->num_groups; ++group_i) {
+        for(var_i = 0; var_i < group_stats->num_vars[group_i]; ++var_i) {
+            for(stat_i = 0; stat_i < group_stats->num_stats[group_i][var_i]; ++stat_i) {
+                if (0 < group_stats->stats[group_i][var_i][stat_i].count) {
+                    nccmp_stringify_stat(& group_stats->stats[group_i][var_i][stat_i], result);
+                }
+            }
+        }
+    }
+
+    LOG_DEBUG("FIXME\n");
 
     return result;
 }
 
+void nccmp_stringify_stat(nccmp_stats_t *stat, nccmp_strlist_t *result)
+{
+    char tmpstr[NCCMP_MAX_STRINGS];
+
+    LOG_DEBUG("FIXME\n");
+
+    #define APPEND(S)                                                   \
+        if (nccmp_add_to_strlist(result, S)) {                          \
+            LOG_ERROR("Failed to add string to statistics output.\n");  \
+            return;                                                     \
+        }
+
+    LOG_DEBUG("FIXME\n");
+    APPEND(stat->name);
+    APPEND(stat->group_name);
+    LOG_DEBUG("FIXME\n");
+    snprintf(tmpstr, NCCMP_MAX_STRINGS, "%d", stat->count);
+    APPEND(tmpstr);
+    snprintf(tmpstr, NCCMP_MAX_STRINGS, "%g", stat->sum);
+    APPEND(tmpstr);
+    snprintf(tmpstr, NCCMP_MAX_STRINGS, "%g", stat->abs_sum);
+    APPEND(tmpstr);
+    snprintf(tmpstr, NCCMP_MAX_STRINGS, "%g", stat->min);
+    APPEND(tmpstr);
+    snprintf(tmpstr, NCCMP_MAX_STRINGS, "%g", stat->max);
+    APPEND(tmpstr);
+    snprintf(tmpstr, NCCMP_MAX_STRINGS, "%g", stat->max - stat->min);
+    APPEND(tmpstr);
+    snprintf(tmpstr, NCCMP_MAX_STRINGS, "%g", nccmp_compute_var_stats_mean(stat));
+    APPEND(tmpstr);
+    snprintf(tmpstr, NCCMP_MAX_STRINGS, "%g", nccmp_compute_var_stats_stdev(stat));
+    APPEND(tmpstr);
+
+    #undef APPEND
+}

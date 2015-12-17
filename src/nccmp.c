@@ -112,12 +112,10 @@ int nccmp_run(nccmp_state_t* state)
     }
 
     if (state->opts.statistics) {
-        nccmp_print_group_stats(
-                state->stats,
-                & state->thread_groups1[0],
-                state->vars1,
-                state->types1,
-                state->nvars1);
+        nccmp_print_vars(state->vars1, state->nvars1); //FIXME
+        LOG_DEBUG("FIXME vars1=%p nvars1=%d vars1[0]=%p\n", state->vars1, state->nvars1, state->vars1[0]);
+
+        nccmp_print_group_stats(state->stats);
     }
 
 recover:

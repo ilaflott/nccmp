@@ -36,12 +36,15 @@ typedef struct nccmp_state_t {
 
     nccmp_group_stats_t *stats;
 
-    /* Var stats array to update while comparing a group per thread batch. */
-    nccmp_stats_t *current_var_stats;
-    nccmp_stats_t *current_field_stats;
+    /* Stats array to update while comparing a group per thread batch.
+     * Only points to existing array [var][stat], and set once before repeated lookups.
+     */
+    nccmp_stats_t **active_stats;
 
     nccmp_user_types_t  *types1;
     nccmp_user_types_t  *types2;
+    nccmp_field_hashmap_t *field_hashmap1;
+
     nccmp_var_t         *vars1;
     nccmp_var_t         *vars2;
     int                 *var_diff_counts;
@@ -68,8 +71,6 @@ void nccmp_init_var_diff_counts(nccmp_state_t* state);
 /* Should only be called once per program instance. */
 int nccmp_open_files(nccmp_state_t* state);
 
-void nccmp_update_state_field_stats(nccmp_state_t *state, int id, double delta);
-
-void nccmp_update_state_var_stats(nccmp_state_t *state, int id, double delta);
+void nccmp_update_state_stats(nccmp_state_t *state, int varid, int stat_id, double delta);
 
 #endif

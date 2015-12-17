@@ -533,7 +533,15 @@ int nccmp_cmp_var_user_type_compound_field_array_atomic_type(nccmp_state_t* stat
             if (COUNT_OVER == diff_count_status) {                             \
                 goto recover;                                                  \
             }                                                                  \
-            if (!state->opts.quiet) {                                          \
+            item1.m_##NAME1 = COMPOUND_FIELD_ARRAY_VALUE(items1, type1->root_size,                  \
+                type1->fields->items[fieldid1].offset, TYPE1, array_i, diff_offset);                \
+            item2.m_##NAME2 = COMPOUND_FIELD_ARRAY_VALUE(items2, type2->root_size,                  \
+                type2->fields->items[fieldid2].offset, TYPE2, array_i, diff_offset);                \
+            if (state->opts.statistics) {                                                           \
+                nccmp_update_state_stats(state, varid1, type1->fields->items[fieldid1].unique_id,   \
+                                               (double)item1.m_##NAME1 - (double)item2.m_##NAME2);  \
+            }                                                                                       \
+            if (!state->opts.quiet) {                                                        \
                 nccmp_get_index_str_size_t(v1->ndims, start, array_i, root_idxstr,           \
                                      state->opts.fortran);                                   \
                 nccmp_get_product_index_str_int(type1->fields->items[fieldid1].num_dims,     \
@@ -545,10 +553,6 @@ int nccmp_cmp_var_user_type_compound_field_array_atomic_type(nccmp_state_t* stat
                 } else {                                                                     \
                     sprintf(idx_str, "%s,%s", root_idxstr, array_idxstr);                    \
                 }                                                                            \
-                item1.m_##NAME1 = COMPOUND_FIELD_ARRAY_VALUE(items1, type1->root_size,       \
-                    type1->fields->items[fieldid1].offset, TYPE1, array_i, diff_offset);     \
-                item2.m_##NAME2 = COMPOUND_FIELD_ARRAY_VALUE(items2, type2->root_size,       \
-                    type2->fields->items[fieldid2].offset, TYPE2, array_i, diff_offset);     \
                 if (print_hex) {                                                             \
                     nccmp_##NAME1##_to_hex(item1.m_##NAME1, str1);                           \
                     nccmp_##NAME2##_to_hex(item2.m_##NAME2, str2);                           \
@@ -1116,17 +1120,23 @@ int nccmp_cmp_var_user_type_compound_field_nonarray_atomic_type(nccmp_state_t* s
     if (state->opts.debug) {
         LOG_DEBUG("cmp_var_user_type_compound_field_nonarray_atomic_type\n");
         LOG_DEBUG("comp_name1=%s parent_name1=%s field1=%s fieldid1=%d offset1=%zu "
-                  "comp_name2=%s parent_name2=%s field2=%s fieldid2=%d offset2=%zu nitems=%d\n",
+                  "tree_name1=%s unique_id1=%d "
+                  "comp_name2=%s parent_name2=%s field2=%s fieldid2=%d offset2=%zu "
+                  "tree_name2=%s unique_id2=%d nitems=%d\n",
                 comp_type1->name,
                 comp_type1->parent ? comp_type1->parent->name : "",
                 comp_type1->fields->items[fieldid1].name,
                 fieldid1,
                 comp_type1->fields->items[fieldid1].offset,
+                comp_type1->fields->items[fieldid1].tree_name,
+                comp_type1->fields->items[fieldid1].unique_id,
                 comp_type2->name,
                 comp_type2->parent ? comp_type2->parent->name : "",
                 comp_type2->fields->items[fieldid2].name,
                 fieldid2,
                 comp_type2->fields->items[fieldid2].offset,
+                comp_type2->fields->items[fieldid2].tree_name,
+                comp_type2->fields->items[fieldid2].unique_id,
                 nitems);
     }
 
@@ -1163,12 +1173,16 @@ int nccmp_cmp_var_user_type_compound_field_nonarray_atomic_type(nccmp_state_t* s
         if (COUNT_OVER == diff_count_status) {                                 \
             break;                                                             \
         }                                                                      \
-        if (!state->opts.quiet) {                                              \
-            nccmp_get_index_str_size_t(v1->ndims, start, diff_offset, idx_str, state->opts.fortran); \
-            item1.m_##NAME1 = COMPOUND_FIELD_VALUE(items1, comp_type1->root_size,       \
-                comp_type1->fields->items[fieldid1].offset, TYPE1, diff_offset);        \
-            item2.m_##NAME2 = COMPOUND_FIELD_VALUE(items2, comp_type2->root_size,       \
-                comp_type2->fields->items[fieldid2].offset, TYPE2, diff_offset);        \
+        item1.m_##NAME1 = COMPOUND_FIELD_VALUE(items1, comp_type1->root_size,  \
+            comp_type1->fields->items[fieldid1].offset, TYPE1, diff_offset);   \
+        item2.m_##NAME2 = COMPOUND_FIELD_VALUE(items2, comp_type2->root_size,  \
+            comp_type2->fields->items[fieldid2].offset, TYPE2, diff_offset);   \
+        if (state->opts.statistics) {                                                               \
+            nccmp_update_state_stats(state, varid1, comp_type1->fields->items[fieldid1].unique_id,  \
+                                           (double)item1.m_##NAME1 - (double)item2.m_##NAME2);      \
+        }                                                                                           \
+        if (!state->opts.quiet) {                                                                   \
+            nccmp_get_index_str_size_t(v1->ndims, start, diff_offset, idx_str, state->opts.fortran);\
             if (print_hex) {                                                            \
                 nccmp_##NAME1##_to_hex(item1.m_##NAME1, str1);                          \
                 nccmp_##NAME2##_to_hex(item2.m_##NAME2, str2);                          \
@@ -1212,6 +1226,10 @@ int nccmp_cmp_var_user_type_compound_field_nonarray_atomic_type(nccmp_state_t* s
             if (COUNT_OVER == diff_count_status) {                             \
                 break;                                                         \
             }                                                                  \
+            if (state->opts.statistics) {                                                               \
+                nccmp_update_state_stats(state, varid1, comp_type1->fields->items[fieldid1].unique_id,  \
+                                               (double)item1.m_##NAME1 - (double)item2.m_##NAME2);      \
+            }                                                                                           \
             if (!state->opts.quiet) {                                          \
                 if ((v1->ndims == 1)  && (v1->has_rec_dim)) {                                           \
                     nccmp_get_index_str_size_t(v1->ndims, start, rec, idx_str, state->opts.fortran);    \
@@ -1874,7 +1892,11 @@ int nccmp_cmp_var_user_type_nest_atomic_item(nccmp_state_t* state,
         if (COUNT_OVER == diff_count_status) {                                 \
             goto recover;                                                      \
         }                                                                      \
-        if (!state->opts.quiet) {                                              \
+        if (state->opts.statistics) {                                                               \
+            nccmp_update_state_stats(state, varid1, nest->type1->unique_id,                         \
+                                           (double)value1.m_##NAME1 - (double)value2.m_##NAME2);    \
+        }                                                                                           \
+        if (!state->opts.quiet) {                                                                   \
             nest_str[0] = 0;                                                                                    \
             nccmp_get_index_str_size_t(state->vars1[varid1].ndims, start, item, idx_str, state->opts.fortran);  \
             nccmp_build_nest_str(nest, state->opts.fortran, nest_str);                                          \
@@ -2723,6 +2745,11 @@ int nccmp_cmp_var_user_type_vlen_atomic(nccmp_state_t* state, int ncid1, int nci
                     if (COUNT_OVER == diff_count_status) {                     \
                         goto recover;                                          \
                     }                                                          \
+                    if (state->opts.statistics) {                              \
+                        nccmp_update_state_stats(state, varid1, 0,             \
+                                                     (double)*(list1.p_##NAME1 + j) - \
+                                                     (double)*(list2.p_##NAME2 + j)); \
+                    }                                                          \
                     if (!state->opts.quiet) {                                                                               \
                         nccmp_get_index_str_size_t(v1->ndims, start, i, idx_str, state->opts.fortran);                      \
                         nccmp_##NAME1##_to_str(*(list1.p_##NAME1 + j), str1, state->opts.precision);                        \
@@ -3225,7 +3252,7 @@ int nccmp_cmp_var_atomic_type(nccmp_state_t* state,  int ncid1, int ncid2,
     v2 = nccmp_find_var_by_id(state->vars2, state->nvars2, varid2);
     type1 = nccmp_get_var_type(v1);
     type2 = nccmp_get_var_type(v2);
-              
+
     if (state->opts.missing && v1->has_missing && v2->has_missing) {
         do_missing = 1;
     }
@@ -3233,17 +3260,20 @@ int nccmp_cmp_var_atomic_type(nccmp_state_t* state,  int ncid1, int ncid2,
 #define CMP_VAR(NAME1, TYPE1, NAME2, TYPE2, NANEQUAL) {                        \
     items1.p_##NAME1 = XMALLOC(TYPE1, nitems + 1);                             \
     items2.p_##NAME2 = XMALLOC(TYPE2, nitems + 1);                             \
+    PRINT(state->opts.debug, "items1=%p start=[%zu,%zu,%zu] count=[%zu,%zu,%zu] nitems=%zu\n",          \
+          (void*)items1.p_##NAME1, start[0], start[1], start[2], count[0], count[1], count[2], nitems); \
+    PRINT(state->opts.debug, "items2=%p ncid1=%d ncid2=%d\n", (void*)items2.p_##NAME2, ncid1, ncid2);   \
                                                                                \
     while(! loop_done) {                                                       \
-          status = nc_get_vara_##NAME1(ncid1, v1->varid, start, count, items1.p_##NAME1);\
-          HANDLE_NC_ERROR(status);                                             \
-          status = nc_get_vara_##NAME2(ncid2, v2->varid, start, count, items2.p_##NAME2);\
-          HANDLE_NC_ERROR(status);                                             \
-          /* Sentinels. */                                                     \
-          items1.p_##NAME1[nitems] = 0;                                        \
-          items2.p_##NAME2[nitems] = 1;                                        \
-          offset = 0;                                                          \
-          while (1) {                                                          \
+        status = nc_get_vara_##NAME1(ncid1, v1->varid, start, count, items1.p_##NAME1);\
+        HANDLE_NC_ERROR(status);                                               \
+        status = nc_get_vara_##NAME2(ncid2, v2->varid, start, count, items2.p_##NAME2);\
+        HANDLE_NC_ERROR(status);                                               \
+        /* Sentinels. */                                                       \
+        items1.p_##NAME1[nitems] = 0;                                          \
+        items2.p_##NAME2[nitems] = 1;                                          \
+        offset = 0;                                                            \
+        while (1) {                                                            \
             if (do_missing) {                                                  \
               if (NANEQUAL) {                                                  \
                 diff_offset = nccmp_cmp_##NAME1##_##NAME2##_missing_nanequal(items1.p_##NAME1+offset, items2.p_##NAME2+offset, v1->missing.m_##NAME1, v2->missing.m_##NAME2);      \
@@ -3269,14 +3299,14 @@ int nccmp_cmp_var_atomic_type(nccmp_state_t* state,  int ncid1, int ncid2,
             } else {                                                           \
               last_status = EXIT_SUCCESS;                                      \
             }                                                                  \
-            item1.m_##NAME1 = items1.p_##NAME1[offset-1];                      \
-            item2.m_##NAME2 = items2.p_##NAME2[offset-1];                      \
-            if (state->opts.statistics) {                                      \
-                nccmp_update_state_var_stats(state, varid1, (double)item1.m_##NAME1 - (double)item2.m_##NAME2); \
-            }                                                                  \
             diff_count_status = nccmp_inc_diff_count(state, varid1);           \
             if (COUNT_OVER == diff_count_status) {                             \
                 goto recover_cmp_##NAME1##_##NAME2;                            \
+            }                                                                  \
+            item1.m_##NAME1 = items1.p_##NAME1[offset-1];                      \
+            item2.m_##NAME2 = items2.p_##NAME2[offset-1];                      \
+            if (state->opts.statistics) {                                      \
+                nccmp_update_state_stats(state, varid1, 0, (double)item1.m_##NAME1 - (double)item2.m_##NAME2); \
             }                                                                  \
             if (!state->opts.quiet) {                                          \
                 nccmp_get_index_str_size_t(v1->ndims, start, offset-1, idx_str, state->opts.fortran);   \
@@ -3293,7 +3323,7 @@ int nccmp_cmp_var_atomic_type(nccmp_state_t* state,  int ncid1, int ncid2,
             if ( (COUNT_EQUAL == diff_count_status) || !state->opts.force) {   \
                 goto recover_cmp_##NAME1##_##NAME2;                            \
             }                                                                  \
-          } /* end while(1) */                                                 \
+        } /* end while(1) */                                                   \
                                                                                \
       /* Increment all but first (if record) and last dimensions. */           \
       loop_done = nccmp_odometer(start, limits, (int) (rec >= 0), v1->ndims-2) == 0;     \
@@ -3332,14 +3362,14 @@ int nccmp_cmp_var_atomic_type(nccmp_state_t* state,  int ncid1, int ncid2,
                     } else {                                                        \
                         last_status = EXIT_SUCCESS;                                 \
                     }                                                               \
-                    item1.m_##NAME1 = items1.p_##NAME1[i];                          \
-                    item2.m_##NAME2 = items2.p_##NAME2[i];                          \
-                    if (state->opts.statistics) {                                   \
-                        nccmp_update_state_var_stats(state, varid1, (double)item1.m_##NAME1 - (double)item2.m_##NAME2); \
-                    }                                                               \
                     diff_count_status = nccmp_inc_diff_count(state, varid1);        \
                     if (COUNT_OVER == diff_count_status) {                          \
                         goto recover_tol_##NAME1##_##NAME2;                         \
+                    }                                                               \
+                    item1.m_##NAME1 = items1.p_##NAME1[i];                          \
+                    item2.m_##NAME2 = items2.p_##NAME2[i];                          \
+                    if (state->opts.statistics) {                                   \
+                        nccmp_update_state_stats(state, varid1, 0, (double)item1.m_##NAME1 - (double)item2.m_##NAME2); \
                     }                                                               \
                     if (!state->opts.quiet) {                                       \
                         if ((v1->ndims == 1)  && (v1->has_rec_dim)) {               \
@@ -3504,7 +3534,7 @@ int nccmp_cmp_var(nccmp_state_t* state, const char* name, int ncid1,
         goto recover;
     }
     
-    last_status = nccmp_cmp_var_start(state, ncid1, ncid2, 
+    last_status = nccmp_cmp_var_start(state, ncid1, ncid2,
         v1->varid, v2->varid, start, count, limits, rec, nitems);
         
 recover:
@@ -3517,7 +3547,7 @@ recover:
 
 int nccmp_cmp_vars(nccmp_state_t* state, nccmp_strlist_t* var_names, int ncid1, int ncid2, int thread_id)
 {
-    int i, idx1, idx2, status, last_status = EXIT_SUCCESS;
+    int i, idx1, idx2, status = EXIT_SUCCESS, last_status = EXIT_SUCCESS;
     int rec_iter, rec_first, rec_last;
 
     if (state->opts.debug) {
@@ -3544,7 +3574,7 @@ int nccmp_cmp_vars(nccmp_state_t* state, nccmp_strlist_t* var_names, int ncid1, 
             rec_iter += state->opts.threads)
         {
             status = nccmp_cmp_var(state, var_names->items[i], ncid1, ncid2,
-                        rec_iter, thread_id);
+                                   rec_iter, thread_id);
             last_status = status ? status : last_status;
             if (last_status && !state->opts.force) {
                 goto recover;
@@ -3575,17 +3605,21 @@ int nccmp_data(nccmp_state_t* state, nccmp_strlist_t* var_names,
     }
 
     nccmp_init_var_diff_counts(state);
-    nccmp_init_group_stats(state->stats,
-            group1->id,
-            state->nvars1,
-            nccmp_find_max_user_type_unique_id(state->types1) + 1);
-    state->current_var_stats = nccmp_find_var_stats_array(state->stats, group1->id);
-
     nccmp_destroy_user_types(state->types1);
-    state->types1 = nccmp_load_user_types(group1->id, state->opts.debug);
+    state->types1 = nccmp_load_group_user_types(group1->id, state->opts.debug);
+    nccmp_destroy_field_hashmap(state->field_hashmap1);
+    state->field_hashmap1 = nccmp_create_field_hashmap(state->types1);
+    nccmp_init_group_stats(
+            state->stats,
+            group1->id,
+            state->thread_groups1[0].fullname,
+            state->vars1,
+            state->nvars1,
+            state->field_hashmap1);
+    state->active_stats = nccmp_find_group_var_stats(state->stats, group1->id);
 
     nccmp_destroy_user_types(state->types2);
-    state->types2 = nccmp_load_user_types(group2->id, state->opts.debug);
+    state->types2 = nccmp_load_group_user_types(group2->id, state->opts.debug);
 
     status = nccmp_data_start_threads(state, validated_var_names,
                 group1->fullname, group2->fullname);
@@ -3686,7 +3720,7 @@ int nccmp_data_start_threads(nccmp_state_t* state, nccmp_strlist_t* var_names,
 
     if (state->opts.threads > 1) {
         #if HAVE_PTHREAD
-        return nccmp_data_start_pthreads(state, var_names, group_name1, group_name2);
+            return nccmp_data_start_pthreads(state, var_names, group_name1, group_name2);
         #endif
     } else {
         group1 = nccmp_find_group_by_name(& state->thread_groups1[0], group_name1);

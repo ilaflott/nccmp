@@ -94,6 +94,8 @@ test_nccmp_odometer_LDADD = $(top_builddir)/src/nccmp-nccmp_odometer.o
 test_nccmp_stats_CPPFLAGS = -I$(top_srcdir)/src
 test_nccmp_stats_LDADD = $(top_builddir)/src/nccmp-log.o                 \
                          $(top_builddir)/src/nccmp-nccmp_stats.o         \
+                         $(top_builddir)/src/nccmp-nccmp_strlist.o       \
+                         $(top_builddir)/src/nccmp-nccmp_user_type.o     \
                          $(top_builddir)/src/nccmp-nccmp_utils.o         \
                          $(top_builddir)/src/nccmp-xmalloc.o
 

@@ -67,13 +67,15 @@ void nccmp_destroy_state(nccmp_state_t *state)
 
     nccmp_destroy_group_stats(state->stats);
 
+    nccmp_destroy_field_hashmap(state->field_hashmap1);
+
     nccmp_opt_free(& state->opts);
 
     nccmp_destroy_dims(& state->dims1, & state->ndims1);
     nccmp_destroy_dims(& state->dims2, & state->ndims2);
 
     #if HAVE_PTHREAD
-    pthread_mutex_destroy(& state->mutex_diff_count);
+        pthread_mutex_destroy(& state->mutex_diff_count);
     #endif
 
     nccmp_destroy_user_types(state->types1);
@@ -101,6 +103,8 @@ void nccmp_init_state(nccmp_state_t *state)
     state->dims2 = 0;
     state->types1 = 0;
     state->types2 = 0;
+    state->field_hashmap1 = 0;
+
     state->thread_groups1 = 0;
     state->thread_groups2 = 0;
 
@@ -115,7 +119,10 @@ void nccmp_init_state(nccmp_state_t *state)
 
     state->recid1 = -1;
     state->recid2 = -1;
+
     state->stats = 0;
+    state->active_stats = 0;
+
     state->global_diff_count = 0;
     state->var_diff_counts = 0;
 
@@ -190,26 +197,13 @@ void nccmp_init_var_diff_counts(nccmp_state_t* state)
     memset(state->var_diff_counts, 0, max_nvars * sizeof(int));
 }
 
-void nccmp_update_state_field_stats(nccmp_state_t *state, int id, double delta)
+void nccmp_update_state_stats(nccmp_state_t *state, int var_id, int stat_id, double delta)
 {
-    nccmp_stats_t *stat = & state->current_field_stats[id];
-#if HAVE_PTHREAD
-    if (state->opts.threads > 1) {
-        /* Lock only if parallel, otherwise avoid overhead. */
-        pthread_mutex_lock(& stat->lock);
+    if (!state->active_stats) {
+        return;
     }
-#endif
-    nccmp_update_stats(stat, delta);
-#if HAVE_PTHREAD
-    if (state->opts.threads > 1) {
-        pthread_mutex_unlock(& stat->lock);
-    }
-#endif
-}
 
-void nccmp_update_state_var_stats(nccmp_state_t *state, int id, double delta)
-{
-    nccmp_stats_t *stat = & state->current_var_stats[id];
+    nccmp_stats_t *stat = & state->active_stats[var_id][stat_id];
 #if HAVE_PTHREAD
     if (state->opts.threads > 1) {
         /* Lock only if parallel, otherwise avoid overhead. */

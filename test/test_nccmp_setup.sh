@@ -15,9 +15,19 @@
 #   along with this program; see the file COPYING.
 #   If not, write to the Free Software Foundation,
 #   59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  
+###############################################################################
+# Help
+#
+# Adding new CDL Files
+# - Add an entry in format() FMT with appropriate format.
+
 if [ $# -lt 2 ]
 then
     echo "Usage : $0 [compound|encoding|group|missing|nan|NUMBER|pad] <id>"
+    echo
+    echo "Examples:"
+    echo "  $0 21 68  # Will generate files test21{a,b}.68.nc"
+    echo "  $0 pad 10 # Will create files padded.10.nc and unpadded.10.nc"
     exit 1
 fi
 DATA=$1
@@ -37,7 +47,7 @@ function format() {
     NC_FORMATS=$($srcdir/ncgen_formats.sh $ID)
     NC3=$(echo $NC_FORMATS | cut -f1 -d' ')
     NC4=$(echo $NC_FORMATS | cut -f2 -d' ')
-    FMT=(0 $NC3 $NC3 $NC3 $NC3 $NC3 $NC3 $NC3 $NC3 $NC3 $NC4 $NC4 $NC4 $NC4 $NC4 $NC4 $NC4 $NC4 $NC4 $NC4 $NC4 $NC4)
+    FMT=(0 $NC3 $NC3 $NC3 $NC3 $NC3 $NC3 $NC3 $NC3 $NC3 $NC4 $NC4 $NC4 $NC4 $NC4 $NC4 $NC4 $NC4 $NC4 $NC4 $NC4 $NC4 $NC4)
     
     echo ${FMT[${index}]}
 }

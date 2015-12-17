@@ -17,7 +17,7 @@ int test_nccmp_build_user_type_field_path_str()
     status = nc_open("make_compound_nest_atomic1.nc", NC_NOWRITE, & ncid);
     HANDLE_NC_ERROR(status);
 
-    types = nccmp_load_user_types(ncid, 0 /*debug*/);
+    types = nccmp_load_group_user_types(ncid, 0 /*debug*/);
 
     type = & types->items[2];
     strcpy(str, "");
@@ -214,8 +214,8 @@ int test_nccmp_get_user_type_compound_field_names_cached()
     status = nc_open("make_compound_nest_atomic2.nc", NC_NOWRITE, & ncid2);
     HANDLE_NC_ERROR(status);
 
-    types1 = nccmp_load_user_types(ncid1, 0);
-    types2 = nccmp_load_user_types(ncid2, 0);
+    types1 = nccmp_load_group_user_types(ncid1, 0);
+    types2 = nccmp_load_group_user_types(ncid2, 0);
 
     names = nccmp_get_user_type_compound_field_names_cached(
             & types1->items[2], & types2->items[2], 0);
@@ -255,8 +255,8 @@ int test_ncccmp_get_user_type_compound_field_index_pairs()
     status = nc_open("make_compound_nest_atomic2.nc", NC_NOWRITE, & ncid2);
     HANDLE_NC_ERROR(status);
 
-    types1 = nccmp_load_user_types(ncid1, 0);
-    types2 = nccmp_load_user_types(ncid2, 0);
+    types1 = nccmp_load_group_user_types(ncid1, 0);
+    types2 = nccmp_load_group_user_types(ncid2, 0);
 
     pairs = ncccmp_get_user_type_compound_field_index_pairs(& types1->items[2],
             & types2->items[2], 0);
@@ -296,7 +296,7 @@ int test_nccmp_load_user_types()
     status = nc_open("make_compound_nest_atomic1.nc", NC_NOWRITE, & ncid);
     HANDLE_NC_ERROR(status);
 
-    types = nccmp_load_user_types(ncid, 0);
+    types = nccmp_load_group_user_types(ncid, 0);
 
     if (!types) {
         PRINT("Unexpected null types.");
@@ -407,7 +407,7 @@ int test_nccmp_print_user_types()
     status = nc_open("make_compound_nest_atomic1.nc", NC_NOWRITE, & ncid);
     HANDLE_NC_ERROR(status);
 
-    types = nccmp_load_user_types(ncid, 0);
+    types = nccmp_load_group_user_types(ncid, 0);
 
     strcpy(str, "");
     nccmp_user_types_to_str(types, str);

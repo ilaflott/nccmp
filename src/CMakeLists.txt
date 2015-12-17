@@ -15,6 +15,8 @@ SET(nccmp_SRCS
     nccmp_odometer.c
     nccmp_opt.c
     nccmp_state.c
+    nccmp_stats.c
+    nccmp_stats_print.c
     nccmp_strlist.c
     nccmp_utils.c
     nccmp_user_type.c

@@ -19,7 +19,7 @@ void nccmp_build_user_type_field_path_str(nccmp_user_type_t *type, char *result)
     }
 }
 
-void nccmp_build_user_type_tree_name(nccmp_user_type_t *type, char *result)
+void nccmp_build_user_type_tree_name(nccmp_user_type_t *type, char **result)
 {
     nccmp_user_type_t *parent = type;
     if (! type) {
@@ -30,20 +30,108 @@ void nccmp_build_user_type_tree_name(nccmp_user_type_t *type, char *result)
     while (NULL != parent->parent) {
         parent = parent->parent;
     }
-    strcpy(result, parent->name);
+    strcpy(*result, parent->name);
     /* Only insert dot if root has children. */
     if (parent != type) {
-        strcat(result, ".");
+        strcat(*result, ".");
     }
 
     /* Concat fields tree. */
-    nccmp_build_user_type_field_path_str(type, result);
+    nccmp_build_user_type_field_path_str(type, *result);
 
     /* Optimize string length. */
-    result = realloc(result, strlen(result));
-    if (NULL == result) {
+    *result = realloc(*result, strlen(*result)+1);
+    if (NULL == *result) {
         LOG_ERROR("Failed to realloc string.\n");
     }
+}
+
+nccmp_field_hashmap_t* nccmp_create_field_hashmap(nccmp_user_types_t *types)
+{
+    nccmp_field_hashmap_t *result = XCALLOC(nccmp_field_hashmap_t, 1);
+    result->items = XCALLOC(nccmp_user_type_t*, nccmp_find_max_user_type_unique_id(types) + 1);
+    nccmp_set_field_hashmap(result, types);
+    return result;
+}
+
+nccmp_user_type_t* nccmp_create_user_type(size_t n)
+{
+    int i;
+    nccmp_user_type_t *result = XMALLOC(nccmp_user_type_t, n);
+    memset(result, 0, sizeof(nccmp_user_type_t) * n);
+
+    for(i = 0; i < n; ++i) {
+        nccmp_init_user_type(& result[i]);
+    }
+
+    return result;
+}
+
+nccmp_user_types_t* nccmp_create_user_types(size_t n)
+{
+    nccmp_user_types_t *result = XMALLOC(nccmp_user_types_t, 1);
+
+    if (!result) {
+        LOG_ERROR("Failed to allocate user types.\n");
+        exit(EXIT_FATAL);
+    }
+
+    if (n > 0) {
+        result->items = XMALLOC(nccmp_user_type_t, n);
+        if (!result->items) {
+                LOG_ERROR("Failed to allocate user type items.\n");
+                exit(EXIT_FATAL);
+            }
+    } else {
+        result->items = NULL;
+    }
+
+    result->num_items = n > 0 ? n : 0;
+
+    nccmp_init_user_types(result);
+
+    return result;
+}
+
+void nccmp_destroy_user_type(nccmp_user_type_t *node)
+{
+    nccmp_destroy_user_type_members(node);
+    XFREE(node);
+}
+
+void nccmp_destroy_user_type_members(nccmp_user_type_t *item)
+{
+    if (!item) {
+        return;
+    }
+
+    nccmp_destroy_user_types(item->fields);
+    XFREE(item->name);
+    XFREE(item->tree_name);
+}
+
+void nccmp_destroy_user_types(nccmp_user_types_t *types)
+{
+    int i = 0;
+
+    if (! types) {
+        return;
+    }
+
+    for(; i < types->num_items; ++i) {
+        nccmp_destroy_user_type_members(& types->items[i]);
+    }
+
+    XFREE(types->items);
+    XFREE(types);
+}
+
+void nccmp_destroy_field_hashmap(nccmp_field_hashmap_t *map)
+{
+    if (map) {
+        XFREE(map->items);
+    }
+    XFREE(map);
 }
 
 int nccmp_find_max_user_type_unique_id(nccmp_user_types_t* types)
@@ -89,11 +177,6 @@ nccmp_user_type_t* nccmp_find_field_by_unique_id(nccmp_user_types_t* types, int 
     }
 
     return result;
-}
-
-int nccmp_is_user_type_compound_with_fields(nccmp_user_type_t *type)
-{
-    return type && type->fields && (NC_COMPOUND == type->user_class);
 }
 
 nccmp_user_type_t* nccmp_get_user_type_by_id(nccmp_user_type_t* items, int num_items, int id)
@@ -278,39 +361,6 @@ nccmp_int_pairs_t* ncccmp_get_user_type_compound_field_index_pairs(nccmp_user_ty
     return result;
 }
 
-void nccmp_destroy_user_type(nccmp_user_type_t *node)
-{
-    nccmp_destroy_user_type_members(node);
-    XFREE(node);
-}
-
-void nccmp_destroy_user_type_members(nccmp_user_type_t *item)
-{
-    if (!item) {
-        return;
-    }
-
-    nccmp_destroy_user_types(item->fields);
-    XFREE(item->name);
-    XFREE(item->tree_name);
-}
-
-void nccmp_destroy_user_types(nccmp_user_types_t *types)
-{
-    int i = 0;
-
-    if (! types) {
-        return;
-    }
-
-    for(; i < types->num_items; ++i) {
-        nccmp_destroy_user_type_members(& types->items[i]);
-    }
-
-    XFREE(types->items);
-    XFREE(types);
-}
-
 size_t nccmp_get_num_user_type_fields(nccmp_user_type_t *type)
 {
     if (type && type->fields) {
@@ -319,29 +369,22 @@ size_t nccmp_get_num_user_type_fields(nccmp_user_type_t *type)
     return 0;
 }
 
+int nccmp_is_user_type_compound_with_fields(nccmp_user_type_t *type)
+{
+    return type && type->fields && (NC_COMPOUND == type->user_class);
+}
+
 int nccmp_is_user_type_field(nccmp_user_type_t *type)
 {
     return type && type->parent;
 }
 
-void nccmp_shallow_copy_user_type(nccmp_user_type_t *to, nccmp_user_type_t *from)
+int nccmp_is_user_type_id(int id)
 {
-    to->base_type   = from->base_type;
-    memcpy(to->dim_sizes, from->dim_sizes, sizeof(from->dim_sizes));
-    to->field_index = from->field_index;
-    strcpy(to->name,  from->name);
-    strcpy(to->tree_name,  from->tree_name);
-    to->num_dims    = from->num_dims;
-    to->num_enums   = from->num_enums;
-    to->offset      = from->offset;
-    to->root_size   = from->root_size;
-    to->size        = from->size;
-    to->type_id     = from->type_id;
-    to->unique_id   = from->unique_id;
-    to->user_class  = from->user_class;
+    return id >= NC_FIRSTUSERTYPEID;
 }
 
-nccmp_user_types_t* nccmp_load_user_types(int ncid, int debug)
+nccmp_user_types_t* nccmp_load_group_user_types(int ncid, int debug)
 {
     int status;
     int i, typeid, *typeids = NULL, ntypeids = 0, fieldid;
@@ -442,7 +485,7 @@ void nccmp_load_user_type_compound_tree(int ncid, nccmp_user_types_t* types,
             }
         }
 
-        nccmp_build_user_type_tree_name(type, type->tree_name);
+        nccmp_build_user_type_tree_name(type, & type->tree_name);
     }
 }
 
@@ -504,7 +547,7 @@ void nccmp_load_user_type_compound_tree_field(int ncid,
         }
     }
 
-    nccmp_build_user_type_tree_name(field, field->tree_name);
+    nccmp_build_user_type_tree_name(field, & field->tree_name);
 }
 
 void nccmp_init_user_type(nccmp_user_type_t *item)
@@ -554,43 +597,65 @@ void nccmp_init_user_types(nccmp_user_types_t* types)
     }
 }
 
-nccmp_user_type_t* nccmp_create_user_type(size_t n)
+void nccmp_print_field_hashmap(nccmp_field_hashmap_t *map)
 {
     int i;
-    nccmp_user_type_t *result = XMALLOC(nccmp_user_type_t, n);
-    memset(result, 0, sizeof(nccmp_user_type_t) * n);
-
-    for(i = 0; i < n; ++i) {
-        nccmp_init_user_type(& result[i]);
+    if (!map) {
+        LOG_DEBUG("map=NULL\n");
+    } else {
+        LOG_DEBUG("map->num_items=%d\n", map->num_items);
+        for(i = 0; i < map->num_items; ++i) {
+            LOG_DEBUG("i=%d unique_id=%d tree_name=%s\n",
+                      i, map->items[i]->unique_id, map->items[i]->tree_name);
+        }
     }
-
-    return result;
 }
 
-nccmp_user_types_t* nccmp_create_user_types(size_t n)
+void nccmp_set_field_hashmap(nccmp_field_hashmap_t *result, nccmp_user_types_t *types)
 {
-    nccmp_user_types_t *result = XMALLOC(nccmp_user_types_t, 1);
+    result->num_items = 0;
+    nccmp_set_field_hashmap_traverse(result, types);
+    /* Shrink memory usage after populating. */
+    result->items = realloc(result->items, result->num_items * sizeof(nccmp_user_type_t*));
+}
 
-    if (!result) {
-        LOG_ERROR("Failed to allocate user types.\n");
-        exit(EXIT_FATAL);
-    }
+void nccmp_set_field_hashmap_traverse(nccmp_field_hashmap_t *result, nccmp_user_types_t *types)
+{
+    int i;
+    nccmp_user_type_t *item;
 
-    if (n > 0) {
-        result->items = XMALLOC(nccmp_user_type_t, n);
-        if (!result->items) {
-                LOG_ERROR("Failed to allocate user type items.\n");
-                exit(EXIT_FATAL);
+    if (types) {
+        for(i = 0; i < types->num_items; ++i) {
+            item = & types->items[i];
+            result->items[item->unique_id] = item;
+            ++result->num_items;
+
+            if (nccmp_is_user_type_compound_with_fields(item)) {
+                nccmp_set_field_hashmap_traverse(result, item->fields);
             }
-    } else {
-        result->items = NULL;
+        }
     }
-    
-    result->num_items = n > 0 ? n : 0;
+}
 
-    nccmp_init_user_types(result);
-
-    return result;
+void nccmp_shallow_copy_user_type(nccmp_user_type_t *to, nccmp_user_type_t *from)
+{
+    to->base_type   = from->base_type;
+    memcpy(to->dim_sizes, from->dim_sizes, sizeof(from->dim_sizes));
+    to->field_index = from->field_index;
+    if (from->name) {
+        strcpy(to->name,  from->name);
+    }
+    if (from->tree_name) {
+        strcpy(to->tree_name, from->tree_name);
+    }
+    to->num_dims    = from->num_dims;
+    to->num_enums   = from->num_enums;
+    to->offset      = from->offset;
+    to->root_size   = from->root_size;
+    to->size        = from->size;
+    to->type_id     = from->type_id;
+    to->unique_id   = from->unique_id;
+    to->user_class  = from->user_class;
 }
 
 void nccmp_user_type_to_str(nccmp_user_type_t* type, char *result, int num_indent)

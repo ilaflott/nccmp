@@ -264,9 +264,9 @@ int nccmp_cmp_metadata(nccmp_state_t *state, nccmp_strlist_t* varlist, int ncid1
     }
 
     nccmp_destroy_user_types(state->types1);
-    state->types1 = nccmp_load_user_types(ncid1, state->opts.debug);
+    state->types1 = nccmp_load_group_user_types(ncid1, state->opts.debug);
     nccmp_destroy_user_types(state->types2);
-    state->types2 = nccmp_load_user_types(ncid2, state->opts.debug);
+    state->types2 = nccmp_load_group_user_types(ncid2, state->opts.debug);
 
     status = nccmp_cmp_metadata_user_types(& state->opts, ncid1, ncid2);
     last_status = status ? status : last_status;

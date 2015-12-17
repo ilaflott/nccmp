@@ -34,4 +34,7 @@ PRODUCT(int)
 PRODUCT(size_t)
 #undef PRODUCT
 
+/* Allocates and populates result. */
+void nccmp_replace_delimited_prefix(const char* old_str, char* prefix, char delim, char **result);
+
 #endif

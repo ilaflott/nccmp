@@ -34,9 +34,9 @@
 /* Use synchronized debug printing if threaded. */
 #define PRINT(DBG, ...)                                                        \
     if (DBG) {                                                                 \
-        PRINT_FUN(LOG_DEBUG, __VA_ARGS__);                                     \
+        PRINT_FUN(LOG_STREAM, "DEBUG", stdout, __VA_ARGS__);                   \
     } else {                                                                   \
-        PRINT_FUN(__VA_ARGS__)                                                 \
+        PRINT_FUN(fprintf, stdout, __VA_ARGS__)                                \
     };
 
 /* Always print diffs to stderr. */
