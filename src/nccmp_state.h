@@ -43,7 +43,7 @@ typedef struct nccmp_state_t {
 
     nccmp_user_types_t  *types1;
     nccmp_user_types_t  *types2;
-    nccmp_field_hashmap_t *field_hashmap1;
+    nccmp_user_type_hashmap_t *field_hashmap1;
 
     nccmp_var_t         *vars1;
     nccmp_var_t         *vars2;

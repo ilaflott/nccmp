@@ -46,11 +46,11 @@ recover:
     return result;
 }
 
-nccmp_field_hashmap_t* create_hashmap(int num_fields)
+nccmp_user_type_hashmap_t* create_hashmap(int num_fields)
 {
     int i;
     char tmp[256];
-    nccmp_field_hashmap_t *result = XMALLOC(nccmp_field_hashmap_t, 1);
+    nccmp_user_type_hashmap_t *result = XMALLOC(nccmp_user_type_hashmap_t, 1);
 
     result->num_items = num_fields;
     result->items = XCALLOC(nccmp_user_type_t*, num_fields);
@@ -70,7 +70,7 @@ nccmp_field_hashmap_t* create_hashmap(int num_fields)
     return result;
 }
 
-void destroy_hashmap(nccmp_field_hashmap_t *map)
+void destroy_hashmap(nccmp_user_type_hashmap_t *map)
 {
     int i;
     if (map) {
@@ -162,7 +162,7 @@ int test_create_hashmap()
     int result = PASS;
     int num_fields = 1;
 
-    nccmp_field_hashmap_t *hashmap = create_hashmap(num_fields);
+    nccmp_user_type_hashmap_t *hashmap = create_hashmap(num_fields);
     destroy_hashmap(hashmap);
 
     return result;
@@ -174,7 +174,7 @@ int test_nccmp_init_group_stats()
     nccmp_stats_t **found = NULL;
     int num_groups = 2, num_vars = 2, num_fields = 1;
     nccmp_group_stats_t *group_stats = create_group_stats(num_groups, num_vars, num_fields);
-    nccmp_field_hashmap_t *hashmap = create_hashmap(num_fields);
+    nccmp_user_type_hashmap_t *hashmap = create_hashmap(num_fields);
     int group_id = 0;
 
     found = nccmp_find_group_var_stats(group_stats, group_id);
@@ -221,7 +221,7 @@ int test_nccmp_update_stats()
 {
     int result = PASS;
     int num_groups = 2, num_vars = 2, num_fields = 1;
-    nccmp_field_hashmap_t *hashmap = create_hashmap(num_fields);
+    nccmp_user_type_hashmap_t *hashmap = create_hashmap(num_fields);
     nccmp_group_stats_t *group_stats = create_group_stats(num_groups, num_vars, num_fields);
     nccmp_stats_t *stats = NULL;
     int expect;
@@ -295,7 +295,7 @@ int main(int argc, char* argv[])
     TEST(test_create_hashmap);
     TEST(test_create_group_stats);
     TEST(test_nccmp_init_group_stats);
-    //TEST(test_nccmp_update_stats);
+    TEST(test_nccmp_update_stats);
 
     return failures;
 }

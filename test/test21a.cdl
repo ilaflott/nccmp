@@ -10,26 +10,26 @@ netcdf test21a {
 	    comp2 com2;
 	};
     dimensions:
-	rec = UNLIMITED;
-	dim1 = 2;
+	    rec = UNLIMITED;
+	    dim1 = 2;
     variables:
-	int var1(rec, dim1);
-	comp3 var2(rec, dim1);
+    	int var1(rec, dim1);
+	    comp3 var2(rec, dim1);
     data:
-	var1 = 0, 0, 0, 0;
+	    var1 = 0, 0, 0, 0;
         var2 = {{{0}}}, {{{0}}}, {{{0}}}, {{{0}}};
 	
     group: group {
-	variables:
-	    comp3 var3(rec, dim1);
-	data:
-	    var3 = {{{0}}}, {{{0}}}, {{{0}}}, {{{0}}};
-	    
-	group: subgroup {
-	    variables:
-		comp3 var4(rec, dim1);
+        variables:
+	        comp3 var3(rec, dim1);
 	    data:
-		var4 = {{{0}}}, {{{0}}}, {{{0}}}, {{{0}}};	
-	} // subgroup	
+	        var3 = {{{0}}}, {{{0}}}, {{{0}}}, {{{0}}};
+	    
+	    group: subgroup {
+	        variables:
+		        comp3 var4(rec, dim1);
+	        data:
+		        var4 = {{{0}}}, {{{0}}}, {{{0}}}, {{{0}}};	
+	    } // subgroup	
     } // group
 }

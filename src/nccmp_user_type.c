@@ -46,9 +46,9 @@ void nccmp_build_user_type_tree_name(nccmp_user_type_t *type, char **result)
     }
 }
 
-nccmp_field_hashmap_t* nccmp_create_field_hashmap(nccmp_user_types_t *types)
+nccmp_user_type_hashmap_t* nccmp_create_field_hashmap(nccmp_user_types_t *types)
 {
-    nccmp_field_hashmap_t *result = XCALLOC(nccmp_field_hashmap_t, 1);
+    nccmp_user_type_hashmap_t *result = XCALLOC(nccmp_user_type_hashmap_t, 1);
     result->items = XCALLOC(nccmp_user_type_t*, nccmp_find_max_user_type_unique_id(types) + 1);
     nccmp_set_field_hashmap(result, types);
     return result;
@@ -126,7 +126,7 @@ void nccmp_destroy_user_types(nccmp_user_types_t *types)
     XFREE(types);
 }
 
-void nccmp_destroy_field_hashmap(nccmp_field_hashmap_t *map)
+void nccmp_destroy_field_hashmap(nccmp_user_type_hashmap_t *map)
 {
     if (map) {
         XFREE(map->items);
@@ -597,7 +597,7 @@ void nccmp_init_user_types(nccmp_user_types_t* types)
     }
 }
 
-void nccmp_print_field_hashmap(nccmp_field_hashmap_t *map)
+void nccmp_print_field_hashmap(nccmp_user_type_hashmap_t *map)
 {
     int i;
     if (!map) {
@@ -611,7 +611,7 @@ void nccmp_print_field_hashmap(nccmp_field_hashmap_t *map)
     }
 }
 
-void nccmp_set_field_hashmap(nccmp_field_hashmap_t *result, nccmp_user_types_t *types)
+void nccmp_set_field_hashmap(nccmp_user_type_hashmap_t *result, nccmp_user_types_t *types)
 {
     result->num_items = 0;
     nccmp_set_field_hashmap_traverse(result, types);
@@ -619,7 +619,7 @@ void nccmp_set_field_hashmap(nccmp_field_hashmap_t *result, nccmp_user_types_t *
     result->items = realloc(result->items, result->num_items * sizeof(nccmp_user_type_t*));
 }
 
-void nccmp_set_field_hashmap_traverse(nccmp_field_hashmap_t *result, nccmp_user_types_t *types)
+void nccmp_set_field_hashmap_traverse(nccmp_user_type_hashmap_t *result, nccmp_user_types_t *types)
 {
     int i;
     nccmp_user_type_t *item;

@@ -27,11 +27,14 @@ double nccmp_compute_var_stats_stdev(nccmp_stats_t *data)
 void nccmp_clear_var_stats_array(nccmp_stats_t *array, int n)
 {
     int i;
+    LOG_DEBUG("FIXME nccmp_clear_var_stats_array\n");
+
     if (!array) {
         return;
     }
 
     for(i = 0; i < n; ++i) {
+        LOG_DEBUG("FIXME   i=%d\n", i);
         array[i].count = 0;
         array[i].min = INFINITY;
         array[i].max = -INFINITY;
@@ -119,33 +122,39 @@ void nccmp_destroy_group_stats(nccmp_group_stats_t *group_stats)
 
 void nccmp_init_group_stats(
         nccmp_group_stats_t *group_stats,
-        int groupid, const char *group_name,
+        int group_id, const char *group_name,
         nccmp_var_t *vars, int num_vars,
-        nccmp_field_hashmap_t *field_hashmap)
+        nccmp_user_type_hashmap_t *field_hashmap)
 {
     int group_i, num_stats, var_i;
-    int FIXME = 0;
+    int FIXME_return = 0;
+
+    LOG_DEBUG("FIXME nccmp_init_group_stats\n");
 
     if (!group_stats) {
         return;
     }
 
-    if (FIXME == 0) {
+    if (FIXME_return) {
         return;
     }
 
     for(group_i = 0; group_i < group_stats->num_groups; ++group_i) {
-        if (groupid == group_stats->group_ids[group_i]) {
+    	LOG_DEBUG("FIXME   group_i=%d group_id=%d group_ids[]=%d\n",
+    			  group_i, group_id, group_stats->group_ids[group_i]);
+        if (group_id == group_stats->group_ids[group_i]) {
             group_stats->num_vars[group_i] = num_vars;
             group_stats->num_stats[group_i] = XMALLOC(int, num_vars);
 
             /* If a var has no fields (is not compound), then create at least one stat. */
             num_stats = nccmp_max_int(field_hashmap->num_items, 1);
+            LOG_DEBUG("FIXME   num_stats=%d num_vars=%d\n", num_stats, num_vars);
             memset(group_stats->num_stats[group_i], num_stats, num_vars);
 
             group_stats->stats[group_i] = XCALLOC(nccmp_stats_t*, num_vars);
 
             for(var_i = 0; var_i < num_vars; ++var_i) {
+            	LOG_DEBUG("FIXME     var_i=%d\n", var_i);
                 group_stats->stats[group_i][var_i] = XCALLOC(nccmp_stats_t, num_stats);
                 nccmp_clear_var_stats_array(group_stats->stats[group_i][var_i], num_stats);
                 nccmp_set_var_stat_names(
@@ -156,24 +165,31 @@ void nccmp_init_group_stats(
             return;
         }
     }
-    LOG_ERROR("Did not find in stats array groupid=%d\n", groupid);
+    LOG_ERROR("Did not find in stats array group_id=%d\n", group_id);
 }
 
 void nccmp_set_var_stat_names(nccmp_stats_t *var_stats_array, int num_stats,
-        nccmp_var_t *var, nccmp_field_hashmap_t *field_hashmap,
+        nccmp_var_t *var, nccmp_user_type_hashmap_t *fields,
         const char* group_name)
 {
     int stat_i;
+
+    LOG_DEBUG("FIXME nccmp_set_var_stat_names\n");
 
 #define ALLOC_AND_COPY(DST, SRC) {              \
         DST = XCALLOC(char, strlen(SRC) + 1);   \
         strcpy(DST, SRC);                       \
     }
 
+	LOG_DEBUG("FIXME   var_name=%s var.type=%d group_name=%s\n", var->name, var->type, group_name);
+    LOG_DEBUG("FIXME fields.num_items=%d fields=%p\n", fields ? fields->num_items : -1, (void*)fields);
+
     if (nccmp_is_user_type_id(var->type)) {
         for(stat_i = 0; stat_i < num_stats; ++stat_i) {
+        	LOG_DEBUG("FIXME   stat_i=%d\n", stat_i);
+        	LOG_DEBUG("FIXME   tree_name=%s\n", fields->items[stat_i]->tree_name);
             nccmp_replace_delimited_prefix(
-                    field_hashmap->items[stat_i]->tree_name,
+                    fields->items[stat_i]->tree_name,
                     var->name,
                     '.',
                     & var_stats_array[stat_i].name);
@@ -204,14 +220,29 @@ nccmp_stats_t** nccmp_find_group_var_stats(nccmp_group_stats_t *group_stats, int
     return NULL;
 }
 
-void nccmp_print_var_stat_pointers(nccmp_stats_t *stats, int groupid, int num_vars)
+void nccmp_print_group_stats_debug(nccmp_group_stats_t *group_stats)
 {
-    int j = 0;
-    for(j = 0; j < num_vars; ++j) {
-        LOG_DEBUG("nccmp_print_var_stat_pointers groupid=%d varid=%d stats=%p stat=%p count=%d min=%g max=%g sum=%g absum=%g sumsq=%g\n",
-                  groupid, j, (void*)stats, (void*)&(stats[j]), stats[j].count, stats[j].min,
-                  stats[j].max, stats[j].sum, stats[j].abs_sum,
-                  stats[j].sum_squares);
+    int group_i, var_i, stat_i;
+    nccmp_stats_t *stat;
+
+    LOG_DEBUG("FIXME nccmp_print_group_stats_debug\n");
+
+    if (!group_stats) {
+    	return;
+    }
+
+    for(group_i = 0; group_i < group_stats->num_groups; ++group_i) {
+    	LOG_DEBUG("FIXME group_i=%d num_vars=%d\n", group_i, group_stats->num_vars[group_i]);
+    	for(var_i = 0; var_i < group_stats->num_vars[group_i]; ++var_i) {
+    		LOG_DEBUG("FIXME  var_i=%d num_stats=%d stats=%p\n", var_i, group_stats->num_stats[group_i][var_i], group_stats->stats[group_i][var_i]);
+    		for(stat_i = 0; stat_i < group_stats->num_stats[group_i][var_i]; ++stat_i) {
+    			stat = & group_stats->stats[group_i][var_i][stat_i];
+    	        LOG_DEBUG("FIXME    stat_i=%d stat=%p count=%d name=%s group_name=%s "
+    	        		  "min=%g max=%g sum=%g absum=%g sumsq=%g\n",
+                          stat_i, (void*)stat, stat->count, stat->name, stat->group_name,
+				          stat->min, stat->max, stat->sum, stat->abs_sum, stat->sum_squares);
+    		}
+    	}
     }
 }
 

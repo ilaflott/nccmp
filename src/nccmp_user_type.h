@@ -25,6 +25,7 @@ typedef struct nccmp_user_type_t {
     nc_type type_id;               /* Defined by file metadata. */
     nc_type user_class;            /* Class like NC_BYTE or NC_COMPOUND. */
     int     unique_id;             /* Unique instance id of a type in tree defined by nccmp. */
+    int     group_id;              /* Group that defined the type. */
 } nccmp_user_type_t;
 
 typedef struct nccmp_user_types_t {
@@ -33,11 +34,11 @@ typedef struct nccmp_user_types_t {
 } nccmp_user_types_t;
 
 /* Minimally perfect hashed map. */
-typedef struct nccmp_field_hashmap_t {
+typedef struct nccmp_user_type_hashmap_t {
     int num_items;
     /* Maps from unique 0-based index to field type instance pointer. */
     nccmp_user_type_t **items;
-} nccmp_field_hashmap_t;
+} nccmp_user_type_hashmap_t;
 
 void nccmp_build_user_type_field_path_str(nccmp_user_type_t *type, char *result);
 
@@ -51,9 +52,9 @@ nccmp_user_type_t* nccmp_create_user_type(size_t n);
 
 nccmp_user_types_t* nccmp_create_user_types(size_t n);
 
-nccmp_field_hashmap_t* nccmp_create_field_hashmap(nccmp_user_types_t *types);
+nccmp_user_type_hashmap_t* nccmp_create_field_hashmap(nccmp_user_types_t *types);
 
-void nccmp_destroy_field_hashmap(nccmp_field_hashmap_t *map);
+void nccmp_destroy_field_hashmap(nccmp_user_type_hashmap_t *map);
 
 /* Free members, and the pointer. */
 void nccmp_destroy_user_type(nccmp_user_type_t *type);
@@ -108,11 +109,11 @@ void nccmp_load_user_type_compound_tree(int ncid, nccmp_user_types_t *types,
 void nccmp_load_user_type_compound_tree_field(int ncid,
         nccmp_user_types_t *types, nccmp_user_type_t *field, int *unique_id);
 
-void nccmp_print_field_hashmap(nccmp_field_hashmap_t *map);
+void nccmp_print_field_hashmap(nccmp_user_type_hashmap_t *map);
 
-void nccmp_set_field_hashmap(nccmp_field_hashmap_t *result, nccmp_user_types_t *types);
+void nccmp_set_field_hashmap(nccmp_user_type_hashmap_t *result, nccmp_user_types_t *types);
 
-void nccmp_set_field_hashmap_traverse(nccmp_field_hashmap_t *result, nccmp_user_types_t *types);
+void nccmp_set_field_hashmap_traverse(nccmp_user_type_hashmap_t *result, nccmp_user_types_t *types);
 
 void nccmp_shallow_copy_user_type(nccmp_user_type_t *to, nccmp_user_type_t *from);
 

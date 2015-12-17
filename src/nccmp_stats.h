@@ -53,12 +53,12 @@ nccmp_stats_t** nccmp_find_group_var_stats(nccmp_group_stats_t *group_stats, int
 void nccmp_init_group_stats(nccmp_group_stats_t *group_stats,
         int groupid, const char* group_name,
         nccmp_var_t *vars, int num_vars,
-        nccmp_field_hashmap_t *field_hashmap);
+        nccmp_user_type_hashmap_t *field_hashmap);
 
-void nccmp_print_var_stat_pointers(nccmp_stats_t *stats, int groupid, int num_vars);
+void nccmp_print_group_stats_debug(nccmp_group_stats_t *group_stats);
 
 void nccmp_set_var_stat_names(nccmp_stats_t *var_stats_array, int num_stats,
-        nccmp_var_t *var, nccmp_field_hashmap_t *field_hashmap,
+        nccmp_var_t *var, nccmp_user_type_hashmap_t *field_hashmap,
         const char* group_name);
 
 void nccmp_update_stats(nccmp_stats_t *stats, double delta);

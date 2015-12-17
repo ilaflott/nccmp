@@ -30,19 +30,22 @@ void nccmp_print_group_stats(nccmp_group_stats_t *group_stats)
     int *widths = NULL;
     int max_widths[NCCMP_NUM_STATS_COLUMNS];
 
+    nccmp_print_group_stats_debug(group_stats);
+
+    LOG_DEBUG("FIXME nccmp_print_group_stats\n");
     strings = nccmp_stringify_group_stats(group_stats);
     if (!strings) {
         return;
     }
 
-    LOG_DEBUG("\n");
+    LOG_DEBUG("FIXME \n");
     widths = nccmp_compute_strlist_lengths(strings);
     if (!widths) {
         return;
     }
-    LOG_DEBUG("\n");
+    LOG_DEBUG("FIXME \n");
     nccmp_compute_stats_column_widths(strings, max_widths);
-    LOG_DEBUG("\n");
+    LOG_DEBUG("FIXME \n");
     /* Header */
     #define PRINT_PAD1() nccmp_print_pad(' ', (max_widths[col] - strlen(NCCMP_STATS_COLUMNS[col])));
     #define PRINT_STR1() printf("%s", NCCMP_STATS_COLUMNS[col])
@@ -109,6 +112,8 @@ nccmp_strlist_t* nccmp_stringify_group_stats(nccmp_group_stats_t *group_stats)
     int num_non_empty_stats = 0, group_i = 0, stat_i = 0, var_i = 0;
     nccmp_strlist_t *result = NULL;
 
+    LOG_DEBUG("FIXME nccmp_stringify_group_stats group_stats=%p num_groups=%d\n",
+    		  group_stats, group_stats ? group_stats->num_groups : 0);
     if (!group_stats || !group_stats->num_groups) {
         return result;
     }
@@ -124,6 +129,7 @@ nccmp_strlist_t* nccmp_stringify_group_stats(nccmp_group_stats_t *group_stats)
         }
     }
 
+    LOG_DEBUG("FIXME num_non_empty_stats=%d\n", num_non_empty_stats);
     if (!num_non_empty_stats) {
         return result;
     }
@@ -149,7 +155,7 @@ void nccmp_stringify_stat(nccmp_stats_t *stat, nccmp_strlist_t *result)
 {
     char tmpstr[NCCMP_MAX_STRINGS];
 
-    LOG_DEBUG("FIXME\n");
+    LOG_DEBUG("FIXME nccmp_stringify_stat\n");
 
     #define APPEND(S)                                                   \
         if (nccmp_add_to_strlist(result, S)) {                          \

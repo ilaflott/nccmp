@@ -21,6 +21,7 @@ CLEANFILES =                                                    \
     not_encoded*.nc encoded*.nc                                 \
     padded*.nc padheader padheader.exe                          \
     stderr*.tmp test*.nc                                        \
+    test_nccmp_darray test_nccmp_darray.exe                     \
     test_nccmp_odometer test_nccmp_odometer.exe                 \
     test_nccmp_stats test_nccmp_stats.exe                       \
     test_nccmp_strlist test_nccmp_strlist.exe                   \
@@ -33,6 +34,7 @@ CLEANFILES =                                                    \
 TESTS =                                                                 \
     test_nccmp_strlist                                                  \
     test_nccmp_odometer                                                 \
+    test_nccmp_darray                                                   \
     test_nccmp_stats                                                    \
     test_nccmp_01.sh test_nccmp_02.sh test_nccmp_03.sh                  \
     test_nccmp_04.sh test_nccmp_05.sh test_nccmp_06.sh test_nccmp_07.sh \
@@ -74,6 +76,7 @@ check_PROGRAMS =                                            \
      make_compound_vlen_nest                                \
      make_big make_nans                                     \
      make_nc4_encodings padheader                           \
+     test_nccmp_darray                                      \
      test_nccmp_odometer                                    \
      test_nccmp_stats                                       \
      test_nccmp_strlist                                     \
@@ -90,6 +93,11 @@ make_nc4_encodings_LDADD = -lnetcdf
 
 test_nccmp_odometer_CPPFLAGS = -I$(top_srcdir)/src
 test_nccmp_odometer_LDADD = $(top_builddir)/src/nccmp-nccmp_odometer.o
+
+test_nccmp_darray_CPPFLAGS = -I$(top_srcdir)/src
+test_nccmp_darray_LDADD = $(top_builddir)/src/nccmp-log.o                 \
+                         $(top_builddir)/src/nccmp-nccmp_darray.o         \
+                         $(top_builddir)/src/nccmp-xmalloc.o
 
 test_nccmp_stats_CPPFLAGS = -I$(top_srcdir)/src
 test_nccmp_stats_LDADD = $(top_builddir)/src/nccmp-log.o                 \
