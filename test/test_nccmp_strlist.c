@@ -140,7 +140,7 @@ int test_compute_strlist_lengths()
 {
     int result = PASS;
     nccmp_strlist_t* list = nccmp_new_strlist(10);
-    int *lens = XCALLOC(int, 10);
+    int *lens = NULL;
 
     if (!nccmp_is_strlist_valid(list)) {
         PRINT("Failed to allocate list.");
@@ -164,12 +164,6 @@ int test_compute_strlist_lengths()
 
     if (4 != lens[1]) {
         PRINT("Expected lens[1] = 4");
-        result = FAIL;
-        goto recover;
-    }
-
-    if (0 != lens[2]) {
-        PRINT("Expected lens[0] = 0");
         result = FAIL;
         goto recover;
     }

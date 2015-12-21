@@ -17,7 +17,8 @@ int nccmp_cmp_var_iterator_init(nccmp_state_t* state, int varid,
 int nccmp_cmp_var_user_type_compound_field_ids(nccmp_state_t* state, int ncid1, int ncid2,
         int varid1, int varid2, size_t* start, size_t* count,
         int nitems, int rec, size_t* limits, void* data1, void* data2,
-        nccmp_user_type_t* comp_type1, nccmp_user_type_t* comp_type2, nccmp_int_pairs_t *fieldids);
+        nccmp_user_type_t* comp_type1, nccmp_user_type_t* comp_type2, 
+        nccmp_darray_t *fieldids);
 
 int nccmp_cmp_var_user_type_vlen_atomic(nccmp_state_t* state, int ncid1, int ncid2,
         int varid1, int varid2, size_t* start, size_t* count,

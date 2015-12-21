@@ -2,21 +2,9 @@
 #include <nccmp_common.h>
 #include <nccmp_utils.h>
 
-nccmp_int_pairs_t* nccmp_create_int_pairs(size_t n)
+nccmp_pair_int_t* nccmp_create_pair_int(size_t n)
 {
-    nccmp_int_pairs_t *result = XMALLOC(nccmp_int_pairs_t, 1);
-
-    result->items = XMALLOC(nccmp_int_pair_t, n);
-    memset(result->items, 0, sizeof(nccmp_int_pair_t) * n);
-    result->size = n;
-
-    return result;
-}
-
-void nccmp_destroy_int_pairs(nccmp_int_pairs_t *pairs)
-{
-    XFREE(pairs->items);
-    XFREE(pairs);
+    return XCALLOC(nccmp_pair_int_t, n);
 }
 
 #define NCCMP_MAX(TYPE) \
@@ -48,7 +36,11 @@ PRODUCT(int)
 PRODUCT(size_t)
 #undef PRODUCT
 
-void nccmp_replace_delimited_prefix(const char *old_str, char *new_prefix, char delim, char **result)
+void nccmp_replace_delimited_prefix(
+		const char *old_str,
+		const char *new_prefix,
+		char delim,
+		char **result)
 {
     char tmp[NC_MAX_NAME];
     strcpy(tmp, new_prefix);

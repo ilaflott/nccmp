@@ -3,7 +3,7 @@ dnl Process this file with `autoreconf -i` to produce a configure script.
 dnl Include additional scripts.
 AC_CONFIG_MACRO_DIR([m4])
 
-AC_INIT(nccmp, 1.7.6.0, [[Remik.Ziemlinski at noaa.gov]])
+AC_INIT(nccmp, 1.8.0.0, [[Remik.Ziemlinski at noaa.gov]])
 dnl Capture flags after ./configure to embed into version message.
 config_flags="$*"
  
@@ -28,7 +28,10 @@ AC_ARG_WITH( [netcdf],
             )
 
 dnl For aggressive compiler checks during development.
-AM_CFLAGS="$AM_CFLAGS -std=c99 -Wpedantic -Wall -Wclobbered -Wempty-body -Wignored-qualifiers -Wmissing-field-initializers -Wmissing-parameter-type -Wold-style-declaration -Woverride-init -Wtype-limits -Wuninitialized -Wunused-but-set-parameter -D_BSD_SOURCE"
+dnl GCC
+dnl AM_CFLAGS="$AM_CFLAGS -std=c99 -Wpedantic -Wall -Wclobbered -Wempty-body -Wignored-qualifiers -Wmissing-field-initializers -Wmissing-parameter-type -Wold-style-declaration -Woverride-init -Wtype-limits -Wuninitialized -Wunused-but-set-parameter -D_BSD_SOURCE"
+dnl Clang
+AM_CFLAGS="$AM_CFLAGS -std=c99 -Wpedantic -Wall -Wconsumed -Wempty-body -Wignored-qualifiers -Wmissing-field-initializers -Wout-of-line-declaration -Wtype-limits -Wuninitialized -Wunused-parameter -D_BSD_SOURCE"
 
 AC_SUBST([AM_CFLAGS])
 

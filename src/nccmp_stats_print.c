@@ -6,47 +6,61 @@
 
 const char *NCCMP_STATS_COLUMNS[] = {"Variable", "Group", "Count", "Sum", "AbsSum", "Min", "Max", "Range", "Mean", "StdDev"};
 
-void nccmp_compute_stats_column_widths(nccmp_strlist_t *strings, int *widths)
+nccmp_darray_t* nccmp_compute_str_widths(nccmp_darray_t *array)
+{
+	int i;
+	nccmp_darray_t *widths = nccmp_darray_create(array->num_items);
+
+	for(i = 0; i < array->num_items; ++i) {
+		nccmp_darray_append_int(widths, strlen( (char*) array->items[i] ));
+	}
+
+	return widths;
+}
+
+void nccmp_compute_column_max_widths(nccmp_darray_t *widths, int *max_widths)
 {
     int i, col;
-    if (!strings || !widths) {
+    if (!widths || !max_widths) {
         return;
     }
 
     for(i = 0; i < NCCMP_NUM_STATS_COLUMNS; ++i) {
-        widths[i] = strlen(NCCMP_STATS_COLUMNS[i]);
+        max_widths[i] = strlen(NCCMP_STATS_COLUMNS[i]);
     }
 
-    for(i = 0; i < strings->size; ++i) {
+    for(i = 0; i < widths->num_items; ++i) {
         col = i % NCCMP_NUM_STATS_COLUMNS;
-        widths[col] = nccmp_max_size_t(widths[col], strlen(strings->items[i]));
+        max_widths[col] = nccmp_max_size_t(max_widths[col], *(int*) widths->items[i]);
     }
 }
 
-void nccmp_print_group_stats(nccmp_group_stats_t *group_stats)
+void nccmp_print_group_stats_array(nccmp_darray_t *array)
 {
-    int i, col;
-    nccmp_strlist_t *strings = NULL;
-    int *widths = NULL;
+    nccmp_darray_t *strings = NULL, *widths = NULL;
     int max_widths[NCCMP_NUM_STATS_COLUMNS];
 
-    nccmp_print_group_stats_debug(group_stats);
+    nccmp_debug_print_group_stats_array(array); //FIXME
 
     LOG_DEBUG("FIXME nccmp_print_group_stats\n");
-    strings = nccmp_stringify_group_stats(group_stats);
+    strings = nccmp_stringify_group_stats_array(array);
     if (!strings) {
         return;
     }
 
     LOG_DEBUG("FIXME \n");
-    widths = nccmp_compute_strlist_lengths(strings);
-    if (!widths) {
-        return;
-    }
+    widths = nccmp_compute_str_widths(strings);
     LOG_DEBUG("FIXME \n");
-    nccmp_compute_stats_column_widths(strings, max_widths);
+    nccmp_compute_column_max_widths(widths, max_widths);
     LOG_DEBUG("FIXME \n");
-    /* Header */
+    nccmp_print_stats_table_header(max_widths);
+    nccmp_print_stats_table_body(strings, widths, max_widths);
+}
+
+void nccmp_print_stats_table_header(int *max_widths)
+{
+	int col;
+
     #define PRINT_PAD1() nccmp_print_pad(' ', (max_widths[col] - strlen(NCCMP_STATS_COLUMNS[col])));
     #define PRINT_STR1() printf("%s", NCCMP_STATS_COLUMNS[col])
     for(col = 0; col < NCCMP_NUM_STATS_COLUMNS; ++col) {
@@ -66,11 +80,20 @@ void nccmp_print_group_stats(nccmp_group_stats_t *group_stats)
         }
     }
     printf("\n");
+	#undef PRINT_PAD1
+	#undef PRINT_STR1
+}
 
-    /* Body */
-    #define PRINT_PAD2() nccmp_print_pad(' ', (max_widths[col] - widths[i]))
-    #define PRINT_STR2() printf("%s", strings->items[i])
-    for(col = 0, i = 0; i < strings->size; ++i) {
+void nccmp_print_stats_table_body(
+		nccmp_darray_t *strings,
+		nccmp_darray_t *widths,
+		int *max_widths)
+{
+	int col, i;
+
+    #define PRINT_PAD2() nccmp_print_pad(' ', (max_widths[col] - *(int*)widths->items[i]))
+    #define PRINT_STR2() printf("%s", (char*) strings->items[i])
+    for(col = 0, i = 0; i < strings->num_items; ++i) {
         col = i % NCCMP_NUM_STATS_COLUMNS;
         if (0 < col) {
             printf(" ");
@@ -91,12 +114,10 @@ void nccmp_print_group_stats(nccmp_group_stats_t *group_stats)
         }
     }
 
-    nccmp_free_strlist(& strings);
-    XFREE(widths);
+    nccmp_darray_destroy_deep(strings);
+    nccmp_darray_destroy_deep(widths);
 
-    #undef PRINT_PAD1
     #undef PRINT_PAD2
-    #undef PRINT_STR1
     #undef PRINT_STR2
 }
 
@@ -107,82 +128,78 @@ void nccmp_print_pad(char c, int num)
     }
 }
 
-nccmp_strlist_t* nccmp_stringify_group_stats(nccmp_group_stats_t *group_stats)
+void nccmp_stringify_group_stats(nccmp_group_stats_t *stats, nccmp_darray_t *result)
 {
-    int num_non_empty_stats = 0, group_i = 0, stat_i = 0, var_i = 0;
-    nccmp_strlist_t *result = NULL;
+    if (stats) {
+    	nccmp_stringify_var_stats_array(stats->var_stats, result);
+    }
+}
 
-    LOG_DEBUG("FIXME nccmp_stringify_group_stats group_stats=%p num_groups=%d\n",
-    		  group_stats, group_stats ? group_stats->num_groups : 0);
-    if (!group_stats || !group_stats->num_groups) {
+nccmp_darray_t* nccmp_stringify_group_stats_array(nccmp_darray_t *array)
+{
+    int i;
+    nccmp_darray_t *result = nccmp_darray_create(NC_MAX_VARS);
+
+    if (!array) {
         return result;
     }
 
-    /* Count items with diffs. */
-    for(group_i = 0; group_i < group_stats->num_groups; ++group_i) {
-        for(var_i = 0; var_i < group_stats->num_vars[group_i]; ++var_i) {
-            for(stat_i = 0; stat_i < group_stats->num_stats[group_i][var_i]; ++stat_i) {
-                if (0 < group_stats->stats[group_i][var_i][stat_i].count) {
-                    ++num_non_empty_stats;
-                }
-            }
-        }
+    for(i = 0; i < array->num_items; ++i) {
+    	nccmp_stringify_group_stats( (nccmp_group_stats_t*) array->items[i], result );
     }
-
-    LOG_DEBUG("FIXME num_non_empty_stats=%d\n", num_non_empty_stats);
-    if (!num_non_empty_stats) {
-        return result;
-    }
-
-    result = nccmp_new_strlist(num_non_empty_stats * NCCMP_NUM_STATS_COLUMNS);
-
-    for(group_i = 0; group_i < group_stats->num_groups; ++group_i) {
-        for(var_i = 0; var_i < group_stats->num_vars[group_i]; ++var_i) {
-            for(stat_i = 0; stat_i < group_stats->num_stats[group_i][var_i]; ++stat_i) {
-                if (0 < group_stats->stats[group_i][var_i][stat_i].count) {
-                    nccmp_stringify_stat(& group_stats->stats[group_i][var_i][stat_i], result);
-                }
-            }
-        }
-    }
-
-    LOG_DEBUG("FIXME\n");
 
     return result;
 }
 
-void nccmp_stringify_stat(nccmp_stats_t *stat, nccmp_strlist_t *result)
+void nccmp_stringify_stats(nccmp_stats_t *stats, nccmp_darray_t *result)
 {
-    char tmpstr[NCCMP_MAX_STRINGS];
+    char tmp[NCCMP_MAX_STRINGS];
 
     LOG_DEBUG("FIXME nccmp_stringify_stat\n");
 
-    #define APPEND(S)                                                   \
-        if (nccmp_add_to_strlist(result, S)) {                          \
-            LOG_ERROR("Failed to add string to statistics output.\n");  \
-            return;                                                     \
-        }
+    nccmp_darray_append(result, stats->name);
+    nccmp_darray_append(result, stats->group_name);
+    snprintf(tmp, NCCMP_MAX_STRINGS, "%d", stats->count);
+    nccmp_darray_append(result, tmp);
+    snprintf(tmp, NCCMP_MAX_STRINGS, "%g", stats->sum);
+    nccmp_darray_append(result, tmp);
+    snprintf(tmp, NCCMP_MAX_STRINGS, "%g", stats->abs_sum);
+    nccmp_darray_append(result, tmp);
+    snprintf(tmp, NCCMP_MAX_STRINGS, "%g", stats->min);
+    nccmp_darray_append(result, tmp);
+    snprintf(tmp, NCCMP_MAX_STRINGS, "%g", stats->max);
+    nccmp_darray_append(result, tmp);
+    snprintf(tmp, NCCMP_MAX_STRINGS, "%g", stats->max - stats->min);
+    nccmp_darray_append(result, tmp);
+    snprintf(tmp, NCCMP_MAX_STRINGS, "%g", nccmp_compute_var_stats_mean(stats));
+    nccmp_darray_append(result, tmp);
+    snprintf(tmp, NCCMP_MAX_STRINGS, "%g", nccmp_compute_var_stats_stdev(stats));
+    nccmp_darray_append(result, tmp);
+}
 
-    LOG_DEBUG("FIXME\n");
-    APPEND(stat->name);
-    APPEND(stat->group_name);
-    LOG_DEBUG("FIXME\n");
-    snprintf(tmpstr, NCCMP_MAX_STRINGS, "%d", stat->count);
-    APPEND(tmpstr);
-    snprintf(tmpstr, NCCMP_MAX_STRINGS, "%g", stat->sum);
-    APPEND(tmpstr);
-    snprintf(tmpstr, NCCMP_MAX_STRINGS, "%g", stat->abs_sum);
-    APPEND(tmpstr);
-    snprintf(tmpstr, NCCMP_MAX_STRINGS, "%g", stat->min);
-    APPEND(tmpstr);
-    snprintf(tmpstr, NCCMP_MAX_STRINGS, "%g", stat->max);
-    APPEND(tmpstr);
-    snprintf(tmpstr, NCCMP_MAX_STRINGS, "%g", stat->max - stat->min);
-    APPEND(tmpstr);
-    snprintf(tmpstr, NCCMP_MAX_STRINGS, "%g", nccmp_compute_var_stats_mean(stat));
-    APPEND(tmpstr);
-    snprintf(tmpstr, NCCMP_MAX_STRINGS, "%g", nccmp_compute_var_stats_stdev(stat));
-    APPEND(tmpstr);
+void nccmp_stringify_stats_array(nccmp_darray_t *array, nccmp_darray_t *result)
+{
+    int i;
+    if (array) {
+    	for(i = 0; i < array->num_items; ++i) {
+    		nccmp_stringify_stats( (nccmp_stats_t*) array->items[i], result );
+    	}
+    }
+}
 
-    #undef APPEND
+void nccmp_stringify_var_stats(nccmp_var_stats_t *stats, nccmp_darray_t *result)
+{
+    if (stats) {
+    	nccmp_stringify_stats_array(stats->stats, result);
+    }
+}
+
+void nccmp_stringify_var_stats_array(nccmp_darray_t *array, nccmp_darray_t *result)
+{
+    int i;
+    if (array) {
+    	for(i = 0; i < array->num_items; ++i) {
+    		nccmp_stringify_var_stats( (nccmp_var_stats_t*) array->items[i], result );
+    	}
+    }
 }

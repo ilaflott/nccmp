@@ -170,7 +170,7 @@ size_t nccmp_cmp_field_array_##NAME1##_##NAME2##_nanequal(                      
     CMP_TYPES_FIELD(NAME1, TYPE1, longlong,  long long)                        \
     CMP_TYPES_FIELD(NAME1, TYPE1, ulonglong, unsigned long long)               \
     CMP_TYPES_FIELD(NAME1, TYPE1, double,    double)                           \
-    CMP_TYPES_FIELD(NAME1, TYPE1, float,     float) 
+    CMP_TYPES_FIELD(NAME1, TYPE1, float,     float)
 #define CMP_TYPES_FIELD_NANEQUAL_GEN(NAME1, TYPE1)                             \
     CMP_TYPES_FIELD_NANEQUAL(NAME1, TYPE1, text,      char)                    \
     CMP_TYPES_FIELD_NANEQUAL(NAME1, TYPE1, schar,     signed char)             \
@@ -412,6 +412,7 @@ int nccmp_cmp_var_user_type_compound_field_array_atomic_type_string(nccmp_state_
     char array_idx_str[64], root_idx_str[64], idx_str[64];
     char field_path_str[NC_MAX_NAME];
     count_limit_type diff_count_status;
+    nccmp_user_type_t *child_field1, *child_field2;
     nccmp_var_t *v1;
 
     if (state->opts.debug) {
@@ -423,12 +424,14 @@ int nccmp_cmp_var_user_type_compound_field_array_atomic_type_string(nccmp_state_
     }
 
     v1 = & state->vars1[varid1];
-    array_size = (size_t) nccmp_product_int(type1->fields->items[fieldid1].dim_sizes,
-                                      0, type1->fields->items[fieldid1].num_dims-1);
+    child_field1 = NCCMP_USER_TYPE_ITEM(type1->fields, fieldid1);
+    child_field2 = NCCMP_USER_TYPE_ITEM(type2->fields, fieldid2);
+    array_size = (size_t) nccmp_product_int(
+    		child_field1->dim_sizes, 0, child_field1->num_dims-1);
 
     for(array_i = 0; array_i < narrays; ++array_i) {
-        strings1 = (char**) ((unsigned char*)items1 + type1->root_size * array_i + type1->fields->items[fieldid1].offset);
-        strings2 = (char**) ((unsigned char*)items2 + type2->root_size * array_i + type2->fields->items[fieldid2].offset);
+        strings1 = (char**) ((unsigned char*)items1 + type1->root_size * array_i + child_field1->offset);
+        strings2 = (char**) ((unsigned char*)items2 + type2->root_size * array_i + child_field2->offset);
         for(i = 0; i < array_size; ++i) {
             if ( ( strings1[i] && !strings2[i]) ||
                  (!strings1[i] &&  strings2[i]) ||
@@ -444,17 +447,18 @@ int nccmp_cmp_var_user_type_compound_field_array_atomic_type_string(nccmp_state_
                 if (!state->opts.quiet) {
                     nccmp_get_index_str_size_t(v1->ndims, start, array_i, root_idx_str,
                                          state->opts.fortran);
-                    nccmp_get_product_index_str_int(type1->fields->items[fieldid1].num_dims,
-                                              type1->fields->items[fieldid1].dim_sizes,
-                                              i, array_idx_str,
-                                              state->opts.fortran);
+                    nccmp_get_product_index_str_int(
+                    		child_field1->num_dims,
+							child_field1->dim_sizes,
+                            i, array_idx_str,
+                            state->opts.fortran);
                     if (state->opts.fortran) {
                         sprintf(idx_str, "%s,%s", array_idx_str, root_idx_str);
                     } else {
                         sprintf(idx_str, "%s,%s", root_idx_str, array_idx_str);
                     }
                     field_path_str[0] = 0;
-                    nccmp_build_user_type_field_path_str(& type1->fields->items[fieldid1], field_path_str);
+                    nccmp_build_user_type_field_path_str(child_field1, field_path_str);
                     PRINT_DIFF(state->opts.debug, DIFF_MSG_FIELD, v1->name, idx_str,
                                field_path_str, strings1[i], strings2[i]);
                 }
@@ -468,8 +472,8 @@ int nccmp_cmp_var_user_type_compound_field_array_atomic_type_string(nccmp_state_
 recover:
     // Must free strings memory allocated by api.
     for(array_i = 0; array_i < narrays; ++array_i) {
-        strings1 = (char**) ((unsigned char*)items1 + type1->root_size * array_i + type1->fields->items[fieldid1].offset);
-        strings2 = (char**) ((unsigned char*)items2 + type2->root_size * array_i + type2->fields->items[fieldid2].offset);
+        strings1 = (char**) ((unsigned char*)items1 + type1->root_size * array_i + child_field1->offset);
+        strings2 = (char**) ((unsigned char*)items2 + type2->root_size * array_i + child_field2->offset);
 		status = nc_free_string(array_size, strings1);
         HANDLE_NC_ERROR(status);
 		status = nc_free_string(array_size, strings2);
@@ -492,8 +496,11 @@ int nccmp_cmp_var_user_type_compound_field_array_atomic_type(nccmp_state_t* stat
     size_t diff_offset, item_offset;
     int array_i;
     char field_path_str[NC_MAX_NAME];
-    size_t array_size = (size_t) nccmp_product_int(type1->fields->items[fieldid1].dim_sizes,
-                            0, type1->fields->items[fieldid1].num_dims-1);
+    nccmp_user_type_t *child_field1 = NCCMP_USER_TYPE_ITEM(type1->fields, fieldid1);
+    nccmp_user_type_t *child_field2 = NCCMP_USER_TYPE_ITEM(type2->fields, fieldid2);
+
+    size_t array_size = (size_t) nccmp_product_int(
+    		child_field1->dim_sizes, 0, child_field1->num_dims-1);
     char array_idxstr[32], root_idxstr[32], idx_str[32], str1[32], str2[32];
     nccmp_nc_type_t item1, item2;
 
@@ -505,19 +512,19 @@ int nccmp_cmp_var_user_type_compound_field_array_atomic_type(nccmp_state_t* stat
         goto recover;
     }
 
-#define CMP_FIELD_ATOMIC_ARRAY(NAME1, TYPE1, NAME2, TYPE2, NANEQUAL)           \
-    for(array_i = 0; array_i < narrays; ++array_i) {                           \
-        item_offset = 0;                                                       \
-        while(1) {                                                             \
-            if (NANEQUAL) {                                                    \
-                diff_offset = nccmp_cmp_field_array_##NAME1##_##NAME2##_nanequal(        \
-                                items1, type1->fields->items[fieldid1].offset, type1->root_size,   \
-                                items2, type2->fields->items[fieldid2].offset, type2->root_size,   \
-                                array_i, array_size, item_offset);             \
-            } else {                                                           \
-                diff_offset = nccmp_cmp_field_array_##NAME1##_##NAME2(         \
-                                items1, type1->fields->items[fieldid1].offset, type1->root_size,   \
-                                items2, type2->fields->items[fieldid2].offset, type2->root_size,   \
+#define CMP_FIELD_ATOMIC_ARRAY(NAME1, TYPE1, NAME2, TYPE2, NANEQUAL)           		\
+    for(array_i = 0; array_i < narrays; ++array_i) {                           		\
+        item_offset = 0;                                                       		\
+        while(1) {                                                             		\
+            if (NANEQUAL) {                                                    		\
+                diff_offset = nccmp_cmp_field_array_##NAME1##_##NAME2##_nanequal( 	\
+                                items1, child_field1->offset, type1->root_size,   	\
+                                items2, child_field2->offset, type2->root_size,   	\
+                                array_i, array_size, item_offset);                	\
+            } else {                                                              	\
+                diff_offset = nccmp_cmp_field_array_##NAME1##_##NAME2(         		\
+                                items1, child_field1->offset, type1->root_size,   	\
+                                items2, child_field2->offset, type2->root_size,   	\
                                 array_i, array_size, item_offset);             \
             }                                                                  \
             if (diff_offset >= array_size) {                                   \
@@ -534,18 +541,19 @@ int nccmp_cmp_var_user_type_compound_field_array_atomic_type(nccmp_state_t* stat
                 goto recover;                                                  \
             }                                                                  \
             item1.m_##NAME1 = COMPOUND_FIELD_ARRAY_VALUE(items1, type1->root_size,                  \
-                type1->fields->items[fieldid1].offset, TYPE1, array_i, diff_offset);                \
-            item2.m_##NAME2 = COMPOUND_FIELD_ARRAY_VALUE(items2, type2->root_size,                  \
-                type2->fields->items[fieldid2].offset, TYPE2, array_i, diff_offset);                \
+            		child_field1->offset, TYPE1, array_i, diff_offset);                				\
+            item2.m_##NAME2 = COMPOUND_FIELD_ARRAY_VALUE(items2, type2->root_size,                 	\
+            		child_field2->offset, TYPE2, array_i, diff_offset);                				\
             if (state->opts.statistics) {                                                           \
-                nccmp_update_state_stats(state, varid1, type1->fields->items[fieldid1].unique_id,   \
+                nccmp_update_state_stats(state, varid1, child_field1->id,   					\
                                                (double)item1.m_##NAME1 - (double)item2.m_##NAME2);  \
             }                                                                                       \
             if (!state->opts.quiet) {                                                        \
                 nccmp_get_index_str_size_t(v1->ndims, start, array_i, root_idxstr,           \
                                      state->opts.fortran);                                   \
-                nccmp_get_product_index_str_int(type1->fields->items[fieldid1].num_dims,     \
-                                          type1->fields->items[fieldid1].dim_sizes,          \
+                nccmp_get_product_index_str_int(											 \
+                		child_field1->num_dims,     										 \
+						child_field1->dim_sizes,           									 \
                                           diff_offset, array_idxstr,                         \
                                           state->opts.fortran);                              \
                 if (state->opts.fortran) {                                                   \
@@ -561,7 +569,7 @@ int nccmp_cmp_var_user_type_compound_field_array_atomic_type(nccmp_state_t* stat
                     nccmp_##NAME2##_to_str(item2.m_##NAME2, str2, state->opts.precision);    \
                 }                                                                            \
                 field_path_str[0] = 0;                                                       \
-                nccmp_build_user_type_field_path_str(& type1->fields->items[fieldid1], field_path_str);\
+                nccmp_build_user_type_field_path_str(child_field1, field_path_str);			 \
                 PRINT_DIFF(state->opts.debug, DIFF_MSG_FIELD, v1->name, idx_str,             \
                       field_path_str, str1, str2);                                           \
             }                                                                                \
@@ -579,7 +587,7 @@ int nccmp_cmp_var_user_type_compound_field_array_atomic_type(nccmp_state_t* stat
     }
 
 #define CMP_FIELD_ATOMIC_ARRAY_TYPE(NAME1, TYPE1, NANEQUAL)                    \
-    switch(type2->fields->items[fieldid2].type_id) {                           \
+    switch(child_field2->type_id) {                                            \
     case NC_BYTE:   CMP_FIELD_ATOMIC_ARRAY_SELECT(NAME1, TYPE1, schar,     signed char,       NANEQUAL);      break;   \
     case NC_CHAR:   CMP_FIELD_ATOMIC_ARRAY_SELECT(NAME1, TYPE1, text,      char,              NANEQUAL);      break;   \
     case NC_DOUBLE: CMP_FIELD_ATOMIC_ARRAY_SELECT(NAME1, TYPE1, double,    double,            state->opts.nanequal);break;       \
@@ -594,13 +602,13 @@ int nccmp_cmp_var_user_type_compound_field_array_atomic_type(nccmp_state_t* stat
     case NC_STRING:                                                            \
     default:                                                                   \
          LOG_ERROR("Unsupported second var field %s data type = %d\n",         \
-                 state->types2->items[state->vars2[varid2].type].fields->items[fieldid2].name,     \
-                 state->types2->items[state->vars2[varid2].type].fields->items[fieldid2].type_id); \
+                 child_field2->name,     \
+                 child_field2->type_id); \
          last_status = EXIT_FAILED;                                            \
          break;                                                                \
     }
 
-    switch(type1->fields->items[fieldid1].type_id) {
+    switch(child_field1->type_id) {
     case NC_BYTE:   CMP_FIELD_ATOMIC_ARRAY_TYPE(schar,    signed char,        0);             break;
     case NC_CHAR:   CMP_FIELD_ATOMIC_ARRAY_TYPE(text,     char,               0);             break;
     case NC_DOUBLE: CMP_FIELD_ATOMIC_ARRAY_TYPE(double,   double,             state->opts.nanequal);break;
@@ -613,7 +621,7 @@ int nccmp_cmp_var_user_type_compound_field_array_atomic_type(nccmp_state_t* stat
     case NC_UINT64: CMP_FIELD_ATOMIC_ARRAY_TYPE(ulonglong,unsigned long long, 0);             break;
     case NC_USHORT: CMP_FIELD_ATOMIC_ARRAY_TYPE(ushort,   unsigned short,     0);             break;
     case NC_STRING:
-        if (NC_STRING == type2->fields->items[fieldid2].type_id) {
+        if (NC_STRING == child_field2->type_id) {
             last_status = nccmp_cmp_var_user_type_compound_field_array_atomic_type_string(
                             state, ncid1, ncid2, varid1, varid2,
                             start, count, narrays, rec, limits,
@@ -622,8 +630,8 @@ int nccmp_cmp_var_user_type_compound_field_array_atomic_type(nccmp_state_t* stat
         }
     default:
         LOG_ERROR("Unsupported first var field %s data type = %d\n",
-                type1->fields->items[fieldid1].name,
-                type1->fields->items[fieldid1].type_id);
+        		child_field1->name,
+				child_field1->type_id);
         last_status = EXIT_FAILED;
         break;
     }
@@ -664,13 +672,15 @@ int nccmp_cmp_var_user_type_compound_field_array_user_type_compound(nccmp_state_
     nest->type2 = type2;
 
     // Set the field comp types.
-    nest_next->type1 = & type1->fields->items[fieldid1];
-    nest_next->type2 = & type2->fields->items[fieldid2];
+    nest_next->type1 = NCCMP_USER_TYPE_ITEM(type1->fields, fieldid1);
+    nest_next->type2 = NCCMP_USER_TYPE_ITEM(type2->fields, fieldid2);
     nest_next->prev = nest;
     nest_next->num_dims = nest_next->type1->num_dims;
 
-    array_size = nccmp_product_int(type1->fields->items[fieldid1].dim_sizes,
-                            0, type1->fields->items[fieldid1].num_dims-1);
+    array_size = nccmp_product_int(
+    				nest_next->type1->dim_sizes,
+					0,
+					nest_next->type1->num_dims-1);
 
     for(parent_comp_i = 0; parent_comp_i < n_parent_comps; ++parent_comp_i) {
         for(i = 0; i < array_size; ++i) {
@@ -710,8 +720,10 @@ int nccmp_cmp_var_user_type_compound_field_array_user_type_enum(nccmp_state_t* s
     int last_status = EXIT_SUCCESS;
     int status, diff_count_status;
     int array_i, i;
-    nc_type field_type_id1 = type1->fields->items[fieldid1].type_id;
-    nc_type field_type_id2 = type2->fields->items[fieldid2].type_id;
+    nccmp_user_type_t *field1 = NCCMP_USER_TYPE_ITEM(type1->fields, fieldid1);
+    nccmp_user_type_t *field2 = NCCMP_USER_TYPE_ITEM(type2->fields, fieldid2);
+    nc_type field_type_id1 = field1->type_id;
+    nc_type field_type_id2 = field2->type_id;
     long long item1, item2;
     char idx_str[NC_MAX_NAME], str1[NC_MAX_NAME], str2[NC_MAX_NAME],
          field_path_str[NC_MAX_NAME], array_idx_str[64], root_idx_str[64];
@@ -732,13 +744,15 @@ int nccmp_cmp_var_user_type_compound_field_array_user_type_enum(nccmp_state_t* s
     str2[0] = 0;
     v1 = & state->vars1[varid1];
 
-    array_size = (size_t) nccmp_product_int(type1->fields->items[fieldid1].dim_sizes,
-                                      0, type1->fields->items[fieldid1].num_dims-1);
+    array_size = (size_t) nccmp_product_int(
+    						field1->dim_sizes,
+							0,
+							field1->num_dims-1);
 
 #define CMP_ENUM_ARRAY(TYPE1, TYPE2)                                           \
     for(array_i = 0; array_i < narrays; ++array_i) {                           \
-        enums1 = COMPOUND_FIELD_PTR(data1, type1->root_size, type1->fields->items[fieldid1].offset, TYPE1, array_i);   \
-        enums2 = COMPOUND_FIELD_PTR(data2, type2->root_size, type2->fields->items[fieldid2].offset, TYPE2, array_i);   \
+        enums1 = COMPOUND_FIELD_PTR(data1, type1->root_size, field1->offset, TYPE1, array_i);   \
+        enums2 = COMPOUND_FIELD_PTR(data2, type2->root_size, field2->offset, TYPE2, array_i);   \
         for(i = 0; i < array_size; ++i) {                                      \
             item1 = (long long) ((TYPE1*)enums1)[i];                           \
             status = nc_inq_enum_ident(ncid1, field_type_id1, item1, str1);    \
@@ -756,21 +770,21 @@ int nccmp_cmp_var_user_type_compound_field_array_user_type_enum(nccmp_state_t* s
                 }                                                              \
                 if (!state->opts.quiet) {                                      \
                     nccmp_get_index_str_size_t(v1->ndims, start, array_i, root_idx_str, state->opts.fortran);    \
-                    nccmp_get_product_index_str_int(type1->fields->items[fieldid1].num_dims,                     \
-                                              type1->fields->items[fieldid1].dim_sizes,                          \
-                                              i, array_idx_str,                                                  \
-                                              state->opts.fortran);                                              \
+                    nccmp_get_product_index_str_int(field1->num_dims,    						                 \
+                    								field1->dim_sizes,                         					 \
+													i, array_idx_str,                                            \
+													state->opts.fortran);                                        \
                     if (state->opts.fortran) {                                                                   \
                         sprintf(idx_str, "%s,%s", array_idx_str, root_idx_str);                                  \
                     } else {                                                                                     \
                         sprintf(idx_str, "%s,%s", root_idx_str, array_idx_str);                                  \
                     }                                                                                            \
                     field_path_str[0] = 0;                                                                       \
-                    nccmp_build_user_type_field_path_str(& type1->fields->items[fieldid1], field_path_str);      \
+                    nccmp_build_user_type_field_path_str(field1, field_path_str);      							 \
                     PRINT_DIFF(state->opts.debug, DIFF_MSG_FIELD, v1->name, idx_str,                             \
                             field_path_str, str1, str2);                                                         \
                 }                                                                                                \
-                if ( (COUNT_EQUAL == diff_count_status) || !state->opts.force) {         \
+                if ( (COUNT_EQUAL == diff_count_status) || !state->opts.force) {   						         \
                     goto recover;                                              \
                 }                                                              \
             }                                                                  \
@@ -778,7 +792,7 @@ int nccmp_cmp_var_user_type_compound_field_array_user_type_enum(nccmp_state_t* s
     }
 
 #define CMP_ENUM_TYPE_ARRAY(TYPE1)                                             \
-    switch(type2->fields->items[fieldid2].base_type) {                         \
+    switch(field2->base_type) {                         					   \
         case NC_BYTE:   CMP_ENUM_ARRAY(TYPE1, signed char);       break;       \
         case NC_CHAR:   CMP_ENUM_ARRAY(TYPE1, char);              break;       \
         case NC_INT:    CMP_ENUM_ARRAY(TYPE1, int);               break;       \
@@ -789,12 +803,12 @@ int nccmp_cmp_var_user_type_compound_field_array_user_type_enum(nccmp_state_t* s
         case NC_UINT64: CMP_ENUM_ARRAY(TYPE1, unsigned long long);break;       \
         case NC_USHORT: CMP_ENUM_ARRAY(TYPE1, unsigned short);    break;       \
         default:                                                               \
-             LOG_ERROR("Unsupported second enum data type = %d\n", type2->fields->items[fieldid2].base_type);\
+             LOG_ERROR("Unsupported second enum data type = %d\n", field2->base_type);\
              last_status = EXIT_FAILED;                                        \
              break;                                                            \
     }
 
-    switch(type1->fields->items[fieldid1].base_type) {
+    switch(field1->base_type) {
         case NC_BYTE:   CMP_ENUM_TYPE_ARRAY(signed char);       break;
         case NC_CHAR:   CMP_ENUM_TYPE_ARRAY(char);              break;
         case NC_INT:    CMP_ENUM_TYPE_ARRAY(int);               break;
@@ -805,7 +819,7 @@ int nccmp_cmp_var_user_type_compound_field_array_user_type_enum(nccmp_state_t* s
         case NC_UINT64: CMP_ENUM_TYPE_ARRAY(unsigned long long);break;
         case NC_USHORT: CMP_ENUM_TYPE_ARRAY(unsigned short);    break;
         default:
-             LOG_ERROR("Unsupported first enum data type = %d\n", type1->fields->items[fieldid1].base_type);
+             LOG_ERROR("Unsupported first enum data type = %d\n", field1->base_type);
              last_status = EXIT_FAILED;
              break;
     }
@@ -830,15 +844,17 @@ int nccmp_cmp_var_user_type_compound_field_array_user_type_opaque(nccmp_state_t*
     size_t array_size;
     unsigned char *items1, *items2;
     unsigned char *bytes1, *bytes2;
+    nccmp_user_type_t *field1 = NCCMP_USER_TYPE_ITEM(type1->fields, fieldid1);
+    nccmp_user_type_t *field2 = NCCMP_USER_TYPE_ITEM(type2->fields, fieldid2);
 
     if (state->opts.debug) {
         LOG_DEBUG("cmp_var_user_type_compound_field_array_user_type_opaque\n");
     }
 
-    nbytes = type1->fields->items[fieldid1].size;
+    nbytes = field1->size;
     ndims = state->vars1[varid1].ndims;
-    array_size = (size_t) nccmp_product_int(type1->fields->items[fieldid1].dim_sizes,
-                                      0, type1->fields->items[fieldid1].num_dims-1);
+    array_size = (size_t) nccmp_product_int(field1->dim_sizes,
+                                      0, field1->num_dims-1);
 
     if (nccmp_check_diff_count(state, varid1)) {
         goto recover;
@@ -847,8 +863,8 @@ int nccmp_cmp_var_user_type_compound_field_array_user_type_opaque(nccmp_state_t*
     idx_str[0] = 0;
 
     for(array_i = 0; array_i < narrays; ++array_i) {
-        items1 = (unsigned char*) COMPOUND_FIELD_PTR(data1, type1->root_size, type1->fields->items[fieldid1].offset, unsigned char, array_i);
-        items2 = (unsigned char*) COMPOUND_FIELD_PTR(data2, type2->root_size, type2->fields->items[fieldid2].offset, unsigned char, array_i);
+        items1 = (unsigned char*) COMPOUND_FIELD_PTR(data1, type1->root_size, field1->offset, unsigned char, array_i);
+        items2 = (unsigned char*) COMPOUND_FIELD_PTR(data2, type2->root_size, field2->offset, unsigned char, array_i);
         for(i = 0; i < array_size; ++i) {
             bytes1 = items1 + (nbytes * i);
             bytes2 = items2 + (nbytes * i);
@@ -862,10 +878,10 @@ int nccmp_cmp_var_user_type_compound_field_array_user_type_opaque(nccmp_state_t*
                 }
                 if (!state->opts.quiet) {
                     nccmp_get_index_str_size_t(ndims, start, array_i, root_idx_str, state->opts.fortran);
-                    nccmp_get_product_index_str_int(type1->fields->items[fieldid1].num_dims,
-                                              type1->fields->items[fieldid1].dim_sizes,
-                                              i, array_idx_str,
-                                              state->opts.fortran);
+                    nccmp_get_product_index_str_int(field1->num_dims,
+                    								field1->dim_sizes,
+													i, array_idx_str,
+													state->opts.fortran);
                     if (state->opts.fortran) {
                         sprintf(idx_str, "%s,%s", array_idx_str, root_idx_str);
                     } else {
@@ -876,8 +892,7 @@ int nccmp_cmp_var_user_type_compound_field_array_user_type_opaque(nccmp_state_t*
                     nccmp_bytes_to_hex_str(bytes1, nbytes, str1);
                     nccmp_bytes_to_hex_str(bytes2, nbytes, str2);
                     field_path_str[0] = 0;
-                    nccmp_build_user_type_field_path_str(& type1->fields->items[fieldid1],
-                            field_path_str);
+                    nccmp_build_user_type_field_path_str(field1, field_path_str);
                     PRINT_DIFF(state->opts.debug, DIFF_MSG_FIELD,
                                state->vars1[varid1].name, idx_str,
                                field_path_str, str1, str2);
@@ -907,6 +922,8 @@ int nccmp_cmp_var_user_type_compound_field_array_user_type_vlen(nccmp_state_t* s
     nccmp_nest_t *nest_next = 0;
     int comp_i, array_size, i;
     void *vlens1 = 0, *vlens2 = 0;
+    nccmp_user_type_t *field1 = NCCMP_USER_TYPE_ITEM(type1->fields, fieldid1);
+    nccmp_user_type_t *field2 = NCCMP_USER_TYPE_ITEM(type2->fields, fieldid2);
 
     if (state->opts.debug) {
         LOG_DEBUG("cmp_var_user_type_compound_field_array_user_type_vlen\n");
@@ -924,13 +941,12 @@ int nccmp_cmp_var_user_type_compound_field_array_user_type_vlen(nccmp_state_t* s
     nest->type2 = type2;
 
     // Set the field vlen types.
-    nest_next->type1 = & type1->fields->items[fieldid1];
-    nest_next->type2 = & type2->fields->items[fieldid2];
+    nest_next->type1 = field1;
+    nest_next->type2 = field2;
     nest_next->prev = nest;
     nest_next->num_dims = nest_next->type1->num_dims;
 
-    array_size = nccmp_product_int(type1->fields->items[fieldid1].dim_sizes,
-                            0, type1->fields->items[fieldid1].num_dims-1);
+    array_size = nccmp_product_int(field1->dim_sizes, 0, field1->num_dims-1);
 
     for(comp_i = 0; comp_i < ncomps; ++comp_i) {
         for(i = 0; i < array_size; ++i) {
@@ -941,9 +957,9 @@ int nccmp_cmp_var_user_type_compound_field_array_user_type_vlen(nccmp_state_t* s
                     i,
                     nest_next->index);
             vlens1 = COMPOUND_FIELD_PTR(data1, type1->root_size,
-                            type1->fields->items[fieldid1].offset, void*, comp_i);
+                            field1->offset, void*, comp_i);
             vlens2 = COMPOUND_FIELD_PTR(data2, type2->root_size,
-                            type2->fields->items[fieldid2].offset, void*, comp_i);
+            				field2->offset, void*, comp_i);
             last_status = nccmp_cmp_var_user_type_nest_vlen(
                             state, ncid1, ncid2,
                             varid1, varid2, start, comp_i, vlens1, vlens2, nest_next);
@@ -967,6 +983,7 @@ int nccmp_cmp_var_user_type_compound_field_array_user_type(nccmp_state_t* state,
         int fieldid1, int fieldid2)
 {
     int last_status = EXIT_SUCCESS;
+    nccmp_user_type_t *field1 = NCCMP_USER_TYPE_ITEM(type1->fields, fieldid1);
 
     if (state->opts.debug) {
         LOG_DEBUG("cmp_var_user_type_compound_field_array_user_type\n");
@@ -977,14 +994,14 @@ int nccmp_cmp_var_user_type_compound_field_array_user_type(nccmp_state_t* state,
                     state, ncid1, ncid2, varid1, varid2, start, count, nitems, \
                     rec, limits, data1, data2, type1, type2, fieldid1, fieldid2);
 
-    switch(type1->fields->items[fieldid1].user_class) {
+    switch(field1->user_class) {
     case NC_COMPOUND: CMP_FIELD_USER_TYPE_ARRAY(compound);    break;
     case NC_ENUM:     CMP_FIELD_USER_TYPE_ARRAY(enum);        break;
     case NC_OPAQUE:   CMP_FIELD_USER_TYPE_ARRAY(opaque);      break;
     case NC_VLEN:     CMP_FIELD_USER_TYPE_ARRAY(vlen);        break;
     default:
         LOG_ERROR("Unsupported user defined type class = %d\n",
-                type1->fields->items[fieldid1].user_class);
+                field1->user_class);
         last_status = EXIT_FATAL;
         break;
     }
@@ -1005,7 +1022,7 @@ int nccmp_cmp_var_user_type_compound_field_array(
         LOG_DEBUG("cmp_var_user_type_compound_field_array\n");
     }
 
-    if (NC_FIRSTUSERTYPEID > type1->fields->items[fieldid1].type_id) {
+    if (NC_FIRSTUSERTYPEID > ((nccmp_user_type_t*)type1->fields->items[fieldid1])->type_id) {
         return nccmp_cmp_var_user_type_compound_field_array_atomic_type(state, ncid1,
                 ncid2, varid1, varid2, start, count, nitems, rec, limits,
                 data1, data2, type1, type2, fieldid1, fieldid2);
@@ -1030,6 +1047,8 @@ int nccmp_cmp_var_user_type_compound_field_nonarray_atomic_type_string(
     int i;
     count_limit_type diff_count_status;
     nccmp_var_t *v1 = & state->vars1[varid1];
+    nccmp_user_type_t *field1 = NCCMP_USER_TYPE_ITEM(type1->fields, fieldid1);
+    nccmp_user_type_t *field2 = NCCMP_USER_TYPE_ITEM(type2->fields, fieldid2);
 
     if (state->opts.debug) {
         LOG_DEBUG("cmp_var_user_type_compound_field_nonarray_atomic_type_string\n");
@@ -1043,12 +1062,12 @@ int nccmp_cmp_var_user_type_compound_field_nonarray_atomic_type_string(
     for(i = 0; i < nitems; ++i) {
         s1 = COMPOUND_FIELD_PTR(items1,
                                  type1->root_size,
-                                 type1->fields->items[fieldid1].offset,
+                                 field1->offset,
                                  char*,
                                  i);
         s2 = COMPOUND_FIELD_PTR(items2,
                                  type2->root_size,
-                                 type2->fields->items[fieldid2].offset,
+                                 field2->offset,
                                  char*,
                                  i);
 
@@ -1067,7 +1086,7 @@ int nccmp_cmp_var_user_type_compound_field_nonarray_atomic_type_string(
             if (!state->opts.quiet) {
                 nccmp_get_index_str_size_t(v1->ndims, start, i, idx_str, state->opts.fortran);
                 strcpy(field_path_str, "");
-                nccmp_build_user_type_field_path_str(& type1->fields->items[fieldid1], field_path_str);
+                nccmp_build_user_type_field_path_str(field1, field_path_str);
                 PRINT_DIFF(state->opts.debug, DIFF_MSG_FIELD, v1->name, idx_str, field_path_str, s1[0], s2[0]);
             }
             if ( (COUNT_EQUAL == diff_count_status) || !state->opts.force ) {
@@ -1081,7 +1100,7 @@ recover:
     for(i = 0; i < nitems; ++i) {
         s1 = COMPOUND_FIELD_PTR(items1,
                                  type1->root_size,
-                                 type1->fields->items[fieldid1].offset,
+                                 field1->offset,
                                  char*,
                                  i);
 		status = nc_free_string(1, s1);
@@ -1089,7 +1108,7 @@ recover:
 
         s2 = COMPOUND_FIELD_PTR(items2,
                                  type2->root_size,
-                                 type2->fields->items[fieldid2].offset,
+								 field2->offset,
                                  char*,
                                  i);
 		status = nc_free_string(1, s2);
@@ -1116,6 +1135,8 @@ int nccmp_cmp_var_user_type_compound_field_nonarray_atomic_type(nccmp_state_t* s
     double absdelta, pct;
     int i;
     nccmp_user_type_t *user_type;
+    nccmp_user_type_t *field1 = NCCMP_USER_TYPE_ITEM(comp_type1->fields, fieldid1);
+    nccmp_user_type_t *field2 = NCCMP_USER_TYPE_ITEM(comp_type2->fields, fieldid2);
 
     if (state->opts.debug) {
         LOG_DEBUG("cmp_var_user_type_compound_field_nonarray_atomic_type\n");
@@ -1125,18 +1146,18 @@ int nccmp_cmp_var_user_type_compound_field_nonarray_atomic_type(nccmp_state_t* s
                   "tree_name2=%s unique_id2=%d nitems=%d\n",
                 comp_type1->name,
                 comp_type1->parent ? comp_type1->parent->name : "",
-                comp_type1->fields->items[fieldid1].name,
+                field1->name,
                 fieldid1,
-                comp_type1->fields->items[fieldid1].offset,
-                comp_type1->fields->items[fieldid1].tree_name,
-                comp_type1->fields->items[fieldid1].unique_id,
+				field1->offset,
+				field1->tree_name,
+				field1->id,
                 comp_type2->name,
                 comp_type2->parent ? comp_type2->parent->name : "",
-                comp_type2->fields->items[fieldid2].name,
+				field2->name,
                 fieldid2,
-                comp_type2->fields->items[fieldid2].offset,
-                comp_type2->fields->items[fieldid2].tree_name,
-                comp_type2->fields->items[fieldid2].unique_id,
+				field2->offset,
+				field2->tree_name,
+				field2->id,
                 nitems);
     }
 
@@ -1150,13 +1171,13 @@ int nccmp_cmp_var_user_type_compound_field_nonarray_atomic_type(nccmp_state_t* s
     while (1) {                                                                \
         if (NANEQUAL) {                                                        \
             diff_offset = nccmp_cmp_field_##NAME1##_##NAME2##_nanequal(        \
-                            items1, comp_type1->fields->items[fieldid1].offset, comp_type1->root_size,       \
-                            items2, comp_type2->fields->items[fieldid2].offset, comp_type2->root_size,       \
+                            items1, field1->offset, comp_type1->root_size,     \
+                            items2, field2->offset, comp_type2->root_size,     \
                             next_offset, nitems);                              \
         } else {                                                               \
             diff_offset = nccmp_cmp_field_##NAME1##_##NAME2(                   \
-                            items1, comp_type1->fields->items[fieldid1].offset, comp_type1->root_size,       \
-                            items2, comp_type2->fields->items[fieldid2].offset, comp_type2->root_size,       \
+                            items1, field1->offset, comp_type1->root_size,     \
+                            items2, field2->offset, comp_type2->root_size,     \
                             next_offset, nitems);                              \
         }                                                                      \
         if (diff_offset >= nitems) {                                           \
@@ -1174,11 +1195,11 @@ int nccmp_cmp_var_user_type_compound_field_nonarray_atomic_type(nccmp_state_t* s
             break;                                                             \
         }                                                                      \
         item1.m_##NAME1 = COMPOUND_FIELD_VALUE(items1, comp_type1->root_size,  \
-            comp_type1->fields->items[fieldid1].offset, TYPE1, diff_offset);   \
+        								field1->offset, TYPE1, diff_offset);   \
         item2.m_##NAME2 = COMPOUND_FIELD_VALUE(items2, comp_type2->root_size,  \
-            comp_type2->fields->items[fieldid2].offset, TYPE2, diff_offset);   \
+        								field2->offset, TYPE2, diff_offset);   \
         if (state->opts.statistics) {                                                               \
-            nccmp_update_state_stats(state, varid1, comp_type1->fields->items[fieldid1].unique_id,  \
+            nccmp_update_state_stats(state, varid1, field1->id,								\
                                            (double)item1.m_##NAME1 - (double)item2.m_##NAME2);      \
         }                                                                                           \
         if (!state->opts.quiet) {                                                                   \
@@ -1191,7 +1212,7 @@ int nccmp_cmp_var_user_type_compound_field_nonarray_atomic_type(nccmp_state_t* s
                 nccmp_##NAME2##_to_str(item2.m_##NAME2, str2, state->opts.precision);   \
             }                                                                           \
             strcpy(field_path_str, "");                                                 \
-            nccmp_build_user_type_field_path_str(& comp_type1->fields->items[fieldid1], field_path_str); \
+            nccmp_build_user_type_field_path_str(field1, field_path_str); \
             PRINT_DIFF(state->opts.debug, DIFF_MSG_FIELD, v1->name, idx_str,            \
                   field_path_str, str1, str2);                                          \
         }                                                                               \
@@ -1204,9 +1225,9 @@ int nccmp_cmp_var_user_type_compound_field_nonarray_atomic_type(nccmp_state_t* s
 #define CMP_FIELD_ATOMIC_TOL(NAME1, TYPE1, NAME2, TYPE2, NANEQUAL)             \
     for(i = 0; i < nitems; ++i) {                                              \
         item1.m_##NAME1 = COMPOUND_FIELD_VALUE(items1, comp_type1->root_size,  \
-            comp_type1->fields->items[fieldid1].offset, TYPE1, i);             \
+        		field1->offset, TYPE1, i);             \
         item2.m_##NAME2 = COMPOUND_FIELD_VALUE(items2, comp_type2->root_size,  \
-            comp_type2->fields->items[fieldid2].offset, TYPE2, i);             \
+        		field2->offset, TYPE2, i);             \
         if (NANEQUAL) {                                                        \
             if ( isnan(item1.m_##NAME1) && isnan(item2.m_##NAME2) ) continue;  \
         }                                                                      \
@@ -1227,7 +1248,7 @@ int nccmp_cmp_var_user_type_compound_field_nonarray_atomic_type(nccmp_state_t* s
                 break;                                                         \
             }                                                                  \
             if (state->opts.statistics) {                                                               \
-                nccmp_update_state_stats(state, varid1, comp_type1->fields->items[fieldid1].unique_id,  \
+                nccmp_update_state_stats(state, varid1, field1->id,  \
                                                (double)item1.m_##NAME1 - (double)item2.m_##NAME2);      \
             }                                                                                           \
             if (!state->opts.quiet) {                                          \
@@ -1248,7 +1269,7 @@ int nccmp_cmp_var_user_type_compound_field_nonarray_atomic_type(nccmp_state_t* s
                         fabs((double)item1.m_##NAME1) :                                                 \
                         fabs((double)item2.m_##NAME2));                                                 \
                 strcpy(field_path_str, "");                                                             \
-                nccmp_build_user_type_field_path_str(& comp_type1->fields->items[fieldid1], field_path_str); \
+                nccmp_build_user_type_field_path_str(field1, field_path_str); \
                 PRINT_DIFF(state->opts.debug, DIFF_MSG_PCT_FIELD, v1->name, idx_str,                    \
                            field_path_str, str1, str2, pct );                                           \
             }                                                                                           \
@@ -1266,7 +1287,7 @@ int nccmp_cmp_var_user_type_compound_field_nonarray_atomic_type(nccmp_state_t* s
     }
 
 #define CMP_FIELD_ATOMIC_TYPE(NAME1, TYPE1, NANEQUAL)                          \
-    switch(comp_type2->fields->items[fieldid2].type_id) {                      \
+    switch(field2->type_id) {                      \
     case NC_BYTE:   CMP_FIELD_ATOMIC_SELECT(NAME1, TYPE1, schar,     signed char,   0); break;     \
     case NC_CHAR:   CMP_FIELD_ATOMIC_SELECT(NAME1, TYPE1, text,      char,          0); break;     \
     case NC_DOUBLE: CMP_FIELD_ATOMIC_SELECT(NAME1, TYPE1, double,    double,        state->opts.nanequal); break;      \
@@ -1280,15 +1301,15 @@ int nccmp_cmp_var_user_type_compound_field_nonarray_atomic_type(nccmp_state_t* s
     case NC_USHORT: CMP_FIELD_ATOMIC_SELECT(NAME1, TYPE1, ushort,    unsigned short,    0); break; \
     case NC_STRING:                                                            \
     default:                                                                   \
-         user_type = nccmp_get_user_type_by_id(state->types2->items, state->types2->num_items, state->vars2[varid2].type);       \
+         user_type = (nccmp_user_type_t*) nccmp_find_user_type_by_type_id(state->types2, state->vars2[varid2].type);       \
          LOG_ERROR("Unsupported second var field %s data type = %d\n",         \
-            user_type->fields->items[fieldid2].name,                           \
-            user_type->fields->items[fieldid2].type_id);                       \
+        		 (NCCMP_USER_TYPE_ITEM(user_type->fields, fieldid2))->name,                           \
+				 (NCCMP_USER_TYPE_ITEM(user_type->fields, fieldid2))->type_id);                       \
          last_status = EXIT_FAILED;                                            \
          break;                                                                \
     }
 
-    switch(comp_type1->fields->items[fieldid1].type_id) {
+    switch(field1->type_id) {
     case NC_BYTE:   CMP_FIELD_ATOMIC_TYPE(schar,    signed char,        0);                     break;
     case NC_CHAR:   CMP_FIELD_ATOMIC_TYPE(text,     char,               0);                     break;
     case NC_DOUBLE: CMP_FIELD_ATOMIC_TYPE(double,   double,             state->opts.nanequal);  break;
@@ -1301,7 +1322,7 @@ int nccmp_cmp_var_user_type_compound_field_nonarray_atomic_type(nccmp_state_t* s
     case NC_UINT64: CMP_FIELD_ATOMIC_TYPE(ulonglong,unsigned long long, 0);                     break;
     case NC_USHORT: CMP_FIELD_ATOMIC_TYPE(ushort,   unsigned short,     0);                     break;
     case NC_STRING:
-        if (NC_STRING == comp_type2->fields->items[fieldid2].type_id) {
+        if (NC_STRING == field2->type_id) {
             last_status = nccmp_cmp_var_user_type_compound_field_nonarray_atomic_type_string(
                             state, ncid1, ncid2, varid1, varid2,
                             start, count, nitems, rec, limits,
@@ -1310,8 +1331,8 @@ int nccmp_cmp_var_user_type_compound_field_nonarray_atomic_type(nccmp_state_t* s
         }
     default:
         LOG_ERROR("Unsupported first var field %s data type = %d\n",
-                comp_type1->fields->items[fieldid1].name,
-                comp_type1->fields->items[fieldid1].type_id);
+        		field1->name,
+				field1->type_id);
         last_status = EXIT_FAILED;
         break;
     }
@@ -1332,22 +1353,24 @@ int nccmp_cmp_var_user_type_compound_field_nonarray_user_type_compound(nccmp_sta
         nccmp_user_type_t *parent_type2, int fieldid1, int fieldid2)
 {
     int last_status = EXIT_SUCCESS;
-    nccmp_int_pairs_t *child_field_ids;
-    nccmp_user_type_t *field_type1 = & parent_type1->fields->items[fieldid1];
-    nccmp_user_type_t *field_type2 = & parent_type2->fields->items[fieldid2];
+    nccmp_darray_t *child_field_ids;
+    nccmp_user_type_t *field_type1 = NCCMP_USER_TYPE_ITEM(parent_type1->fields, fieldid1);
+    nccmp_user_type_t *field_type2 = NCCMP_USER_TYPE_ITEM(parent_type2->fields, fieldid2);
 
     if (state->opts.debug) {
         LOG_DEBUG("cmp_var_user_type_compound_field_nonarray_user_type_compound\n");
     }
 
-    child_field_ids = ncccmp_get_user_type_compound_field_index_pairs(field_type1, field_type2,
-                        state->opts.debug);
+    child_field_ids = ncccmp_create_user_type_field_id_pairs(
+            field_type1, 
+            field_type2,
+            state->opts.debug);
 
     last_status = nccmp_cmp_var_user_type_compound_field_ids(state, ncid1, ncid2,
                     varid1, varid2, start, count, nitems, rec, limits,
                     items1, items2, field_type1, field_type2, child_field_ids);
 
-    nccmp_destroy_int_pairs(child_field_ids);
+    nccmp_darray_destroy_deep(child_field_ids);
 
     return last_status;
 }
@@ -1361,8 +1384,10 @@ int nccmp_cmp_var_user_type_compound_field_nonarray_user_type_enum(nccmp_state_t
     int last_status = EXIT_SUCCESS;
     int status, diff_count_status;
     int item_i;
-    nc_type field_type_id1 = type1->fields->items[fieldid1].type_id;
-    nc_type field_type_id2 = type2->fields->items[fieldid2].type_id;
+    nccmp_user_type_t *field1 = NCCMP_USER_TYPE_ITEM(type1->fields, fieldid1);
+    nccmp_user_type_t *field2 = NCCMP_USER_TYPE_ITEM(type2->fields, fieldid2);
+    nc_type field_type_id1 = field1->type_id;
+    nc_type field_type_id2 = field2->type_id;
     long long item1, item2;
     char idx_str[NC_MAX_NAME], str1[NC_MAX_NAME], str2[NC_MAX_NAME];
 
@@ -1380,8 +1405,8 @@ int nccmp_cmp_var_user_type_compound_field_nonarray_user_type_enum(nccmp_state_t
 
 #define CMP_ENUM(TYPE1, TYPE2)                                                 \
     for(item_i = 0; item_i < nitems; ++item_i) {                               \
-        item1 = (long long) COMPOUND_FIELD_VALUE(items1, type1->root_size, type1->fields->items[fieldid1].offset, TYPE1, item_i);\
-        item2 = (long long) COMPOUND_FIELD_VALUE(items2, type2->root_size, type2->fields->items[fieldid2].offset, TYPE2, item_i);\
+        item1 = (long long) COMPOUND_FIELD_VALUE(items1, type1->root_size, field1->offset, TYPE1, item_i);\
+        item2 = (long long) COMPOUND_FIELD_VALUE(items2, type2->root_size, field2->offset, TYPE2, item_i);\
         status = nc_inq_enum_ident(ncid1, field_type_id1, item1, str1);        \
         HANDLE_NC_ERROR(status);                                               \
         status = nc_inq_enum_ident(ncid2, field_type_id2, item2, str2);        \
@@ -1405,7 +1430,7 @@ int nccmp_cmp_var_user_type_compound_field_nonarray_user_type_enum(nccmp_state_t
     }
 
 #define CMP_ENUM_TYPE(TYPE1)                                                   \
-    switch(type2->fields->items[fieldid2].base_type) {                         \
+    switch(field2->base_type) {                         			\
     case NC_BYTE:   CMP_ENUM(TYPE1, signed char);       break;                 \
     case NC_CHAR:   CMP_ENUM(TYPE1, char);              break;                 \
     case NC_INT:    CMP_ENUM(TYPE1, int);               break;                 \
@@ -1416,12 +1441,12 @@ int nccmp_cmp_var_user_type_compound_field_nonarray_user_type_enum(nccmp_state_t
     case NC_UINT64: CMP_ENUM(TYPE1, unsigned long long);break;                 \
     case NC_USHORT: CMP_ENUM(TYPE1, unsigned short);    break;                 \
     default:                                                                   \
-         LOG_ERROR("Unsupported second enum data type = %d\n", type2->fields->items[fieldid2].base_type);    \
+         LOG_ERROR("Unsupported second enum data type = %d\n", field2->base_type);    \
          last_status = EXIT_FAILED;                                            \
          break;                                                                \
     }
 
-    switch(type1->fields->items[fieldid1].base_type) {
+    switch(field1->base_type) {
     case NC_BYTE:   CMP_ENUM_TYPE(signed char);       break;
     case NC_CHAR:   CMP_ENUM_TYPE(char);              break;
     case NC_INT:    CMP_ENUM_TYPE(int);               break;
@@ -1432,7 +1457,7 @@ int nccmp_cmp_var_user_type_compound_field_nonarray_user_type_enum(nccmp_state_t
     case NC_UINT64: CMP_ENUM_TYPE(unsigned long long);break;
     case NC_USHORT: CMP_ENUM_TYPE(unsigned short);    break;
     default:
-         LOG_ERROR("Unsupported first enum data type = %d\n", type1->fields->items[fieldid1].base_type);
+         LOG_ERROR("Unsupported first enum data type = %d\n", field1->base_type);
          last_status = EXIT_FAILED;
          break;
     }
@@ -1455,7 +1480,9 @@ int nccmp_cmp_var_user_type_compound_field_nonarray_user_type_opaque(nccmp_state
     unsigned char *items2 = (unsigned char*) data2;
     unsigned char *bytes1, *bytes2;
     int item_i;
-    int nbytes = type1->fields->items[fieldid1].size;
+    nccmp_user_type_t *field1 = NCCMP_USER_TYPE_ITEM(type1->fields, fieldid1);
+    nccmp_user_type_t *field2 = NCCMP_USER_TYPE_ITEM(type2->fields, fieldid2);
+    int nbytes = field1->size;
     int ndims = state->vars1[varid1].ndims;
     char idx_str[NC_MAX_NAME], *str1 = 0, *str2 = 0;
     int diff_count_status;
@@ -1471,8 +1498,8 @@ int nccmp_cmp_var_user_type_compound_field_nonarray_user_type_opaque(nccmp_state
     idx_str[0] = 0;
 
     for(item_i = 0; item_i < nitems; ++item_i) {
-        bytes1 = items1 + type1->root_size * item_i + type1->fields->items[fieldid1].offset;
-        bytes2 = items2 + type2->root_size * item_i + type2->fields->items[fieldid2].offset;
+        bytes1 = items1 + type1->root_size * item_i + field1->offset;
+        bytes2 = items2 + type2->root_size * item_i + field2->offset;
         if (memcmp(bytes1, bytes2, nbytes)) {
             if (!state->opts.warn[NCCMP_W_ALL]) {
                 last_status = EXIT_DIFFER;
@@ -1513,6 +1540,8 @@ int nccmp_cmp_var_user_type_compound_field_nonarray_user_type_vlen(nccmp_state_t
     nccmp_nest_t *nest_next = nccmp_create_nest();
     int comp_i;
     void *vlen1, *vlen2;
+    nccmp_user_type_t *field1 = NCCMP_USER_TYPE_ITEM(type1->fields, fieldid1);
+    nccmp_user_type_t *field2 = NCCMP_USER_TYPE_ITEM(type2->fields, fieldid2);
 
     if (state->opts.debug) {
         LOG_DEBUG("cmp_var_user_type_compound_field_nonarray_user_type_vlen\n");
@@ -1525,15 +1554,15 @@ int nccmp_cmp_var_user_type_compound_field_nonarray_user_type_vlen(nccmp_state_t
     nest->type1 = type1;
     nest->type2 = type2;
     // Set the vlen types.
-    nest_next->type1 = & type1->fields->items[fieldid1];
-    nest_next->type2 = & type2->fields->items[fieldid2];
+    nest_next->type1 = field1;
+    nest_next->type2 = field2;
     nest_next->prev = nest;
 
     for(comp_i = 0; comp_i < nitems; ++comp_i) {
         vlen1 = COMPOUND_FIELD_PTR(items1, type1->size,
-                        type1->fields->items[fieldid1].offset, void*, comp_i);
+                        field1->offset, void*, comp_i);
         vlen2 = COMPOUND_FIELD_PTR(items2, type2->size,
-                        type2->fields->items[fieldid2].offset, void*, comp_i);
+        				field2->offset, void*, comp_i);
         last_status = nccmp_cmp_var_user_type_nest_vlen(
                     state, ncid1, ncid2,
                     varid1, varid2, start, comp_i, vlen1, vlen2, nest_next);
@@ -1556,6 +1585,7 @@ int nccmp_cmp_var_user_type_compound_field_nonarray_user_type(nccmp_state_t* sta
         int fieldid1, int fieldid2)
 {
     int last_status = EXIT_SUCCESS;
+    nccmp_user_type_t *field1 = NCCMP_USER_TYPE_ITEM(type1->fields, fieldid1);
 
     if (state->opts.debug) {
         LOG_DEBUG("cmp_var_user_type_compound_field_nonarray_user_type\n");
@@ -1566,14 +1596,14 @@ int nccmp_cmp_var_user_type_compound_field_nonarray_user_type(nccmp_state_t* sta
                     state, ncid1, ncid2, varid1, varid2, start, count, nitems, \
                     rec, limits, data1, data2, type1, type2, fieldid1, fieldid2);
 
-    switch(type1->fields->items[fieldid1].user_class) {
+    switch(field1->user_class) {
     case NC_COMPOUND: CMP_FIELD_USER_TYPE_NONARRAY(compound);    break;
     case NC_ENUM:     CMP_FIELD_USER_TYPE_NONARRAY(enum);        break;
     case NC_OPAQUE:   CMP_FIELD_USER_TYPE_NONARRAY(opaque);      break;
     case NC_VLEN:     CMP_FIELD_USER_TYPE_NONARRAY(vlen);        break;
     default:
         LOG_ERROR("Unsupported user defined type class = %d in first file.\n",
-                type1->fields->items[fieldid1].user_class);
+                field1->user_class);
         last_status = EXIT_FATAL;
         break;
     }
@@ -1588,11 +1618,13 @@ int nccmp_cmp_var_user_type_compound_field_nonarray(nccmp_state_t* state, int nc
         int rec, size_t* limits, void* data1, void* data2,
         nccmp_user_type_t *type1, nccmp_user_type_t *type2, int fieldid1, int fieldid2)
 {
+	nccmp_user_type_t *field1 = NCCMP_USER_TYPE_ITEM(type1->fields, fieldid1);
+
     if (state->opts.debug) {
         LOG_DEBUG("cmp_var_user_type_compound_field_nonarray\n");
     }
 
-    if (NC_FIRSTUSERTYPEID > type1->fields->items[fieldid1].type_id) {
+    if (NC_FIRSTUSERTYPEID > field1->type_id) {
         return nccmp_cmp_var_user_type_compound_field_nonarray_atomic_type(state, ncid1,
                 ncid2, varid1, varid2, start, count, nitems, rec, limits,
                 data1, data2, type1, type2, fieldid1, fieldid2);
@@ -1608,12 +1640,15 @@ int nccmp_cmp_var_user_type_compound_field(nccmp_state_t* state, int ncid1, int 
         int rec, size_t* limits, void* data1, void* data2,
         nccmp_user_type_t *type1, nccmp_user_type_t *type2, int fieldid1, int fieldid2)
 {
+	nccmp_user_type_t *field1 = NCCMP_USER_TYPE_ITEM(type1->fields, fieldid1);
+	nccmp_user_type_t *field2 = NCCMP_USER_TYPE_ITEM(type2->fields, fieldid2);
+
     if (state->opts.debug) {
         LOG_DEBUG("cmp_var_user_type_compound_field\n");
     }
 
-    if (type1->fields->items[fieldid1].num_dims &&
-        type2->fields->items[fieldid2].num_dims) {
+    if (field1->num_dims &&
+        field2->num_dims) {
         return nccmp_cmp_var_user_type_compound_field_array(state, ncid1, ncid2,
                     varid1, varid2, start, count, nitems, rec, limits,
                     data1, data2, type1, type2, fieldid1, fieldid2);
@@ -1627,20 +1662,23 @@ int nccmp_cmp_var_user_type_compound_field(nccmp_state_t* state, int ncid1, int 
 int nccmp_cmp_var_user_type_compound_field_ids(nccmp_state_t* state, int ncid1, int ncid2,
         int varid1, int varid2, size_t* start, size_t* count,
         int nitems, int rec, size_t* limits, void* data1, void* data2,
-        nccmp_user_type_t* comp_type1, nccmp_user_type_t* comp_type2, nccmp_int_pairs_t *fieldids)
+        nccmp_user_type_t* comp_type1, nccmp_user_type_t* comp_type2, 
+        nccmp_darray_t *field_ids)
 {
     int status, last_status = EXIT_SUCCESS;
     int i;
+    nccmp_pair_int_t *pair;
 
     if (state->opts.debug) {
         LOG_DEBUG("cmp_var_user_type_compound_field_ids\n");
     }
 
-    for(i = 0; i < fieldids->size; ++i) {
+    for(i = 0; i < field_ids->num_items; ++i) {
+        pair = (nccmp_pair_int_t*) field_ids->items[i];
         status = nccmp_cmp_var_user_type_compound_field(state, ncid1, ncid2,
                     varid1, varid2, start, count, nitems, rec, limits,
                     data1, data2, comp_type1, comp_type2,
-                    fieldids->items[i].first, fieldids->items[i].second);
+                    pair->first, pair->second);
 
         last_status = status ? status : last_status;
         if(last_status && !state->opts.force) goto recover;
@@ -1657,23 +1695,25 @@ int nccmp_cmp_var_user_type_compound(nccmp_state_t* state, int ncid1, int ncid2,
 {
     int status, last_status = EXIT_SUCCESS;
     unsigned char *data1 = NULL, *data2 = NULL;
-    nccmp_int_pairs_t *fieldids = NULL;
+    nccmp_darray_t *field_ids = NULL;
     int loop_done = 0;
     nc_type comp_typeid1 = state->vars1[varid1].type;
     nc_type comp_typeid2 = state->vars2[varid2].type;
-    nccmp_user_type_t *comp_type1 = nccmp_get_user_type_by_id(state->types1->items,
-                                        state->types1->num_items, comp_typeid1);
-    nccmp_user_type_t *comp_type2 = nccmp_get_user_type_by_id(state->types2->items,
-                                        state->types2->num_items, comp_typeid2);
+    nccmp_user_type_t *comp_type1 = nccmp_find_user_type_by_type_id(
+				state->types1, comp_typeid1);
+    nccmp_user_type_t *comp_type2 = nccmp_find_user_type_by_type_id(
+    				state->types2, comp_typeid2);
 
     if (state->opts.debug) {
         LOG_DEBUG("cmp_var_user_type_compound\n");
     }
 
-    fieldids = ncccmp_get_user_type_compound_field_index_pairs(comp_type1, comp_type2,
+    field_ids = ncccmp_create_user_type_field_id_pairs(
+                    comp_type1, 
+                    comp_type2,
                     state->opts.debug);
 
-    if (0 >= fieldids->size) {
+    if (nccmp_darray_empty(field_ids)) {
         goto recover;
     }
 
@@ -1688,7 +1728,7 @@ int nccmp_cmp_var_user_type_compound(nccmp_state_t* state, int ncid1, int ncid2,
 
         status = nccmp_cmp_var_user_type_compound_field_ids(state, ncid1, ncid2,
                         varid1, varid2, start, count, nitems, rec, limits,
-                        data1, data2, comp_type1, comp_type2, fieldids);
+                        data1, data2, comp_type1, comp_type2, field_ids);
         last_status = status ? status : last_status;
         if (last_status && !state->opts.force) {
             break;
@@ -1700,7 +1740,7 @@ int nccmp_cmp_var_user_type_compound(nccmp_state_t* state, int ncid1, int ncid2,
 recover:
     XFREE(data1);
     XFREE(data2);
-    nccmp_destroy_int_pairs(fieldids);
+    nccmp_darray_destroy_deep(field_ids);
 
     return last_status;
 }
@@ -1893,7 +1933,7 @@ int nccmp_cmp_var_user_type_nest_atomic_item(nccmp_state_t* state,
             goto recover;                                                      \
         }                                                                      \
         if (state->opts.statistics) {                                                               \
-            nccmp_update_state_stats(state, varid1, nest->type1->unique_id,                         \
+            nccmp_update_state_stats(state, varid1, nest->type1->id,                         \
                                            (double)value1.m_##NAME1 - (double)value2.m_##NAME2);    \
         }                                                                                           \
         if (!state->opts.quiet) {                                                                   \
@@ -2002,8 +2042,8 @@ int nccmp_cmp_var_user_type_nest_compound_field(nccmp_state_t* state,
         LOG_DEBUG("cmp_var_user_type_nest_compound_field\n");
     }
 
-    field1 = & nest->type1->fields->items[fieldid1];
-    field2 = & nest->type2->fields->items[fieldid2];
+    field1 = NCCMP_USER_TYPE_ITEM(nest->type1->fields, fieldid1);
+    field2 = NCCMP_USER_TYPE_ITEM(nest->type2->fields, fieldid2);
     nest_next->type1 = field1;
     nest_next->type2 = field2;
     nest_next->num_dims = field1->num_dims;
@@ -2025,28 +2065,32 @@ int nccmp_cmp_var_user_type_nest_compound(nccmp_state_t* state, int ncid1, int n
         nccmp_nest_t *nest)
 {
     int i, status, last_status = EXIT_SUCCESS;
-    nccmp_int_pairs_t *fieldids = NULL;
+    nccmp_darray_t *field_ids;
+    nccmp_pair_int_t *pair;
     int cardinal_index;
 
     if (state->opts.debug) {
         LOG_DEBUG("cmp_var_user_type_nest_compound\n");
     }
 
-    fieldids = ncccmp_get_user_type_compound_field_index_pairs(
-                nest->type1, nest->type2, state->opts.debug);
+    field_ids = ncccmp_create_user_type_field_id_pairs(
+                nest->type1, 
+                nest->type2, 
+                state->opts.debug);
 
     cardinal_index = nccmp_nest_cardinal_index(nest);
 
     data1 += nest->type1->size * cardinal_index;
     data2 += nest->type2->size * cardinal_index;
 
-    for(i = 0; i < fieldids->size; ++i) {
+    for(i = 0; i < field_ids->num_items; ++i) {
+        pair = (nccmp_pair_int_t*) field_ids->items[i];
         status = nccmp_cmp_var_user_type_nest_compound_field(
                     state, ncid1, ncid2,
                     varid1, varid2, start, item, data1, data2,
                     nest,
-                    fieldids->items[i].first,
-                    fieldids->items[i].second);
+                    pair->first,
+                    pair->second);
         last_status = status ? status : last_status;
         if ((last_status && !state->opts.force) || nccmp_check_diff_count(state, varid1)) {
             goto recover;
@@ -2054,7 +2098,7 @@ int nccmp_cmp_var_user_type_nest_compound(nccmp_state_t* state, int ncid1, int n
     }
 
 recover:
-    nccmp_destroy_int_pairs(fieldids);
+    nccmp_darray_destroy_deep(field_ids);
 
     return last_status;
 }
@@ -2250,13 +2294,11 @@ int nccmp_cmp_var_user_type_nest_vlen(nccmp_state_t* state,
         nest_next->type1 = atomic1;
         nest_next->type2 = atomic2;
     } else {
-        nest_next->type1 = nccmp_get_user_type_by_id(
-                                state->types1->items,
-                                state->types1->num_items,
+        nest_next->type1 = nccmp_find_user_type_by_type_id(
+                                state->types1,
                                 nest->type1->base_type);
-        nest_next->type2 = nccmp_get_user_type_by_id(
-                                state->types2->items,
-                                state->types2->num_items,
+        nest_next->type2 = nccmp_find_user_type_by_type_id(
+                                state->types2,
                                 nest->type2->base_type);
     }
     nest_next->prev = nest;
@@ -2285,7 +2327,7 @@ recover:
         for(i = minlen; i < vlen2->len; ++i) {
             strings = (char**) vlen2->p + i;
 			status = nc_free_string(1, strings);
-			HANDLE_NC_ERROR(status);			
+			HANDLE_NC_ERROR(status);
         }
     }
 
@@ -2369,22 +2411,18 @@ int nccmp_cmp_var_user_type_nest_vlen_start(nccmp_state_t* state, int ncid1, int
     }
 
     nest = nccmp_create_nest();
-    nest->type1 = nccmp_get_user_type_by_id(
-                                    state->types1->items,
-                                    state->types1->num_items,
+    nest->type1 = nccmp_find_user_type_by_type_id(
+                                    state->types1,
                                     state->vars1[varid1].type);
-    nest->type2 = nccmp_get_user_type_by_id(
-                                    state->types2->items,
-                                    state->types2->num_items,
+    nest->type2 = nccmp_find_user_type_by_type_id(
+                                    state->types2,
                                     state->vars2[varid2].type);
     nest_next = nccmp_create_nest();
-    nest_next->type1 = nccmp_get_user_type_by_id(
-                            state->types1->items,
-                            state->types1->num_items,
+    nest_next->type1 = nccmp_find_user_type_by_type_id(
+                            state->types1,
                             nest->type1->base_type);
-    nest_next->type2 = nccmp_get_user_type_by_id(
-                            state->types2->items,
-                            state->types2->num_items,
+    nest_next->type2 = nccmp_find_user_type_by_type_id(
+                            state->types2,
                             nest->type2->base_type);
     nest_next->prev = nest;
     nest_next->num_dims = 1;
@@ -2461,11 +2499,9 @@ int nccmp_cmp_var_user_type_nest(nccmp_state_t* state, int ncid1, int ncid2,
     type_id1 = v1->type;
     type_id2 = v2->type;
 
-    type1 = nccmp_get_user_type_by_id(state->types1->items,
-                                      state->types1->num_items,
+    type1 = nccmp_find_user_type_by_type_id(state->types1,
                                       type_id1);
-    type2 = nccmp_get_user_type_by_id(state->types2->items,
-                                      state->types2->num_items,
+    type2 = nccmp_find_user_type_by_type_id(state->types2,
                                       type_id2);
     size1 = type1->size;
     size2 = type2->size;
@@ -3110,7 +3146,7 @@ int nccmp_cmp_var_user_type_vlen(nccmp_state_t* state, int ncid1, int ncid2,
     if (NC_FIRSTUSERTYPEID > base_type) {
         CMP_VLEN_TYPE(atomic);
     } else {
-        user_type = nccmp_get_user_type_by_id(state->types1->items, state->types1->num_items, base_type);
+        user_type = nccmp_find_user_type_by_type_id(state->types1, base_type);
         if (!user_type) {
             LOG_ERROR("No type found for base_type=%d\n", base_type);
             last_status = EXIT_FATAL;
@@ -3146,8 +3182,7 @@ int nccmp_cmp_var_user_type(nccmp_state_t* state, int ncid1, int ncid2,
         LOG_DEBUG("cmp_var_user_type\n");
     }
 
-    type1 = nccmp_get_user_type_by_id(state->types1->items,
-            state->types1->num_items, state->vars1[varid1].type);
+    type1 = nccmp_find_user_type_by_type_id(state->types1, state->vars1[varid1].type);
     if (!type1) {
         LOG_ERROR("Failed to find user type with id = %d\n",
                     state->vars1[varid1].type);
@@ -3184,13 +3219,13 @@ int nccmp_cmp_var_iterator_init(nccmp_state_t* state, int varid,
     int i;
     int last_status = EXIT_SUCCESS;
     const nccmp_var_t* v1 = nccmp_find_var_by_id(state->vars1, state->nvars1, varid);
-    
+
     if (!v1) {
         LOG_ERROR("Failed to find var with id=%d\n", varid);
         last_status = EXIT_FAILURE;
         goto recover;
     }
-    
+
     for(i = 0; i < v1->ndims; ++i) {
         start[i] = 0;
         iterator_max[i] = v1->dimlens[i] - 1;
@@ -3216,7 +3251,7 @@ int nccmp_cmp_var_iterator_init(nccmp_state_t* state, int varid,
 
     /* Number of values to process per loop batch. */
     count[v1->ndims-1] = *nitems;
-    
+
 recover:
     return last_status;
 }
@@ -3490,7 +3525,7 @@ int nccmp_cmp_var(nccmp_state_t* state, const char* name, int ncid1,
     size_t nitems;
     size_t *limits;
     int last_status = EXIT_SUCCESS;
-    
+
     if (state->opts.verbose) {
         if (-1 == rec) {
             LOG_INFO("Thread %d comparing non-record data for variable %s.\n", thread_id, name);
@@ -3502,15 +3537,15 @@ int nccmp_cmp_var(nccmp_state_t* state, const char* name, int ncid1,
     start = XCALLOC(size_t, NC_MAX_DIMS);
     count = XCALLOC(size_t, NC_MAX_DIMS);
     limits = XCALLOC(size_t, NC_MAX_DIMS);
-    
+
     v1 = nccmp_find_var_by_name(state->vars1, state->nvars1, name);
     v2 = nccmp_find_var_by_name(state->vars2, state->nvars2, name);
-    
+
     if (!v1 || !v2) {
         last_status = EXIT_FATAL;
         goto recover;
     }
-    
+
     if (v1->has_rec_dim && (rec < 0)) {
         if (state->opts.debug) {
             LOG_DEBUG("Empty record will not be compared.\n");
@@ -3528,20 +3563,20 @@ int nccmp_cmp_var(nccmp_state_t* state, const char* name, int ncid1,
         goto recover;
     }
 
-    last_status = nccmp_cmp_var_iterator_init(state, v1->varid, 
+    last_status = nccmp_cmp_var_iterator_init(state, v1->varid,
         start, count, limits, & nitems, rec);
     if (last_status) {
         goto recover;
     }
-    
+
     last_status = nccmp_cmp_var_start(state, ncid1, ncid2,
         v1->varid, v2->varid, start, count, limits, rec, nitems);
-        
+
 recover:
     XFREE(start);
     XFREE(count);
     XFREE(limits);
-    
+
     return last_status;
 }
 
@@ -3605,21 +3640,14 @@ int nccmp_data(nccmp_state_t* state, nccmp_strlist_t* var_names,
     }
 
     nccmp_init_var_diff_counts(state);
-    nccmp_destroy_user_types(state->types1);
-    state->types1 = nccmp_load_group_user_types(group1->id, state->opts.debug);
-    nccmp_destroy_field_hashmap(state->field_hashmap1);
-    state->field_hashmap1 = nccmp_create_field_hashmap(state->types1);
-    nccmp_init_group_stats(
-            state->stats,
+
+    state->active_group_stats = nccmp_create_group_stats(
             group1->id,
             state->thread_groups1[0].fullname,
             state->vars1,
             state->nvars1,
-            state->field_hashmap1);
-    state->active_stats = nccmp_find_group_var_stats(state->stats, group1->id);
-
-    nccmp_destroy_user_types(state->types2);
-    state->types2 = nccmp_load_group_user_types(group2->id, state->opts.debug);
+            state->types1);
+    nccmp_darray_append(state->stats, state->active_group_stats);
 
     status = nccmp_data_start_threads(state, validated_var_names,
                 group1->fullname, group2->fullname);

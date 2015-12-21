@@ -263,11 +263,6 @@ int nccmp_cmp_metadata(nccmp_state_t *state, nccmp_strlist_t* varlist, int ncid1
         goto recover;
     }
 
-    nccmp_destroy_user_types(state->types1);
-    state->types1 = nccmp_load_group_user_types(ncid1, state->opts.debug);
-    nccmp_destroy_user_types(state->types2);
-    state->types2 = nccmp_load_group_user_types(ncid2, state->opts.debug);
-
     status = nccmp_cmp_metadata_user_types(& state->opts, ncid1, ncid2);
     last_status = status ? status : last_status;
     if (last_status && !state->opts.force) {
@@ -1038,7 +1033,7 @@ int nccmp_cmp_metadata_var_types(nccmp_state_t *state, nccmp_strlist_t* varlist,
     nccmp_user_type_t *type1 = 0, *type2 = 0;
     const nccmp_var_t *var1, *var2;
     char is_diff_types;
-    
+
     if (state->opts.verbose) {
         LOG_INFO("Comparing variable datatypes and rank.\n");
     }
@@ -1072,18 +1067,18 @@ int nccmp_cmp_metadata_var_types(nccmp_state_t *state, nccmp_strlist_t* varlist,
         if (!var1 || !var2) {
             continue;
         }
-        
+
         /* Compare numeric id, but also check names if user-types. */
         if(var1->type != var2->type) {
             typestr1[0] = 0;
             typestr2[0] = 0;
             if (var1->type < NC_FIRSTUSERTYPEID) {
                 nccmp_nc_type_name_to_str(var1->type, typestr1, ncid1, state->opts.debug);
-                nccmp_nc_type_name_to_str(var2->type, typestr2, ncid2, state->opts.debug);    
-                is_diff_types = 1;          
+                nccmp_nc_type_name_to_str(var2->type, typestr2, ncid2, state->opts.debug);
+                is_diff_types = 1;
             } else {
-                type1 = nccmp_get_user_type_by_id(state->types1->items, state->types1->num_items, var1->type);
-                type2 = nccmp_get_user_type_by_id(state->types2->items, state->types2->num_items, var2->type);
+                type1 = nccmp_find_user_type_by_type_id(state->types1, var1->type);
+                type2 = nccmp_find_user_type_by_type_id(state->types2, var2->type);
                 if (type1) {
                     strcpy(typestr1, type1->name);
                 }
@@ -1092,7 +1087,7 @@ int nccmp_cmp_metadata_var_types(nccmp_state_t *state, nccmp_strlist_t* varlist,
                 }
                 is_diff_types = (strcmp(typestr1, typestr2) != 0);
             }
-            
+
             if (is_diff_types) {
                 if (!state->opts.quiet) {
                     PRINT_DIFF(state->opts.debug, "DIFFER : VARIABLE : %s : TYPE : %s <> %s\n",
@@ -1101,7 +1096,7 @@ int nccmp_cmp_metadata_var_types(nccmp_state_t *state, nccmp_strlist_t* varlist,
                 if (!state->opts.warn[NCCMP_W_ALL]) {
                     last_status = EXIT_DIFFER;
                 }
-                if(state->opts.force) continue; else break;            
+                if(state->opts.force) continue; else break;
             }
         }
 
@@ -1127,18 +1122,18 @@ int nccmp_cmp_metadata_var_dim_names(const nccmp_state_t *state, nccmp_strlist_t
     int i, dim, dimid1, dimid2, cmp1, cmp2;
     nccmp_dim_t *dim1, *dim2;
     const nccmp_var_t *var1, *var2;
-    
+
     if (state->opts.verbose) {
         LOG_INFO("Comparing variable dimension names.\n");
     }
-    
+
     for(i=0; i < varlist->size; ++i) {
         var1 = nccmp_find_var_by_name(state->vars1, state->nvars1, varlist->items[i]);
         var2 = nccmp_find_var_by_name(state->vars2, state->nvars2, varlist->items[i]);
         if (!var1 || !var2) {
             continue;
         }
-        
+
         /* dimensions */
         for(dim = 0; dim < var1->ndims; ++dim) {
             dimid1 = nccmp_get_var_dimid(var1, dim);
@@ -1218,8 +1213,8 @@ int nccmp_cmp_metadata_var_atts(nccmp_state_t *state, nccmp_strlist_t* varlist, 
         var2 = nccmp_find_var_by_name(state->vars2, state->nvars2, varlist->items[i]);
         if (!var1 || !var2) {
             continue;
-        }        
-        
+        }
+
         natts1 = natts2 = 0;
         nccmp_clear_strlist(processed_atts);
 

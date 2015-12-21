@@ -17,7 +17,7 @@ typedef struct nccmp_stats_t {
     double sum;            /* Helps compute mean and stdev. */
     double abs_sum;
     double sum_squares;    /* Helps compute stdev. */
-    char   *name;          /* Var or field name. */
+    char   *name;          /* Var or dotted field tree name. */
     char   *group_name;    /* Name of group it belongs to. */
 
     #if HAVE_PTHREAD
@@ -25,41 +25,44 @@ typedef struct nccmp_stats_t {
     #endif
 } nccmp_stats_t;
 
+typedef struct nccmp_var_stats_t {
+	int var_id;
+	/* Array of nccmp_stats_t indexed by user-type unique_id or singleton if var has no fields. */
+	nccmp_darray_t *stats;
+} nccmp_var_stats_t;
+
 /* Contains stats arrays for all groups in a file. */
-typedef struct nccmp_group_stats_t {
-    int num_groups;
-    int *group_ids; /* Has length num_groups. */
-    int *num_vars;  /* Number of vars each group has. */
-    int **num_stats;  /* Number of stats for a variable in group. Compound types will have more than 1. [group_index][varid] */
-    nccmp_stats_t ***stats; /* Indexed by [group_index][varid][unique_user_type_id] */
+typedef struct nccmp_group_group_t {
+    int group_id;
+    nccmp_darray_t *var_stats; /* Array of nccmp_vars_stats_t indexed by varid in group. */
 } nccmp_group_stats_t;
 
 double nccmp_compute_var_stats_mean(nccmp_stats_t *data);
 
 double nccmp_compute_var_stats_stdev(nccmp_stats_t *data);
 
-nccmp_group_stats_t* nccmp_create_group_stats_array(int num_groups);
+nccmp_group_stats_t* nccmp_create_group_stats(int group_id,
+		const char *group_name, nccmp_var_t *vars, int num_vars,
+		nccmp_darray_t *types);
+
+nccmp_stats_t* nccmp_create_stats(const char *name, const char *group_name);
+
+nccmp_var_stats_t* nccmp_create_var_stats(nccmp_var_t *var,
+		nccmp_darray_t *types, const char *group_name);
 
 void nccmp_clear_var_stats_array(nccmp_stats_t *array, int n);
 
-void nccmp_destroy_group_stats(nccmp_group_stats_t *array);
+void nccmp_debug_print_group_stats_array(nccmp_darray_t *array);
 
-void nccmp_destroy_stats_array(nccmp_stats_t *stats, int n);
+void nccmp_destroy_group_stats(nccmp_group_stats_t *group_stats);
 
-void nccmp_destroy_stats_arrays(nccmp_stats_t **stats, int num_vars, int *num_fields);
+void nccmp_destroy_group_stats_array(nccmp_darray_t *array);
 
-nccmp_stats_t** nccmp_find_group_var_stats(nccmp_group_stats_t *group_stats, int group_id);
+void nccmp_destroy_stats(nccmp_stats_t *stats);
 
-void nccmp_init_group_stats(nccmp_group_stats_t *group_stats,
-        int groupid, const char* group_name,
-        nccmp_var_t *vars, int num_vars,
-        nccmp_user_type_hashmap_t *field_hashmap);
+void nccmp_destroy_stats_array(nccmp_darray_t *array);
 
-void nccmp_print_group_stats_debug(nccmp_group_stats_t *group_stats);
-
-void nccmp_set_var_stat_names(nccmp_stats_t *var_stats_array, int num_stats,
-        nccmp_var_t *var, nccmp_user_type_hashmap_t *field_hashmap,
-        const char* group_name);
+void nccmp_destroy_var_stats_array(nccmp_darray_t *array);
 
 void nccmp_update_stats(nccmp_stats_t *stats, double delta);
 

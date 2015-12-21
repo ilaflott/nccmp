@@ -22,6 +22,7 @@ CLEANFILES =                                                    \
     padded*.nc padheader padheader.exe                          \
     stderr*.tmp test*.nc                                        \
     test_nccmp_darray test_nccmp_darray.exe                     \
+    test_nccmp_darray_sort test_nccmp_darray_sort.exe           \
     test_nccmp_odometer test_nccmp_odometer.exe                 \
     test_nccmp_stats test_nccmp_stats.exe                       \
     test_nccmp_strlist test_nccmp_strlist.exe                   \
@@ -35,7 +36,9 @@ TESTS =                                                                 \
     test_nccmp_strlist                                                  \
     test_nccmp_odometer                                                 \
     test_nccmp_darray                                                   \
+    test_nccmp_darray_sort                                              \
     test_nccmp_stats                                                    \
+    test_nccmp_user_type.sh						\                                                
     test_nccmp_01.sh test_nccmp_02.sh test_nccmp_03.sh                  \
     test_nccmp_04.sh test_nccmp_05.sh test_nccmp_06.sh test_nccmp_07.sh \
     test_nccmp_08.sh test_nccmp_09.sh test_nccmp_10.sh test_nccmp_11.sh \
@@ -54,7 +57,7 @@ TESTS =                                                                 \
     test_nccmp_56.sh test_nccmp_57.sh test_nccmp_58.sh test_nccmp_59.sh \
     test_nccmp_60.sh test_nccmp_61.sh test_nccmp_62.sh test_nccmp_63.sh \
     test_nccmp_64.sh test_nccmp_65.sh test_nccmp_66.sh test_nccmp_67.sh \
-    test_nccmp_68.sh
+    test_nccmp_68.sh							
 
 if ENABLE_TEST_BIG
     TESTS += test_big.sh
@@ -77,6 +80,7 @@ check_PROGRAMS =                                            \
      make_big make_nans                                     \
      make_nc4_encodings padheader                           \
      test_nccmp_darray                                      \
+     test_nccmp_darray_sort                                 \
      test_nccmp_odometer                                    \
      test_nccmp_stats                                       \
      test_nccmp_strlist                                     \
@@ -95,12 +99,19 @@ test_nccmp_odometer_CPPFLAGS = -I$(top_srcdir)/src
 test_nccmp_odometer_LDADD = $(top_builddir)/src/nccmp-nccmp_odometer.o
 
 test_nccmp_darray_CPPFLAGS = -I$(top_srcdir)/src
-test_nccmp_darray_LDADD = $(top_builddir)/src/nccmp-log.o                 \
-                         $(top_builddir)/src/nccmp-nccmp_darray.o         \
+test_nccmp_darray_LDADD = $(top_builddir)/src/nccmp-log.o                \
+                         $(top_builddir)/src/nccmp-nccmp_darray.o        \
+                         $(top_builddir)/src/nccmp-xmalloc.o
+
+test_nccmp_darray_sort_CPPFLAGS = -I$(top_srcdir)/src
+test_nccmp_darray_sort_LDADD = $(top_builddir)/src/nccmp-log.o           \
+                         $(top_builddir)/src/nccmp-nccmp_darray.o        \
+                         $(top_builddir)/src/nccmp-nccmp_darray_sort.o   \
                          $(top_builddir)/src/nccmp-xmalloc.o
 
 test_nccmp_stats_CPPFLAGS = -I$(top_srcdir)/src
 test_nccmp_stats_LDADD = $(top_builddir)/src/nccmp-log.o                 \
+                         $(top_builddir)/src/nccmp-nccmp_darray.o        \
                          $(top_builddir)/src/nccmp-nccmp_stats.o         \
                          $(top_builddir)/src/nccmp-nccmp_strlist.o       \
                          $(top_builddir)/src/nccmp-nccmp_user_type.o     \
@@ -113,6 +124,7 @@ test_nccmp_strlist_LDADD = $(top_builddir)/src/nccmp-xmalloc.o           \
 
 test_nccmp_user_type_CPPFLAGS = -I$(top_srcdir)/src
 test_nccmp_user_type_LDADD = $(top_builddir)/src/nccmp-log.o             \
+                             $(top_builddir)/src/nccmp-nccmp_darray.o    \
                              $(top_builddir)/src/nccmp-nccmp_strlist.o   \
                              $(top_builddir)/src/nccmp-nccmp_user_type.o \
                              $(top_builddir)/src/nccmp-nccmp_utils.o     \

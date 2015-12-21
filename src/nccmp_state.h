@@ -2,6 +2,7 @@
 #define NCCMP_STATE_H
 
 #include <netcdf.h>
+#include <nccmp_darray.h>
 #include <nccmp_dim.h>
 #include <nccmp_opt.h>
 #include <nccmp_stats.h>
@@ -34,16 +35,15 @@ typedef struct nccmp_state_t {
         pthread_mutex_t     mutex_diff_count;
     #endif
 
-    nccmp_group_stats_t *stats;
+    nccmp_darray_t *stats;
 
     /* Stats array to update while comparing a group per thread batch.
      * Only points to existing array [var][stat], and set once before repeated lookups.
      */
-    nccmp_stats_t **active_stats;
+    nccmp_group_stats_t *active_group_stats;
 
-    nccmp_user_types_t  *types1;
-    nccmp_user_types_t  *types2;
-    nccmp_user_type_hashmap_t *field_hashmap1;
+    nccmp_darray_t  *types1;
+    nccmp_darray_t  *types2;
 
     nccmp_var_t         *vars1;
     nccmp_var_t         *vars2;
@@ -64,13 +64,12 @@ count_limit_type nccmp_inc_diff_count(nccmp_state_t* state, int varid);
 
 void nccmp_init_state(nccmp_state_t *state);
 
-void nccmp_init_state_stats(nccmp_state_t *state);
-
 void nccmp_init_var_diff_counts(nccmp_state_t* state);
 
 /* Should only be called once per program instance. */
 int nccmp_open_files(nccmp_state_t* state);
 
-void nccmp_update_state_stats(nccmp_state_t *state, int varid, int stat_id, double delta);
+void nccmp_update_state_stats(nccmp_state_t *state, int varid, int stat_id,
+		double delta);
 
 #endif

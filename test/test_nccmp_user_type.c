@@ -1,107 +1,70 @@
+
+#include <stddef.h>
+
 #include <nccmp_error.h>
 #include <nccmp_user_type.h>
 #include <test_common.h>
 
 int failures = 0;
 
+const char *file1 = "make_compound_nest_atomic1.user_type.nc";
+const char *file2 = "make_compound_nest_atomic2.user_type.nc";
+
 int test_nccmp_build_user_type_field_path_str()
 {
     int result = PASS;
     int status, ncid;
-    nccmp_user_types_t *types;
+    nccmp_darray_t *types;
     nccmp_user_type_t *type;
     char str[NC_MAX_NAME];
-    char expected1[] = "t3";
-    char expected2[] = "com2.com1.t1";
-
-    status = nc_open("make_compound_nest_atomic1.nc", NC_NOWRITE, & ncid);
+    char expected[256];
+    status = nc_open(file1, NC_NOWRITE, & ncid);
+    if (status) {
+        PRINT("Failed to open %s\n", file1);
+    }
     HANDLE_NC_ERROR(status);
 
-    types = nccmp_load_group_user_types(ncid, 0 /*debug*/);
+    types = nccmp_load_group_user_type_map(ncid, 0 /*debug*/);
 
-    type = & types->items[2];
+    type = NCCMP_USER_TYPE_ITEM(types, 0);
     strcpy(str, "");
     nccmp_build_user_type_field_path_str(type, str);
-
-    if (strcmp("", str)) {
+    strcpy(expected, "");
+    if (strcmp(expected, str)) {
         PRINT("Unexpected string %s\n", str);
         result = FAIL;
         goto recover;
     }
 
-    type = & types->items[2].fields->items[12];
+    type = NCCMP_USER_TYPE_ITEM(NCCMP_USER_TYPE_ITEM(types, 0)->fields, 11);
     strcpy(str, "");
     nccmp_build_user_type_field_path_str(type, str);
-
-    if (strcmp(expected1, str)) {
-        PRINT("Unexpected string %s <> %s\n", expected1, str);
+    strcpy(expected, "t1");
+    if (strcmp(expected, str)) {
+        PRINT("Unexpected %s <> %s\n", expected, str);
         result = FAIL;
         goto recover;
     }
 
-    type = & types->items[2] // comp3
-                    .fields->items[0] // com2
-                    .fields->items[0] // com1
-                    .fields->items[11]; // t1
+    type = (nccmp_user_type_t*)
+                ((nccmp_user_type_t*)
+                    ((nccmp_user_type_t*)
+                        (NCCMP_USER_TYPE_ITEM(types, 39))   // comp3
+                            ->fields->items[0])             // com2
+                                ->fields->items[0])         // com1
+                                    ->fields->items[11];    // t1
     strcpy(str, "");
     nccmp_build_user_type_field_path_str(type, str);
-
-    if (strcmp(expected2, str)) {
-        PRINT("Unexpected string %s <> %s\n", expected2, str);
+    strcpy(expected, "com1.t1");
+    if (strcmp(expected, str)) {
+        PRINT("Unexpected %s <> %s\n", expected, str);
         result = FAIL;
         goto recover;
     }
 
 recover:
     nc_close(ncid);
-    nccmp_destroy_user_types(types);
-
-    return result;
-}
-
-int test_nccmp_get_user_type_by_id()
-{
-    int result = PASS;
-    const size_t n = 16;
-    nccmp_user_types_t *types = nccmp_create_user_types(n);
-    nccmp_user_type_t *type;
-    int id;
-
-    for(id = 0; id < n; ++id) {
-        types->items[id].type_id = NC_FIRSTUSERTYPEID + id;
-    }
-
-    for(id = -1; id < NC_FIRSTUSERTYPEID; ++id) {
-        type = nccmp_get_user_type_by_id(types->items, n, id);
-
-        if (type) {
-            PRINT("Unexpected type=%p id=%d\n", type, type->type_id);
-            result = FAIL;
-            goto recover;
-        }
-    }
-
-    for(id = NC_FIRSTUSERTYPEID; id < (NC_FIRSTUSERTYPEID + n); ++id) {
-        type = nccmp_get_user_type_by_id(types->items, n, id);
-
-        if (!type) {
-            PRINT("Expected user type for id=%d\n", id);
-            result = FAIL;
-            goto recover;
-        }
-    }
-
-    id = NC_FIRSTUSERTYPEID + n + 1;
-    type = nccmp_get_user_type_by_id(types->items, n, id);
-    if (type) {
-        PRINT("Unexpected type=%p id=%d\n", type, type->type_id);
-        result = FAIL;
-        goto recover;
-    }
-
-
-recover:
-    nccmp_destroy_user_types(types);
+    nccmp_destroy_user_type_array(types);
 
     return result;
 }
@@ -113,9 +76,9 @@ int test_nccmp_get_user_type_names()
     nccmp_strlist_t *names;
     int expected = 3;
 
-    status = nc_open("make_compound_nest_atomic1.nc", NC_NOWRITE, & ncid1);
+    status = nc_open(file1, NC_NOWRITE, & ncid1);
     HANDLE_NC_ERROR(status);
-    status = nc_open("make_compound_nest_atomic2.nc", NC_NOWRITE, & ncid2);
+    status = nc_open(file2, NC_NOWRITE, & ncid2);
     HANDLE_NC_ERROR(status);
 
     status = nc_inq_typeids(ncid1, & n1, ids1);
@@ -162,9 +125,9 @@ int test_nccmp_get_user_type_compound_field_names()
     nccmp_strlist_t *names;
     int i, expected = 13;
 
-    status = nc_open("make_compound_nest_atomic1.nc", NC_NOWRITE, & ncid1);
+    status = nc_open(file1, NC_NOWRITE, & ncid1);
     HANDLE_NC_ERROR(status);
-    status = nc_open("make_compound_nest_atomic2.nc", NC_NOWRITE, & ncid2);
+    status = nc_open(file2, NC_NOWRITE, & ncid2);
     HANDLE_NC_ERROR(status);
 
     names = nccmp_get_user_type_compound_field_names(ncid1, ncid2, "comp3", 0);
@@ -201,76 +164,39 @@ recover:
     return result;
 }
 
-int test_nccmp_get_user_type_compound_field_names_cached()
+int test_ncccmp_create_user_type_field_id_pairs()
 {
     int result = PASS;
     int status, ncid1, ncid2;
-    nccmp_user_types_t *types1, *types2;
-    int expected = 13;
-    nccmp_strlist_t *names;
-
-    status = nc_open("make_compound_nest_atomic1.nc", NC_NOWRITE, & ncid1);
-    HANDLE_NC_ERROR(status);
-    status = nc_open("make_compound_nest_atomic2.nc", NC_NOWRITE, & ncid2);
-    HANDLE_NC_ERROR(status);
-
-    types1 = nccmp_load_group_user_types(ncid1, 0);
-    types2 = nccmp_load_group_user_types(ncid2, 0);
-
-    names = nccmp_get_user_type_compound_field_names_cached(
-            & types1->items[2], & types2->items[2], 0);
-
-    if (expected != names->size) {
-        PRINT("Unexpected num names %d <> %d\n", expected, names->size);
-        result = FAIL;
-        goto recover;
-    }
-
-    if (strcmp("t3", names->items[expected-1])) {
-        PRINT("Unexpected name t3 <> %s\n", names->items[expected-1]);
-        result = FAIL;
-        goto recover;
-    }
-
-recover:
-    nc_close(ncid1);
-    nc_close(ncid2);
-    nccmp_destroy_user_types(types1);
-    nccmp_destroy_user_types(types2);
-    nccmp_free_strlist(& names);
-
-    return result;
-}
-
-int test_ncccmp_get_user_type_compound_field_index_pairs()
-{
-    int result = PASS;
-    int status, ncid1, ncid2;
-    nccmp_int_pairs_t *pairs;
-    nccmp_user_types_t *types1, *types2;
+    nccmp_darray_t *pairs;
+    nccmp_darray_t *types1, *types2;
     int i, expected = 13;
+    int first, second;
 
-    status = nc_open("make_compound_nest_atomic1.nc", NC_NOWRITE, & ncid1);
+    status = nc_open(file1, NC_NOWRITE, & ncid1);
     HANDLE_NC_ERROR(status);
-    status = nc_open("make_compound_nest_atomic2.nc", NC_NOWRITE, & ncid2);
+    status = nc_open(file2, NC_NOWRITE, & ncid2);
     HANDLE_NC_ERROR(status);
 
-    types1 = nccmp_load_group_user_types(ncid1, 0);
-    types2 = nccmp_load_group_user_types(ncid2, 0);
+    types1 = nccmp_load_group_user_type_map(ncid1, 0);
+    types2 = nccmp_load_group_user_type_map(ncid2, 0);
 
-    pairs = ncccmp_get_user_type_compound_field_index_pairs(& types1->items[2],
-            & types2->items[2], 0);
+    pairs = ncccmp_create_user_type_field_id_pairs(
+            NCCMP_USER_TYPE_ITEM(types1, 13), // comp2
+            NCCMP_USER_TYPE_ITEM(types2, 13), 
+            0);
 
-    if (expected != pairs->size) {
-        PRINT("Unexpected num pairs %d <> %d\n", expected, pairs->size);
+    if (expected != pairs->num_items) {
+        PRINT("Unexpected number of pairs %d <> %d\n", expected, pairs->num_items);
         result = FAIL;
         goto recover;
     }
 
-    for(i = 0; i < pairs->size; ++i) {
-        //printf("%d %d\n", pairs->pairs[i].first, pairs->pairs[i].second);
-        if (pairs->items[i].first != pairs->items[i].second) {
-            PRINT("Unexpected pairs %d <> %d\n", pairs->items[i].first, pairs->items[i].second);
+    for(i = 0; i < pairs->num_items; ++i) {
+        first = ((nccmp_pair_int_t*) pairs->items[i])->first;
+        second = ((nccmp_pair_int_t*) pairs->items[i])->second;
+        if (first != second) {
+            PRINT("Unexpected pairs %d <> %d\n", first, second);
             result = FAIL;
             goto recover;
         }
@@ -279,9 +205,9 @@ int test_ncccmp_get_user_type_compound_field_index_pairs()
 recover:
     nc_close(ncid1);
     nc_close(ncid2);
-    nccmp_destroy_user_types(types1);
-    nccmp_destroy_user_types(types2);
-    nccmp_destroy_int_pairs(pairs);
+    nccmp_destroy_user_type_array(types1);
+    nccmp_destroy_user_type_array(types2);
+    nccmp_darray_destroy_deep(pairs);
 
     return result;
 }
@@ -291,12 +217,14 @@ int test_nccmp_load_user_types()
     int result = PASS;
     int status, ncid;
     char *name;
-    nccmp_user_types_t *types;
-
-    status = nc_open("make_compound_nest_atomic1.nc", NC_NOWRITE, & ncid);
+    nccmp_darray_t *types;
+    int expect; 
+    nccmp_user_type_t *t1, *t2, *t3, *t4;
+    
+    status = nc_open(file1, NC_NOWRITE, & ncid);
     HANDLE_NC_ERROR(status);
 
-    types = nccmp_load_group_user_types(ncid, 0);
+    types = nccmp_load_group_user_type_map(ncid, 0);
 
     if (!types) {
         PRINT("Unexpected null types.");
@@ -304,34 +232,40 @@ int test_nccmp_load_user_types()
         goto recover;
     }
 
-    if (types->num_items != 3) {
-        PRINT("Unexpected num items 3 <> %d\n", types->num_items);
+    expect = 66;
+    if (expect != types->num_items) {
+        PRINT("Unexpected %d <> %d\n", expect, types->num_items);
         result = FAIL;
         goto recover;
     }
 
-#define CMP(NAME, INDEX) \
-    if (strcmp(NAME, types->items[INDEX].name)) { \
-        PRINT("Unexpected type name " #NAME " <> %s\n", types->items[INDEX].name); \
-        result = FAIL; \
-        goto recover; \
+#define CMP(NAME, INDEX)                                                        \
+    if (strcmp(NAME, NCCMP_USER_TYPE_ITEM(types, INDEX)->name)) {               \
+        PRINT("Unexpected type name " #NAME " <> \"%s\"\n",                     \
+              NCCMP_USER_TYPE_ITEM(types, INDEX)->name);                        \
+        result = FAIL;                                                          \
+        goto recover;                                                           \
     }
 
     CMP("comp1", 0);
-    CMP("comp2", 1);
-    CMP("comp3", 2);
+    CMP("comp2", 13);
+    CMP("comp3", 39);
 #undef CMP
-
-    name = types->items[2].fields->items[0].fields->items[0].fields->items[11].name;
-    if (strcmp("t1", name)) {
-        PRINT("Unexpected field name t1 <> %s\n", name);
+    
+    t1 = NCCMP_USER_TYPE_ITEM(types, 39);
+    t2 = NCCMP_USER_TYPE_ITEM(t1->fields, 0);
+    t3 = NCCMP_USER_TYPE_ITEM(t2->fields, 0);
+    t4 = NCCMP_USER_TYPE_ITEM(t3->fields, 11);
+    name = "t1";
+    if (strcmp("t1", t4->name)) {
+        PRINT("Unexpected field name %s <> %s\n", name, t4->name);
         result = FAIL;
         goto recover;
     }
 
 recover:
     nc_close(ncid);
-    nccmp_destroy_user_types(types);
+    nccmp_destroy_user_type_array(types);
 
     return result;
 }
@@ -342,8 +276,12 @@ int test_nccmp_shallow_copy_user_type()
     nccmp_user_type_t to, from;
 
     from.name = malloc(32);
+    from.tree_name = NULL;
+    from.fields = NULL;
     to.name = malloc(32);
-
+    to.tree_name = NULL;
+    to.fields = NULL;
+    
     from.base_type = 1;
     from.dim_sizes[0] = 1;
     from.dim_sizes[1] = 2;
@@ -402,49 +340,46 @@ int test_nccmp_print_user_types()
     int result = PASS;
     int status, ncid;
     char str[NC_MAX_NAME * NC_MAX_NAME];
-    nccmp_user_types_t *types;
+    nccmp_darray_t *types;
 
-    status = nc_open("make_compound_nest_atomic1.nc", NC_NOWRITE, & ncid);
+    status = nc_open(file1, NC_NOWRITE, & ncid);
     HANDLE_NC_ERROR(status);
 
-    types = nccmp_load_group_user_types(ncid, 0);
+    types = nccmp_load_group_user_type_map(ncid, 0);
 
     strcpy(str, "");
-    nccmp_user_types_to_str(types, str);
+    nccmp_user_type_array_to_str(types, str);
 
     nc_close(ncid);
-    nccmp_destroy_user_types(types);
+    nccmp_destroy_user_type_array(types);
 
     return result;
 }
 
-int test_new_user_types()
+int test_new_user_type()
 {
     int result = PASS;
-    const int n = 8192;
-    nccmp_user_types_t *types = nccmp_create_user_types(n);
+    nccmp_user_type_t *type = nccmp_create_user_type(1);
 
-    if (types->num_items != n) {
-        PRINT("Expected num_items %d <> %d\n", types->num_items, n);
+    if (!type) {
+        PRINT("Expected item\n");
         result = FAIL;
         goto recover;
     }
 
 recover:
-    nccmp_destroy_user_types(types);
+    nccmp_destroy_user_type(type);
 
     return result;
 }
 
 int main(int argc, char* argv[])
 {
-    TEST(test_new_user_types);
+    TEST(test_new_user_type);
     TEST(test_nccmp_build_user_type_field_path_str);
-    TEST(test_nccmp_get_user_type_by_id);
     TEST(test_nccmp_get_user_type_names);
     TEST(test_nccmp_get_user_type_compound_field_names);
-    TEST(test_nccmp_get_user_type_compound_field_names_cached);
-    TEST(test_ncccmp_get_user_type_compound_field_index_pairs);
+    TEST(test_ncccmp_create_user_type_field_id_pairs);
     TEST(test_nccmp_load_user_types);
     TEST(test_nccmp_shallow_copy_user_type);
     TEST(test_nccmp_print_user_types);

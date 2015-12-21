@@ -31,13 +31,13 @@ void vprint(FILE * stream, const char* file, int line, ...)
 #define PRINT(...) { vprint(stdout, __FILE__, __LINE__, __VA_ARGS__); }
 
 #define TEST(FUN) {                   \
-    PRINT(#FUN ": ");                 \
     if (PASS == FUN()) {              \
-        printf("PASS\n");             \
+        printf("PASS: " #FUN " ");    \
     } else {                          \
-        printf("FAIL\n");             \
+        printf("FAIL: " #FUN " ");    \
         ++failures;                   \
     }                                 \
+    PRINT("\n");                      \
 }
 
 #define ROUND(V, N) ( (int)((V) * pow(10.0, (N))) / pow(10.0, (N)) )

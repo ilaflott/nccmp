@@ -18,6 +18,7 @@ nccmp_SOURCES    =      \
     xmalloc.c           \
     nccmp_data.c        \
     nccmp_darray.c      \
+    nccmp_darray_sort.c \
     nccmp_dim.c         \
     nccmp_format.c      \
     nccmp_group.c       \

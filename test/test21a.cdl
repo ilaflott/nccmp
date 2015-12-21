@@ -1,5 +1,5 @@
 netcdf test21a {
-    types:
+types:
 	compound comp1 {
 	    int i;
 	};
@@ -9,27 +9,41 @@ netcdf test21a {
 	compound comp3 {
 	    comp2 com2;
 	};
-    dimensions:
-	    rec = UNLIMITED;
-	    dim1 = 2;
-    variables:
-    	int var1(rec, dim1);
-	    comp3 var2(rec, dim1);
-    data:
-	    var1 = 0, 0, 0, 0;
-        var2 = {{{0}}}, {{{0}}}, {{{0}}}, {{{0}}};
 	
-    group: group {
+	int enum enum1 {FOO = -1, BAR = 0, SIC = 1} ;
+	opaque(3) opaq1;
+	int(*) vlen1;
+    compound comp9 {
+        vlen1 vl1;
+        opaq1 op1;
+        enum1 en1;
+    };
+dimensions:
+    rec = UNLIMITED;
+    dim1 = 2;
+variables:
+	int var1(rec, dim1);
+    comp3 var2(rec, dim1);
+data:
+    var1 = 0, 0, 0, 0;
+    var2 = {{{0}}}, {{{0}}}, {{{0}}}, {{{0}}};
+	
+group: group {
+    types:
+        compound comp4 {
+            float f;
+        };            
+    variables:
+        comp3 var3(rec, dim1);
+        comp4 var4(rec, dim1);
+    data:
+        var3 = {{{0}}}, {{{0}}}, {{{0}}}, {{{0}}};
+	    var4 = {0}, {0}, {0}, {0};
+    group: subgroup {
         variables:
-	        comp3 var3(rec, dim1);
-	    data:
-	        var3 = {{{0}}}, {{{0}}}, {{{0}}}, {{{0}}};
-	    
-	    group: subgroup {
-	        variables:
-		        comp3 var4(rec, dim1);
-	        data:
-		        var4 = {{{0}}}, {{{0}}}, {{{0}}}, {{{0}}};	
-	    } // subgroup	
-    } // group
+	        comp3 var5(rec, dim1);
+        data:
+	        var5 = {{{0}}}, {{{0}}}, {{{0}}}, {{{0}}};	
+    } // subgroup	
+} // group
 }

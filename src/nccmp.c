@@ -96,8 +96,6 @@ int nccmp_run(nccmp_state_t* state)
         LOG_INFO("Comparing groups.\n");
     }
 
-    nccmp_init_state_stats(state);
-
     status = nccmp_cmp_groups(state);
     if (state->opts.debug) {
         LOG_DEBUG("status = %d\n", status);
@@ -115,7 +113,8 @@ int nccmp_run(nccmp_state_t* state)
         nccmp_print_vars(state->vars1, state->nvars1); //FIXME
         LOG_DEBUG("FIXME vars1=%p nvars1=%d vars1[0]=%p\n", state->vars1, state->nvars1, state->vars1[0]);
 
-        nccmp_print_group_stats(state->stats);
+        nccmp_debug_print_group_stats_array(state->stats);
+        nccmp_print_group_stats_array(state->stats);
     }
 
 recover:

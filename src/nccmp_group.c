@@ -346,6 +346,10 @@ int nccmp_cmp_groups(nccmp_state_t* state)
         group_names_to_process = tmp_group_names;
     }
 
+    /* Load all user-type info for entire files. */
+    state->types1 = nccmp_load_group_user_type_map(state->thread_groups1[0].id, state->opts.debug);
+    state->types2 = nccmp_load_group_user_type_map(state->thread_groups2[0].id, state->opts.debug);
+
     for(i = 0; i < group_names_to_process->size; ++i) {
         child1 = nccmp_find_group_by_name(state->thread_groups1, group_names_to_process->items[i]);
         if (! child1) {

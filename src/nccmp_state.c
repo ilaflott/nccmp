@@ -56,7 +56,7 @@ void nccmp_destroy_state_groups(struct nccmp_group_t **thread_groups, int *nthre
         HANDLE_NC_ERROR(status);
         nccmp_destroy_group(& (*thread_groups)[i]);
     }
-    
+
     nccmp_destroy_groups(thread_groups, nthread_groups);
 }
 
@@ -65,9 +65,7 @@ void nccmp_destroy_state(nccmp_state_t *state)
     nccmp_destroy_state_groups(& state->thread_groups1, & state->nthread_groups1);
     nccmp_destroy_state_groups(& state->thread_groups2, & state->nthread_groups2);
 
-    nccmp_destroy_group_stats(state->stats);
-
-    nccmp_destroy_field_hashmap(state->field_hashmap1);
+    nccmp_destroy_group_stats_array(state->stats);
 
     nccmp_opt_free(& state->opts);
 
@@ -78,8 +76,8 @@ void nccmp_destroy_state(nccmp_state_t *state)
         pthread_mutex_destroy(& state->mutex_diff_count);
     #endif
 
-    nccmp_destroy_user_types(state->types1);
-    nccmp_destroy_user_types(state->types2);
+    nccmp_destroy_user_type_array(state->types1);
+    nccmp_destroy_user_type_array(state->types2);
 
     var_info_destroy(& state->vars1, & state->nvars1);
     var_info_destroy(& state->vars2, & state->nvars2);
@@ -97,16 +95,15 @@ void nccmp_init_state(nccmp_state_t *state)
         return;
     }
 
-    state->vars1 = 0;
-    state->vars2 = 0;
-    state->dims1 = 0;
-    state->dims2 = 0;
-    state->types1 = 0;
-    state->types2 = 0;
-    state->field_hashmap1 = 0;
+    state->vars1 = NULL;
+    state->vars2 = NULL;
+    state->dims1 = NULL;
+    state->dims2 = NULL;
+    state->types1 = NULL;
+    state->types2 = NULL;
 
-    state->thread_groups1 = 0;
-    state->thread_groups2 = 0;
+    state->thread_groups1 = NULL;
+    state->thread_groups2 = NULL;
 
     state->nrecs1 = 0;
     state->nrecs2 = 0;
@@ -120,24 +117,17 @@ void nccmp_init_state(nccmp_state_t *state)
     state->recid1 = -1;
     state->recid2 = -1;
 
-    state->stats = 0;
-    state->active_stats = 0;
+    state->stats = NULL;
+    state->active_group_stats = NULL;
 
     state->global_diff_count = 0;
-    state->var_diff_counts = 0;
+    state->var_diff_counts = NULL;
 
     nccmp_opt_init(& state->opts);
 
     #if HAVE_PTHREAD
         pthread_mutex_init(& state->mutex_diff_count, NULL);
     #endif
-}
-
-void nccmp_init_state_stats(nccmp_state_t *state)
-{
-    int num_groups = nccmp_compute_num_groups(state->thread_groups1);
-    state->stats = nccmp_create_group_stats_array(num_groups);
-    nccmp_get_group_ids(state->thread_groups1, state->stats->group_ids);
 }
 
 int nccmp_open_file(nccmp_state_t* state, nccmp_group_t** groups,
@@ -197,23 +187,24 @@ void nccmp_init_var_diff_counts(nccmp_state_t* state)
     memset(state->var_diff_counts, 0, max_nvars * sizeof(int));
 }
 
-void nccmp_update_state_stats(nccmp_state_t *state, int var_id, int stat_id, double delta)
+void nccmp_update_state_stats(nccmp_state_t *state, int var_id,
+		int stat_id, double delta)
 {
-    if (!state->active_stats) {
-        return;
-    }
+	nccmp_var_stats_t *var_stats = (nccmp_var_stats_t*) state->active_group_stats->var_stats->items[var_id];
+	nccmp_stats_t *stats = (nccmp_stats_t*) var_stats->stats->items[stat_id];
 
-    nccmp_stats_t *stat = & state->active_stats[var_id][stat_id];
-#if HAVE_PTHREAD
-    if (state->opts.threads > 1) {
-        /* Lock only if parallel, otherwise avoid overhead. */
-        pthread_mutex_lock(& stat->lock);
-    }
-#endif
-    nccmp_update_stats(stat, delta);
-#if HAVE_PTHREAD
-    if (state->opts.threads > 1) {
-        pthread_mutex_unlock(& stat->lock);
-    }
-#endif
+    #if HAVE_PTHREAD
+		if (state->opts.threads > 1) {
+			/* Lock only if parallel, otherwise avoid overhead. */
+			pthread_mutex_lock(& stats->lock);
+		}
+	#endif
+
+    nccmp_update_stats(stats, delta);
+
+	#if HAVE_PTHREAD
+		if (state->opts.threads > 1) {
+			pthread_mutex_unlock(& stats->lock);
+		}
+	#endif
 }

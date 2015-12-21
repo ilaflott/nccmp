@@ -3,19 +3,12 @@
 
 #include <nccmp_opt.h>
 
-typedef struct nccmp_int_pair_t {
+typedef struct nccmp_pair_int_t {
     int first;
     int second;
-} nccmp_int_pair_t;
+} nccmp_pair_int_t;
 
-typedef struct nccmp_int_pairs_t {
-    int              size;
-    nccmp_int_pair_t *items;
-} nccmp_int_pairs_t;
-
-void nccmp_destroy_int_pairs(nccmp_int_pairs_t *pairs);
-
-nccmp_int_pairs_t* nccmp_create_int_pairs(size_t n);
+nccmp_pair_int_t* nccmp_create_pair_int(size_t n);
 
 #define NCCMP_MAX(TYPE) TYPE nccmp_max_##TYPE(TYPE a, TYPE b);
 NCCMP_MAX(double)
@@ -34,7 +27,8 @@ PRODUCT(int)
 PRODUCT(size_t)
 #undef PRODUCT
 
-/* Allocates and populates result. */
-void nccmp_replace_delimited_prefix(const char* old_str, char* prefix, char delim, char **result);
+/* Allocates and populates new result. Caller owns result memory. */
+void nccmp_replace_delimited_prefix(const char* old_str, const char* prefix,
+		char delim, char **result);
 
 #endif
