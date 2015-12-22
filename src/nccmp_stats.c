@@ -111,52 +111,80 @@ void nccmp_destroy_var_stats_array(nccmp_darray_t *array)
 	}
 }
 
+nccmp_var_stats_t* nccmp_create_var_stats_many(		
+		const char *var_name,
+		const char *group_name,
+		nccmp_darray_t *types,
+        nccmp_darray_t *leafs)
+{
+    nccmp_var_stats_t *result = XMALLOC(nccmp_var_stats_t, 1);    
+	nccmp_user_type_t *type = NULL;
+    char *field_name = NULL;
+    int i;
+    
+    result->stats = nccmp_darray_create(types->num_items);
+    for(i = 0; i < types->num_items; ++i) {
+        type = nccmp_find_user_type_by_id(leafs, i);
+        LOG_DEBUG("FIXME leaf i=%d type=%p\n", i, type);
+        if (type) {
+            /* Copy names only for usable leaf nodes, ignore others. */
+            nccmp_replace_delimited_prefix(
+                    type->tree_name,
+                    var_name,
+                    '.',
+                    & field_name);
+
+            nccmp_darray_append(result->stats,
+                                nccmp_create_stats(field_name, group_name));
+            LOG_DEBUG("FIXME    field_name=%s\n", field_name);
+            if (field_name) {
+                XFREE(field_name);
+            }
+        } else {
+            /* Add empty stat anyway to make array perfectly hashable by index. */
+            nccmp_darray_append(result->stats, NULL);
+        }
+    }
+    
+    return result;    
+}
+
+nccmp_var_stats_t* nccmp_create_var_stats_single(
+        const char *var_name,
+        const char *group_name)
+{
+    nccmp_var_stats_t *result = XMALLOC(nccmp_var_stats_t, 1);        
+
+    LOG_DEBUG("FIXME leafs empty\n");
+    result->stats = nccmp_darray_create(1);
+    nccmp_darray_append(result->stats,
+					            nccmp_create_stats(var_name, group_name));
+            
+    return result;
+}
+
 nccmp_var_stats_t* nccmp_create_var_stats(
 		nccmp_var_t *var,
 		nccmp_darray_t *types,
 		const char *group_name)
 {
-	nccmp_var_stats_t *result = XMALLOC(nccmp_var_stats_t, 1);
+	nccmp_var_stats_t *result = NULL;
 	nccmp_user_type_t *type = NULL;
 	nccmp_darray_t *leafs = NULL;
-	int i;
-	char *field_name = NULL;
 
 	if (var) {
-		result->var_id = var->varid;
-
 		if (types) {
-			type = (nccmp_user_type_t*) nccmp_find_user_type_by_type_id(types, var->type);
+			type = nccmp_find_user_type_by_type_id(types, var->type);
 			leafs = nccmp_find_user_type_leafs(types, type);
 		}
 
 		if (nccmp_darray_empty(leafs)) {
-			result->stats = nccmp_darray_create(1);
-			nccmp_darray_append(result->stats,
-					            nccmp_create_stats(var->name, group_name));
+            result = nccmp_create_var_stats_single(var->name, group_name);
 		} else {
-			result->stats = nccmp_darray_create(types->num_items);
-			for(i = 0; i < types->num_items; ++i) {
-				type = (nccmp_user_type_t*) nccmp_find_user_type_by_unique_id(leafs, i);
-				if (type) {
-					/* Copy names only for usable leaf nodes, ignore others. */
-		            nccmp_replace_delimited_prefix(
-		            		type->tree_name,
-		                    var->name,
-		                    '.',
-		                    & field_name);
-
-					nccmp_darray_append(result->stats,
-							            nccmp_create_stats(field_name, group_name));
-					if (field_name) {
-						XFREE(field_name);
-					}
-				} else {
-					/* Add empty stat anyway to make array perfectly hashable by index. */
-					nccmp_darray_append(result->stats, NULL);
-				}
-			}
+			result = nccmp_create_var_stats_many(var->name, group_name,
+                        types, leafs);            
 		}
+		result->var_id = var->varid;
 	}
 
 	if (leafs) {
@@ -190,104 +218,6 @@ nccmp_group_stats_t* nccmp_create_group_stats(
     }
 
 	return result;
-}
-
-void nccmp_debug_print_stats(nccmp_stats_t *stats)
-{
-	LOG_DEBUG("nccmp_debug_print_stats\n");
-
-	if (!stats) {
-		return;
-	}
-
-    LOG_DEBUG("    stats=%p name=%s group_name=%s count=%d "
-    		  "max=%g min=%g sum=%g absum=%g sumsq=%g\n",
-              (void*)stats,
-			  stats->name,
-			  stats->group_name,
-			  stats->count,
-			  stats->max,
-	          stats->min,
-			  stats->sum,
-			  stats->abs_sum,
-			  stats->sum_squares);
-}
-
-void nccmp_debug_print_stats_array(nccmp_darray_t *array)
-{
-	int i;
-	nccmp_stats_t *item;
-
-	LOG_DEBUG("nccmp_debug_print_stats_array\n");
-
-	if (!array) {
-		return;
-	}
-
-    for(i = 0; i < array->num_items; ++i) {
-    	item = (nccmp_stats_t*) array->items[i];
-    	nccmp_debug_print_stats(item);
-    }
-}
-
-void nccmp_debug_print_var_stats(nccmp_var_stats_t *var_stats)
-{
-	LOG_DEBUG("nccmp_debug_print_var_stats\n");
-
-	if (!var_stats) {
-		return;
-	}
-
-	LOG_DEBUG("    var_id=%d\n", var_stats->var_id);
-
-	nccmp_debug_print_stats_array(var_stats->stats);
-}
-
-void nccmp_debug_print_var_stats_array(nccmp_darray_t *array)
-{
-	int i;
-	nccmp_var_stats_t *item;
-
-	LOG_DEBUG("nccmp_debug_print_var_stats_array\n");
-
-	if (!array) {
-		return;
-	}
-
-    for(i = 0; i < array->num_items; ++i) {
-    	item = (nccmp_var_stats_t*) array->items[i];
-    	nccmp_debug_print_var_stats(item);
-    }
-}
-
-void nccmp_debug_print_group_stats(nccmp_group_stats_t *group_stats)
-{
-	LOG_DEBUG("nccmp_debug_print_group_stats\n");
-
-	if (!group_stats) {
-		return;
-	}
-
-	LOG_DEBUG("    group_id=%d\n", group_stats->group_id);
-
-	nccmp_debug_print_var_stats_array(group_stats->var_stats);
-}
-
-void nccmp_debug_print_group_stats_array(nccmp_darray_t *array)
-{
-    int i;
-    nccmp_group_stats_t *item;
-
-    LOG_DEBUG("nccmp_debug_print_group_stats_array\n");
-
-    if (!array) {
-    	return;
-    }
-
-    for(i = 0; i < array->num_items; ++i) {
-    	item = (nccmp_group_stats_t*) array->items[i];
-    	nccmp_debug_print_group_stats(item);
-    }
 }
 
 void nccmp_update_stats(nccmp_stats_t *stat, double delta)

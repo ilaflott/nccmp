@@ -28,11 +28,11 @@ typedef struct nccmp_user_type_t {
 } nccmp_user_type_t;
 
 NCCMP_DARRAY_FIND_FIELD_DECLARE(nccmp_find_user_type_by_type_id, nccmp_user_type_t, type_id, nc_type)
-NCCMP_DARRAY_FIND_FIELD_DECLARE(nccmp_find_user_type_by_unique_id, nccmp_user_type_t, unique_id, nc_type)
+NCCMP_DARRAY_FIND_FIELD_DECLARE(nccmp_find_user_type_by_id, nccmp_user_type_t, unique_id, nc_type)
 #define NCCMP_USER_TYPE_ITEM(ARRAY, INDEX) NCCMP_DARRAY_ITEM(nccmp_user_type_t, ARRAY, INDEX)
 
 /* Builds dotted tree name of only child fields and excludes root user-type name.
- * Returns allocated result string. 
+ * Caller must allocate result before calling. 
  */        
 void nccmp_build_user_type_field_path_str(nccmp_user_type_t *type, char *result);
 

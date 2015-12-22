@@ -1313,11 +1313,11 @@ int nccmp_dump_info_path(nccmp_state_t* state, int ncid)
     if (!pathptr) {
         if (state->nthread_groups1 &&
             state->thread_groups1 &&
-            state->thread_groups1[0].id == ncid) {
+            state->thread_groups1[0].ncid == ncid) {
             pathptr = state->opts.file1;
         } else if (state->nthread_groups2 &&
                 state->thread_groups2 &&
-                state->thread_groups2[0].id == ncid) {
+                state->thread_groups2[0].ncid == ncid) {
             pathptr = state->opts.file2;
         } else {
             status = EXIT_FAILURE;

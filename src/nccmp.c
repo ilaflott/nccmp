@@ -57,7 +57,7 @@ int nccmp_run(nccmp_state_t* state)
     if (state->opts.info)
     {
         if (state->thread_groups1) {
-            status = nccmp_dump_info(state, state->thread_groups1[0].id);
+            status = nccmp_dump_info(state, state->thread_groups1[0].ncid);
             last_status = status ? status : last_status;
             if (last_status) {
                 goto recover;
@@ -65,7 +65,7 @@ int nccmp_run(nccmp_state_t* state)
         }
 
         if (state->thread_groups2) {
-            status = nccmp_dump_info(state, state->thread_groups2[0].id);
+            status = nccmp_dump_info(state, state->thread_groups2[0].ncid);
             last_status = status ? status : last_status;
             if (last_status) {
                 goto recover;
@@ -82,8 +82,8 @@ int nccmp_run(nccmp_state_t* state)
         LOG_INFO("Comparing file formats.\n");
     }
 
-    status = nccmp_file_formats(& state->opts, state->thread_groups1[0].id,
-                state->thread_groups2[0].id);
+    status = nccmp_file_formats(& state->opts, state->thread_groups1[0].ncid,
+                state->thread_groups2[0].ncid);
     if (state->opts.debug) {
         LOG_DEBUG("status = %d\n", status);
     }
@@ -110,10 +110,6 @@ int nccmp_run(nccmp_state_t* state)
     }
 
     if (state->opts.statistics) {
-        nccmp_print_vars(state->vars1, state->nvars1); //FIXME
-        LOG_DEBUG("FIXME vars1=%p nvars1=%d vars1[0]=%p\n", state->vars1, state->nvars1, state->vars1[0]);
-
-        nccmp_debug_print_group_stats_array(state->stats);
         nccmp_print_group_stats_array(state->stats);
     }
 

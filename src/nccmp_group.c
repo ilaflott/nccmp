@@ -53,7 +53,7 @@ int nccmp_cmp_group(nccmp_state_t* state, nccmp_group_t* group1, nccmp_group_t* 
         LOG_INFO("Comparing groups \"%s\" and \"%s\".\n", group1->fullname, group2->fullname);
     }
 
-    status = nccmp_global_atts(& state->opts, group1->id, group2->id);
+    status = nccmp_global_atts(& state->opts, group1->ncid, group2->ncid);
     last_status = status ? status : last_status;
     if (last_status && !state->opts.force) {
         goto recover;
@@ -63,33 +63,33 @@ int nccmp_cmp_group(nccmp_state_t* state, nccmp_group_t* group1, nccmp_group_t* 
         LOG_INFO("Collecting dimension information for first group.\n");
     }
 
-    nccmp_init_dims(group1->id, & state->dims1, & state->ndims1);
-    nccmp_load_dims(group1->id, state->dims1, state->ndims1);
+    nccmp_init_dims(group1->ncid, & state->dims1, & state->ndims1);
+    nccmp_load_dims(group1->ncid, state->dims1, state->ndims1);
 
     if (state->opts.verbose) {
         LOG_INFO("Collecting dimension information for second group.\n");
     }
 
-    nccmp_init_dims(group2->id, & state->dims2, & state->ndims2);
-    nccmp_load_dims(group2->id, state->dims2, state->ndims2);
+    nccmp_init_dims(group2->ncid, & state->dims2, & state->ndims2);
+    nccmp_load_dims(group2->ncid, state->dims2, state->ndims2);
 
     if (state->opts.verbose) {
-        LOG_INFO("Collecting variable information for group id = %d.\n", group1->id);
+        LOG_INFO("Collecting variable information for group id = %d.\n", group1->ncid);
     }
 
-    var_info_init(group1->id, & state->vars1, & state->nvars1);
-    var_info_get(group1->id, state->vars1, state->nvars1, state->opts.verbose);
+    var_info_init(group1->ncid, & state->vars1, & state->nvars1);
+    var_info_get(group1->ncid, state->vars1, state->nvars1, state->opts.verbose);
     if (state->opts.debug) {
         nccmp_print_vars(state->vars1, state->nvars1);
     }
 
     if (state->opts.verbose) {
         LOG_INFO("Found %d variables in first group.\n", state->nvars1);
-        LOG_INFO("Collecting variable information for group id = %d.\n", group2->id);
+        LOG_INFO("Collecting variable information for group id = %d.\n", group2->ncid);
     }
 
-    var_info_init(group2->id, & state->vars2, & state->nvars2);
-    var_info_get(group2->id, state->vars2, state->nvars2, state->opts.verbose);
+    var_info_init(group2->ncid, & state->vars2, & state->nvars2);
+    var_info_get(group2->ncid, state->vars2, state->nvars2, state->opts.verbose);
     if (state->opts.debug) {
         nccmp_print_vars(state->vars2, state->nvars2);
     }
@@ -98,16 +98,16 @@ int nccmp_cmp_group(nccmp_state_t* state, nccmp_group_t* group1, nccmp_group_t* 
         LOG_INFO("Found %d variables in second group.\n", state->nvars2);
     }
 
-    var_names = make_cmp_var_list(& state->opts, group1->id, group2->id);
+    var_names = make_cmp_var_list(& state->opts, group1->ncid, group2->ncid);
 
-    status = nccmp_cmp_rec_info(state, var_names, group1->id, group2->id);
+    status = nccmp_cmp_rec_info(state, var_names, group1->ncid, group2->ncid);
     last_status = status ? status : last_status;
     if (last_status && !state->opts.force) {
         goto recover;
     }
 
     if (state->opts.metadata) {
-        status = nccmp_cmp_metadata(state, var_names, group1->id, group2->id);
+        status = nccmp_cmp_metadata(state, var_names, group1->ncid, group2->ncid);
         last_status = status ? status : last_status;
         if (last_status && !state->opts.force) {
             goto recover;
@@ -115,7 +115,7 @@ int nccmp_cmp_group(nccmp_state_t* state, nccmp_group_t* group1, nccmp_group_t* 
     }
 
     if (state->opts.encoding) {
-        status = nccmp_var_encoding(state, var_names, group1->id, group2->id);
+        status = nccmp_var_encoding(state, var_names, group1->ncid, group2->ncid);
         last_status = status ? status : last_status;
         if (last_status && !state->opts.force) {
             goto recover;
@@ -201,7 +201,7 @@ nccmp_group_t* nccmp_find_group_by_id(nccmp_group_t* groups, const int id)
         return 0;
     }
 
-    if (id == groups->id) {
+    if (id == groups->ncid) {
         return groups;
     }
 
@@ -223,7 +223,7 @@ void nccmp_get_group_ids_recurse(nccmp_group_t *group, int *ids, int *index)
         return;
     }
 
-    ids[*index] = group->id;
+    ids[*index] = group->ncid;
     ++(*index);
     for(i = 0; i < group->nchildren; ++i) {
         nccmp_get_group_ids_recurse(group->children[i], ids, index);
@@ -282,7 +282,7 @@ int nccmp_get_group_info(int ncid, nccmp_group_t* group) {
     status = nc_inq_grpname_full(ncid, & len, group->fullname);
     HANDLE_NC_ERROR(status);
 
-    group->id = ncid;
+    group->ncid = ncid;
     group->nchildren = nchildren;
 
     if (1 > nchildren) {
@@ -347,8 +347,8 @@ int nccmp_cmp_groups(nccmp_state_t* state)
     }
 
     /* Load all user-type info for entire files. */
-    state->types1 = nccmp_load_group_user_type_map(state->thread_groups1[0].id, state->opts.debug);
-    state->types2 = nccmp_load_group_user_type_map(state->thread_groups2[0].id, state->opts.debug);
+    state->types1 = nccmp_load_group_user_type_map(state->thread_groups1[0].ncid, state->opts.debug);
+    state->types2 = nccmp_load_group_user_type_map(state->thread_groups2[0].ncid, state->opts.debug);
 
     for(i = 0; i < group_names_to_process->size; ++i) {
         child1 = nccmp_find_group_by_name(state->thread_groups1, group_names_to_process->items[i]);

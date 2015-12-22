@@ -11,6 +11,10 @@ nccmp_darray_t* nccmp_compute_str_widths(nccmp_darray_t *array);
 
 void nccmp_compute_column_max_widths(nccmp_darray_t *widths, int *max_widths);
 
+void nccmp_debug_print_group_stats(nccmp_group_stats_t *group_stats);
+
+void nccmp_debug_print_group_stats_array(nccmp_darray_t *array);
+
 void nccmp_print_group_stats_array(nccmp_darray_t *array);
 
 /* Print a character 'num' times to stdout. */

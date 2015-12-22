@@ -6,7 +6,8 @@
 #include <nccmp_strlist.h>
 
 typedef struct nccmp_group_t {
-    int     id;                    /* Same as ncid in netcdf api. */
+    int     id;                    /* Unique id generated at runtime by nccmp. */
+    int     ncid;                  /* Same as ncid in netcdf api. */
     char    name[NC_MAX_NAME];     /* Short name without parent paths. */
     char    fullname[NC_MAX_NAME]; /* Full path name with parents, such as "/a/b/c". */
     size_t  nchildren;

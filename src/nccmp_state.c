@@ -52,7 +52,7 @@ void nccmp_destroy_state_groups(struct nccmp_group_t **thread_groups, int *nthre
     int i, status;
 
     for(i = 0; i < *nthread_groups; ++i) {
-        status = nc_close((*thread_groups)[i].id);
+        status = nc_close((*thread_groups)[i].ncid);
         HANDLE_NC_ERROR(status);
         nccmp_destroy_group(& (*thread_groups)[i]);
     }
@@ -66,7 +66,8 @@ void nccmp_destroy_state(nccmp_state_t *state)
     nccmp_destroy_state_groups(& state->thread_groups2, & state->nthread_groups2);
 
     nccmp_destroy_group_stats_array(state->stats);
-
+    state->active_group_stats = NULL;
+    
     nccmp_opt_free(& state->opts);
 
     nccmp_destroy_dims(& state->dims1, & state->ndims1);
@@ -85,7 +86,7 @@ void nccmp_destroy_state(nccmp_state_t *state)
     XFREE(state->var_diff_counts);
 
     state->global_diff_count = 0;
-    state->nrecs1   = state->nrecs2   = 0;
+    state->nrecs1   = state->nrecs2 = 0;
     state->recid1   = state->recid2 = 0;
 }
 
@@ -117,7 +118,7 @@ void nccmp_init_state(nccmp_state_t *state)
     state->recid1 = -1;
     state->recid2 = -1;
 
-    state->stats = NULL;
+    state->stats = nccmp_darray_create(1);
     state->active_group_stats = NULL;
 
     state->global_diff_count = 0;
@@ -144,9 +145,9 @@ int nccmp_open_file(nccmp_state_t* state, nccmp_group_t** groups,
         *ngroups = state->opts.threads;
         *groups = nccmp_create_groups(*ngroups);
         for(i = 0; i < *ngroups; ++i) {
-            status = nc_open(filename, NC_NOWRITE, & ((*groups)[i].id) );
+            status = nc_open(filename, NC_NOWRITE, & ((*groups)[i].ncid) );
             HANDLE_NC_ERROR(status);
-            status = nccmp_get_group_info((*groups)[i].id, & (*groups)[i]);
+            status = nccmp_get_group_info((*groups)[i].ncid, & (*groups)[i]);
             if (status) {
                 goto recover;
             }
@@ -192,7 +193,8 @@ void nccmp_update_state_stats(nccmp_state_t *state, int var_id,
 {
 	nccmp_var_stats_t *var_stats = (nccmp_var_stats_t*) state->active_group_stats->var_stats->items[var_id];
 	nccmp_stats_t *stats = (nccmp_stats_t*) var_stats->stats->items[stat_id];
-
+    LOG_DEBUG("FIXME nccmp_update_state_stats var_id=%d stat_id=%d\n", var_id, stat_id);
+    
     #if HAVE_PTHREAD
 		if (state->opts.threads > 1) {
 			/* Lock only if parallel, otherwise avoid overhead. */

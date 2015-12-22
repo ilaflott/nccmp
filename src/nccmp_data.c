@@ -3,10 +3,11 @@
 #include <nccmp_error.h>
 #include <nccmp_format.h>
 #include <nccmp_io.h>
+#include <nccmp_nest.h>
 #include <nccmp_odometer.h>
 #include <nccmp_thread.h>
 #include <math.h>
-#include "nccmp_nest.h"
+#include <nccmp_stats_print.h> // FIXME only for debug printing
 
 PRINT_SETUP()
 
@@ -1198,8 +1199,8 @@ int nccmp_cmp_var_user_type_compound_field_nonarray_atomic_type(nccmp_state_t* s
         								field1->offset, TYPE1, diff_offset);   \
         item2.m_##NAME2 = COMPOUND_FIELD_VALUE(items2, comp_type2->root_size,  \
         								field2->offset, TYPE2, diff_offset);   \
-        if (state->opts.statistics) {                                                               \
-            nccmp_update_state_stats(state, varid1, field1->id,								\
+        if (state->opts.statistics) {                                          \
+            nccmp_update_state_stats(state, varid1, field1->id,				   \
                                            (double)item1.m_##NAME1 - (double)item2.m_##NAME2);      \
         }                                                                                           \
         if (!state->opts.quiet) {                                                                   \
@@ -1212,7 +1213,7 @@ int nccmp_cmp_var_user_type_compound_field_nonarray_atomic_type(nccmp_state_t* s
                 nccmp_##NAME2##_to_str(item2.m_##NAME2, str2, state->opts.precision);   \
             }                                                                           \
             strcpy(field_path_str, "");                                                 \
-            nccmp_build_user_type_field_path_str(field1, field_path_str); \
+            nccmp_build_user_type_field_path_str(field1, field_path_str);               \
             PRINT_DIFF(state->opts.debug, DIFF_MSG_FIELD, v1->name, idx_str,            \
                   field_path_str, str1, str2);                                          \
         }                                                                               \
@@ -3632,7 +3633,7 @@ int nccmp_data(nccmp_state_t* state, nccmp_strlist_t* var_names,
     }
 
     status = validate_var_names(& state->opts, var_names, & validated_var_names,
-            group1->id, group2->id, state->vars1, state->vars2,
+            group1->ncid, group2->ncid, state->vars1, state->vars2,
             state->nvars1, state->nvars2);
     last_status = status ? status : last_status;
     if (last_status && !state->opts.force) {
@@ -3642,13 +3643,15 @@ int nccmp_data(nccmp_state_t* state, nccmp_strlist_t* var_names,
     nccmp_init_var_diff_counts(state);
 
     state->active_group_stats = nccmp_create_group_stats(
-            group1->id,
-            state->thread_groups1[0].fullname,
+            group1->ncid,
+            group1->fullname,
             state->vars1,
             state->nvars1,
             state->types1);
     nccmp_darray_append(state->stats, state->active_group_stats);
-
+    // LOG_DEBUG("FIXME active_group_stats=%p\n");
+    // nccmp_debug_print_group_stats(state->active_group_stats);
+    
     status = nccmp_data_start_threads(state, validated_var_names,
                 group1->fullname, group2->fullname);
     last_status = status ? status : last_status;
@@ -3708,8 +3711,8 @@ int nccmp_data_start_pthreads(nccmp_state_t* state, nccmp_strlist_t* var_names,
 
         args[thread].var_names = var_names;
         args[thread].state = state;
-        args[thread].ncid1 = group1->id;
-        args[thread].ncid2 = group2->id;
+        args[thread].ncid1 = group1->ncid;
+        args[thread].ncid2 = group2->ncid;
         args[thread].id = thread;
 
         status = pthread_create(& threads[thread], & attr_joinable,
@@ -3755,7 +3758,7 @@ int nccmp_data_start_threads(nccmp_state_t* state, nccmp_strlist_t* var_names,
         group2 = nccmp_find_group_by_name(& state->thread_groups2[0], group_name2);
 
         if (group1 && group2) {
-            return nccmp_cmp_vars(state, var_names, group1->id, group2->id, 0);
+            return nccmp_cmp_vars(state, var_names, group1->ncid, group2->ncid, 0);
         }
     }
     return EXIT_FATAL;

@@ -26,9 +26,9 @@ typedef struct nccmp_stats_t {
 } nccmp_stats_t;
 
 typedef struct nccmp_var_stats_t {
-	int var_id;
-	/* Array of nccmp_stats_t indexed by user-type unique_id or singleton if var has no fields. */
-	nccmp_darray_t *stats;
+    int var_id;
+    /* Array of nccmp_stats_t indexed by user-type unique_id or singleton if var has no fields. */
+    nccmp_darray_t *stats;
 } nccmp_var_stats_t;
 
 /* Contains stats arrays for all groups in a file. */
@@ -47,12 +47,15 @@ nccmp_group_stats_t* nccmp_create_group_stats(int group_id,
 
 nccmp_stats_t* nccmp_create_stats(const char *name, const char *group_name);
 
+/* For a given variable and group, create new stats arrays.
+ * Each item in output array is indexed by varid.
+ * Each var will then have an array for a stat per field if it is compound,
+ * or just a signleton array with one stats item for the variable itself.
+ */
 nccmp_var_stats_t* nccmp_create_var_stats(nccmp_var_t *var,
 		nccmp_darray_t *types, const char *group_name);
 
 void nccmp_clear_var_stats_array(nccmp_stats_t *array, int n);
-
-void nccmp_debug_print_group_stats_array(nccmp_darray_t *array);
 
 void nccmp_destroy_group_stats(nccmp_group_stats_t *group_stats);
 

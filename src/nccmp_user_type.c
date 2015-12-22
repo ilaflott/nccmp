@@ -3,14 +3,13 @@
 #include <nccmp_user_type.h>
 
 NCCMP_DARRAY_FIND_FIELD(nccmp_find_user_type_by_type_id, nccmp_user_type_t, type_id, nc_type)
-NCCMP_DARRAY_FIND_FIELD(nccmp_find_user_type_by_unique_id, nccmp_user_type_t, id, nc_type)
+NCCMP_DARRAY_FIND_FIELD(nccmp_find_user_type_by_id, nccmp_user_type_t, id, nc_type)
 
 void nccmp_build_user_type_field_path_str(nccmp_user_type_t *type, char *result)
 {
     if (! type) {
         return;
     }
-
     if (nccmp_is_user_type_field(type)) {
         nccmp_build_user_type_field_path_str(type->parent, result);
 
@@ -519,7 +518,7 @@ void nccmp_load_user_type_compound_tree_field(int group_id,
     }
 
     if (NC_COMPOUND == field->user_class) {
-        type = (nccmp_user_type_t*) nccmp_find_user_type_by_type_id(types, field->type_id);
+        type = nccmp_find_user_type_by_type_id(types, field->type_id);
         if (type && !nccmp_darray_empty(type->fields) && nccmp_darray_empty(field->fields)) {
             // Populate dependencies according to the field's type definition.
         	nccmp_darray_reserve(field->fields, type->fields->num_items);
@@ -598,7 +597,6 @@ void nccmp_shallow_copy_user_type(nccmp_user_type_t *to, nccmp_user_type_t *from
     to->size        = from->size;
     to->type_id     = from->type_id;
     to->user_class  = from->user_class;
-    nccmp_darray_copy(to->fields, from->fields);
 }
 
 void nccmp_user_type_to_str(nccmp_user_type_t* type, char *result, int num_indent)

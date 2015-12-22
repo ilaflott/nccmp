@@ -38,7 +38,7 @@ TESTS =                                                                 \
     test_nccmp_darray                                                   \
     test_nccmp_darray_sort                                              \
     test_nccmp_stats                                                    \
-    test_nccmp_user_type.sh						\                                                
+    test_nccmp_user_type.sh						\
     test_nccmp_01.sh test_nccmp_02.sh test_nccmp_03.sh                  \
     test_nccmp_04.sh test_nccmp_05.sh test_nccmp_06.sh test_nccmp_07.sh \
     test_nccmp_08.sh test_nccmp_09.sh test_nccmp_10.sh test_nccmp_11.sh \

@@ -31,7 +31,7 @@ dnl For aggressive compiler checks during development.
 dnl GCC
 dnl AM_CFLAGS="$AM_CFLAGS -std=c99 -Wpedantic -Wall -Wclobbered -Wempty-body -Wignored-qualifiers -Wmissing-field-initializers -Wmissing-parameter-type -Wold-style-declaration -Woverride-init -Wtype-limits -Wuninitialized -Wunused-but-set-parameter -D_BSD_SOURCE"
 dnl Clang
-AM_CFLAGS="$AM_CFLAGS -std=c99 -Wpedantic -Wall -Wconsumed -Wempty-body -Wignored-qualifiers -Wmissing-field-initializers -Wout-of-line-declaration -Wtype-limits -Wuninitialized -Wunused-parameter -D_BSD_SOURCE"
+AM_CFLAGS="$AM_CFLAGS -std=c99 -Wpedantic -Wall -Wconsumed -Wempty-body -Wignored-qualifiers -Wmissing-field-initializers -Wout-of-line-declaration -Wtype-limits -Wuninitialized -Wunused-variable -D_BSD_SOURCE"
 
 AC_SUBST([AM_CFLAGS])
 
