@@ -4,7 +4,7 @@
 #include <netcdf.h>
 
 typedef struct nccmp_nc_type_t {
-    nc_type                type;
+    nc_type            type;
     char               m_text;
     double             m_double;
     float              m_float;

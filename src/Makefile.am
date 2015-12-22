@@ -16,6 +16,7 @@ nccmp_SOURCES    =      \
     log.c               \
     nccmp.c             \
     xmalloc.c           \
+    nccmp_buffer.c      \
     nccmp_data.c        \
     nccmp_darray.c      \
     nccmp_darray_sort.c \

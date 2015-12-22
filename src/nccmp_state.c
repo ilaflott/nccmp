@@ -184,8 +184,7 @@ void nccmp_init_var_diff_counts(nccmp_state_t* state)
     }
 
     max_nvars = nccmp_max_int(state->nvars1, state->nvars2);
-    state->var_diff_counts = XMALLOC(int, max_nvars);
-    memset(state->var_diff_counts, 0, max_nvars * sizeof(int));
+    state->var_diff_counts = XCALLOC(int, max_nvars);
 }
 
 void nccmp_update_state_stats(nccmp_state_t *state, int var_id,
@@ -193,7 +192,6 @@ void nccmp_update_state_stats(nccmp_state_t *state, int var_id,
 {
 	nccmp_var_stats_t *var_stats = (nccmp_var_stats_t*) state->active_group_stats->var_stats->items[var_id];
 	nccmp_stats_t *stats = (nccmp_stats_t*) var_stats->stats->items[stat_id];
-    LOG_DEBUG("FIXME nccmp_update_state_stats var_id=%d stat_id=%d\n", var_id, stat_id);
     
     #if HAVE_PTHREAD
 		if (state->opts.threads > 1) {

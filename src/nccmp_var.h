@@ -5,7 +5,7 @@
 #include <nccmp_constants.h>
 #include <nccmp_nc_type.h>
 #include <nccmp_opt.h>
-#include "nccmp_strlist.h"
+#include <nccmp_strlist.h>
 
 typedef struct nccmp_var_t {
     char    name[NC_MAX_NAME];
@@ -35,7 +35,7 @@ int find_var(const char * name, nccmp_var_t *vars, int nvars);
 char get_missing(int ncid, nccmp_var_t * var, const char* attname);
 
 /* Get vars to use to do cmp based on input varname and exclusion lists. */
-nccmp_strlist_t* make_cmp_var_list(nccmp_opt_t* opts, int ncid1, int ncid2);
+nccmp_strlist_t* make_cmp_var_name_list(nccmp_opt_t* opts, int ncid1, int ncid2);
 
 /* @param valid[out]: List of valid var names.
  */
@@ -61,6 +61,8 @@ int nccmp_get_var_num_dims(const nccmp_var_t *vars, const int nvars, const int v
 int nccmp_get_var_dimid(const nccmp_var_t *var, const int dim_index);
 
 int nccmp_get_var_dimid_by_id(const nccmp_var_t *vars, const int nvars, const int varid, const int dim_index);
+
+size_t nccmp_get_var_last_dim_num_items(const nccmp_var_t *var);
 
 int nccmp_get_var_type(const nccmp_var_t *var);
 

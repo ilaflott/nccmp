@@ -38,6 +38,6 @@ int nccmp_all_var_names(int ncid, nccmp_strlist_t* list);
 
 int nccmp_rec_info(int ncid, int* recid, char* name, size_t* size);
 
-int nccmp_type_size(nc_type type);
+int nccmp_nc_type_size(nc_type type);
 
 #endif

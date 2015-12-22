@@ -177,24 +177,31 @@ int nccmp_has_rec_dim(int* dimids, int ndims, const int recid)
 
     return 0;
 }
-int nccmp_type_size(nc_type type)
+int nccmp_nc_type_size(nc_type type)
 {
-        switch(type)
-        {
-                case NC_BYTE:
-                case NC_CHAR:
-                return 1;
-                break;
-                case NC_SHORT:
-                return 2;
-                break;
-                case NC_INT:
-                case NC_FLOAT:
-                return 4;
-                break;
-                case NC_DOUBLE:
-                return 8;
-                break;
-        }
-        return 0;
+    switch(type) {
+        case NC_BYTE:
+        case NC_CHAR:
+        case NC_UBYTE:
+            return 1;
+            break;
+
+        case NC_SHORT:
+        case NC_USHORT:
+            return 2;
+            break;
+
+        case NC_INT:
+        case NC_FLOAT:
+        case NC_UINT:
+            return 4;
+            break;
+
+        case NC_DOUBLE:
+        case NC_INT64:
+        case NC_UINT64:
+            return 8;
+            break;
+    }
+    return 0;
 }

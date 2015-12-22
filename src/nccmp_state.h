@@ -16,8 +16,10 @@
 struct nccmp_group_t;  /* Forward declaration. */
 
 typedef struct nccmp_state_t {
-    nccmp_dim_t         *dims1;
-    nccmp_dim_t         *dims2;
+    nccmp_darray_t     *buffers1;
+    nccmp_darray_t     *buffers2;
+    nccmp_dim_t        *dims1;
+    nccmp_dim_t        *dims2;
     int                 global_diff_count;
     int                 ndims1;
     int                 ndims2;

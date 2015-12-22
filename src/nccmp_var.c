@@ -152,7 +152,7 @@ int exclude_vars(nccmp_opt_t* opts, int ncid1, int ncid2, nccmp_strlist_t* resul
     return status;
 }
 
-nccmp_strlist_t* make_cmp_var_list(nccmp_opt_t* opts, int ncid1, int ncid2)
+nccmp_strlist_t* make_cmp_var_name_list(nccmp_opt_t* opts, int ncid1, int ncid2)
 {
     int status, i;
 
@@ -179,12 +179,9 @@ nccmp_strlist_t* make_cmp_var_list(nccmp_opt_t* opts, int ncid1, int ncid2)
     }
 
     if (opts->verbose) {
-        LOG_INFO("Variables to compare (%d): ", result->size);
-        for(i=0; i < result->size-1; ++i) {
-            printf("%s, ", result->items[i]);
-        }
-        if (result->size > 0) {
-            printf("%s", result->items[i]);
+        LOG_INFO("%d variables to compare:", result->size);
+        for(i=0; i < result->size; ++i) {
+            printf(" %s", result->items[i]);
         }
         printf("\n");
     }
@@ -413,6 +410,19 @@ int nccmp_get_var_dimid(const nccmp_var_t *var, const int index)
 	}
 	
 	return -1;
+}
+
+size_t nccmp_get_var_last_dim_num_items(const nccmp_var_t *var)
+{
+    if (!var) {
+        return 0;
+    }
+    
+    if ((1 == var->ndims) && var->has_rec_dim) {
+        return 1;
+    } else {
+        return var->dimlens[var->ndims-1];
+    }
 }
 
 int nccmp_get_var_num_atts_by_id(const nccmp_var_t *vars, const int nvars, const int varid)

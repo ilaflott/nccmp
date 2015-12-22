@@ -98,7 +98,7 @@ int nccmp_cmp_group(nccmp_state_t* state, nccmp_group_t* group1, nccmp_group_t* 
         LOG_INFO("Found %d variables in second group.\n", state->nvars2);
     }
 
-    var_names = make_cmp_var_list(& state->opts, group1->ncid, group2->ncid);
+    var_names = make_cmp_var_name_list(& state->opts, group1->ncid, group2->ncid);
 
     status = nccmp_cmp_rec_info(state, var_names, group1->ncid, group2->ncid);
     last_status = status ? status : last_status;
