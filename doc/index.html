@@ -175,7 +175,7 @@ Compare similarly named compound fields and ignore differently named or missing 
 Asymmetric enum value and datatype semantics. Enum identifiers are compared instead of their encoded values, so your dataset schema can evolve flexibly without worrying about enum order, size, type, or numeric values, although any metadata differences will be reported.
 </li>
 <li>
-Print data diff statistics (count, sum, absolute sum, min, max, range, mean, stdev) for numeric variables and compound fields.
+Print data difference statistics (count, sum, absolute sum, min, max, range, mean, stdev) for numeric variables and compound fields. In quiet mode, only this summary table will print.
 </li>
 <li>
 Lightweight. Comparing multi-gigabyte files will only consume several megabytes of memory.
@@ -301,7 +301,7 @@ configure:
     with-netcdf        = /usr/local/netcdf-4.3.3.1/src
 
 <span class="code command">
-$ make
+$ make -j4
 $ make check
 $ make install-strip
 $ make clean
@@ -414,16 +414,16 @@ PASS: test_nccmp_odometer
 PASS: test_nccmp_user_type
 PASS: test_nccmp_01.sh
 ...
-PASS: test_nccmp_66.sh
+PASS: test_nccmp_68.sh
 PASS: test_big.sh
 make[4]: Entering directory `/home/rsz/projects/nccmp/nccmp-code/test'
 make[4]: Nothing to be done for `all'.
 make[4]: Leaving directory `/home/rsz/projects/nccmp/nccmp-code/test'
 ============================================================================
-Testsuite summary for nccmp 1.7.1
+Testsuite summary for nccmp 1.8.0.0
 ============================================================================
-# TOTAL: 71
-# PASS:  71
+# TOTAL: 75
+# PASS:  75
 # SKIP:  0
 # XFAIL: 0
 # FAIL:  0
@@ -448,7 +448,7 @@ $ cd test &&
 Examples</a>
 </h2>
 <p>
-There are 66 examples in the test/ directory.
+There are 68 examples in the test/ directory.
 
 <pre class="code">
 </span><span class="code comment">
@@ -555,11 +555,15 @@ DIFFER : VARIABLE : var1 : POSITION : [0,0,0] : FIELD : myVlen[1,1,1,1][0] : VAL
 DIFFER : VARIABLE : var1 : POSITION : [0,0,1] : FIELD : myComp[1,1,0,1].myLongLong[1,0,0,1] : VALUES : 1014009 <> 2014009
 </span><span class="code comment">
 # Print statistics and hide diff messages.
-</span><span class="code command">$ nccmp -dfqS test20a.nc test20b.nc
+</span><span class="code command">$ nccmp -dfqS test21a.68.nc test21b.68.nc
 </span><span>
-Variable             Group     Count Sum AbsSum Min Max Range Mean StdDev
-comp3.com2.com1.sc1  /             1  -1      1  -1  -1     0   -1      0
-var2                 /subgroup     2   3      3   1   2     1  1.5
+Variable         Group           Count     Sum AbsSum     Min     Max  Range    Mean   StdDev
+var1             /                   2      -3      3      -2      -1      1    -1.5 0.707107
+var2.com2.com1.i /                   2     -30     30     -20     -10     10     -15  7.07107
+var3.com2.com1.i /group              2    -300    300    -200    -100    100    -150  70.7107
+var4.f           /group              1   -1000   1000   -1000   -1000      0   -1000        0
+var4.s           /group              1  -10000  10000  -10000  -10000      0  -10000        0
+var5.com2.com1.i /group/subgroup     2 -300000 300000 -200000 -100000 100000 -150000  70710.7
 </pre>
 
 <p>
@@ -645,7 +649,7 @@ Usage: nccmp [OPTION...] file1 [file2]
                                  eos: Extra attribute end-of-string nulls.
 
 Report bugs to Remik . Ziemlinski @ noaa . gov.
-nccmp 1.7.4.1
+nccmp 1.8.0.0
 
 Configuration
 Date    = Fri Sep 25 12:42:16 EDT 2015
@@ -677,7 +681,7 @@ News</a>
 <pre>
 Version 1.8.0.0 (12/15/2015)
 
-1. Added -S, --statistics to print summary data for numeric data diffs.
+1. Added -S, --statistics to print summary data table for numeric data diffs.
 2. Added -q, --quiet to suppress diff messages.
 3. Added cmake config to build executable.
 

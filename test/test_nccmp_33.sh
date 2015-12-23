@@ -11,7 +11,7 @@ then
     exit 0
 fi
 
-$srcdir/test_nccmp_setup.sh pad
+$srcdir/test_nccmp_setup.sh pad $I
 CMD="$($srcdir/nccmp.sh) -md -s -P -f $srcdir/pad1a.nc $srcdir/pad1b.nc > $LOG 2>&1"
 eval $CMD 
 
