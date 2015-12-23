@@ -1,0 +1,7 @@
+Variable         Group           Count     Sum AbsSum     Min     Max  Range    Mean   StdDev
+var1             /                   2      -3      3      -2      -1      1    -1.5 0.707107
+var2.com2.com1.i /                   2     -30     30     -20     -10     10     -15  7.07107
+var3.com2.com1.i /group              2    -300    300    -200    -100    100    -150  70.7107
+var4.f           /group              1   -1000   1000   -1000   -1000      0   -1000        0
+var4.s           /group              1  -10000  10000  -10000  -10000      0  -10000        0
+var5.com2.com1.i /group/subgroup     2 -300000 300000 -200000 -100000 100000 -150000  70710.7

@@ -8,7 +8,6 @@
 #include <nccmp_odometer.h>
 #include <nccmp_thread.h>
 #include <math.h>
-#include <nccmp_stats_print.h> // FIXME only for debug printing
 
 PRINT_SETUP()
 
@@ -3292,9 +3291,9 @@ int nccmp_cmp_var_atomic_type(nccmp_state_t* state,  int ncid1, int ncid2,
 #define CMP_VAR(NAME1, TYPE1, NAME2, TYPE2, NANEQUAL) {                        \
     items1.p_##NAME1 = NCCMP_BUFFER_ITEM(state->buffers1, thread_id)->bytes.p_##NAME1; \
     items2.p_##NAME2 = NCCMP_BUFFER_ITEM(state->buffers2, thread_id)->bytes.p_##NAME2; \
-    PRINT(state->opts.debug, "items1=%p start=[%zu,%zu,%zu] count=[%zu,%zu,%zu] nitems=%zu\n",          \
-          (void*)items1.p_##NAME1, start[0], start[1], start[2], count[0], count[1], count[2], nitems); \
-    PRINT(state->opts.debug, "items2=%p ncid1=%d ncid2=%d\n", (void*)items2.p_##NAME2, ncid1, ncid2);   \
+    /*PRINT(state->opts.debug, "items1=%p start=[%zu,%zu,%zu] count=[%zu,%zu,%zu] nitems=%zu\n",         */   \
+    /*      (void*)items1.p_##NAME1, start[0], start[1], start[2], count[0], count[1], count[2], nitems);*/   \
+    /*PRINT(state->opts.debug, "items2=%p ncid1=%d ncid2=%d\n", (void*)items2.p_##NAME2, ncid1, ncid2);  */   \
                                                                                \
     while(! loop_done) {                                                       \
         status = nc_get_vara_##NAME1(ncid1, v1->varid, start, count, items1.p_##NAME1);\
@@ -3665,7 +3664,9 @@ recover:
     nccmp_free_strlist(& validated_var_names);
     nccmp_destroy_buffer_array(state->buffers1);
     nccmp_destroy_buffer_array(state->buffers2);
-
+    state->buffers1 = NULL;
+    state->buffers2 = NULL;
+        
     if (state->opts.verbose) {
         LOG_INFO("Finished comparing group data.\n");
     }

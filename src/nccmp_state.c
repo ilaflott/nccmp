@@ -1,4 +1,5 @@
 #include <log.h>
+#include <nccmp_buffer.h>
 #include <nccmp_state.h>
 #include <nccmp_error.h>
 #include <nccmp_group.h>
@@ -62,6 +63,9 @@ void nccmp_destroy_state_groups(struct nccmp_group_t **thread_groups, int *nthre
 
 void nccmp_destroy_state(nccmp_state_t *state)
 {
+    nccmp_destroy_buffer_array(state->buffers1);
+    nccmp_destroy_buffer_array(state->buffers2);
+    
     nccmp_destroy_state_groups(& state->thread_groups1, & state->nthread_groups1);
     nccmp_destroy_state_groups(& state->thread_groups2, & state->nthread_groups2);
 
@@ -96,6 +100,9 @@ void nccmp_init_state(nccmp_state_t *state)
         return;
     }
 
+    state->buffers1 = NULL;
+    state->buffers2 = NULL;
+    
     state->vars1 = NULL;
     state->vars2 = NULL;
     state->dims1 = NULL;

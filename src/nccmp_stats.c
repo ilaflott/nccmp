@@ -15,7 +15,7 @@ double nccmp_compute_var_stats_mean(nccmp_stats_t *data)
     }
 }
 
-double nccmp_compute_var_stats_stdev(nccmp_stats_t *data)
+double nccmp_compute_var_stats_stdev(nccmp_stats_t *data) 
 {
     if (data && (data->count > 1) ) {
         return sqrt( (data->sum_squares - (data->sum * data->sum)/data->count) /
@@ -25,11 +25,36 @@ double nccmp_compute_var_stats_stdev(nccmp_stats_t *data)
     }
 }
 
+nccmp_group_stats_t* nccmp_create_group_stats(
+		int group_id,
+		const char *group_name,
+		nccmp_var_t *vars, 
+		int num_vars,
+		nccmp_darray_t *types)
+{
+    nccmp_group_stats_t *result = XMALLOC(nccmp_group_stats_t, 1);
+    nccmp_var_stats_t *var_stats;
+    nccmp_var_t *var;
+    int i;
+
+	result->group_id = group_id;
+	result->var_stats = nccmp_darray_create(num_vars);
+
+    // FIXME
+	for(i = 0; i < num_vars; ++i) {
+		var = & vars[i];
+		var_stats = nccmp_create_var_stats(var, types, group_name);
+		nccmp_darray_append(result->var_stats, var_stats);
+    }
+
+	return result;
+}
+
 nccmp_stats_t* nccmp_create_stats(const char *name, const char *group_name)
 {
 	nccmp_stats_t *result = XMALLOC(nccmp_stats_t, 1);
 	result->count = 0;
-	result->min = INFINITY;
+    result->min = INFINITY;
 	result->max = -INFINITY;
 	result->sum = 0.0;
 	result->abs_sum = 0.0;
@@ -54,60 +79,6 @@ nccmp_stats_t* nccmp_create_stats(const char *name, const char *group_name)
     #endif
 
 	return result;
-}
-
-void nccmp_destroy_group_stats(nccmp_group_stats_t *array)
-{
-    if (array) {
-		nccmp_destroy_var_stats_array(array->var_stats);
-        XFREE(array);
-    }
-}
-
-void nccmp_destroy_group_stats_array(nccmp_darray_t *array)
-{
-	int i;
-
-	if (array) {
-		for(i = 0; i < array->num_items; ++i) {
-			nccmp_destroy_group_stats( (nccmp_group_stats_t*) array->items[i] );
-		}
-		nccmp_darray_destroy(array);
-	}
-}
-
-void nccmp_destroy_stats(nccmp_stats_t *stats)
-{
-	if (stats) {
-		XFREE(stats->name);
-		XFREE(stats->group_name);
-
-		#if HAVE_PTHREAD
-			pthread_mutex_destroy(& stats->lock);
-		#endif
-
-		XFREE(stats);
-	}
-}
-
-void nccmp_destroy_stats_array(nccmp_darray_t *array)
-{
-	int i;
-
-	if (array) {
-		for(i = 0; i < array->num_items; ++i) {
-			nccmp_destroy_stats( (nccmp_stats_t*) array->items[i] );
-		}
-		nccmp_darray_destroy(array);
-	}
-}
-
-void nccmp_destroy_var_stats_array(nccmp_darray_t *array)
-{
-	if (array) {
-		nccmp_destroy_stats_array(array);
-		nccmp_darray_destroy(array);
-	}
 }
 
 nccmp_var_stats_t* nccmp_create_var_stats_many(		
@@ -154,7 +125,7 @@ nccmp_var_stats_t* nccmp_create_var_stats_single(
 
     result->stats = nccmp_darray_create(1);
     nccmp_darray_append(result->stats,
-					            nccmp_create_stats(var_name, group_name));
+					    nccmp_create_stats(var_name, group_name));
             
     return result;
 }
@@ -190,34 +161,75 @@ nccmp_var_stats_t* nccmp_create_var_stats(
 	return result;
 }
 
-nccmp_group_stats_t* nccmp_create_group_stats(
-		int group_id,
-		const char *group_name,
-		nccmp_var_t *vars, // FIXME: Use darray.
-		int num_vars,
-		nccmp_darray_t *types)
+void nccmp_destroy_group_stats(nccmp_group_stats_t *item)
 {
-    nccmp_group_stats_t *result = XMALLOC(nccmp_group_stats_t, 1);
-    nccmp_var_stats_t *var_stats;
-    nccmp_var_t *var;
-    int i;
-
-	result->group_id = group_id;
-	result->var_stats = nccmp_darray_create(num_vars);
-
-	for(i = 0; i < num_vars; ++i) {
-		var = & vars[i];
-		var_stats = nccmp_create_var_stats(var, types, group_name);
-		nccmp_darray_append(result->var_stats, var_stats);
+    if (item) {
+		nccmp_destroy_var_stats_array(item->var_stats);
+        XFREE(item);
     }
+}
 
-	return result;
+void nccmp_destroy_group_stats_array(nccmp_darray_t *array)
+{
+	int i;
+
+	if (array) {
+		for(i = 0; i < array->num_items; ++i) {
+			nccmp_destroy_group_stats( (nccmp_group_stats_t*) array->items[i] );
+		}
+		nccmp_darray_destroy(array);
+	}
+}
+
+void nccmp_destroy_stats(nccmp_stats_t *stats)
+{
+	if (stats) {
+		XFREE(stats->name);
+		XFREE(stats->group_name);
+
+		#if HAVE_PTHREAD
+			pthread_mutex_destroy(& stats->lock);
+		#endif
+
+		XFREE(stats);
+	}
+}
+
+void nccmp_destroy_stats_array(nccmp_darray_t *array)
+{
+	int i;
+
+	if (array) {
+		for(i = 0; i < array->num_items; ++i) {
+			nccmp_destroy_stats( (nccmp_stats_t*) array->items[i] );
+		}
+        nccmp_darray_destroy(array);
+	}
+}
+
+void nccmp_destroy_var_stats(nccmp_var_stats_t *item)
+{
+    if (item) {
+        nccmp_destroy_stats_array(item->stats);
+        XFREE(item);
+    }
+}
+
+void nccmp_destroy_var_stats_array(nccmp_darray_t *array)
+{
+    int i;
+    
+	if (array) {
+        for(i = 0; i < array->num_items; ++i) {
+            nccmp_destroy_var_stats( (nccmp_var_stats_t*) array->items[i] );
+        }
+		nccmp_darray_destroy(array);
+	}
 }
 
 void nccmp_update_stats(nccmp_stats_t *stat, double delta)
 {
     ++stat->count;
-
     if (delta > stat->max) {
     	stat->max = delta;
     }

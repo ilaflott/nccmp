@@ -139,7 +139,7 @@ void nccmp_print_group_stats_array(nccmp_darray_t *array)
     int max_widths[NCCMP_NUM_STATS_COLUMNS];
 
     strings = nccmp_stringify_group_stats_array(array);
-    if (!strings) {
+    if (!strings || !strings->num_items) {
         goto recover;
     }
 
@@ -217,9 +217,6 @@ void nccmp_print_stats_table_body(
             printf("\n");
         }
     }
-
-    nccmp_darray_destroy_deep(strings);
-    nccmp_darray_destroy_deep(widths);
 
     #undef PRINT_PAD2
     #undef PRINT_STR2

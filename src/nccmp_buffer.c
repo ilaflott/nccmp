@@ -1,6 +1,5 @@
 #include <nccmp_buffer.h>
 #include <nccmp_ncinfo.h>
-#include <nccmp_utils.h>
 
 size_t nccmp_compute_max_buffer_num_bytes(
         nccmp_var_t *vars,
@@ -53,6 +52,10 @@ void nccmp_destroy_buffer_array(nccmp_darray_t *array)
 {
     int i;
     nccmp_buffer_t *item;
+    
+    if (!array) {
+        return;
+    }
     
     for(i = 0; i < array->num_items; ++i) {
         item = (nccmp_buffer_t*) array->items[i];

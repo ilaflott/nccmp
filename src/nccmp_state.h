@@ -16,36 +16,36 @@
 struct nccmp_group_t;  /* Forward declaration. */
 
 typedef struct nccmp_state_t {
-    nccmp_darray_t     *buffers1;
-    nccmp_darray_t     *buffers2;
-    nccmp_dim_t        *dims1;
-    nccmp_dim_t        *dims2;
-    int                 global_diff_count;
-    int                 ndims1;
-    int                 ndims2;
-    int                 nthread_groups1;
-    int                 nthread_groups2;
-    size_t              nrecs1;
-    size_t              nrecs2;
-    int                 nvars1;
-    int                 nvars2;
-    int                 recid1;
-    int                 recid2;
-    nccmp_opt_t         opts;
+    nccmp_darray_t      *buffers1;
+    nccmp_darray_t      *buffers2;
+    nccmp_dim_t         *dims1;
+    nccmp_dim_t         *dims2;
+    int                  global_diff_count;
+    int                  ndims1;
+    int                  ndims2;
+    int                  nthread_groups1;
+    int                  nthread_groups2;
+    size_t               nrecs1;
+    size_t               nrecs2;
+    int                  nvars1;
+    int                  nvars2;
+    int                  recid1;
+    int                  recid2;
+    nccmp_opt_t          opts;
 
     #if HAVE_PTHREAD
-        pthread_mutex_t     mutex_diff_count;
+        pthread_mutex_t  mutex_diff_count;
     #endif
 
-    nccmp_darray_t *stats;
+    nccmp_darray_t      *stats;
 
     /* Stats array to update while comparing a group per thread batch.
      * Only points to existing array [var][stat], and set once before repeated lookups.
      */
     nccmp_group_stats_t *active_group_stats;
 
-    nccmp_darray_t  *types1;
-    nccmp_darray_t  *types2;
+    nccmp_darray_t      *types1;
+    nccmp_darray_t      *types2;
 
     nccmp_var_t         *vars1;
     nccmp_var_t         *vars2;
