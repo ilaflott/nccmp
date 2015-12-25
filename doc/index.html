@@ -178,7 +178,7 @@ Asymmetric enum value and datatype semantics. Enum identifiers are compared inst
 Print data difference statistics (count, sum, absolute sum, min, max, range, mean, stdev) for numeric variables and compound fields. In quiet mode, only this summary table will print.
 </li>
 <li>
-Lightweight. Comparing multi-gigabyte files will only consume several megabytes of memory.
+Lightweight. Comparing multi-gigabyte files will only consume several megabytes of arena memory.
 </li>
 </ul>
 
@@ -607,6 +607,7 @@ Usage: nccmp [OPTION...] file1 [file2]
   -H, --help                 Give this usage message.
       --usage                
   -i, --info                 Print file structure info for one or both files.
+  -l, --color                Print colored messages.
   -m, --metadata             Compare metadata.
                              Use -g to include global attributes.
   -M, --missing              Ignore difference between values that have
@@ -679,11 +680,13 @@ News</a>
 </h2>
 <p>
 <pre>
-Version 1.8.0.0 (12/15/2015)
+Version 1.8.0.0 (12/25/2015)
 
 1. Added -S, --statistics to print summary data table for numeric data diffs.
 2. Added -q, --quiet to suppress diff messages.
-3. Added cmake config to build executable.
+3. Added -l, --color for colored printing.
+4. Added arena memory for non-compound numeric variables.
+5. Added cmake config to build executable.
 
 Version 1.7.5.1 (10/2/2015)
 

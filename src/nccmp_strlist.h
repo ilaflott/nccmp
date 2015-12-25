@@ -45,6 +45,9 @@ int nccmp_clear_strlist(nccmp_strlist_t* list);
 /* Compute string lengths and return new array. Caller must free the result array. */
 int* nccmp_compute_strlist_lengths(nccmp_strlist_t* list);
 
+/* Print all pointers allocated. */
+void nccmp_debug_print_strlist(FILE* f, nccmp_strlist_t* list, char delim);
+
 /* Deep copy. Requires 'dst' capacity greater than or equal to 'src'.
    Strings in 'listdst' after 'nsrc' position are left intact.*/
 int nccmp_deep_copy_strlist(nccmp_strlist_t* src, nccmp_strlist_t* dst);
@@ -69,7 +72,7 @@ void nccmp_free_strlist(nccmp_strlist_t** list);
 /* Create new list with desired size. Returns NULL if failed. */
 nccmp_strlist_t* nccmp_new_strlist(unsigned int size);
 
-/* Dumps delimited strings to a stream. */
+/* Dumps delimited strings to a stream of non-null items. */
 void nccmp_print_strlist(FILE* stream, nccmp_strlist_t* list, char delim);
 
 /* Get number of strings in list, which don't have to occupy every array position contiguously. */

@@ -33,14 +33,14 @@ int nccmp_cmp_group(nccmp_state_t* state, nccmp_group_t* group1, nccmp_group_t* 
 
     if (!group1 || !group2) {
         if (state->opts.verbose) {
-            LOG_INFO("Invalid groups cannot be compared.\n");
+            LOG_INFO_CHOOSE(state->opts.color, "Invalid groups cannot be compared.\n");
         }
         return EXIT_DIFFER;
     }
 
     if (group1->nchildren != group1->nchildren) {
         if (!state->opts.quiet) {
-            PRINT_DIFF(state->opts.debug, "DIFFER : NUMBER OF GROUPS : %zu (\"%s\") <> %zu (\"%s\")\n",
+            PRINT_DIFF(state->opts.color, state->opts.debug, " : NUMBER OF GROUPS : %zu (\"%s\") <> %zu (\"%s\")\n",
                        group1->nchildren, group1->fullname, group2->nchildren, group2->fullname);
         }
         last_status = EXIT_DIFFER;
@@ -50,7 +50,7 @@ int nccmp_cmp_group(nccmp_state_t* state, nccmp_group_t* group1, nccmp_group_t* 
     }
 
     if (state->opts.verbose) {
-        LOG_INFO("Comparing groups \"%s\" and \"%s\".\n", group1->fullname, group2->fullname);
+        LOG_INFO_CHOOSE(state->opts.color, "Comparing groups \"%s\" and \"%s\".\n", group1->fullname, group2->fullname);
     }
 
     status = nccmp_global_atts(& state->opts, group1->ncid, group2->ncid);
@@ -60,42 +60,42 @@ int nccmp_cmp_group(nccmp_state_t* state, nccmp_group_t* group1, nccmp_group_t* 
     }
 
     if (state->opts.verbose) {
-        LOG_INFO("Collecting dimension information for first group.\n");
+        LOG_INFO_CHOOSE(state->opts.color, "Collecting dimension information for first group.\n");
     }
 
     nccmp_init_dims(group1->ncid, & state->dims1, & state->ndims1);
     nccmp_load_dims(group1->ncid, state->dims1, state->ndims1);
 
     if (state->opts.verbose) {
-        LOG_INFO("Collecting dimension information for second group.\n");
+        LOG_INFO_CHOOSE(state->opts.color, "Collecting dimension information for second group.\n");
     }
 
     nccmp_init_dims(group2->ncid, & state->dims2, & state->ndims2);
     nccmp_load_dims(group2->ncid, state->dims2, state->ndims2);
 
     if (state->opts.verbose) {
-        LOG_INFO("Collecting variable information for group id = %d.\n", group1->ncid);
+        LOG_INFO_CHOOSE(state->opts.color, "Collecting variable information for group id = %d.\n", group1->ncid);
     }
 
     var_info_init(group1->ncid, & state->vars1, & state->nvars1);
-    var_info_get(group1->ncid, state->vars1, state->nvars1, state->opts.verbose);
+    var_info_get(group1->ncid, state->vars1, state->nvars1, state->opts.verbose, state->opts.color);
     if (state->opts.debug) {
-        nccmp_print_vars(state->vars1, state->nvars1);
+        nccmp_print_vars(state->vars1, state->nvars1, state->opts.color);
     }
 
     if (state->opts.verbose) {
-        LOG_INFO("Found %d variables in first group.\n", state->nvars1);
-        LOG_INFO("Collecting variable information for group id = %d.\n", group2->ncid);
+        LOG_INFO_CHOOSE(state->opts.color, "Found %d variables in first group.\n", state->nvars1);
+        LOG_INFO_CHOOSE(state->opts.color, "Collecting variable information for group id = %d.\n", group2->ncid);
     }
 
     var_info_init(group2->ncid, & state->vars2, & state->nvars2);
-    var_info_get(group2->ncid, state->vars2, state->nvars2, state->opts.verbose);
+    var_info_get(group2->ncid, state->vars2, state->nvars2, state->opts.verbose, 0);
     if (state->opts.debug) {
-        nccmp_print_vars(state->vars2, state->nvars2);
+        nccmp_print_vars(state->vars2, state->nvars2, state->opts.color);
     }
 
     if (state->opts.verbose) {
-        LOG_INFO("Found %d variables in second group.\n", state->nvars2);
+        LOG_INFO_CHOOSE(state->opts.color, "Found %d variables in second group.\n", state->nvars2);
     }
 
     var_names = make_cmp_var_name_list(& state->opts, group1->ncid, group2->ncid);
@@ -132,7 +132,7 @@ int nccmp_cmp_group(nccmp_state_t* state, nccmp_group_t* group1, nccmp_group_t* 
 
 recover:
     if (state->opts.verbose) {
-      LOG_INFO("Group comparison complete.\n");
+      LOG_INFO_CHOOSE(state->opts.color, "Group comparison complete.\n");
     }
 
     nccmp_free_strlist(& var_names);
@@ -347,14 +347,14 @@ int nccmp_cmp_groups(nccmp_state_t* state)
     }
 
     /* Load all user-type info for entire files. */
-    state->types1 = nccmp_load_group_user_type_map(state->thread_groups1[0].ncid, state->opts.debug);
-    state->types2 = nccmp_load_group_user_type_map(state->thread_groups2[0].ncid, state->opts.debug);
+    state->types1 = nccmp_load_group_user_type_map(state->thread_groups1[0].ncid, state->opts.debug, state->opts.color);
+    state->types2 = nccmp_load_group_user_type_map(state->thread_groups2[0].ncid, state->opts.debug, state->opts.color);
 
     for(i = 0; i < group_names_to_process->size; ++i) {
         child1 = nccmp_find_group_by_name(state->thread_groups1, group_names_to_process->items[i]);
         if (! child1) {
             if (!state->opts.quiet) {
-                PRINT_DIFF(state->opts.debug, "DIFFER : Failed to find group %s in file \"%s\"\n",
+                PRINT_DIFF(state->opts.color, state->opts.debug, " : Failed to find group %s in file \"%s\"\n",
                            group_names_to_process->items[i], state->opts.file1);
             }
             last_status = EXIT_DIFFER;
@@ -365,7 +365,7 @@ int nccmp_cmp_groups(nccmp_state_t* state)
         child2 = nccmp_find_group_by_name(state->thread_groups2, group_names_to_process->items[i]);
         if (! child2) {
             if (!state->opts.quiet) {
-                PRINT_DIFF(state->opts.debug, "DIFFER : Failed to find group %s in file \"%s\"\n",
+                PRINT_DIFF(state->opts.color, state->opts.debug, " : Failed to find group %s in file \"%s\"\n",
                            group_names_to_process->items[i], state->opts.file2);
             }
             last_status = EXIT_DIFFER;

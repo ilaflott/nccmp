@@ -41,7 +41,7 @@ int nccmp_run(nccmp_state_t* state)
     io_init();
 
     if (state->opts.verbose) {
-        LOG_INFO("Opening input files.\n");
+        LOG_INFO_CHOOSE(state->opts.color, "Opening input files.\n");
     }
 
     status = nccmp_open_files(state);
@@ -51,7 +51,7 @@ int nccmp_run(nccmp_state_t* state)
     }
 
     if (state->opts.debug) {
-        LOG_DEBUG("status = %d\n", status);
+        LOG_DEBUG_CHOOSE(state->opts.color, "status = %d\n", status);
     }
 
     if (state->opts.info)
@@ -79,13 +79,13 @@ int nccmp_run(nccmp_state_t* state)
     }
 
     if (state->opts.verbose) {
-        LOG_INFO("Comparing file formats.\n");
+        LOG_INFO_CHOOSE(state->opts.color, "Comparing file formats.\n");
     }
 
     status = nccmp_file_formats(& state->opts, state->thread_groups1[0].ncid,
                 state->thread_groups2[0].ncid);
     if (state->opts.debug) {
-        LOG_DEBUG("status = %d\n", status);
+        LOG_DEBUG_CHOOSE(state->opts.color, "status = %d\n", status);
     }
     last_status = status ? status : last_status;
     if (last_status && !state->opts.force) {
@@ -93,12 +93,12 @@ int nccmp_run(nccmp_state_t* state)
     }
 
     if (state->opts.verbose) {
-        LOG_INFO("Comparing groups.\n");
+        LOG_INFO_CHOOSE(state->opts.color, "Comparing groups.\n");
     }
 
     status = nccmp_cmp_groups(state);
     if (state->opts.debug) {
-        LOG_DEBUG("status = %d\n", status);
+        LOG_DEBUG_CHOOSE(state->opts.color, "status = %d\n", status);
     }
     last_status = status ? status : last_status;
     if (last_status && !state->opts.force) {
@@ -106,7 +106,7 @@ int nccmp_run(nccmp_state_t* state)
     }
 
     if (state->opts.verbose) {
-      LOG_INFO("Comparisons complete.\n");
+      LOG_INFO_CHOOSE(state->opts.color, "Comparisons complete.\n");
     }
 
     if (state->opts.statistics) {
@@ -116,7 +116,7 @@ int nccmp_run(nccmp_state_t* state)
 recover:
 
     if (state->opts.debug) {
-      LOG_DEBUG("last_status = %d\n", last_status);
+      LOG_DEBUG_CHOOSE(state->opts.color, "last_status = %d\n", last_status);
     }
 
     io_destroy();
@@ -137,7 +137,7 @@ int nccmp_main(int argc, const char** argv)
     }
 
     if (state.opts.verbose) {
-        LOG_INFO("Command-line options parsed.\n");
+        LOG_INFO_CHOOSE(state.opts.color, "Command-line options parsed.\n");
     }
 
     status = nccmp_run(& state);

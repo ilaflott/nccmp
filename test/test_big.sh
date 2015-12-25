@@ -8,14 +8,15 @@ NT=25
 NZ=10
 NY=1000
 NX=2000
+builddir=..
 
 echo "Making first test file."
-./make_big $NT $NZ $NY $NX 0 $TMP1
+$builddir/test/make_big $NT $NZ $NY $NX 0 $TMP1
 echo "Making second test file." 
-./make_big $NT $NZ $NY $NX 1 $TMP2 
+$builddir/test/make_big $NT $NZ $NY $NX 1 $TMP2 
 
 function run() {
-    ../src/nccmp -mdfb -n $THREADS $TMP1 $TMP2 > stderr.tmp 2>&1
+    $builddir/src/nccmp -mdfbS -n $THREADS $TMP1 $TMP2 > stderr.tmp 2>&1
 	if test "$?" -eq "1"; then :; else
 		echo
 		echo "run: Expected exit code 1."
@@ -27,7 +28,7 @@ function run() {
 }
 
 function run_tol() {
-    ../src/nccmp -mdfb -n $THREADS -t 1 $TMP1 $TMP2 > stderr.tol.tmp 2>&1
+    $builddir/src/nccmp -mdfbS -n $THREADS -t 1 $TMP1 $TMP2 > stderr.tol.tmp 2>&1
 	if test "$?" -eq "1"; then :; else
 		echo
 		echo "run_tol: Expected exit code 1."

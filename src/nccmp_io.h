@@ -10,12 +10,16 @@
     (f == NC_FORMAT_NETCDF4 ? "NC_FORMAT_NETCDF4" :                            \
                               "NC_FORMAT_NETCDF4_CLASSIC")))
 
-#define DIFF_MSG            "DIFFER : VARIABLE : %s : POSITION : [%s] : VALUES : %s <> %s\n"
-#define DIFF_MSG_PCT        "DIFFER : VARIABLE : %s : POSITION : [%s] : VALUES : %s <> %s : PERCENT : %g\n"
-#define DIFF_MSG_FIELD      "DIFFER : VARIABLE : %s : POSITION : [%s] : FIELD : %s : VALUES : %s <> %s\n"
-#define DIFF_MSG_FIELD_VLEN "DIFFER : VARIABLE : %s : POSITION : [%s] : FIELD : %s : VARIABLE LENGTH : %zu <> %zu\n"
-#define DIFF_MSG_VLEN       "DIFFER : VARIABLE : %s : POSITION : [%s] : VARIABLE LENGTH : %zu <> %zu\n"
-#define DIFF_MSG_PCT_FIELD  "DIFFER : VARIABLE : %s : POSITION : [%s] : FIELD : %s : VALUES : %s <> %s : PERCENT : %g\n"
+#define DEBUG_COLOR    YELLOW "DEBUG"  NOCOLOR
+#define DIFFER                "DIFFER"
+#define DIFFER_COLOR   RED    "DIFFER" NOCOLOR
+
+#define DIFF_MSG            " : VARIABLE : %s : POSITION : [%s] : VALUES : %s <> %s\n"
+#define DIFF_MSG_PCT        " : VARIABLE : %s : POSITION : [%s] : VALUES : %s <> %s : PERCENT : %g\n"
+#define DIFF_MSG_FIELD      " : VARIABLE : %s : POSITION : [%s] : FIELD : %s : VALUES : %s <> %s\n"
+#define DIFF_MSG_FIELD_VLEN " : VARIABLE : %s : POSITION : [%s] : FIELD : %s : VARIABLE LENGTH : %zu <> %zu\n"
+#define DIFF_MSG_VLEN       " : VARIABLE : %s : POSITION : [%s] : VARIABLE LENGTH : %zu <> %zu\n"
+#define DIFF_MSG_PCT_FIELD  " : VARIABLE : %s : POSITION : [%s] : FIELD : %s : VALUES : %s <> %s : PERCENT : %g\n"
 
 #if HAVE_PTHREAD
     #include <pthread.h>
@@ -31,22 +35,21 @@
     #define PRINT_SETUP() /* empty */
 #endif
 
-/* Use synchronized debug printing if threaded. */
-#define PRINT(DBG, ...)                                                        \
-    if (DBG) {                                                                 \
-        PRINT_FUN(LOG_STREAM, "DEBUG", stdout, __VA_ARGS__);                   \
-    } else {                                                                   \
-        PRINT_FUN(fprintf, stdout, __VA_ARGS__)                                \
-    };
-
 /* Always print diffs to stderr. */
-#define PRINT_DIFF(DBG, ...)                                                   \
+#define PRINT_DIFF(COLOR, DBG, FMT, ...)                                       \
     if (DBG) {                                                                 \
-        PRINT_FUN(LOG_STREAM, "DEBUG", stderr, __VA_ARGS__);                   \
+        if (COLOR) {                                                           \
+            PRINT_FUN(LOG_DEBUG_CHOOSE_STDERR, COLOR, DIFFER_COLOR FMT, __VA_ARGS__); \
+        } else {                                                               \
+            PRINT_FUN(LOG_STREAM, "DEBUG", stderr, DIFFER FMT, __VA_ARGS__);   \
+        }                                                                      \
     } else {                                                                   \
-        PRINT_FUN(fprintf, stderr, __VA_ARGS__)                                \
-    };
-
+        if (COLOR) {                                                           \
+            PRINT_FUN(fprintf, stderr, DIFFER_COLOR FMT, __VA_ARGS__);         \
+        } else {                                                               \
+            PRINT_FUN(fprintf, stderr, DIFFER FMT, __VA_ARGS__);               \
+        }                                                                      \
+    }
 
 void io_destroy();
 void io_init();

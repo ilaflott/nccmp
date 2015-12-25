@@ -5,6 +5,7 @@ export srcdir=.
 e=tmp.valgrind
 RED='\033[0;31m'
 GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
 NOCOLOR='\033[0m'
 
 for f in test_nccmp_??.sh; do

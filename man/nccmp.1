@@ -16,11 +16,11 @@ Ignore attribute(s) att1[,...] for all variables.
 .SS -b, --verbose              
 Print messages to show progress.
 
-.SS -c, --var-diff-count=CNT   
-Print messages up until CNT data differences per variable.
+.SS -c, --var-diff-count=COUNT   
+Stop comparing a variable after COUNT data diffs.
 
-.SS -C, --diff-count=CNT       
-Print messages up until CNT data differences total.
+.SS -C, --diff-count=COUNT       
+Stop comparing after COUNT data diffs total for all variables.
 
 .SS -d, --data  
 Compare data (variable values).
@@ -53,6 +53,9 @@ Print usage message.
 .SS -i, --info
 Print file structure info for one or both files.
 
+.SS -l, --color
+Print colored messages.
+
 .SS -m, --metadata
 Compare metadata. Use -g to include global attributes.
   
@@ -84,12 +87,18 @@ FMT defaults differently per data type:
 .SS -P, --header-pad 
 Compare header padding in NetCDF3 classic and 64bit file formats.
 
+.SS -q, --quiet
+Do not print metadata or data differences.
+
 .SS -r, --group=group1[,...]
 Compare group(s) group1[,...] only. Group names can be full or short.
 "/" is the file root group. "/group1/subgroup2" is an example fullname, whereas "group1" and "subgroup2" are short names.
 
 .SS -s, --report-identical-files
 Report when files are the same.
+
+.SS -S, --statistics
+Report data difference statistics summary table after all comparisons.
 
 .SS -t, --tolerance=TOL
 Compare if absolute difference > TOL.
@@ -124,8 +133,8 @@ $ nccmp -mf -x recdata,rec test1a.nc test1b.nc
 .SS Compare data and allow differences up to a threshold
 $ nccmp -df -t 1e-3 test4a.nc test4b.nc
 
-.SS Run in parallel and report up to 5 differences per variable
-$ nccmp -df --threads 4 -c 5 in1.nc in2.nc
+.SS Run in parallel and report table up to 5 differences per variable
+$ nccmp -df -S --threads 4 -c 5 in1.nc in2.nc
 
 .SH BUGS
 No known bugs.

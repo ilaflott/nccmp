@@ -146,7 +146,7 @@ int nccmp_open_file(nccmp_state_t* state, nccmp_group_t** groups,
     if (filename)
     {
         if (state->opts.verbose) {
-          LOG_INFO("Opening %s\n", filename);
+          LOG_INFO_CHOOSE(state->opts.color, "Opening %s\n", filename);
         }
 
         *ngroups = state->opts.threads;

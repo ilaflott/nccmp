@@ -180,6 +180,23 @@ int nccmp_diff_strlist(nccmp_strlist_t* list1, nccmp_strlist_t* list2, nccmp_str
     return status;
 }
 
+void nccmp_debug_print_strlist(FILE* f, nccmp_strlist_t* list, char delim)
+{
+    int i;
+
+    if (! nccmp_is_strlist_valid(list)) {
+        return;
+    }
+
+    if (list->capacity > 0) {
+        fprintf(f, "%s", list->items[0]);
+    }
+
+    for(i = 1; i < list->capacity; ++i) {
+        fprintf(f, "%c%s", delim, list->items[i]);
+    }
+}
+
 int nccmp_exists_in_strlist(nccmp_strlist_t* list, const char* str)
 {
     return nccmp_index_in_strlist(list, str) != -1;
@@ -266,16 +283,12 @@ void nccmp_print_strlist(FILE* f, nccmp_strlist_t* list, char delim)
         return;
     }
 
-    if (list->capacity > 0) {
+    if (list->size > 0) {
         fprintf(f, "%s", list->items[0]);
     }
 
-    for(i = 1; i < list->capacity; ++i) {
+    for(i = 1; i < list->size; ++i) {
         fprintf(f, "%c%s", delim, list->items[i]);
-    }
-
-    if (list->capacity > 0) {
-        fprintf(f, "\n");
     }
 }
 

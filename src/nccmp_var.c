@@ -160,26 +160,26 @@ nccmp_strlist_t* make_cmp_var_name_list(nccmp_opt_t* opts, int ncid1, int ncid2)
 
     if(opts->variable) {
         if (opts->verbose) {
-            LOG_INFO("Using variables provided in list.\n");
+            LOG_INFO_CHOOSE(opts->color, "Using variables provided in list.\n");
         }
         status = nccmp_deep_copy_strlist(opts->variablelist, result);
     } else if (opts->exclude) {
         if (opts->verbose) {
-            LOG_INFO("Excluding variables in provided list.\n");
+            LOG_INFO_CHOOSE(opts->color, "Excluding variables in provided list.\n");
         }
         status = exclude_vars(opts, ncid1, ncid2, result, opts->excludelist);
     } else {
         if (opts->verbose) {
-            LOG_INFO("Using all variables.\n");
+            LOG_INFO_CHOOSE(opts->color, "Using all variables.\n");
         }
         status = all_varnames(opts, result, ncid1, ncid2);
         if (opts->debug) {
-            LOG_DEBUG("status = %d, ncid1 = %d, ncid2 = %d\n", status, ncid1, ncid2);
+            LOG_DEBUG_CHOOSE(opts->color, "status = %d, ncid1 = %d, ncid2 = %d\n", status, ncid1, ncid2);
         }
     }
 
     if (opts->verbose) {
-        LOG_INFO("%d variables to compare:", result->size);
+        LOG_INFO_CHOOSE(opts->color, "%d variables to compare:", result->size);
         for(i=0; i < result->size; ++i) {
             printf(" %s", result->items[i]);
         }
@@ -226,7 +226,7 @@ int validate_var_names(nccmp_opt_t* opts, nccmp_strlist_t* names, nccmp_strlist_
         }
 
         if (opts->verbose) {
-            LOG_INFO("Validating variable %s.\n", names->items[i]);
+            LOG_INFO_CHOOSE(opts->color, "Validating variable %s.\n", names->items[i]);
         }
 
         nccmp_add_to_strlist(processed, names->items[i]);
@@ -237,7 +237,7 @@ int validate_var_names(nccmp_opt_t* opts, nccmp_strlist_t* names, nccmp_strlist_
         if (idx1 < 0) {
             if (! opts->metadata) { /* This gets reported in cmpmeta. */
                 if (!opts->quiet) {
-                    PRINT_DIFF(opts->debug, "DIFFER : Failed to find variable %s in file \"%s\".\n",
+                    PRINT_DIFF(opts->color, opts->debug, " : Failed to find variable %s in file \"%s\".\n",
                                names->items[i], opts->file1);
                 }
             }
@@ -254,7 +254,7 @@ int validate_var_names(nccmp_opt_t* opts, nccmp_strlist_t* names, nccmp_strlist_
         if (idx2 < 0) {
             if (! opts->metadata) { /* This gets reported in cmpmeta. */
                 if (!opts->quiet) {
-                    PRINT_DIFF(opts->debug, "DIFFER : Failed to find variable %s in file \"%s\".\n",
+                    PRINT_DIFF(opts->color, opts->debug, " : Failed to find variable %s in file \"%s\".\n",
                                names->items[i], opts->file2);
                 }
             }
@@ -270,7 +270,7 @@ int validate_var_names(nccmp_opt_t* opts, nccmp_strlist_t* names, nccmp_strlist_
 
         if (vars1[idx1].len != vars2[idx2].len) {
             if (!opts->quiet) {
-                PRINT_DIFF(opts->debug, "DIFFER : VARIABLE : %s : SIZE : %d <> %d\n",
+                PRINT_DIFF(opts->color, opts->debug, " : VARIABLE : %s : SIZE : %d <> %d\n",
                            names->items[i], (int)vars1[idx1].len,
                            (int)vars2[idx2].len);
             }
@@ -304,16 +304,18 @@ void var_info_destroy(nccmp_var_t** vars, int* nvars)
     XFREE(*vars);
 }
 
-void nccmp_print_vars(nccmp_var_t *vars, int nvars)
+void nccmp_print_vars(nccmp_var_t *vars, int nvars, int color)
 {
     int i = 0;
     for(; i < nvars; ++i) {
-        LOG_DEBUG("i=%d name=%s ndims=%d natts=%d type=%d varid=%d\n",
-                  i, vars[i].name, vars[i].ndims, vars[i].natts, vars[i].type, vars[i].varid);
+        LOG_DEBUG_CHOOSE(color, 
+                "i=%d name=%s ndims=%d natts=%d type=%d varid=%d\n",
+                i, vars[i].name, vars[i].ndims, vars[i].natts, vars[i].type, 
+                vars[i].varid);
     }
 }
 
-void var_info_get(int ncid, nccmp_var_t* vars, int nvars, int verbose)
+void var_info_get(int ncid, nccmp_var_t* vars, int nvars, int verbose, int color)
 {
     int status, i, j, recid;
 
@@ -343,17 +345,17 @@ void var_info_get(int ncid, nccmp_var_t* vars, int nvars, int verbose)
         if (verbose) {
             if (vars[i].has_missing) {
                 switch(vars[i].missing.type) {
-                case NC_BYTE:   LOG_INFO("\"%s\" missing value: %d (byte)\n",           vars[i].name, vars[i].missing.m_schar);           break;
-                case NC_CHAR:   LOG_INFO("\"%s\" missing value: %d (char)\n",           vars[i].name, vars[i].missing.m_text);            break;
-                case NC_DOUBLE: LOG_INFO("\"%s\" missing value: %g (double)\n",         vars[i].name, vars[i].missing.m_double);          break;
-                case NC_FLOAT:  LOG_INFO("\"%s\" missing value: %g (float)\n",          vars[i].name, vars[i].missing.m_float);           break;
-                case NC_INT:    LOG_INFO("\"%s\" missing value: %d (int)\n",            vars[i].name, vars[i].missing.m_int);             break;
-                case NC_INT64:  LOG_INFO("\"%s\" missing value: %ll (long long)\n",     vars[i].name, vars[i].missing.m_longlong);        break;
-                case NC_SHORT:  LOG_INFO("\"%s\" missing value: %d (short)\n",          vars[i].name, vars[i].missing.m_short);           break;
-                case NC_UBYTE:  LOG_INFO("\"%s\" missing value: %d (unsigned byte)\n",  vars[i].name, vars[i].missing.m_uchar);           break;
-                case NC_UINT:   LOG_INFO("\"%s\" missing value: %d (unsigned int)\n",   vars[i].name, vars[i].missing.m_uint);            break;
-                case NC_UINT64: LOG_INFO("\"%s\" missing value: %ull (unsigned long long)\n", vars[i].name, vars[i].missing.m_ulonglong); break;
-                case NC_USHORT: LOG_INFO("\"%s\" missing value: %d (unsigned short)\n",       vars[i].name, vars[i].missing.m_ushort);    break;
+                case NC_BYTE:   LOG_INFO_CHOOSE(color, "\"%s\" missing value: %d (byte)\n",           vars[i].name, vars[i].missing.m_schar);           break;
+                case NC_CHAR:   LOG_INFO_CHOOSE(color, "\"%s\" missing value: %d (char)\n",           vars[i].name, vars[i].missing.m_text);            break;
+                case NC_DOUBLE: LOG_INFO_CHOOSE(color, "\"%s\" missing value: %g (double)\n",         vars[i].name, vars[i].missing.m_double);          break;
+                case NC_FLOAT:  LOG_INFO_CHOOSE(color, "\"%s\" missing value: %g (float)\n",          vars[i].name, vars[i].missing.m_float);           break;
+                case NC_INT:    LOG_INFO_CHOOSE(color, "\"%s\" missing value: %d (int)\n",            vars[i].name, vars[i].missing.m_int);             break;
+                case NC_INT64:  LOG_INFO_CHOOSE(color, "\"%s\" missing value: %ll (long long)\n",     vars[i].name, vars[i].missing.m_longlong);        break;
+                case NC_SHORT:  LOG_INFO_CHOOSE(color, "\"%s\" missing value: %d (short)\n",          vars[i].name, vars[i].missing.m_short);           break;
+                case NC_UBYTE:  LOG_INFO_CHOOSE(color, "\"%s\" missing value: %d (unsigned byte)\n",  vars[i].name, vars[i].missing.m_uchar);           break;
+                case NC_UINT:   LOG_INFO_CHOOSE(color, "\"%s\" missing value: %d (unsigned int)\n",   vars[i].name, vars[i].missing.m_uint);            break;
+                case NC_UINT64: LOG_INFO_CHOOSE(color, "\"%s\" missing value: %ull (unsigned long long)\n", vars[i].name, vars[i].missing.m_ulonglong); break;
+                case NC_USHORT: LOG_INFO_CHOOSE(color, "\"%s\" missing value: %d (unsigned short)\n",       vars[i].name, vars[i].missing.m_ushort);    break;
                 }
             }
         }

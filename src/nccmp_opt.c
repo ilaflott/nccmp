@@ -23,6 +23,7 @@
 static struct option const long_options[] =
 {
     {"Attribute",         required_argument,      0, 'A'},
+    {"color",             no_argument,            0, 'l'},
     {"data",              no_argument,            0, 'd'},
     {"debug",             no_argument,            0, 'D'},
     {"diff-count",        required_argument,      0, 'C'},
@@ -73,6 +74,7 @@ void nccmp_opt_init(nccmp_opt_t* popts)
     if (popts == NULL) return;
 
     popts->abstolerance     = 0;
+    popts->color            = 0;
     popts->data             = 0;
     popts->debug            = 0;
     popts->diff_count       = 0;
@@ -128,21 +130,52 @@ void print_features()
 
 void print_options(nccmp_opt_t* popts)
 {
-    LOG_DEBUG("abstolerance = %d\n", popts->abstolerance);
-    LOG_DEBUG("data = %d\n", popts->data);
-    LOG_DEBUG("diff_count = %d\n", popts->diff_count);
-    LOG_DEBUG("encoding = %d\n", popts->encoding);
-    LOG_DEBUG("global = %d\n", popts->global);
-    LOG_DEBUG("header_pad = %d\n", popts->header_pad);
-    LOG_DEBUG("history = %d\n", popts->history);
-    LOG_DEBUG("metadata = %d\n", popts->metadata);
-    LOG_DEBUG("nanequal = %d\n", popts->nanequal);
-    LOG_DEBUG("precision = %s\n", popts->precision);
-    LOG_DEBUG("quiet = %d\n", popts->quiet);
-    LOG_DEBUG("statistics = %d\n", popts->statistics);
-    LOG_DEBUG("threads = %d\n", popts->threads);
-    LOG_DEBUG("tolerance = %g\n", popts->tolerance);
-    LOG_DEBUG("var_diff_count = %d\n", popts->var_diff_count);
+   LOG_DEBUG_CHOOSE(popts->color, "abstolerance = %d\n", popts->abstolerance);
+   LOG_DEBUG_CHOOSE(popts->color, "color = %d\n", popts->color);
+   LOG_DEBUG_CHOOSE(popts->color, "data = %d\n", popts->data);
+   LOG_DEBUG_CHOOSE(popts->color, "debug = %d\n", popts->debug);
+   LOG_DEBUG_CHOOSE(popts->color, "diff_count = %d\n", popts->diff_count);
+   LOG_DEBUG_CHOOSE(popts->color, "encoding = %d\n", popts->encoding);
+
+   LOG_DEBUG_CHOOSE(popts->color, "excludelist = ");
+    nccmp_print_strlist(stdout, popts->excludelist, ' ');
+    fprintf(stdout, "\n");
+
+   LOG_DEBUG_CHOOSE(popts->color, "excludeattlist = ");
+    nccmp_print_strlist(stdout, popts->excludeattlist, ' ');
+    fprintf(stdout, "\n");
+    
+   LOG_DEBUG_CHOOSE(popts->color, "file1 = %s\n", popts->file1);
+   LOG_DEBUG_CHOOSE(popts->color, "file2 = %s\n", popts->file2);
+   LOG_DEBUG_CHOOSE(popts->color, "force = %d\n", popts->force);
+   LOG_DEBUG_CHOOSE(popts->color, "fortran = %d\n", popts->fortran);
+   LOG_DEBUG_CHOOSE(popts->color, "global = %d\n", popts->global);
+
+   LOG_DEBUG_CHOOSE(popts->color, "globalexclude = ");
+    nccmp_print_strlist(stdout, popts->globalexclude, ' ');
+    fprintf(stdout, "\n");
+
+   LOG_DEBUG_CHOOSE(popts->color, "groupnames = ");
+    nccmp_print_strlist(stdout, popts->groupnames, ' ');
+    fprintf(stdout, "\n");
+    
+   LOG_DEBUG_CHOOSE(popts->color, "header_pad = %d\n", popts->header_pad);
+   LOG_DEBUG_CHOOSE(popts->color, "history = %d\n", popts->history);
+   LOG_DEBUG_CHOOSE(popts->color, "info = %d\n", popts->info);
+   LOG_DEBUG_CHOOSE(popts->color, "metadata = %d\n", popts->metadata);
+   LOG_DEBUG_CHOOSE(popts->color, "missing = %d\n", popts->missing);
+   LOG_DEBUG_CHOOSE(popts->color, "nanequal = %d\n", popts->nanequal);
+   LOG_DEBUG_CHOOSE(popts->color, "precision = %s\n", popts->precision);
+   LOG_DEBUG_CHOOSE(popts->color, "quiet = %d\n", popts->quiet);
+   LOG_DEBUG_CHOOSE(popts->color, "report_identical = %d\n", popts->report_identical);
+   LOG_DEBUG_CHOOSE(popts->color, "statistics = %d\n", popts->statistics);
+   LOG_DEBUG_CHOOSE(popts->color, "threads = %d\n", popts->threads);
+   LOG_DEBUG_CHOOSE(popts->color, "tolerance = %g\n", popts->tolerance);
+   LOG_DEBUG_CHOOSE(popts->color, "var_diff_count = %d\n", popts->var_diff_count);
+    
+   LOG_DEBUG_CHOOSE(popts->color, "variablelist = ");
+    nccmp_print_strlist(stdout, popts->variablelist, ' ');
+    fprintf(stdout, "\n");    
 }
 
 void print_copyright()
@@ -235,7 +268,7 @@ int nccmp_opt_parse(int argc, const char** argv, nccmp_opt_t* popts)
         goto recover;
     }
 
-    while ( (c = getopt_long(argc, (char*const*)argv, "A:bc:C:dDefFgG:hHimMn:Np:qPr:sSt:T:v:Vw:x:", long_options, 0))
+    while ( (c = getopt_long(argc, (char*const*)argv, "A:bc:C:dDefFgG:hHilmMn:Np:qPr:sSt:T:v:Vw:x:", long_options, 0))
           != -1
         ) {
         switch (c) {
@@ -298,6 +331,10 @@ int nccmp_opt_parse(int argc, const char** argv, nccmp_opt_t* popts)
 
         case 'i':
             popts->info = 1;
+            break;
+
+        case 'l':
+            popts->color = 1;
             break;
 
         case 'm':

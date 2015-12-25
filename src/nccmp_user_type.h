@@ -45,10 +45,9 @@ void nccmp_build_user_type_tree_name(nccmp_user_type_t *type, char **result);
 /* Return pairs of unique_ids for field types that match by tree_name in both
    type field arrays.
  */
-nccmp_darray_t* ncccmp_create_user_type_field_id_pairs(
-        nccmp_user_type_t *parent1,
+nccmp_darray_t* ncccmp_create_user_type_field_id_pairs(nccmp_user_type_t *parent1,
         nccmp_user_type_t *parent2,
-        int debug);
+        int debug, int color);
 
 nccmp_user_type_t* nccmp_create_user_type(size_t n);
 
@@ -71,11 +70,7 @@ nccmp_strlist_t* nccmp_get_user_type_names(int ncid1, int ncid2, int ntypes1, in
         nc_type *typeids1, nc_type *typeids2, int clazz);
 
 nccmp_strlist_t* nccmp_get_user_type_compound_field_names(int ncid1, int ncid2,
-        const char* name, int debug);
-
-/* Return union of all field names in both user types. */
-nccmp_strlist_t* nccmp_get_user_type_compound_field_names_cached(nccmp_user_type_t *type1,
-        nccmp_user_type_t *type2, int debug);
+        const char* name, int debug, int color);
 
 /* @param type: Must be newly pre-allocated pointer. */
 void nccmp_init_user_type(nccmp_user_type_t *type);
@@ -87,10 +82,10 @@ int nccmp_is_user_type_compound_with_fields(nccmp_user_type_t *type);
 
 int nccmp_is_user_type_field(nccmp_user_type_t *type);
 
-nccmp_darray_t* nccmp_load_group_user_type_array(int group_id, int *unique_id, int debug);
+nccmp_darray_t* nccmp_load_group_user_type_array(int group_id, int *unique_id, int debug, int color);
 
 /* Loads all user-types in group and subgroups indexed by a unique id. */
-nccmp_darray_t* nccmp_load_group_user_type_map(int group_id, int debug);
+nccmp_darray_t* nccmp_load_group_user_type_map(int group_id, int debug, int color);
 
 void nccmp_load_user_type_compound_tree(
 		int ncid,

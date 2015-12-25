@@ -24,7 +24,7 @@ int test_nccmp_build_user_type_field_path_str()
     }
     HANDLE_NC_ERROR(status);
 
-    types = nccmp_load_group_user_type_map(ncid, 0 /*debug*/);
+    types = nccmp_load_group_user_type_map(ncid, 0 /*debug*/, 0);
 
     type = NCCMP_USER_TYPE_ITEM(types, 0);
     strcpy(str, "");
@@ -130,7 +130,7 @@ int test_nccmp_get_user_type_compound_field_names()
     status = nc_open(file2, NC_NOWRITE, & ncid2);
     HANDLE_NC_ERROR(status);
 
-    names = nccmp_get_user_type_compound_field_names(ncid1, ncid2, "comp3", 0);
+    names = nccmp_get_user_type_compound_field_names(ncid1, ncid2, "comp3", 0, 0);
 
     if (!names) {
         PRINT("Failed to create names list.\n");
@@ -178,13 +178,12 @@ int test_ncccmp_create_user_type_field_id_pairs()
     status = nc_open(file2, NC_NOWRITE, & ncid2);
     HANDLE_NC_ERROR(status);
 
-    types1 = nccmp_load_group_user_type_map(ncid1, 0);
-    types2 = nccmp_load_group_user_type_map(ncid2, 0);
+    types1 = nccmp_load_group_user_type_map(ncid1, 0, 0);
+    types2 = nccmp_load_group_user_type_map(ncid2, 0, 0);
 
-    pairs = ncccmp_create_user_type_field_id_pairs(
-            NCCMP_USER_TYPE_ITEM(types1, 13), // comp2
+    pairs = ncccmp_create_user_type_field_id_pairs(NCCMP_USER_TYPE_ITEM(types1, 13), // comp2
             NCCMP_USER_TYPE_ITEM(types2, 13), 
-            0);
+            0, 0);
 
     if (expected != pairs->num_items) {
         PRINT("Unexpected number of pairs %d <> %d\n", expected, pairs->num_items);
@@ -224,7 +223,7 @@ int test_nccmp_load_user_types()
     status = nc_open(file1, NC_NOWRITE, & ncid);
     HANDLE_NC_ERROR(status);
 
-    types = nccmp_load_group_user_type_map(ncid, 0);
+    types = nccmp_load_group_user_type_map(ncid, 0, 0);
 
     if (!types) {
         PRINT("Unexpected null types.");
@@ -345,7 +344,7 @@ int test_nccmp_print_user_types()
     status = nc_open(file1, NC_NOWRITE, & ncid);
     HANDLE_NC_ERROR(status);
 
-    types = nccmp_load_group_user_type_map(ncid, 0);
+    types = nccmp_load_group_user_type_map(ncid, 0, 0);
 
     strcpy(str, "");
     nccmp_user_type_array_to_str(types, str);

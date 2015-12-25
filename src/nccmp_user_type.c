@@ -151,7 +151,7 @@ nccmp_strlist_t* nccmp_get_user_type_names(int ncid1, int ncid2,
 }
 
 nccmp_strlist_t* nccmp_get_user_type_compound_field_names(int ncid1, int ncid2,
-        const char* name, int debug)
+        const char* name, int debug, int color)
 {
     nccmp_strlist_t *result;
     int status, typeid, fieldid, group;
@@ -181,7 +181,7 @@ nccmp_strlist_t* nccmp_get_user_type_compound_field_names(int ncid1, int ncid2,
             if (!nccmp_exists_in_strlist(result, fieldname)) {
                 nccmp_add_to_strlist(result, fieldname);
                 if (debug) {
-                    LOG_DEBUG("Adding compound type %s field name %s to set.\n",
+                    LOG_DEBUG_CHOOSE(color, "Adding compound type %s field name %s to set.\n",
                                 name, fieldname);
                 }
             }
@@ -191,45 +191,9 @@ nccmp_strlist_t* nccmp_get_user_type_compound_field_names(int ncid1, int ncid2,
     return result;
 }
 
-nccmp_strlist_t* nccmp_get_user_type_compound_field_names_cached(
-        nccmp_user_type_t *type1, nccmp_user_type_t *type2, int debug)
-{
-    nccmp_strlist_t *result;
-    nccmp_user_type_t *type, *field;
-    int group, i;
-
-    result = nccmp_new_strlist(NC_MAX_NAME);
-    if (!type1 || !type2) {
-        goto recover;
-    }
-
-    for(group = 0; group < 2; ++group) {
-        switch(group) {
-        case 0: type = type1; break;
-        case 1: type = type2; break;
-        }
-        if (type->fields) {
-            for(i = 0; i < type->fields->num_items; ++i) {
-            	field = (nccmp_user_type_t*) type->fields->items[i];
-                if (! nccmp_exists_in_strlist(result, field->name)) {
-                    nccmp_add_to_strlist(result, field->name);
-                    if (debug) {
-                        LOG_DEBUG("Adding compound type %s field name %s to set.\n",
-                                    type->name, field->name);
-                    }
-                }
-            }
-        }
-    }
-
-recover:
-    return result;
-}
-
-nccmp_darray_t* ncccmp_create_user_type_field_id_pairs(
-        nccmp_user_type_t *parent1,
+nccmp_darray_t* ncccmp_create_user_type_field_id_pairs(nccmp_user_type_t *parent1,
         nccmp_user_type_t *parent2,
-        int debug)
+        int debug, int color)
 {
     int i, j;
     nccmp_pair_int_t *pair = NULL;
@@ -246,7 +210,7 @@ nccmp_darray_t* ncccmp_create_user_type_field_id_pairs(
                 pair->second = j;
                 nccmp_darray_append(result, pair);
                 if (debug) {
-                    LOG_DEBUG("field id pair tree_name=%s first=%d second=%d\n",
+                    LOG_DEBUG_CHOOSE(color, "field id pair tree_name=%s first=%d second=%d\n",
                               field1->tree_name, pair->first, pair->second);
                 }
                 break;
@@ -311,17 +275,16 @@ nccmp_darray_t* nccmp_find_user_type_leafs(nccmp_darray_t *types, nccmp_user_typ
 	return result;
 }
 
-void nccmp_load_group_user_types_recurse(
-		int group_id,
+void nccmp_load_group_user_types_recurse(int group_id,
 		nccmp_darray_t *output,
 		int *id,
-		int debug)
+		int debug, int color)
 {
 	int status, child_i, num_children, children[NC_MAX_NAME];
 	nccmp_darray_t *types;
 
 	/* Load own. */
-	types = nccmp_load_group_user_type_array(group_id, id, debug);
+	types = nccmp_load_group_user_type_array(group_id, id, debug, color);
 	nccmp_darray_extend(output, types);
 	nccmp_darray_destroy(types);
 
@@ -330,7 +293,7 @@ void nccmp_load_group_user_types_recurse(
     HANDLE_NC_ERROR(status);
 
     for(child_i = 0; child_i < num_children; ++child_i) {
-    	nccmp_load_group_user_types_recurse(children[child_i], output, id, debug);
+    	nccmp_load_group_user_types_recurse(children[child_i], output, id, debug, color);
     }
 }
 
@@ -351,13 +314,13 @@ void nccmp_set_user_type_map(nccmp_darray_t *map, nccmp_darray_t *types)
 	}
 }
 
-nccmp_darray_t* nccmp_load_group_user_type_map(int group_id, int debug)
+nccmp_darray_t* nccmp_load_group_user_type_map(int group_id, int debug, int color)
 {
 	nccmp_darray_t *map, *types;
 	int id = 0;
 
 	types = nccmp_darray_create(1);
-	nccmp_load_group_user_types_recurse(group_id, types, & id, debug);
+	nccmp_load_group_user_types_recurse(group_id, types, & id, debug, color);
 
 	map = nccmp_darray_create(id);
 	nccmp_set_user_type_map(map, types);
@@ -366,7 +329,7 @@ nccmp_darray_t* nccmp_load_group_user_type_map(int group_id, int debug)
 	return map;
 }
 
-nccmp_darray_t* nccmp_load_group_user_type_array(int group_id, int *id, int debug)
+nccmp_darray_t* nccmp_load_group_user_type_array(int group_id, int *id, int debug, int color)
 {
     int status;
     int i, typeid, *typeids = NULL, ntypeids = 0, field_i;
@@ -438,7 +401,7 @@ nccmp_darray_t* nccmp_load_group_user_type_array(int group_id, int *id, int debu
         results_str = XMALLOC(char, NC_MAX_NAME * NC_MAX_NAME);
         strcpy(results_str, "");
         nccmp_user_type_array_to_str(results, results_str);
-        LOG_DEBUG("Loaded %d user-defined types for group_id = %d\n%s",
+        LOG_DEBUG_CHOOSE(color, "Loaded %d user-defined types for group_id = %d\n%s",
                 ntypeids, group_id, results_str);
         XFREE(results_str);
     }

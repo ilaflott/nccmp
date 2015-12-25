@@ -46,7 +46,7 @@ int validate_var_names(nccmp_opt_t* opts, nccmp_strlist_t* names, nccmp_strlist_
 void var_info_destroy(nccmp_var_t** vars, int* nvars);
 
 /* Read all the file's metadata for variables. */
-void var_info_get(int ncid, nccmp_var_t* vars, int nvars, int debug);
+void var_info_get(int ncid, nccmp_var_t* vars, int nvars, int debug, int color);
 
 void var_info_init(int ncid, nccmp_var_t** vars, int* nvars);
 
@@ -66,6 +66,6 @@ size_t nccmp_get_var_last_dim_num_items(const nccmp_var_t *var);
 
 int nccmp_get_var_type(const nccmp_var_t *var);
 
-void nccmp_print_vars(nccmp_var_t *vars, int nvars);
+void nccmp_print_vars(nccmp_var_t *vars, int nvars, int color);
 
 #endif
