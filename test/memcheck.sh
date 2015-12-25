@@ -11,7 +11,8 @@ NOCOLOR='\033[0m'
 for f in test_nccmp_??.sh; do
     rm -f $e 
     ./$f
-    
+    cp -f $e $e.$f
+
     if test "$?" = "0"; then :; else
         echo -e ${RED}FAIL: $f ${NOCOLOR}
     fi
