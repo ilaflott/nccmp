@@ -17,6 +17,8 @@
    59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
+#include <log.h>
+#include <math.h>
 #include <nccmp.h>
 #include <nccmp_dim.h>
 #include <nccmp_group.h>
@@ -30,9 +32,7 @@
 #include <nccmp_utils.h>
 #include <nccmp_var.h>
 #include <netcdf.h>
-#include <math.h>
 
-#include "log.h"
 
 int nccmp_run(nccmp_state_t* state)
 {

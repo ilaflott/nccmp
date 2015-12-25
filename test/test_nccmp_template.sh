@@ -3,12 +3,14 @@
 echo $I. $HELP
 
 $srcdir/test_nccmp_setup.sh $DATA $I
-
+TRUTH=$srcdir/stderr$I.txt
 NCGEN_VER=$(ncgen -v 2>&1 | grep -e version | cut -d' ' -f4)
+
 if [ ${NCGEN_VER:0:5} != "4.3.3" ]; then
-    TRUTH=$srcdir/stderr$I.pre433.txt
-else
-    TRUTH=$srcdir/stderr$I.txt
+    LEGACY_TRUTH=$srcdir/stderr$I.pre433.txt
+    if [ -e $LEGACY_TRUTH ]; then
+        TRUTH=$LEGACY_TRUTH
+    fi
 fi
 
 LOG=stderr$I.tmp
