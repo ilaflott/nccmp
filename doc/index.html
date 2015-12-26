@@ -2,6 +2,7 @@
 <head>
 
 <style>
+body { font: normal 14px Verdana, Arial, sans-serif; }
 pre.code { background-color: lightgray; }
 .code.command { font-weight: bold; }
 .code.comment { color: green; }
@@ -31,9 +32,11 @@ width="125" height="37" border="0" alt="SourceForge.net Logo" /></a>
 </p>
 <p>
 <font SIZE="+4">
-nccmp
+nccmp - Compare NetCDF Files
 </font>
-
+</p>
+<p>
+<img src="screenshot1.png" alt="nccmp terminal screenshot">
 </p>
 
 <p>
@@ -224,6 +227,7 @@ Download
 </p>
 
 <h4>Windows</h4>
+<h5>MSYS2</h5>
 <p>
 <pre class="code">
 <span class="code comment"># 64-bit
@@ -231,14 +235,21 @@ Download
 </pre>
 </p>
 
-<h4>Cygwin - Windows</h4>
+<h5>Cygwin</h5>
 <p>Run either setup-x86.exe or setup-x86_64.exe, and select All => Science => nccmp.
 </p>
 
-<h4>Mac OSX Homebrew</h4>
+<h4>Mac OSX</h4>
+<h5>Homebrew</h5>
 <p><pre class="code"><span class="code command">$ brew tap homebrew/science
 $ brew install nccmp
 $ brew test nccmp</span>
+<span class="code comment"># Direct download.
+</span><span class="code command">$ wget https://downloads.sourceforge.net/project/nccmp/mac/nccmp-1.8.0.0-mac-brew.zip</span>
+</pre>
+<h5>MacPorts</h5>
+<p><pre class="code"><span class="code comment"># Direct download.
+</span><span class="code command">$ wget https://downloads.sourceforge.net/project/nccmp/mac/nccmp-1.8.0.0-macports.zip</span>
 </pre>
 </p>
 
@@ -556,8 +567,7 @@ DIFFER : VARIABLE : var1 : POSITION : [0,0,1] : FIELD : myComp[1,1,0,1].myLongLo
 </span><span class="code comment">
 # Print statistics and hide diff messages.
 </span><span class="code command">$ nccmp -dfqS test21a.68.nc test21b.68.nc
-</span><span>
-Variable         Group           Count     Sum AbsSum     Min     Max  Range    Mean   StdDev
+</span><span>Variable         Group           Count     Sum AbsSum     Min     Max  Range    Mean   StdDev
 var1             /                   2      -3      3      -2      -1      1    -1.5 0.707107
 var2.com2.com1.i /                   2     -30     30     -20     -10     10     -15  7.07107
 var3.com2.com1.i /group              2    -300    300    -200    -100    100    -150  70.7107
