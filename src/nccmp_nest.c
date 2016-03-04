@@ -2,7 +2,7 @@
 #include <nccmp_nest.h>
 #include <nccmp_odometer.h>
 
-void nccmp_build_nest_index_str(nccmp_nest_t *nest, int fortran, char *result)
+void nccmp_build_nest_index_str(nccmp_nest_t *nest, int is_fortran, char *result)
 {
     char tmp[32];
     int i = 0;
@@ -13,7 +13,7 @@ void nccmp_build_nest_index_str(nccmp_nest_t *nest, int fortran, char *result)
 
     strcat(result, "[");
 
-    if (fortran) {
+    if (is_fortran) {
         // Reverse order for fortran and make 1-based.
         for(i = nest->num_dims - 1; i >= 0; --i) {
             sprintf(tmp, "%d", nest->index[i] + 1);
@@ -35,14 +35,14 @@ void nccmp_build_nest_index_str(nccmp_nest_t *nest, int fortran, char *result)
     strcat(result, "]");
 }
 
-void nccmp_build_nest_str(nccmp_nest_t *nest, int fortran, char *result)
+void nccmp_build_nest_str(nccmp_nest_t *nest, int is_fortran, char *result)
 {
     if (!nest || !result) {
         return;
     }
 
     if (nest->prev) {
-        nccmp_build_nest_str(nest->prev, fortran, result);
+        nccmp_build_nest_str(nest->prev, is_fortran, result);
     }
 
     if (nccmp_is_user_type_field(nest->type1)) {
@@ -53,18 +53,18 @@ void nccmp_build_nest_str(nccmp_nest_t *nest, int fortran, char *result)
     }
 
     if (nest->num_dims > 0) {
-        nccmp_build_nest_index_str(nest, fortran, result);
+        nccmp_build_nest_index_str(nest, is_fortran, result);
     }
 }
 
-void nccmp_build_nest_str_no_index(nccmp_nest_t *nest, int fortran, char *result)
+void nccmp_build_nest_str_no_index(nccmp_nest_t *nest, int is_fortran, char *result)
 {
     if (!nest || !result) {
         return;
     }
 
     if (nest->prev) {
-        nccmp_build_nest_str_no_index(nest->prev, fortran, result);
+        nccmp_build_nest_str_no_index(nest->prev, is_fortran, result);
     }
 
     if (nccmp_is_user_type_field(nest->type1)) {

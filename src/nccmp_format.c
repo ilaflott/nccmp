@@ -6,12 +6,12 @@
 #include <nccmp_common.h>
 
 #define GET_INDEX_STR(TYPE)                                                    \
-void nccmp_get_index_str_##TYPE(int nitems, TYPE* items, int last, char* out, char fortran)    \
+void nccmp_get_index_str_##TYPE(int nitems, TYPE* items, int last, char* out, char is_fortran)    \
 {                                                                              \
     int i;                                                                     \
     char tmp[NCCMP_MAX_TMP_STR_SIZE];                                          \
     strcpy(out, "");                                                           \
-    if (fortran) {                                                             \
+    if (is_fortran) {                                                             \
         sprintf(tmp, "%d", last + 1);                                          \
         strcat(out, tmp);                                                      \
                                                                                \
@@ -51,12 +51,12 @@ GET_PRODUCT_INDEX_INVERSE_ARRAY(size_t)
 #undef GET_PRODUCT_INDEX_INVERSE_ARRAY
 
 #define GET_PRODUCT_INDEX_STR(NAME, TYPE) \
-void nccmp_get_product_index_str_##NAME(TYPE nitems, TYPE* limits, TYPE index, char* out, char fortran) \
+void nccmp_get_product_index_str_##NAME(TYPE nitems, TYPE* limits, TYPE index, char* out, char is_fortran) \
 { \
     TYPE items[NCCMP_MAX_TMP_STR_SIZE]; \
     \
     nccmp_get_product_index_inverse_array_##TYPE(nitems, limits, index, items); \
-    nccmp_get_index_str_##TYPE(nitems, items, items[nitems-1], out, fortran); \
+    nccmp_get_index_str_##TYPE(nitems, items, items[nitems-1], out, is_fortran); \
 }
 GET_PRODUCT_INDEX_STR(int, int)
 GET_PRODUCT_INDEX_STR(size_t, size_t)
@@ -178,7 +178,7 @@ int nccmp_is_precision_hex(nccmp_opt_t* opts)
            (strchr(opts->precision, 'X') || strchr(opts->precision, 'x'));
 }
 
-void nccmp_pretty_print_att(int ncid, const char* varname, 
+void nccmp_pretty_print_att(int ncid, const char* varname,
     int varid, const char* name, char* result, int maxstrlen)
 {
     int status, i;
@@ -197,7 +197,7 @@ void nccmp_pretty_print_att(int ncid, const char* varname,
     unsigned int       *pui = 0;
     unsigned long long *pull = 0;
     unsigned short     *pus = 0;
-	
+
     status = nc_inq_att(ncid, varid, name, &type, &len);
     if (status != NC_NOERR) {
         if (varid == NC_GLOBAL) {

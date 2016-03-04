@@ -63,12 +63,12 @@ void nccmp_endian_to_str(int value, char* result);
     Returns formatted string of dimension indices.
     Intended to print out locations of value differences.
 
-    @param fortran: If should use fortran index convention.
+    @param is_fortran: If should use fortran index convention.
     @param last: Extra digit not in items array to print.
     @param[out] out: Should be pre-allocated large enough for output.
 */
 #define GET_INDEX_STR(TYPE)                                                    \
-    void nccmp_get_index_str_##TYPE(int nitems, TYPE* items, int last, char* out, char fortran);
+    void nccmp_get_index_str_##TYPE(int nitems, TYPE* items, int last, char* out, char is_fortran);
 GET_INDEX_STR(int)
 GET_INDEX_STR(size_t)
 #undef GET_INDEX_STR
@@ -84,12 +84,12 @@ GET_PRODUCT_INDEX_INVERSE_ARRAY(size_t)
     Example,
         limits = {10,20,30}
         index = 5999
-        fortran = 0
+        is_fortran = 0
         out = "9 19 29"
 
 */
 #define GET_PRODUCT_INDEX_STR(NAME, TYPE)                                      \
-    void nccmp_get_product_index_str_##NAME(TYPE nitems, TYPE* limits, TYPE index, char* out, char fortran);
+    void nccmp_get_product_index_str_##NAME(TYPE nitems, TYPE* limits, TYPE index, char* out, char is_fortran);
 GET_PRODUCT_INDEX_STR(int, int)
 GET_PRODUCT_INDEX_STR(size_t, size_t)
 #undef GET_PRODUCT_INDEX_STR
@@ -100,7 +100,7 @@ int nccmp_is_precision_hex(nccmp_opt_t* opts);
    Assumes 'str' is pre-allocated large enough to hold output string,
    defined by 'maxstrlen'.
 */
-void nccmp_pretty_print_att(int ncid, const char* varname, int varid, 
+void nccmp_pretty_print_att(int ncid, const char* varname, int varid,
     const char* name, char* result, int maxstrlen);
 
 #define TYPE_ARRAY_TO_STR(NAME, TYPE, FORMAT)                                  \

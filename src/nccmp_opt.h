@@ -125,7 +125,7 @@ typedef struct NCCMPOPTS
     char*   file1;                 /* two files to compare */
     char*   file2;                 /*                      */
     int     force;                 /* continue checking after 1st difference */
-    int     fortran;               /* fortran style index printing */
+    int     is_fortran;               /* fortran style index printing */
     int     global;                /* compare global attributes */
     nccmp_strlist_t* globalexclude;/* list of global atts to exclude */
     nccmp_strlist_t* groupnames;   /* list of group names to compare */

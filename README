@@ -33,7 +33,7 @@ II. Developer Tasks
     autoheader/autoconf 2.68
 
   And package it up into a tarball.
-    make -f Makefile.dev sdist VER=1.2.3
+    make -f Makefile.dev sdist VER=1.2.3.0
 
 3. Distribution
 

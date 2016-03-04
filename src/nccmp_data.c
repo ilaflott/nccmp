@@ -373,7 +373,7 @@ int nccmp_cmp_var_string(nccmp_state_t* state, int ncid1, int ncid2,
                     goto recover;
                 }
                 if (!state->opts.quiet) {
-                    nccmp_get_index_str_size_t(v1->ndims, start, i, idx_str, state->opts.fortran);
+                    nccmp_get_index_str_size_t(v1->ndims, start, i, idx_str, state->opts.is_fortran);
                     PRINT_DIFF(state->opts.color, state->opts.debug, DIFF_MSG, v1->name, idx_str, s1[i], s2[i]);
                 }
                 if ( (COUNT_EQUAL == diff_count_status) || !state->opts.force ) {
@@ -447,13 +447,13 @@ int nccmp_cmp_var_user_type_compound_field_array_atomic_type_string(nccmp_state_
                 }
                 if (!state->opts.quiet) {
                     nccmp_get_index_str_size_t(v1->ndims, start, array_i, root_idx_str,
-                                         state->opts.fortran);
+                                         state->opts.is_fortran);
                     nccmp_get_product_index_str_int(
                     		child_field1->num_dims,
 							child_field1->dim_sizes,
                             i, array_idx_str,
-                            state->opts.fortran);
-                    if (state->opts.fortran) {
+                            state->opts.is_fortran);
+                    if (state->opts.is_fortran) {
                         sprintf(idx_str, "%s,%s", array_idx_str, root_idx_str);
                     } else {
                         sprintf(idx_str, "%s,%s", root_idx_str, array_idx_str);
@@ -551,13 +551,13 @@ int nccmp_cmp_var_user_type_compound_field_array_atomic_type(nccmp_state_t* stat
             }                                                                                       \
             if (!state->opts.quiet) {                                                        \
                 nccmp_get_index_str_size_t(v1->ndims, start, array_i, root_idxstr,           \
-                                     state->opts.fortran);                                   \
+                                     state->opts.is_fortran);                                   \
                 nccmp_get_product_index_str_int(											 \
                 		child_field1->num_dims,     										 \
 						child_field1->dim_sizes,           									 \
                                           diff_offset, array_idxstr,                         \
-                                          state->opts.fortran);                              \
-                if (state->opts.fortran) {                                                   \
+                                          state->opts.is_fortran);                              \
+                if (state->opts.is_fortran) {                                                   \
                     sprintf(idx_str, "%s,%s", array_idxstr, root_idxstr);                    \
                 } else {                                                                     \
                     sprintf(idx_str, "%s,%s", root_idxstr, array_idxstr);                    \
@@ -770,12 +770,12 @@ int nccmp_cmp_var_user_type_compound_field_array_user_type_enum(nccmp_state_t* s
                     goto recover;                                              \
                 }                                                              \
                 if (!state->opts.quiet) {                                      \
-                    nccmp_get_index_str_size_t(v1->ndims, start, array_i, root_idx_str, state->opts.fortran);    \
+                    nccmp_get_index_str_size_t(v1->ndims, start, array_i, root_idx_str, state->opts.is_fortran);    \
                     nccmp_get_product_index_str_int(field1->num_dims,    						                 \
                     								field1->dim_sizes,                         					 \
 													i, array_idx_str,                                            \
-													state->opts.fortran);                                        \
-                    if (state->opts.fortran) {                                                                   \
+													state->opts.is_fortran);                                        \
+                    if (state->opts.is_fortran) {                                                                   \
                         sprintf(idx_str, "%s,%s", array_idx_str, root_idx_str);                                  \
                     } else {                                                                                     \
                         sprintf(idx_str, "%s,%s", root_idx_str, array_idx_str);                                  \
@@ -878,12 +878,12 @@ int nccmp_cmp_var_user_type_compound_field_array_user_type_opaque(nccmp_state_t*
                     goto recover;
                 }
                 if (!state->opts.quiet) {
-                    nccmp_get_index_str_size_t(ndims, start, array_i, root_idx_str, state->opts.fortran);
+                    nccmp_get_index_str_size_t(ndims, start, array_i, root_idx_str, state->opts.is_fortran);
                     nccmp_get_product_index_str_int(field1->num_dims,
                     								field1->dim_sizes,
 													i, array_idx_str,
-													state->opts.fortran);
-                    if (state->opts.fortran) {
+													state->opts.is_fortran);
+                    if (state->opts.is_fortran) {
                         sprintf(idx_str, "%s,%s", array_idx_str, root_idx_str);
                     } else {
                         sprintf(idx_str, "%s,%s", root_idx_str, array_idx_str);
@@ -1085,7 +1085,7 @@ int nccmp_cmp_var_user_type_compound_field_nonarray_atomic_type_string(
                 goto recover;
             }
             if (!state->opts.quiet) {
-                nccmp_get_index_str_size_t(v1->ndims, start, i, idx_str, state->opts.fortran);
+                nccmp_get_index_str_size_t(v1->ndims, start, i, idx_str, state->opts.is_fortran);
                 strcpy(field_path_str, "");
                 nccmp_build_user_type_field_path_str(field1, field_path_str);
                 PRINT_DIFF(state->opts.color, state->opts.debug, DIFF_MSG_FIELD, v1->name, idx_str, field_path_str, s1[0], s2[0]);
@@ -1205,7 +1205,7 @@ int nccmp_cmp_var_user_type_compound_field_nonarray_atomic_type(nccmp_state_t* s
                                            (double)item1.m_##NAME1 - (double)item2.m_##NAME2);      \
         }                                                                                           \
         if (!state->opts.quiet) {                                                                   \
-            nccmp_get_index_str_size_t(v1->ndims, start, diff_offset, idx_str, state->opts.fortran);\
+            nccmp_get_index_str_size_t(v1->ndims, start, diff_offset, idx_str, state->opts.is_fortran);\
             if (print_hex) {                                                            \
                 nccmp_##NAME1##_to_hex(item1.m_##NAME1, str1);                          \
                 nccmp_##NAME2##_to_hex(item2.m_##NAME2, str2);                          \
@@ -1255,9 +1255,9 @@ int nccmp_cmp_var_user_type_compound_field_nonarray_atomic_type(nccmp_state_t* s
             }                                                                                           \
             if (!state->opts.quiet) {                                                                   \
                 if ((v1->ndims == 1)  && (v1->has_rec_dim)) {                                           \
-                    nccmp_get_index_str_size_t(v1->ndims, start, rec, idx_str, state->opts.fortran);    \
+                    nccmp_get_index_str_size_t(v1->ndims, start, rec, idx_str, state->opts.is_fortran);    \
                 } else {                                                                                \
-                    nccmp_get_index_str_size_t(v1->ndims, start, i, idx_str, state->opts.fortran);      \
+                    nccmp_get_index_str_size_t(v1->ndims, start, i, idx_str, state->opts.is_fortran);      \
                 }                                                                                       \
                 if (print_hex) {                                                                        \
                     nccmp_##NAME1##_to_hex(item1.m_##NAME1, str1);                                      \
@@ -1363,7 +1363,7 @@ int nccmp_cmp_var_user_type_compound_field_nonarray_user_type_compound(nccmp_sta
         LOG_DEBUG_CHOOSE(state->opts.color, "cmp_var_user_type_compound_field_nonarray_user_type_compound\n");
     }
 
-    child_field_ids = ncccmp_create_user_type_field_id_pairs(field_type1, 
+    child_field_ids = ncccmp_create_user_type_field_id_pairs(field_type1,
             field_type2,
             state->opts.debug, state->opts.color);
 
@@ -1421,7 +1421,7 @@ int nccmp_cmp_var_user_type_compound_field_nonarray_user_type_enum(nccmp_state_t
                 goto recover;                                                  \
             }                                                                  \
             if (!state->opts.quiet) {                                          \
-                nccmp_get_index_str_size_t(state->vars1[varid1].ndims, start, item_i, idx_str, state->opts.fortran); \
+                nccmp_get_index_str_size_t(state->vars1[varid1].ndims, start, item_i, idx_str, state->opts.is_fortran); \
                 PRINT_DIFF(state->opts.color, state->opts.debug, DIFF_MSG, state->vars1[varid1].name, idx_str, str1, str2);             \
             }                                                                  \
             if ( (COUNT_EQUAL == diff_count_status) || !state->opts.force) {   \
@@ -1510,7 +1510,7 @@ int nccmp_cmp_var_user_type_compound_field_nonarray_user_type_opaque(nccmp_state
                 goto recover;
             }
             if (!state->opts.quiet) {
-                nccmp_get_index_str_size_t(ndims, start, item_i, idx_str, state->opts.fortran);
+                nccmp_get_index_str_size_t(ndims, start, item_i, idx_str, state->opts.is_fortran);
                 str1 = nccmp_realloc_bytes_hex_str(str1, nbytes);
                 str2 = nccmp_realloc_bytes_hex_str(str2, nbytes);
                 nccmp_bytes_to_hex_str(bytes1, nbytes, str1);
@@ -1663,7 +1663,7 @@ int nccmp_cmp_var_user_type_compound_field(nccmp_state_t* state, int ncid1, int 
 int nccmp_cmp_var_user_type_compound_field_ids(nccmp_state_t* state, int ncid1, int ncid2,
         int varid1, int varid2, size_t* start, size_t* count,
         int nitems, int rec, size_t* limits, void* data1, void* data2,
-        nccmp_user_type_t* comp_type1, nccmp_user_type_t* comp_type2, 
+        nccmp_user_type_t* comp_type1, nccmp_user_type_t* comp_type2,
         nccmp_darray_t *field_ids)
 {
     int status, last_status = EXIT_SUCCESS;
@@ -1709,7 +1709,7 @@ int nccmp_cmp_var_user_type_compound(nccmp_state_t* state, int ncid1, int ncid2,
         LOG_DEBUG_CHOOSE(state->opts.color, "cmp_var_user_type_compound\n");
     }
 
-    field_ids = ncccmp_create_user_type_field_id_pairs(comp_type1, 
+    field_ids = ncccmp_create_user_type_field_id_pairs(comp_type1,
                     comp_type2,
                     state->opts.debug, state->opts.color);
 
@@ -1795,7 +1795,7 @@ int nccmp_cmp_var_user_type_enum(nccmp_state_t* state, int ncid1, int ncid2,
                     goto recover_##NAME1##_##NAME2;                            \
                 }                                                              \
                 if (!state->opts.quiet) {                                      \
-                    nccmp_get_index_str_size_t(v1->ndims, start, item_i, idx_str, state->opts.fortran); \
+                    nccmp_get_index_str_size_t(v1->ndims, start, item_i, idx_str, state->opts.is_fortran); \
                     PRINT_DIFF(state->opts.color, state->opts.debug, DIFF_MSG, v1->name, idx_str, str1, str2);             \
                 }                                                                                       \
                 if ( (COUNT_EQUAL == diff_count_status) || !state->opts.force) {                        \
@@ -1881,9 +1881,9 @@ int nccmp_cmp_var_user_type_nest_atomic_string(nccmp_state_t* state,
         }
         if (!state->opts.quiet) {
             idx_str[0] = 0;
-            nccmp_get_index_str_size_t(state->vars1[varid1].ndims, start, item, idx_str, state->opts.fortran);
+            nccmp_get_index_str_size_t(state->vars1[varid1].ndims, start, item, idx_str, state->opts.is_fortran);
             nest_str[0] = 0;
-            nccmp_build_nest_str(nest, state->opts.fortran, nest_str);
+            nccmp_build_nest_str(nest, state->opts.is_fortran, nest_str);
             PRINT_DIFF(state->opts.color, state->opts.debug, DIFF_MSG_FIELD,
                        state->vars1[varid1].name, idx_str, nest_str, s1[0], s2[0]);
         }
@@ -1938,8 +1938,8 @@ int nccmp_cmp_var_user_type_nest_atomic_item(nccmp_state_t* state,
         }                                                                                           \
         if (!state->opts.quiet) {                                                                   \
             nest_str[0] = 0;                                                                                    \
-            nccmp_get_index_str_size_t(state->vars1[varid1].ndims, start, item, idx_str, state->opts.fortran);  \
-            nccmp_build_nest_str(nest, state->opts.fortran, nest_str);                                          \
+            nccmp_get_index_str_size_t(state->vars1[varid1].ndims, start, item, idx_str, state->opts.is_fortran);  \
+            nccmp_build_nest_str(nest, state->opts.is_fortran, nest_str);                                          \
             nccmp_##NAME1##_to_str(value1.m_##NAME1, str1, state->opts.precision);                              \
             nccmp_##NAME2##_to_str(value2.m_##NAME2, str2, state->opts.precision);                              \
             PRINT_DIFF(state->opts.color, state->opts.debug, DIFF_MSG_FIELD,                                                       \
@@ -2018,7 +2018,7 @@ int nccmp_cmp_var_user_type_nest_atomic(nccmp_state_t* state,
                 multidim_i,
                 nest->index);
         tmp_index_str[0] = 0;
-        nccmp_build_nest_index_str(nest, 0 /*fortran*/, tmp_index_str);
+        nccmp_build_nest_index_str(nest, 0 /*is_fortran*/, tmp_index_str);
         if (state->opts.debug) {
             LOG_DEBUG_CHOOSE(state->opts.color, "%s multidim_i=%d index=%s\n", nest->type1->name, multidim_i, tmp_index_str);
         }
@@ -2073,8 +2073,8 @@ int nccmp_cmp_var_user_type_nest_compound(nccmp_state_t* state, int ncid1, int n
         LOG_DEBUG_CHOOSE(state->opts.color, "cmp_var_user_type_nest_compound\n");
     }
 
-    field_ids = ncccmp_create_user_type_field_id_pairs(nest->type1, 
-                nest->type2, 
+    field_ids = ncccmp_create_user_type_field_id_pairs(nest->type1,
+                nest->type2,
                 state->opts.debug, 0);
 
     cardinal_index = nccmp_nest_cardinal_index(nest);
@@ -2140,9 +2140,9 @@ int nccmp_cmp_var_user_type_nest_enum(nccmp_state_t* state,
                 goto recover;                                                  \
             }                                                                  \
             if (!state->opts.quiet) {                                          \
-                nccmp_get_index_str_size_t(state->vars1[varid1].ndims, start, item, idx_str, state->opts.fortran);  \
+                nccmp_get_index_str_size_t(state->vars1[varid1].ndims, start, item, idx_str, state->opts.is_fortran);  \
                 nest_str[0] = 0;                                                                                    \
-                nccmp_build_nest_str(nest, state->opts.fortran, nest_str);                                          \
+                nccmp_build_nest_str(nest, state->opts.is_fortran, nest_str);                                          \
                 PRINT_DIFF(state->opts.color, state->opts.debug, DIFF_MSG_FIELD, state->vars1[varid1].name,                            \
                            idx_str, nest_str, str1, str2);                                                          \
             }                                                                                                       \
@@ -2219,13 +2219,13 @@ int nccmp_cmp_var_user_type_nest_opaque(nccmp_state_t* state,
             goto recover;
         }
         if (!state->opts.quiet) {
-            nccmp_get_index_str_size_t(state->vars1[varid1].ndims, start, item, idx_str, state->opts.fortran);
+            nccmp_get_index_str_size_t(state->vars1[varid1].ndims, start, item, idx_str, state->opts.is_fortran);
             str1 = nccmp_realloc_bytes_hex_str(str1, nbytes);
             str2 = nccmp_realloc_bytes_hex_str(str2, nbytes);
             nccmp_bytes_to_hex_str(bytes1, nbytes, str1);
             nccmp_bytes_to_hex_str(bytes2, nbytes, str2);
             nest_str[0] = 0;
-            nccmp_build_nest_str(nest, state->opts.fortran, nest_str);
+            nccmp_build_nest_str(nest, state->opts.is_fortran, nest_str);
             PRINT_DIFF(state->opts.color, state->opts.debug, DIFF_MSG_FIELD, state->vars1[varid1].name,
                        idx_str, nest_str, str1, str2);
         }
@@ -2273,9 +2273,9 @@ int nccmp_cmp_var_user_type_nest_vlen(nccmp_state_t* state,
             goto recover;
         }
         if (!state->opts.quiet) {
-            nccmp_get_index_str_size_t(state->vars1[varid1].ndims, start, item, idx_str, state->opts.fortran);
+            nccmp_get_index_str_size_t(state->vars1[varid1].ndims, start, item, idx_str, state->opts.is_fortran);
             nest_str[0] = 0;
-            nccmp_build_nest_str(nest, state->opts.fortran, nest_str);
+            nccmp_build_nest_str(nest, state->opts.is_fortran, nest_str);
             PRINT_DIFF(state->opts.color, state->opts.debug, DIFF_MSG_FIELD_VLEN,
                        state->vars1[varid1].name, idx_str, nest_str,
                        vlen1->len, vlen2->len);
@@ -2438,9 +2438,9 @@ int nccmp_cmp_var_user_type_nest_vlen_start(nccmp_state_t* state, int ncid1, int
             goto recover;
         }
         if (!state->opts.quiet) {
-            nccmp_get_index_str_size_t(state->vars1[varid1].ndims, start, item, idx_str, state->opts.fortran);
+            nccmp_get_index_str_size_t(state->vars1[varid1].ndims, start, item, idx_str, state->opts.is_fortran);
             nest_str[0] = 0;
-            nccmp_build_nest_str(nest, state->opts.fortran, nest_str);
+            nccmp_build_nest_str(nest, state->opts.is_fortran, nest_str);
             PRINT_DIFF(state->opts.color, state->opts.debug, DIFF_MSG_FIELD_VLEN,
                        state->vars1[varid1].name, idx_str, nest_str, vlen1->len, vlen2->len);
         }
@@ -2597,7 +2597,7 @@ int nccmp_cmp_var_user_type_opaque(nccmp_state_t* state, int ncid1, int ncid2,
                 goto recover;
             }
             if (!state->opts.quiet) {
-                nccmp_get_index_str_size_t(v1->ndims, start, (offset-base_size)/base_size, idx_str, state->opts.fortran);
+                nccmp_get_index_str_size_t(v1->ndims, start, (offset-base_size)/base_size, idx_str, state->opts.is_fortran);
                 nccmp_bytes_to_hex_str(items1 + offset - base_size, base_size, str1);
                 nccmp_bytes_to_hex_str(items2 + offset - base_size, base_size, str2);
                 PRINT_DIFF(state->opts.color, state->opts.debug, DIFF_MSG, v1->name, idx_str, str1, str2);
@@ -2655,7 +2655,7 @@ int nccmp_cmp_var_user_type_vlen_atomic_string(nccmp_state_t* state, int ncid1, 
                     goto recover;
                 }
                 if (!state->opts.quiet) {
-                    nccmp_get_index_str_size_t(v1->ndims, start, i, idx_str, state->opts.fortran);
+                    nccmp_get_index_str_size_t(v1->ndims, start, i, idx_str, state->opts.is_fortran);
                     PRINT_DIFF(state->opts.color, state->opts.debug, " : VARIABLE : %s : POSITION : [%s] : VARIABLE LENGTH : %zu <> %zu\n",
                                v1->name, idx_str, items1[i].len, items2[i].len);
                 }
@@ -2682,12 +2682,12 @@ int nccmp_cmp_var_user_type_vlen_atomic_string(nccmp_state_t* state, int ncid1, 
                         goto recover;
                     }
                     if (!state->opts.quiet) {
-                        nccmp_get_index_str_size_t(v1->ndims, start, i, idx_str, state->opts.fortran);
-                        sprintf(j_str, "%d", state->opts.fortran ? j + 1 : j);
+                        nccmp_get_index_str_size_t(v1->ndims, start, i, idx_str, state->opts.is_fortran);
+                        sprintf(j_str, "%d", state->opts.is_fortran ? j + 1 : j);
                         PRINT_DIFF(state->opts.color, state->opts.debug, " : VARIABLE : %s : POSITION : [%s,%s] : VALUES : %s <> %s\n",
                                    v1->name,
-                                   state->opts.fortran ? j_str : idx_str,
-                                   state->opts.fortran ? idx_str : j_str,
+                                   state->opts.is_fortran ? j_str : idx_str,
+                                   state->opts.is_fortran ? idx_str : j_str,
                                    s1[j], s2[j]);
                     }
                     if ( (COUNT_EQUAL == diff_count_status) || !state->opts.force ) {
@@ -2759,7 +2759,7 @@ int nccmp_cmp_var_user_type_vlen_atomic(nccmp_state_t* state, int ncid1, int nci
                     goto recover;                                              \
                 }                                                              \
                 if (!state->opts.quiet) {                                      \
-                    nccmp_get_index_str_size_t(v1->ndims, start, i, idx_str, state->opts.fortran);                              \
+                    nccmp_get_index_str_size_t(v1->ndims, start, i, idx_str, state->opts.is_fortran);                              \
                     PRINT_DIFF(state->opts.color, state->opts.debug, " : VARIABLE : %s : POSITION : [%s] : VARIABLE LENGTH : %zu <> %zu\n",  \
                                v1->name, idx_str, items1[i].len, items2[i].len);                                                \
                 }                                                                                                               \
@@ -2786,14 +2786,14 @@ int nccmp_cmp_var_user_type_vlen_atomic(nccmp_state_t* state, int ncid1, int nci
                                                      (double)*(list2.p_##NAME2 + j)); \
                     }                                                          \
                     if (!state->opts.quiet) {                                                                               \
-                        nccmp_get_index_str_size_t(v1->ndims, start, i, idx_str, state->opts.fortran);                      \
+                        nccmp_get_index_str_size_t(v1->ndims, start, i, idx_str, state->opts.is_fortran);                      \
                         nccmp_##NAME1##_to_str(*(list1.p_##NAME1 + j), str1, state->opts.precision);                        \
                         nccmp_##NAME2##_to_str(*(list2.p_##NAME2 + j), str2, state->opts.precision);                        \
-                        sprintf(j_str, "%d", state->opts.fortran ? j + 1 : j);                                              \
+                        sprintf(j_str, "%d", state->opts.is_fortran ? j + 1 : j);                                              \
                         PRINT_DIFF(state->opts.color, state->opts.debug, " : VARIABLE : %s : POSITION : [%s,%s] : VALUES : %s <> %s\n",  \
                                 v1->name,                                                                                   \
-                                state->opts.fortran ? j_str : idx_str,                                                      \
-                                state->opts.fortran ? idx_str : j_str,                                                      \
+                                state->opts.is_fortran ? j_str : idx_str,                                                      \
+                                state->opts.is_fortran ? idx_str : j_str,                                                      \
                                 str1, str2);                                                                                \
                     }                                                                                                       \
                     if ( (COUNT_EQUAL == diff_count_status) || !state->opts.force) {                                        \
@@ -2920,7 +2920,7 @@ int nccmp_cmp_var_user_type_vlen_enum(nccmp_state_t* state, int ncid1, int ncid2
                     goto recover;                                              \
                 }                                                              \
                 if (!state->opts.quiet) {                                                                                           \
-                    nccmp_get_index_str_size_t(v1->ndims, start, i, idx_str, state->opts.fortran);                                  \
+                    nccmp_get_index_str_size_t(v1->ndims, start, i, idx_str, state->opts.is_fortran);                                  \
                     PRINT_DIFF(state->opts.color, state->opts.debug, " : VARIABLE : %s : POSITION : [%s] : VARIABLE LENGTH : %zu <> %zu\n",      \
                                v1->name, idx_str, items1[i].len, items2[i].len);                                                    \
                 }                                                                                                                   \
@@ -2946,12 +2946,12 @@ int nccmp_cmp_var_user_type_vlen_enum(nccmp_state_t* state, int ncid1, int ncid2
                         goto recover;                                          \
                     }                                                          \
                     if (!state->opts.quiet) {                                  \
-                        nccmp_get_index_str_size_t(v1->ndims, start, i, idx_str, state->opts.fortran);                      \
-                        sprintf(j_str, "%d", state->opts.fortran ? j + 1 : j);                                              \
+                        nccmp_get_index_str_size_t(v1->ndims, start, i, idx_str, state->opts.is_fortran);                      \
+                        sprintf(j_str, "%d", state->opts.is_fortran ? j + 1 : j);                                              \
                         PRINT_DIFF(state->opts.color, state->opts.debug, " : VARIABLE : %s : POSITION : [%s,%s] : VALUES : %s <> %s\n",  \
                                    v1->name,                                                                                \
-                                   state->opts.fortran ? j_str : idx_str,                                                   \
-                                   state->opts.fortran ? idx_str : j_str,                                                   \
+                                   state->opts.is_fortran ? j_str : idx_str,                                                   \
+                                   state->opts.is_fortran ? idx_str : j_str,                                                   \
                                    str1, str2);                                                                             \
                     }                                                                                                       \
                     if ( (COUNT_EQUAL == diff_count_status) || !state->opts.force) {                                        \
@@ -3062,7 +3062,7 @@ int nccmp_cmp_var_user_type_vlen_opaque(nccmp_state_t* state, int ncid1, int nci
                     goto recover;
                 }
                 if (!state->opts.quiet) {
-                    nccmp_get_index_str_size_t(v1->ndims, start, vlen_i, idx_str, state->opts.fortran);
+                    nccmp_get_index_str_size_t(v1->ndims, start, vlen_i, idx_str, state->opts.is_fortran);
                     PRINT_DIFF(state->opts.color, state->opts.debug, " : VARIABLE : %s : POSITION : [%s] : VARIABLE LENGTH : %zu <> %zu\n",
                                v1->name, idx_str, vlens1[vlen_i].len, vlens2[vlen_i].len);
                 }
@@ -3087,8 +3087,8 @@ int nccmp_cmp_var_user_type_vlen_opaque(nccmp_state_t* state, int ncid1, int nci
                         }
                         if (!state->opts.quiet) {
                             // Example: Z Y X
-                            nccmp_get_index_str_size_t(v1->ndims, start, vlen_i, idx_str, state->opts.fortran);
-                            if (state->opts.fortran) {
+                            nccmp_get_index_str_size_t(v1->ndims, start, vlen_i, idx_str, state->opts.is_fortran);
+                            if (state->opts.is_fortran) {
                                 sprintf(vlen_idx_str, "%d,", opaq_i);
                                 strcat(vlen_idx_str, idx_str);
                             } else {
@@ -3334,7 +3334,7 @@ int nccmp_cmp_var_atomic_type(nccmp_state_t* state,  int ncid1, int ncid2,
                 nccmp_update_state_stats(state, varid1, 0, (double)item1.m_##NAME1 - (double)item2.m_##NAME2); \
             }                                                                  \
             if (!state->opts.quiet) {                                          \
-                nccmp_get_index_str_size_t(v1->ndims, start, offset-1, idx_str, state->opts.fortran);   \
+                nccmp_get_index_str_size_t(v1->ndims, start, offset-1, idx_str, state->opts.is_fortran);   \
                 if (print_hex) {                                                                        \
                     nccmp_##NAME1##_to_hex(item1.m_##NAME1, str1);                                      \
                     nccmp_##NAME2##_to_hex(item2.m_##NAME2, str2);                                      \
@@ -3397,9 +3397,9 @@ int nccmp_cmp_var_atomic_type(nccmp_state_t* state,  int ncid1, int ncid2,
                     }                                                               \
                     if (!state->opts.quiet) {                                       \
                         if ((v1->ndims == 1)  && (v1->has_rec_dim)) {               \
-                            nccmp_get_index_str_size_t(v1->ndims, start, rec, idx_str, state->opts.fortran); \
+                            nccmp_get_index_str_size_t(v1->ndims, start, rec, idx_str, state->opts.is_fortran); \
                         } else {                                                    \
-                            nccmp_get_index_str_size_t(v1->ndims, start, i, idx_str, state->opts.fortran);   \
+                            nccmp_get_index_str_size_t(v1->ndims, start, i, idx_str, state->opts.is_fortran);   \
                         }                                                           \
                         if (print_hex) {                                            \
                             nccmp_##NAME1##_to_hex(item1.m_##NAME1, str1);          \
@@ -3635,7 +3635,7 @@ int nccmp_data(nccmp_state_t* state, nccmp_strlist_t* var_names,
             state->nvars1,
             state->types1);
     nccmp_darray_append(state->stats, state->active_group_stats);
-    
+
     state->buffers1 = nccmp_create_buffer_array(
                         state->nthread_groups1,
                         state->vars1,
@@ -3646,13 +3646,13 @@ int nccmp_data(nccmp_state_t* state, nccmp_strlist_t* var_names,
                         state->vars2,
                         state->nvars2,
                         var_names);
-    
+
     if (state->opts.debug) {
         LOG_DEBUG_CHOOSE(state->opts.color, "Allocated bytes for buffer1=%zu buffer2=%zu\n",
                   ((nccmp_buffer_t*) state->buffers1->items[0])->num_bytes,
                   ((nccmp_buffer_t*) state->buffers2->items[0])->num_bytes);
     }
-    
+
     status = nccmp_data_start_threads(state, validated_var_names,
                 group1->fullname, group2->fullname);
     last_status = status ? status : last_status;
@@ -3666,7 +3666,7 @@ recover:
     nccmp_destroy_buffer_array(state->buffers2);
     state->buffers1 = NULL;
     state->buffers2 = NULL;
-        
+
     if (state->opts.verbose) {
         LOG_INFO_CHOOSE(state->opts.color, "Finished comparing group data.\n");
     }

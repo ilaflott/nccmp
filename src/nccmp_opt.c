@@ -14,7 +14,7 @@
    You should have received a copy of the GNU General Public License
    along with this program; see the file COPYING.
    If not, write to the Free Software Foundation,
-   59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  
+   59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #include <nccmp_opt.h>
@@ -85,7 +85,7 @@ void nccmp_opt_init(nccmp_opt_t* popts)
     popts->file1            = NULL;
     popts->file2            = NULL;
     popts->force            = 0;
-    popts->fortran          = 0;
+    popts->is_fortran       = 0;
     popts->global           = 0;
     popts->globalexclude    = NULL;
     popts->groupnames       = NULL;
@@ -144,11 +144,11 @@ void print_options(nccmp_opt_t* popts)
    LOG_DEBUG_CHOOSE(popts->color, "excludeattlist = ");
     nccmp_print_strlist(stdout, popts->excludeattlist, ' ');
     fprintf(stdout, "\n");
-    
+
    LOG_DEBUG_CHOOSE(popts->color, "file1 = %s\n", popts->file1);
    LOG_DEBUG_CHOOSE(popts->color, "file2 = %s\n", popts->file2);
    LOG_DEBUG_CHOOSE(popts->color, "force = %d\n", popts->force);
-   LOG_DEBUG_CHOOSE(popts->color, "fortran = %d\n", popts->fortran);
+   LOG_DEBUG_CHOOSE(popts->color, "is_fortran = %d\n", popts->is_fortran);
    LOG_DEBUG_CHOOSE(popts->color, "global = %d\n", popts->global);
 
    LOG_DEBUG_CHOOSE(popts->color, "globalexclude = ");
@@ -158,7 +158,7 @@ void print_options(nccmp_opt_t* popts)
    LOG_DEBUG_CHOOSE(popts->color, "groupnames = ");
     nccmp_print_strlist(stdout, popts->groupnames, ' ');
     fprintf(stdout, "\n");
-    
+
    LOG_DEBUG_CHOOSE(popts->color, "header_pad = %d\n", popts->header_pad);
    LOG_DEBUG_CHOOSE(popts->color, "history = %d\n", popts->history);
    LOG_DEBUG_CHOOSE(popts->color, "info = %d\n", popts->info);
@@ -172,10 +172,10 @@ void print_options(nccmp_opt_t* popts)
    LOG_DEBUG_CHOOSE(popts->color, "threads = %d\n", popts->threads);
    LOG_DEBUG_CHOOSE(popts->color, "tolerance = %g\n", popts->tolerance);
    LOG_DEBUG_CHOOSE(popts->color, "var_diff_count = %d\n", popts->var_diff_count);
-    
+
    LOG_DEBUG_CHOOSE(popts->color, "variablelist = ");
     nccmp_print_strlist(stdout, popts->variablelist, ' ');
-    fprintf(stdout, "\n");    
+    fprintf(stdout, "\n");
 }
 
 void print_copyright()
@@ -305,7 +305,7 @@ int nccmp_opt_parse(int argc, const char** argv, nccmp_opt_t* popts)
             break;
 
         case 'F':
-            popts->fortran = 1;
+            popts->is_fortran = 1;
             break;
 
         case 'g':

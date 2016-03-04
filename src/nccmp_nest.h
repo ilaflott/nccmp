@@ -10,16 +10,16 @@ typedef struct nccmp_nest_t {
     struct nccmp_nest_t *prev;
 } nccmp_nest_t;
 
-void nccmp_build_nest_index_str(nccmp_nest_t *nest, int fortran, char *result);
+void nccmp_build_nest_index_str(nccmp_nest_t *nest, int is_fortran, char *result);
 
 /* Examples:
      myField[1,2].child[0,1]
      myVlen[1,1][0]
 */
-void nccmp_build_nest_str(nccmp_nest_t *nest, int fortran, char *result);
+void nccmp_build_nest_str(nccmp_nest_t *nest, int is_fortran, char *result);
 
 /* Builds dotted string without indices. Example: myField.child.myShort */
-void nccmp_build_nest_str_no_index(nccmp_nest_t *nest, int fortran, char *result);
+void nccmp_build_nest_str_no_index(nccmp_nest_t *nest, int is_fortran, char *result);
 
 nccmp_nest_t* nccmp_create_nest();
 
