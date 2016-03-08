@@ -416,7 +416,7 @@ int nccmp_get_var_dimid(const nccmp_var_t *var, const int index)
 
 size_t nccmp_get_var_last_dim_num_items(const nccmp_var_t *var)
 {
-    if (!var) {
+    if (!var || 0 >= var->ndims) {
         return 0;
     }
     

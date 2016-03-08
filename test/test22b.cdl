@@ -1,0 +1,17 @@
+netcdf test22a {
+
+variables:
+	byte varb;
+	double vard;
+	float varf;
+    int vari;
+	short vars;
+
+data:
+    varb = _;
+    vard = _;
+    varf = _;
+    vari = _;
+    vars = _;
+}
+

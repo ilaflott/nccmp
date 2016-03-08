@@ -3241,10 +3241,11 @@ int nccmp_cmp_var_iterator_init(nccmp_state_t* state, int varid,
     }
 
     *nitems = nccmp_get_var_last_dim_num_items(v1);
-
-    /* Number of values to process per loop batch. */
-    count[v1->ndims-1] = *nitems;
-
+    if (0 < v1->ndims) {
+        /* Number of values to process per loop batch. */
+        count[v1->ndims-1] = *nitems;
+    }
+    
 recover:
     return last_status;
 }
@@ -3556,9 +3557,12 @@ int nccmp_cmp_var(nccmp_state_t* state, const char* name, int ncid1,
         goto recover;
     }
 
-    last_status = nccmp_cmp_var_start(state, ncid1, ncid2,
-        v1->varid, v2->varid, start, count, limits, rec, nitems, thread_id);
-
+    if (0 < nitems) {
+        last_status = nccmp_cmp_var_start(
+                        state, ncid1, ncid2, v1->varid, v2->varid, 
+                        start, count, limits, rec, nitems, thread_id);
+    }
+    
 recover:
     XFREE(start);
     XFREE(count);

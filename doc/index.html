@@ -255,11 +255,11 @@ $ brew test nccmp</span>
 
 <h3>Source</h3>
 <p>
-<a href="http://prdownloads.sourceforge.net/nccmp/nccmp-1.8.1.0.tar.gz?download">nccmp-1.8.1.0.tar.gz</a><br>
+<a href="http://prdownloads.sourceforge.net/nccmp/nccmp-1.8.2.0.tar.gz?download">nccmp-1.8.2.0.tar.gz</a><br>
 
 <pre class="code">
 </span><span class="code command">$ cd /tmp && \
-  wget -nd -c http://prdownloads.sourceforge.net/nccmp/nccmp-1.8.1.0.tar.gz && \
+  wget -nd -c http://prdownloads.sourceforge.net/nccmp/nccmp-1.8.2.0.tar.gz && \
   tar zxvf nccmp-*.tar.gz</span>
 </pre>
 </p>
@@ -425,16 +425,16 @@ PASS: test_nccmp_odometer
 PASS: test_nccmp_user_type
 PASS: test_nccmp_01.sh
 ...
-PASS: test_nccmp_68.sh
+PASS: test_nccmp_69.sh
 PASS: test_big.sh
 make[4]: Entering directory `/home/rsz/projects/nccmp/nccmp-code/test'
 make[4]: Nothing to be done for `all'.
 make[4]: Leaving directory `/home/rsz/projects/nccmp/nccmp-code/test'
 ============================================================================
-Testsuite summary for nccmp 1.8.0.0
+Testsuite summary for nccmp 1.8.2.0
 ============================================================================
-# TOTAL: 75
-# PASS:  75
+# TOTAL: 76
+# PASS:  76
 # SKIP:  0
 # XFAIL: 0
 # FAIL:  0
@@ -659,16 +659,16 @@ Usage: nccmp [OPTION...] file1 [file2]
                                  format: File formats.
                                  eos: Extra attribute end-of-string nulls.
 
-Report bugs to Remik . Ziemlinski @ noaa . gov.
-nccmp 1.8.0.0
+Report bugs to Remik.Ziemlinski@noaa.gov.
+nccmp 1.8.2.0
 
 Configuration
-Date    = Fri Sep 25 12:42:16 EDT 2015
+Date    = Tue Mar  8 09:33:57 EST 2016
 Host    = Linux mint 3.16.0-38-generic #52~14.04.1-Ubuntu SMP Fri May 8 09:43:57 UTC 2015 x86_64 x86_64 x86_64 GNU/Linux
 NetCDF  = 4.3.3.1 of Jul  8 2015 09:51:52 $
 User    = rsz
 Flags   = CC="gcc" \
-          CFLAGS="-I/usr/local/hdf5-1.8.15-patch1/include -I/usr/local/netcdf-4.3.3.1/include -pthread" \
+          CFLAGS="-I/usr/local/hdf5-1.8.15-patch1/include -I/usr/local/netcdf-4.3.3.1/include -Wall -ggdb -pthread" \
           CPP="gcc -E" \
           CPPFLAGS="" \
           LDFLAGS="-L/usr/local/hdf5-1.8.15-patch1/lib -L/usr/local/netcdf-4.3.3.1/lib -pthread" \
@@ -690,6 +690,11 @@ News</a>
 </h2>
 <p>
 <pre>
+Version 1.8.2.0 (3/08/2016)
+
+1. Add support for variables with no dimensions.
+   Thanks to Matthew Hambley (UK MetOffice) for providing the data.
+
 Version 1.8.1.0 (3/04/2016)
 
 1. Refactored "fortran" variable names to "is_fortran" due to clash with C11 reserved keyword.
