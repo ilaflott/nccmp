@@ -32,24 +32,24 @@ size_t nccmp_cmp_##NAME1##_##NAME2##_missing(TYPE1* in1, TYPE2* in2, TYPE1 m1, T
 size_t nccmp_cmp_##NAME1##_##NAME2##_nanequal(TYPE1* in1, TYPE2* in2) {         \
     TYPE1 const *p1 = in1;                                                     \
     TYPE2 const *p2 = in2;                                                     \
-    for(; (*p1 == *p2) || (isnan(*p1) && isnan(*p2)); ++p1, ++p2) { };         \
+    for(; (*p1 == *p2) || (isnan((double)*p1) && isnan((double)*p2)); ++p1, ++p2) { }; \
     return p1 - in1;                                                           \
 }
 #define CMP_TYPES_MISSING_NANEQUAL(NAME1, TYPE1, NAME2, TYPE2)                 \
 size_t nccmp_cmp_##NAME1##_##NAME2##_missing_nanequal(TYPE1* in1, TYPE2* in2, TYPE1 m1, TYPE2 m2) { \
     TYPE1 const *p1 = in1;                                                     \
     TYPE2 const *p2 = in2;                                                     \
-    for(; (*p1 == *p2) || ((*p1 == m1) && (*p2 == m2)) || (isnan(*p1) && isnan(*p2)); ++p1, ++p2) { };       \
+    for(; (*p1 == *p2) || ((*p1 == m1) && (*p2 == m2)) || (isnan((double)*p1) && isnan((double)*p2)); ++p1, ++p2) { }; \
     return p1 - in1;                                                           \
 }
 #define CMP_TYPES_FIELD(NAME1, TYPE1, NAME2, TYPE2)                            \
-size_t nccmp_cmp_field_##NAME1##_##NAME2(                                       \
+size_t nccmp_cmp_field_##NAME1##_##NAME2(                                      \
         void *in1, size_t field_off1, size_t size1,                            \
         void *in2, size_t field_off2, size_t size2,                            \
-        size_t first, size_t nitems) {                                          \
+        size_t first, size_t nitems) {                                         \
     unsigned char const *p1 = in1;                                             \
     unsigned char const *p2 = in2;                                             \
-    size_t i = first;                                                           \
+    size_t i = first;                                                          \
     for(; i < nitems; ++i) {                                                   \
         if ( *(TYPE1*)(p1 + size1 * i + field_off1) !=                         \
              *(TYPE2*)(p2 + size2 * i + field_off2) ) {                        \
@@ -59,10 +59,10 @@ size_t nccmp_cmp_field_##NAME1##_##NAME2(                                       
     return i;                                                                  \
 }
 #define CMP_TYPES_FIELD_NANEQUAL(NAME1, TYPE1, NAME2, TYPE2)                   \
-size_t nccmp_cmp_field_##NAME1##_##NAME2##_nanequal(                            \
+size_t nccmp_cmp_field_##NAME1##_##NAME2##_nanequal(                           \
         void *in1, size_t field_off1, size_t size1,                            \
         void *in2, size_t field_off2, size_t size2,                            \
-        size_t first, size_t nitems) {                                          \
+        size_t first, size_t nitems) {                                         \
     unsigned char const *p1 = in1;                                             \
     unsigned char const *p2 = in2;                                             \
     TYPE1 item1;                                                               \
@@ -71,31 +71,31 @@ size_t nccmp_cmp_field_##NAME1##_##NAME2##_nanequal(                            
     for(; i < nitems; ++i) {                                                   \
         item1 = *(TYPE1*)(p1 + size1*i + field_off1);                          \
         item2 = *(TYPE2*)(p2 + size2*i + field_off2);                          \
-        if ( (item1 != item2) && !isnan(item1) && !isnan(item2) ) {            \
+        if ( (item1 != item2) && !isnan((double)item1) && !isnan((double)item2) ) { \
             break;                                                             \
         }                                                                      \
     };                                                                         \
     return i;                                                                  \
 }
 #define CMP_TYPES_FIELD_ARRAY(NAME1, TYPE1, NAME2, TYPE2)                      \
-size_t nccmp_cmp_field_array_##NAME1##_##NAME2(                                 \
+size_t nccmp_cmp_field_array_##NAME1##_##NAME2(                                \
         void *in1, size_t field_off1, size_t comp_size1,                       \
-        void *in2, size_t field_off2, size_t comp_size2, size_t array_offset,   \
+        void *in2, size_t field_off2, size_t comp_size2, size_t array_offset,  \
         size_t nitems, size_t first_item) {                                    \
     unsigned char const *p1 = (unsigned char*)in1 + comp_size1 * array_offset; \
     unsigned char const *p2 = (unsigned char*)in2 + comp_size2 * array_offset; \
     int i = first_item;                                                        \
     for(; i < nitems; ++i) {                                                   \
-        if ( *((TYPE1*)(p1 + field_off1) + i) != *((TYPE2*)(p2 + field_off2) + i) ) {    \
+        if ( *((TYPE1*)(p1 + field_off1) + i) != *((TYPE2*)(p2 + field_off2) + i) ) { \
             break;                                                             \
         }                                                                      \
     };                                                                         \
     return i;                                                                  \
 }
 #define CMP_TYPES_FIELD_ARRAY_NANEQUAL(NAME1, TYPE1, NAME2, TYPE2)             \
-size_t nccmp_cmp_field_array_##NAME1##_##NAME2##_nanequal(                      \
+size_t nccmp_cmp_field_array_##NAME1##_##NAME2##_nanequal(                     \
         void *in1, size_t field_off1, size_t comp_size1,                       \
-        void *in2, size_t field_off2, size_t comp_size2, size_t array_offset,   \
+        void *in2, size_t field_off2, size_t comp_size2, size_t array_offset,  \
         size_t nitems, size_t first_item) {                                    \
     unsigned char const *p1 = (unsigned char*)in1 + comp_size1 * array_offset; \
     unsigned char const *p2 = (unsigned char*)in2 + comp_size2 * array_offset; \
@@ -105,7 +105,7 @@ size_t nccmp_cmp_field_array_##NAME1##_##NAME2##_nanequal(                      
     for(; i < nitems; ++i) {                                                   \
         item1 = *((TYPE1*)(p1 + field_off1) + i);                              \
         item2 = *((TYPE2*)(p2 + field_off2) + i);                              \
-        if ( (item1 != item2) && !isnan(item1) && !isnan(item2) ) {            \
+        if ( (item1 != item2) && !isnan((double)item1) && !isnan((double)item2) ) { \
             break;                                                             \
         }                                                                      \
     };                                                                         \
@@ -1231,7 +1231,7 @@ int nccmp_cmp_var_user_type_compound_field_nonarray_atomic_type(nccmp_state_t* s
         item2.m_##NAME2 = COMPOUND_FIELD_VALUE(items2, comp_type2->root_size,  \
         		field2->offset, TYPE2, i);             \
         if (NANEQUAL) {                                                        \
-            if ( isnan(item1.m_##NAME1) && isnan(item2.m_##NAME2) ) continue;  \
+            if ( isnan((double)item1.m_##NAME1) && isnan((double)item2.m_##NAME2) ) continue;  \
         }                                                                      \
         absdelta = fabs((double)(item1.m_##NAME1 - item2.m_##NAME2));          \
         if (state->opts.abstolerance ?                                         \
@@ -3373,7 +3373,7 @@ int nccmp_cmp_var_atomic_type(nccmp_state_t* state,  int ncid1, int ncid2,
                         (v2->missing.m_##NAME2 == items2.p_##NAME2[i])) continue;        \
                 }                                                              \
                 if (NANEQUAL) {                                                \
-                    if ( isnan(items1.p_##NAME1[i]) && isnan(items2.p_##NAME2[i]) ) continue;      \
+                    if ( isnan((double)items1.p_##NAME1[i]) && isnan((double)items2.p_##NAME2[i]) ) continue;      \
                 }                                                              \
                 absdelta = fabs((double)(items1.p_##NAME1[i] - items2.p_##NAME2[i]));    \
                 if (state->opts.abstolerance ?                                 \

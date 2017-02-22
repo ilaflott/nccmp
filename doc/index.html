@@ -249,11 +249,11 @@ $ brew test nccmp</span>
 
 <h3>Source</h3>
 <p>
-<a href="http://prdownloads.sourceforge.net/nccmp/nccmp-1.8.2.0.tar.gz?download">nccmp-1.8.2.0.tar.gz</a><br>
+<a href="http://prdownloads.sourceforge.net/nccmp/nccmp-1.8.2.1.tar.gz?download">nccmp-1.8.2.1.tar.gz</a><br>
 
 <pre class="code">
 </span><span class="code command">$ cd /tmp && \
-  wget -nd -c http://prdownloads.sourceforge.net/nccmp/nccmp-1.8.2.0.tar.gz && \
+  wget -nd -c http://prdownloads.sourceforge.net/nccmp/nccmp-1.8.2.1.tar.gz && \
   tar zxvf nccmp-*.tar.gz</span>
 </pre>
 </p>
@@ -425,7 +425,7 @@ make[4]: Entering directory `/home/rsz/projects/nccmp/nccmp-code/test'
 make[4]: Nothing to be done for `all'.
 make[4]: Leaving directory `/home/rsz/projects/nccmp/nccmp-code/test'
 ============================================================================
-Testsuite summary for nccmp 1.8.2.0
+Testsuite summary for nccmp 1.8.2.1
 ============================================================================
 # TOTAL: 76
 # PASS:  76
@@ -654,20 +654,20 @@ Usage: nccmp [OPTION...] file1 [file2]
                                  eos: Extra attribute end-of-string nulls.
 
 Report bugs to Remik.Ziemlinski@noaa.gov.
-nccmp 1.8.2.0
+nccmp 1.8.2.1
 
 Configuration
-Date    = Tue Mar  8 09:33:57 EST 2016
-Host    = Linux mint 3.16.0-38-generic #52~14.04.1-Ubuntu SMP Fri May 8 09:43:57 UTC 2015 x86_64 x86_64 x86_64 GNU/Linux
-NetCDF  = 4.3.3.1 of Jul  8 2015 09:51:52 $
-User    = rsz
+Date    = Tue Feb 21 22:30:41 EST 2017
+Host    = Linux ubuntu16 4.4.0-59-generic #80-Ubuntu SMP Fri Jan 6 17:47:47 UTC 2017 x86_64 x86_64 x86_64 GNU/Linux
+NetCDF  = 4.4.0 of Mar 29 2016 11:41:40 $
+User    = rziemlinski
 Flags   = CC="gcc" \
-          CFLAGS="-I/usr/local/hdf5-1.8.15-patch1/include -I/usr/local/netcdf-4.3.3.1/include -Wall -ggdb -pthread" \
+          CFLAGS="-I/home/rziemlinski/3ps/netcdf-4.4.1.1/include -pthread" \
           CPP="gcc -E" \
           CPPFLAGS="" \
-          LDFLAGS="-L/usr/local/hdf5-1.8.15-patch1/lib -L/usr/local/netcdf-4.3.3.1/lib -pthread" \
+          LDFLAGS=" -pthread" \
           LIBS="-lnetcdf -lm " \
-          ./configure --with-netcdf=/usr/local/netcdf-4.3.3.1/src --enable-test-big
+          ./configure --enable-test-big --with-netcdf=/home/rziemlinski/3ps/netcdf-4.4.1.1
 
 Features
 header-pad = yes
@@ -684,6 +684,11 @@ News</a>
 </h2>
 <p>
 <pre>
+Version 1.8.2.1 (2/21/2017)
+
+1. Fixed compiler errors for newer GCC.
+   Thanks to Jos de Kloe for providing a patch.
+
 Version 1.8.2.0 (3/08/2016)
 
 1. Add support for variables with no dimensions.
