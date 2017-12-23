@@ -1,4 +1,4 @@
-set(make_compound_array_atomic_SRCS ${CMAKE_CURRENT_BINARY_DIR}/dummy.cpp)
+#set(make_compound_array_atomic_SRCS ${CMAKE_CURRENT_BINARY_DIR}/dummy.cpp)
 
 if(BUILD_TESTS)
 

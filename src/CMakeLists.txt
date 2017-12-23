@@ -3,6 +3,8 @@ SET(CMAKE_INCLUDE_CURRENT_DIR ON)
 SET(nccmp_SRCS
     log.c
     nccmp.c
+    nccmp_buffer.c
+    nccmp_darray.c
     nccmp_data.c
     nccmp_dim.c
     nccmp_format.c

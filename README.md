@@ -91,8 +91,25 @@ Run either setup-x86.exe or setup-x86_64.exe, and select All => Science => nccmp
 (Optional) Download the NetCDF source code to support header-pad comparisons.
 
     cd /tmp && \
-      wget -nd -c http://www.unidata.ucar.edu/downloads/netcdf/ftp/netcdf-4.3.3.1.tar.gz && \
+      wget -nd -c http://www.unidata.ucar.edu/downloads/netcdf/ftp/netcdf-4.5.0.tar.gz && \
       tar zxvf netcdf-*.tar.gz
+
+#### CMake
+
+    cmake \
+      -DCMAKE_BUILD_TYPE=Release \
+      -DCMAKE_C_COMPILER=$GCC/bin/gcc \
+      -DCMAKE_EXE_LINKER_FLAGS="-L$HDF/lib -lhdf5 -lhdf5_hl -L$NC/lib -lcurl" \
+      -DCMAKE_INSTALL_PREFIX=$HOME/3ps/nccmp \
+      -DNETCDF_INC_DIR=$NC/include \
+      -DNETCDF_LIB_PATH=$NC/lib/libnetcdf.a \
+      -DWITH_NETCDF=$NC/src \
+      ..
+
+    make -j
+    make install
+    
+#### Autotools
 
 Specify non-standard installation locations for HDF and NetCDF, 
 if not auto-detected by configure (i.e. they're not in /usr/local/{include,lib}).
