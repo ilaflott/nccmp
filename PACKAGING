@@ -1,0 +1,18 @@
+After making modifications to code, also update the following:
+- configure.ac  Update the version number in AC_INIT.
+- README.md     Update version news, links and usage.
+
+Run these commands to regenerate the autoconf scripts.
+    autoreconf -i
+    # Deprecated:
+    # rm -rf autom4te.cache && aclocal && automake -a -c -Wno-portability && autoheader && autoconf
+  
+Versions that worked:
+- aclocal/automake 1.11.3
+- autoheader/autoconf 2.68
+
+And package it up into a tarball.
+    make -f Makefile.dev sdist VER=1.2.3.0
+
+Add the new tarball to the Github Release page.
+    
