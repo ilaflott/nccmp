@@ -1,5 +1,5 @@
 #!/bin/bash
-
+if [ -z "$srcdir" ]; then export srcdir=`dirname $0`; fi 
 export I="01" 
 export ARGS="-mgf -x data1,data2,data3,data4,recdata,rec test01a.$I.nc test01b.$I.nc"
 export DATA=01
