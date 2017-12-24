@@ -1,4 +1,5 @@
 #!/bin/bash
+if [ -z "$srcdir" ]; then export srcdir=`dirname $0`; fi
 
 I=33
 echo "$I. Header pads content difference (lengths are equal)."

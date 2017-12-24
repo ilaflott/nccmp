@@ -1,4 +1,5 @@
 #!/bin/bash
+if [ -z "$srcdir" ]; then export srcdir=`dirname $0`; fi
 
 export I="62" 
 export ARGS="-df make_compound_nest_atomic1.$I.nc make_compound_nest_atomic2.$I.nc"

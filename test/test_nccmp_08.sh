@@ -1,4 +1,5 @@
 #!/bin/bash
+if [ -z "$srcdir" ]; then export srcdir=`dirname $0`; fi
 
 export I="08" 
 export ARGS="-mdf test03a.$I.nc test03b.$I.nc"

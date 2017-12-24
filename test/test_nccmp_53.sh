@@ -1,4 +1,5 @@
 #!/bin/bash
+if [ -z "$srcdir" ]; then export srcdir=`dirname $0`; fi
 
 export I="53" 
 export ARGS="-ef not_encoded.$I.nc encoded.$I.nc"

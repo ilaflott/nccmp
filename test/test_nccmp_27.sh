@@ -1,4 +1,5 @@
 #!/bin/bash
+if [ -z "$srcdir" ]; then export srcdir=`dirname $0`; fi
 
 I=27
 echo "$I. Ignore different missing_value and _FillValue."

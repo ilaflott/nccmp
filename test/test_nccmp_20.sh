@@ -1,4 +1,5 @@
 #!/bin/bash
+if [ -z "$srcdir" ]; then export srcdir=`dirname $0`; fi
 
 I=20
 echo "$I. unknown warning tag, should print a warning and ignore."

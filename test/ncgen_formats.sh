@@ -1,4 +1,5 @@
 #!/bin/bash
+if [ -z "$srcdir" ]; then export srcdir=`dirname $0`; fi
 
 # Determine the proper "-k" format options for `ncgen`.
 if [ $# -lt 1 ]; then

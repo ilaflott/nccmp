@@ -1,4 +1,5 @@
 #!/bin/bash
+if [ -z "$srcdir" ]; then export srcdir=`dirname $0`; fi
 
 export I="45" 
 export ARGS="-dmf --group /group/subgroup,group group1.$I.nc group2.$I.nc"

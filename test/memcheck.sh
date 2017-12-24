@@ -1,6 +1,6 @@
 #!/bin/bash
+if [ -z "$srcdir" ]; then export srcdir=`dirname $0`; fi
 export MEMCHECK=1
-export srcdir=.
 
 e=tmp.valgrind
 RED='\033[0;31m'

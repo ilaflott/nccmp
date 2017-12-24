@@ -1,4 +1,5 @@
 #!/bin/bash
+if [ -z "$srcdir" ]; then export srcdir=`dirname $0`; fi
 
 export I="06" 
 export ARGS="-df -v recdata,rec test01a.$I.nc test01b.$I.nc"
