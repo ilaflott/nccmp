@@ -70,7 +70,7 @@ FIND_FILE(NC_H_PATH nc.h
 IF (NOT NC_H_PATH)
     MESSAGE(STATUS "Cannot find nc.h in WITH_NETCDF/include; header-pad feature will be disabled.")
 ELSE()
-    SET(HAVE_NC_H YES)
+    SET(HAVE_NC_H 1)
 ENDIF()
 
 SET(PACKAGE "\"nccmp\"")

@@ -5,7 +5,7 @@ I=38
 echo "$I. Format info."
 LOG=stderr$I.tmp
 
-../src/nccmp --version 2>&1 >/dev/null | grep 'header-pad = no'
+../src/nccmp --usage 2>&1 >/dev/null | grep 'header-pad = no'
 if test "$?" = "0"; 
 then
     # Does not have pad support.
