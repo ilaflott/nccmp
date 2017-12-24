@@ -96,6 +96,7 @@ Run either setup-x86.exe or setup-x86_64.exe, and select All => Science => nccmp
 
 #### CMake
 
+	mkdir build && cd build
     cmake \
       -DBUILD_TESTS=ON \
       -DCMAKE_BUILD_TYPE=Release \
@@ -109,8 +110,9 @@ Run either setup-x86.exe or setup-x86_64.exe, and select All => Science => nccmp
       ..
 
     make -j
-    make install
-    
+    cd test && ctest
+	cd ..   && make install
+
 #### Autotools
 
 Specify non-standard installation locations for HDF and NetCDF, 
