@@ -114,7 +114,7 @@ case "$DATA" in
             # Check for backwards compatible test files. 
             PATCH=""
             NCGEN_VER=$(ncgen_version)
-            if [ ${NCGEN_VER:0:5} != "4.3.3" ]; then
+            if [[ ${NCGEN_VER:0:5} < "4.3.3" ]]; then
                 if [ -e test${DATA}${SUFFIX}.pre433.cdl ]; then
                     PATCH=.pre433
                 elif [ -e test${DATA}${SUFFIX}.pre413.cdl ]; then

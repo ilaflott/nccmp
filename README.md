@@ -76,14 +76,6 @@ Run either setup-x86.exe or setup-x86_64.exe, and select All => Science => nccmp
     brew install nccmp
     brew test nccmp# nccmp - NetCDF Compare
 
-### Source
-
-[nccmp-1.8.2.1.tar.gz](http://prdownloads.sourceforge.net/nccmp/nccmp-1.8.2.1.tar.gz?download)
-
-    cd /tmp && \
-      wget -nd -c http://prdownloads.sourceforge.net/nccmp/nccmp-1.8.2.1.tar.gz && \
-      tar zxvf nccmp-*.tar.gz
-
 ## Compiling 
 
 ### Linux/Unix/MacPorts/Anaconda
@@ -219,31 +211,9 @@ Check the result.
 
 ## Testing
 
-    make check
-    
-    make  check-TESTS
-    make[3]: Entering directory `/home/rsz/projects/nccmp/nccmp-code/test'
-    PASS: test_nccmp_setup.sh
-    PASS: test_nccmp_strlist
-    PASS: test_nccmp_odometer
-    PASS: test_nccmp_user_type
-    PASS: test_nccmp_01.sh
-    ...
-    PASS: test_nccmp_69.sh
-    PASS: test_big.sh
-    make[4]: Entering directory `/home/rsz/projects/nccmp/nccmp-code/test'
-    make[4]: Nothing to be done for `all'.
-    make[4]: Leaving directory `/home/rsz/projects/nccmp/nccmp-code/test'
-    ============================================================================
-    Testsuite summary for nccmp 1.8.2.1
-    ============================================================================
-    # TOTAL: 76
-    # PASS:  76
-    # SKIP:  0
-    # XFAIL: 0
-    # FAIL:  0
-    # XPASS: 0
-    # ERROR: 0
+    $ cd build && ctest
+    100% tests passed, 0 tests failed out of 76
+    Total Test time (real) =  89.10 sec
 
 Memory correctness is tested with valgrind. Leaks will print red colored errors.
 
@@ -448,26 +418,30 @@ Print statistics and hide diff messages.
                                      eos: Extra attribute end-of-string nulls.
     
     Report bugs to Remik.Ziemlinski@noaa.gov.
-    nccmp 1.8.2.1
+    nccmp 1.8.2.2
     
     Configuration
-    Date    = Tue Feb 21 22:30:41 EST 2017
-    Host    = Linux ubuntu16 4.4.0-59-generic #80-Ubuntu SMP Fri Jan 6 17:47:47 UTC 2017 x86_64 x86_64 x86_64 GNU/Linux
-    NetCDF  = 4.4.0 of Mar 29 2016 11:41:40 $
+    Date    = 24/12/17
+    Host    = Linux-2.6.32-696.16.1.el6.x86_64
+    NetCDF  = 4.5.0 of Dec 23 2017 12:30:50 $
     User    = rziemlinski
-    Flags   = CC="gcc" \
-              CFLAGS="-I/home/rziemlinski/3ps/netcdf-4.4.1.1/include -pthread" \
-              CPP="gcc -E" \
+    Flags   = CC="/home/rziemlinski/3ps/gcc/gcc-7.2.0/bin/gcc" \
+              CFLAGS="-I/home/rziemlinski/3ps/hdf/hdf5-1.10.1/include -I/home/rziemlinski/3ps/netcdf/netcdf-4.5.0/include" \
+              CPP="" \
               CPPFLAGS="" \
-              LDFLAGS=" -pthread" \
-              LIBS="-lnetcdf -lm " \
-              ./configure --enable-test-big --with-netcdf=/home/rziemlinski/3ps/netcdf-4.4.1.1
-    
+              LDFLAGS="-L/home/rziemlinski/3ps/hdf/hdf5-1.10.1/lib -lhdf5 -lhdf5_hl -L/home/rziemlinski/3ps/netcdf/netcdf-4.5.0/lib -lcurl" \
+              LIBS="" \
+
     Features
     header-pad = yes
     pthreads   = yes
 
 ## News
+
+Version 1.8.2.2 (12/24/2017)
+
+1. Migrated project to Github. Thanks to David Meyer for the idea.
+2. Updated CMake build scripts and tests to all pass with CTest.
 
 Version 1.8.2.1 (2/21/2017)
 
