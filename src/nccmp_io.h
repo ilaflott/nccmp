@@ -21,6 +21,9 @@
 #define DIFF_MSG_VLEN       " : VARIABLE : %s : POSITION : [%s] : VARIABLE LENGTH : %zu <> %zu\n"
 #define DIFF_MSG_PCT_FIELD  " : VARIABLE : %s : POSITION : [%s] : FIELD : %s : VALUES : %s <> %s : PERCENT : %g\n"
 
+#define DIFF_MSG_SCALAR     " : VARIABLE : %s : VALUES : %s <> %s\n"
+#define DIFF_MSG_PCT_SCALAR " : VARIABLE : %s : VALUES : %s <> %s : PERCENT : %g\n"
+
 #if HAVE_PTHREAD
     #include <pthread.h>
     extern pthread_mutex_t mutex_print;

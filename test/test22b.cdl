@@ -1,11 +1,11 @@
-netcdf test22a {
+netcdf test22b {
 
 variables:
-	byte varb;
-	double vard;
-	float varf;
+    byte varb;
+    double vard;
+    float varf;
     int vari;
-	short vars;
+    short vars;
 
 data:
     varb = _;

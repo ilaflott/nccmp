@@ -47,7 +47,7 @@ function format() {
     NC_FORMATS=$($srcdir/ncgen_formats.sh $ID)
     NC3=$(echo $NC_FORMATS | cut -f1 -d' ')
     NC4=$(echo $NC_FORMATS | cut -f2 -d' ')
-    FMT=(0 $NC3 $NC3 $NC3 $NC3 $NC3 $NC3 $NC3 $NC3 $NC3 $NC4 $NC4 $NC4 $NC4 $NC4 $NC4 $NC4 $NC4 $NC4 $NC4 $NC4 $NC4 $NC4)
+    FMT=(0 $NC3 $NC3 $NC3 $NC3 $NC3 $NC3 $NC3 $NC3 $NC3 $NC4 $NC4 $NC4 $NC4 $NC4 $NC4 $NC4 $NC4 $NC4 $NC4 $NC4 $NC4 $NC4 $NC4)
     
     echo ${FMT[${index}]}
 }

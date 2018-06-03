@@ -1,10 +1,10 @@
 APP = nccmp
-DEVDIR = nccmp-code
+DEVDIR = nccmp.git
 
 all: help
 
 clean:
-	find . \( -name "*~" -o -name "*.exe" \) -exec rm -f "{}" \;
+	find . \( -name "*~" -o -name "*.exe" \) -delete
 	
 help:
 	@echo make [ clean sdist ]

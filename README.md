@@ -74,7 +74,7 @@ Run either setup-x86.exe or setup-x86_64.exe, and select All => Science => nccmp
 
     brew tap homebrew/science
     brew install nccmp
-    brew test nccmp# nccmp - NetCDF Compare
+    brew test nccmp
 
 ## Compiling 
 
@@ -417,16 +417,16 @@ Print statistics and hide diff messages.
                                      format: File formats.
                                      eos: Extra attribute end-of-string nulls.
     
-    Report bugs to Remik.Ziemlinski@noaa.gov.
-    nccmp 1.8.2.2
-    
+    Report bugs to Remik.Ziemlinski at noaa dot gov 
+    nccmp 1.8.3.0
+
     Configuration
-    Date    = 24/12/17
+    Date    = 03/06/18
     Host    = Linux-2.6.32-696.16.1.el6.x86_64
     NetCDF  = 4.5.0 of Dec 23 2017 12:30:50 $
     User    = rziemlinski
     Flags   = CC="/home/rziemlinski/3ps/gcc/gcc-7.2.0/bin/gcc" \
-              CFLAGS="-I/home/rziemlinski/3ps/hdf/hdf5-1.10.1/include -I/home/rziemlinski/3ps/netcdf/netcdf-4.5.0/include" \
+              CFLAGS="" \
               CPP="" \
               CPPFLAGS="" \
               LDFLAGS="-L/home/rziemlinski/3ps/hdf/hdf5-1.10.1/lib -lhdf5 -lhdf5_hl -L/home/rziemlinski/3ps/netcdf/netcdf-4.5.0/lib -lcurl" \
@@ -438,6 +438,10 @@ Print statistics and hide diff messages.
 
 ## News
 
+Version 1.8.3.0 (6/03/2018)
+
+1. Fixed bug that did not report scalar variable diffs. Thanks to Laurence Beard (UK MetOffice) for spotting it.
+ 
 Version 1.8.2.2 (12/24/2017)
 
 1. Migrated project to Github. Thanks to David Meyer for the idea.
