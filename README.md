@@ -44,9 +44,12 @@ over thread-strided record indices. Threading is optional, and configure will de
 
 ### Header Pad
 
-In order to compare the contents of header pads, it is required to download the NetCDF
-source code and configure nccmp using --with-netcdf=dir in order to access the private netcdf API.
-This is optional, and nccmp can be built without this feature.
+If you do not use the classic NetCDF 3 format (the one that doesn't wrap HDF), than this section can be ignored.
+
+What is a header pad? The classic format is organized into header and data sections. Only the data section can be appended to, such as adding new records (time steps) when resuming a simulation. This implies that any additional byte added to the metadata in the header requires copying over and rewriting the entire file. Some growing header operations include renaming to a longer variable name, or appending to the global attributes. To make such modifications in-place, you can pre-allocate the file's header to a larger size (100KB or more). This is often a technique used by large model runners to make post-processing more efficient.
+
+In order to compare the contents and lengths of header pads, it is required to download the NetCDF
+source code and configure nccmp using --with-netcdf=dir (Autotools) or -DWITH_NETCDF=dir (CMake) in order to access the private netcdf API. This is optional, and nccmp can be built without this feature.
 
 ## Download
 
@@ -76,7 +79,7 @@ Run either setup-x86.exe or setup-x86_64.exe, and select All => Science => nccmp
     brew install nccmp
     brew test nccmp
 
-## Compiling 
+## Compiling
 
 ### Linux/Unix/MacPorts/Anaconda
 
@@ -95,7 +98,7 @@ Run either setup-x86.exe or setup-x86_64.exe, and select All => Science => nccmp
       -DCMAKE_BUILD_TYPE=Release \
       -DCMAKE_C_COMPILER=$GCC/bin/gcc \
       -DCMAKE_EXE_LINKER_FLAGS="-L$HDF/lib -lhdf5 -lhdf5_hl -L$NC/lib -lcurl" \
-      -DCMAKE_INSTALL_PREFIX=$HOME/3ps/nccmp \
+      -DCMAKE_INSTALL_PREFIX=path/to/install/dir \
       -DCMAKE_VERBOSE_MAKEFILE=OFF \
       -DNETCDF_INC_DIR=$NC/include \
       -DNETCDF_LIB_PATH=$NC/lib/libnetcdf.a \
@@ -108,7 +111,7 @@ Run either setup-x86.exe or setup-x86_64.exe, and select All => Science => nccmp
 
 #### Autotools
 
-Specify non-standard installation locations for HDF and NetCDF, 
+Specify non-standard installation locations for HDF and NetCDF,
 if not auto-detected by configure (i.e. they're not in /usr/local/{include,lib}).
 
     HDF=/usr/local/hdf5-1.8.15-patch1
@@ -123,13 +126,13 @@ This will output:
     configure:
 
         CFLAGS             = -I/usr/local/hdf5-1.8.15-patch1/include -I/usr/local/netcdf-4.3.3.1/include -pthread
-        CPPFLAGS           = 
+        CPPFLAGS           =
         enable-test-big    = yes
         HAVE_NC_H          = yes
         HAVE_NC_INQ_PATH   = yes
         HAVE_PTHREAD       = yes
         LDFLAGS            = -L/usr/local/hdf5-1.8.15-patch1/lib -L/usr/local/netcdf-4.3.3.1/lib -pthread
-        LIBS               = -lnetcdf -lm 
+        LIBS               = -lnetcdf -lm
         with-netcdf        = /usr/local/netcdf-4.3.3.1/src
 
 Proceed with compiling.
@@ -147,7 +150,7 @@ Install these prebuilt binary cygwin packages via the setup GUI C:/cygwin/setup-
     All => Libs  => libnetcdf7      v4.3.3.1-2
                  => libnetcdf-devel v4.3.3.1-2
                  => netcdf          v4.3.3.1-2
-    
+
 Proceed with compiling.
 
     ./configure --with-netcdf=/cygdrive/c/Temp/netcdf-4.3.3.1
@@ -166,19 +169,19 @@ Download and run Netcdf Windows installer:
     http://www.unidata.ucar.edu/software/netcdf/docs/winbin.html
 
 Proceed with compiling.
-    
-    NC=/d/netCDF-4.3.3.1/ 
+
+    NC=/d/netCDF-4.3.3.1/
     export PATH=$PATH:$NC/bin
     ./configure CFLAGS=-I$NC/include LDFLAGS=-L$NC/bin --enable-test-big
     make
     make check
     make install
-    
+
 Check the result.
 
     man nccmp
     nccmp --version
-    
+
     Configuration
     Date    = Wed Sep 30 13:48:00 EDT 2015
     Host    = MSYS_NT-6.1 rszhp 2.3.0(0.290/5/3) 2015-09-15 09:39 x86_64 Msys
@@ -197,13 +200,13 @@ Check the result.
     brew tap homebrew/science
     brew install hdf5
     brew install netcdf
-    
+
     NC=/usr/local/Cellar/netcdf/4.3.3.1_1
     export CFLAGS="-I$NC/include"
     export CPPFLAGS="$CFLAGS"
     export LDFLAGS="-L$NC/lib"
     export DYLD_LIBRARY_PATH="$DYLD_LIBRARY_PATH":$NC/lib
-    
+
     ./configure --with-netcdf=/Users/rsz/source/netcdf-4.3.3.1
     make
     make check
@@ -251,7 +254,7 @@ Compare data using a tolerance threshold.
 
 Compare data written in different formats (classic vs. HDF).
 
-    $ nccmp -dmgfb test1a.nc test1c.nc 
+    $ nccmp -dmgfb test1a.nc test1c.nc
     2015-09-11 16:42:16.955951 -0400 INFO nccmp.c:135 Command-line options parsed.
     2015-09-11 16:42:16.955951 -0400 INFO nccmp.c:43 Opening input files.
     2015-09-11 16:42:16.955951 -0400 INFO nccmp_state.c:130 Opening test1a.nc
@@ -302,11 +305,11 @@ Compare data written in different formats (classic vs. HDF).
 
 Compare identical files.
 
-    $ nccmp -dmgfs test1a.nc test1a.nc 
+    $ nccmp -dmgfs test1a.nc test1a.nc
     Files "test1a.nc" and "test1a.nc" are identical.
 
 Get some info on file structure internals.
-    
+
     $ nccmp -i encoded.nc
     path=encoded.nc
     format=NC_FORMAT_NETCDF4
@@ -348,11 +351,11 @@ Print statistics and hide diff messages.
 
     Compare two NetCDF files.
     nccmp is silent when files are equivalent, otherwise it will echo to STDERR whether metadata or a specific variable differs.  By default, comparing stops after the first difference.
-    
+
     Exit code 0 is returned for identical files, 1 for different files, and 2 for a fatal error.
-    
+
     Usage: nccmp [OPTION...] file1 [file2]
-    
+
       -A, --Attribute=att1[,...] Ignore attribute(s) att1[,...]
                                  for all variables.
       -b, --verbose              Print messages to show progress.
@@ -373,7 +376,7 @@ Print statistics and hide diff messages.
       -h, --history              Compare global history attribute.
                                  (auto enables -g)
       -H, --help                 Give this usage message.
-          --usage                
+          --usage
       -i, --info                 Print file structure info for one or both files.
       -l, --color                Print colored messages.
       -m, --metadata             Compare metadata.
@@ -513,30 +516,30 @@ Version 1.7.0 (9/11/2015)
 2. Support all new Netcdf4 atomic types:
    ubyte, ushort, uint, int64, uint64, string.
 3. Support user-defined types and nesting of enums, compounds, variable-length, opaque blobs.
-4. Asymmetric type data comparisons. For example, you can compare a 
+4. Asymmetric type data comparisons. For example, you can compare a
    variable defined as integer in the first file, and float in the second.
    Use --force if initial metadata variable type comparisons fail.
 5. Enable optional big file test when running `make check`
    (./configure --enable-test-big).
 6. Fixed segfault, all memory leaks and cleaned up scripts,
    thanks to testing by Emma Hogan (UK MetOffice).
-   
+
 Version 1.6.1 (7/29/2015)
 
-1. Added multithreading with posix threads 
+1. Added multithreading with posix threads
    (-n, --threads=N).
-2. Compare groups (and recursively) for all or by short or full name 
+2. Compare groups (and recursively) for all or by short or full name
    (-r, --group=group1[,...]).
    Thanks to Sean W. Bailey (NASA) and Rick Healy (NASA) for the idea and contributing code.
-3. Dump file traits like shuffle, chunk, deflate, header-pad for one or 
+3. Dump file traits like shuffle, chunk, deflate, header-pad for one or
    both input files, with no need to do compare
    (-i, --info).
-4. Limit comparisons and diff messages printed with global and/or per-variable count 
+4. Limit comparisons and diff messages printed with global and/or per-variable count
    (-c, --var-diff-count=CNT, -C, --diff-count=CNT).
    Thanks to Sean W. Bailey (NASA) and Rick Healy (NASA) for the idea and contributing code.
 5. Optionally build with header-pad and thread support, and print features enabled
    with --version or --help.
-   
+
 Version 1.5.0 (11/30/2014)
 
 1. Added new -N, --nans-are-equal option.
@@ -579,7 +582,7 @@ Version 1.1.1 (9/24/2012)
 Version 1.1.0 (7/15/2010)
 
 1. Added "-w, --warn" command-line option to make certain differences exceptions and only print messages of their occurance.  Thanks to Aleksey Yakovlev.
-2. Added a small helper program called 'ncinfo' that echoes a file's format, header size (NetCDF3 files only) and compression characteristics for NetCDF4 files.  
+2. Added a small helper program called 'ncinfo' that echoes a file's format, header size (NetCDF3 files only) and compression characteristics for NetCDF4 files.
 
 Version 1.0.4 (6/27/2010)
 
@@ -613,7 +616,7 @@ Version 0.6.0
 
 Version 0.5.4
 
-1. Avoided reading past EOF when number of records differ between files.  Record variables won't be compared as a result.  
+1. Avoided reading past EOF when number of records differ between files.  Record variables won't be compared as a result.
 Users should use another tool, like "ncks" to extract record-based hyperslabs if they really need to compare partial netcdf files.  Thanks to Lionel Guez.
 2. Handles case when both files have record dimensions with length zero. Thanks to Lionel Guez.
 
@@ -643,7 +646,7 @@ Thanks to Amy Langenhorst for these suggestions.
 * forces removal of temporary files in generated view script.
 * generated view script tests if there exists a user defined NCCMPDIFF,
   otherwise sets it to 'diff' as default.
-* suppresses global history attribute when extracting data in 
+* suppresses global history attribute when extracting data in
   generated view script.
 
 Version 0.4.1
@@ -670,7 +673,7 @@ Version 0.2
 * -f force mode, process all variables possible; doesn't exit program
   after 1st difference
 * -x exclude variable list option
-* enhanced view script 
+* enhanced view script
 
 Version 0.1
 
