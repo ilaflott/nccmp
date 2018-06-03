@@ -1,0 +1,28 @@
+netcdf test23b {
+
+variables:
+    byte   varb1;
+    double vard1;
+    float  varf1;
+    int    vari1;
+    short  vars1;
+
+    byte   varb2;
+    double vard2;
+    float  varf2;
+    int    vari2;
+    short  vars2;
+
+data:
+    varb1 = 0;
+    vard1 = 1;
+    varf1 = 2;
+    vari1 = 3;
+    vars1 = 4;
+    varb2 = 20;
+    vard2 = 21;
+    varf2 = 22;
+    vari2 = 23;
+    vars2 = 24;
+}
+
