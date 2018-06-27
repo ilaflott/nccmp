@@ -1,6 +1,6 @@
 # nccmp - NetCDF Compare
 
-![Screenshot](https://gitlab.com/remikz/nccmp/blob/master/images/screenshot1.png "Screenshot")
+![Screenshot](images/screenshot1.png)
 
 ## Overview
 
