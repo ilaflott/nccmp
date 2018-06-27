@@ -441,6 +441,10 @@ Print statistics and hide diff messages.
 
 ## News
 
+Version 1.8.3.1 (6/27/2018)
+
+1. Package scripts to configure with GNU Autotools as a classic alternative to CMake.
+
 Version 1.8.3.0 (6/03/2018)
 
 1. Fixed bug that did not report scalar variable diffs. Thanks to Laurence Beard (UK MetOffice) for spotting it.

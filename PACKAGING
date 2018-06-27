@@ -15,9 +15,5 @@ Versions that worked:
 - aclocal/automake 1.11.3
 - autoheader/autoconf 2.68
 
-## Package
-And package it up into a tarball.
-    make -f Makefile.dev sdist VER=1.2.3.0
-
-Add the new tarball to the Github Release page.
-    
+## Publish
+On Gitlab, create a new tag version like 1.8.3.1 and the site will generate tarballs.   
