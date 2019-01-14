@@ -67,11 +67,17 @@ void nccmp_endian_to_str(int value, char* result);
     @param last: Extra digit not in items array to print.
     @param[out] out: Should be pre-allocated large enough for output.
 */
-#define GET_INDEX_STR(TYPE)                                                    \
-    void nccmp_get_index_str_##TYPE(int nitems, TYPE* items, int last, char* out, char is_fortran);
+#define GET_INDEX_STR(TYPE) \
+    void nccmp_get_index_str_##TYPE(int nitems, const TYPE* items, int last, char* out, char is_fortran);
 GET_INDEX_STR(int)
 GET_INDEX_STR(size_t)
 #undef GET_INDEX_STR
+
+#define GET_ENTIRE_INDEX_STR(TYPE) \
+    void nccmp_get_entire_index_str_##TYPE(int ndims, const TYPE* dimlens, int offset, char* out, char is_fortran);
+GET_ENTIRE_INDEX_STR(int)
+GET_ENTIRE_INDEX_STR(size_t)
+#undef GET_ENTIRE_INDEX_STR
 
 #define GET_PRODUCT_INDEX_INVERSE_ARRAY(TYPE)                                  \
     void nccmp_get_product_index_inverse_array_##TYPE(TYPE nitems, TYPE* limits, TYPE index, TYPE *result);

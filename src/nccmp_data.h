@@ -10,10 +10,6 @@ int nccmp_data(nccmp_state_t* state, nccmp_strlist_t* varnames, nccmp_group_t* g
 int nccmp_data_start_threads(nccmp_state_t* state, nccmp_strlist_t* var_names,
                              const char* group_name1, const char* group_name2);
 
-int nccmp_cmp_var_iterator_init(nccmp_state_t* state, int varid,
-        size_t* start, size_t* count,
-        size_t* iterator_max, size_t* nitems, int rec);
-
 int nccmp_cmp_var_user_type_compound_field_ids(nccmp_state_t* state, int ncid1, int ncid2,
         int varid1, int varid2, size_t* start, size_t* count,
         int nitems, int rec, size_t* limits, void* data1, void* data2,

@@ -359,6 +359,8 @@ Print statistics and hide diff messages.
       -A, --Attribute=att1[,...] Ignore attribute(s) att1[,...]
                                  for all variables.
       -b, --verbose              Print messages to show progress.
+      -B, --buffer-entire-var    Load entire variable into memory
+                                 to reduce memory allocation runtime overhead.
       -c, --var-diff-count=COUNT Stop comparing a variable after COUNT data diffs.
       -C, --diff-count=COUNT     Stop comparing after COUNT data diffs total.
       -d, --data                 Compare data (variable values).
@@ -421,25 +423,32 @@ Print statistics and hide diff messages.
                                      eos: Extra attribute end-of-string nulls.
     
     Report bugs to Remik.Ziemlinski at noaa dot gov 
-    nccmp 1.8.3.0
+    nccmp 1.8.4.0
 
     Configuration
-    Date    = 03/06/18
-    Host    = Linux-2.6.32-696.16.1.el6.x86_64
-    NetCDF  = 4.5.0 of Dec 23 2017 12:30:50 $
-    User    = rziemlinski
-    Flags   = CC="/home/rziemlinski/3ps/gcc/gcc-7.2.0/bin/gcc" \
+    Date    = 13/01/19
+    Host    = Linux-4.15.0-42-generic
+    NetCDF  = 4.4.0 of Nov 26 2018 22:01:33 $
+    User    =
+    Flags   = CC="/usr/bin/cc" \
               CFLAGS="" \
               CPP="" \
               CPPFLAGS="" \
-              LDFLAGS="-L/home/rziemlinski/3ps/hdf/hdf5-1.10.1/lib -lhdf5 -lhdf5_hl -L/home/rziemlinski/3ps/netcdf/netcdf-4.5.0/lib -lcurl" \
+              LDFLAGS="-L/home/rziemlinski/3ps/hdf5/lib -lhdf5 -lhdf5_hl -L/home/rziemlinski/3ps/netcdf/netcdf-4.4.0/lib -lcurl" \
               LIBS="" \
+              ./configure
 
     Features
     header-pad = yes
     pthreads   = yes
 
 ## News
+
+Version 1.8.4.0 (1/13/2019)
+
+1. Added a new flag "-B, --buffer-entire-var" to speed up runtime by many orders of magnitude for very tall
+   variables that have vertical or record dimensions over tens of thousands in size.
+   Thanks to Jennifer Adams (NASA) for reporting the issue.
 
 Version 1.8.3.1 (6/27/2018)
 
@@ -689,5 +698,5 @@ Version 0.1
 
 ## License
 
-Copyright (C) 2004-2017 Remik Ziemlinski
+Copyright (C) 2004-2019 Remik Ziemlinski
 Licensed under the terms of GPL.

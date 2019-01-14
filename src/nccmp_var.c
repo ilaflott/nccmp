@@ -419,7 +419,7 @@ size_t nccmp_get_var_last_dim_num_items(const nccmp_var_t *var)
     if (!var || 0 >= var->ndims) {
         return 0;
     }
-    
+
     if ((1 == var->ndims) && var->has_rec_dim) {
         return 1;
     } else {

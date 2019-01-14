@@ -32,42 +32,42 @@ NCCMP_DARRAY_APPEND_TYPE(unsigned short, ushort)
    Returns 0 if equal, negative if first less than second, and positive if greater than second.
    NULL items are considered greater, so they will go to end of sorted array.
 */
-#define NCCMP_DARRAY_CMP_FIELD(NAME, TYPE, FIELD) 					\
-int NAME(void *first, void *second) 								\
-{ 																	\
-	if (first) { 													\
-		if (second) { 												\
+#define NCCMP_DARRAY_CMP_FIELD(NAME, TYPE, FIELD) 					  \
+int NAME(void *first, void *second) 								          \
+{ 																	                          \
+	if (first) { 												                       	\
+		if (second) { 												                    \
 			return ((TYPE*)first)->FIELD - ((TYPE*)second)->FIELD;  \
-		} else { 													\
-			return -1; 												\
-		} 															\
-	} else if (second) {											\
-		return 1;													\
-	}																\
-	return 0;														\
+		} else { 													                        \
+			return -1; 												                      \
+		} 															                          \
+	} else if (second) {											                  \
+		return 1;													                        \
+	}																                            \
+	return 0;														                        \
 }
 
 #define NCCMP_DARRAY_CMP_FIELD_STR(NAME, TYPE, FIELD) 				\
-int NAME(void *first, void *second) 								\
-{ 																	\
-	if (first) { 													\
-		if (second) { 												\
-			if (((TYPE*)first)->FIELD) { 							\
-				if (((TYPE*)second)->FIELD) { 						\
+int NAME(void *first, void *second) 								          \
+{ 																	                          \
+	if (first) { 													                      \
+		if (second) { 												                    \
+			if (((TYPE*)first)->FIELD) { 							              \
+				if (((TYPE*)second)->FIELD) { 						            \
 					return strcmp( ((TYPE*)first)->FIELD, ((TYPE*)second)->FIELD );	\
-				} else { 											\
-					return -1; 										\
-				} 													\
-			} else { 												\
-				return 1; 											\
-			} 														\
-       } else { 													\
-    	   return -1;												\
-       }															\
-	} else if (second) {											\
-		return 1;													\
-	}																\
-	return 0; 														\
+				} else { 											                        \
+					return -1; 										                      \
+				} 													                          \
+			} else { 												                        \
+				return 1; 											                      \
+			} 														                          \
+       } else { 													                    \
+    	   return -1;												                    \
+       }															                        \
+	} else if (second) {											                  \
+		return 1;													                        \
+	}																                            \
+	return 0; 														                      \
 }
 
 /* Shrink storage capacity to number of items stored. */

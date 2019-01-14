@@ -23,6 +23,7 @@
 static struct option const long_options[] =
 {
     {"Attribute",         required_argument,      0, 'A'},
+    {"buffer-entire-var", no_argument,            0, 'B'},
     {"color",             no_argument,            0, 'l'},
     {"data",              no_argument,            0, 'd'},
     {"debug",             no_argument,            0, 'D'},
@@ -74,6 +75,7 @@ void nccmp_opt_init(nccmp_opt_t* popts)
     if (popts == NULL) return;
 
     popts->abstolerance     = 0;
+    popts->buffer_entire_var= 0;
     popts->color            = 0;
     popts->data             = 0;
     popts->debug            = 0;
@@ -131,6 +133,7 @@ void print_features()
 void print_options(nccmp_opt_t* popts)
 {
    LOG_DEBUG_CHOOSE(popts->color, "abstolerance = %d\n", popts->abstolerance);
+   LOG_DEBUG_CHOOSE(popts->color, "buffer_entire_var = %d\n", popts->buffer_entire_var);
    LOG_DEBUG_CHOOSE(popts->color, "color = %d\n", popts->color);
    LOG_DEBUG_CHOOSE(popts->color, "data = %d\n", popts->data);
    LOG_DEBUG_CHOOSE(popts->color, "debug = %d\n", popts->debug);
@@ -180,7 +183,7 @@ void print_options(nccmp_opt_t* popts)
 
 void print_copyright()
 {
-    fprintf(stderr, "\nCopyright (C) 2004-2007,2009,2010,2012-2018 Remik Ziemlinski\n \
+    fprintf(stderr, "\nCopyright (C) 2004-2007,2009,2010,2012-2019 Remik Ziemlinski\n \
 \n\
 This program comes with NO WARRANTY, to the extent permitted by law.\n\
 You may redistribute copies of this program\n\
@@ -268,7 +271,7 @@ int nccmp_opt_parse(int argc, const char** argv, nccmp_opt_t* popts)
         goto recover;
     }
 
-    while ( (c = getopt_long(argc, (char*const*)argv, "A:bc:C:dDefFgG:hHilmMn:Np:qPr:sSt:T:v:Vw:x:", long_options, 0))
+    while ( (c = getopt_long(argc, (char*const*)argv, "A:bBc:C:dDefFgG:hHilmMn:Np:qPr:sSt:T:v:Vw:x:", long_options, 0))
           != -1
         ) {
         switch (c) {
@@ -278,6 +281,10 @@ int nccmp_opt_parse(int argc, const char** argv, nccmp_opt_t* popts)
 
         case 'b':
             popts->verbose = 1;
+            break;
+
+        case 'B':
+            popts->buffer_entire_var = 1;
             break;
 
         case 'c':

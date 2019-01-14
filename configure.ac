@@ -1,5 +1,5 @@
 dnl Process this file with `autoreconf -i` to produce a configure script.
-AC_INIT(nccmp, 1.8.3.1, [[Remik.Ziemlinski at noaa.gov]])
+AC_INIT(nccmp, 1.8.4.0, [[Remik.Ziemlinski at noaa.gov]])
 
 dnl Include additional scripts.
 AC_CONFIG_MACRO_DIR([m4])

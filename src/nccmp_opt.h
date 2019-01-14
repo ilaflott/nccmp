@@ -47,6 +47,8 @@ Usage: nccmp [OPTION...] file1 [file2]\n\
   -A, --Attribute=att1[,...] Ignore attribute(s) att1[,...]\n\
                              for all variables.\n\
   -b, --verbose              Print messages to show progress.\n\
+  -B, --buffer-entire-var    Load entire variable into memory\n\
+                             to reduce memory allocation runtime overhead.\n\
   -c, --var-diff-count=COUNT Stop comparing a variable after COUNT data diffs.\n\
   -C, --diff-count=COUNT     Stop comparing after COUNT data diffs total.\n\
   -d, --data                 Compare data (variable values).\n\
@@ -114,6 +116,7 @@ Report bugs to Remik.Ziemlinski@noaa.gov.\n\
 typedef struct NCCMPOPTS
 {
     char    abstolerance;          /* flag, 0=percentage (0-100+), 1=absolute tolerance */
+    char    buffer_entire_var;     /* Load entire variable into memory if not zero. */
     char    color;                 /* Print color messages if non-zero. */
     int     data;                  /* compare variable values? */
     int     debug;                 /* print additional debug messages */
@@ -140,7 +143,7 @@ typedef struct NCCMPOPTS
     char    quiet;                 /* If enabled, do not print diffs. */
     char    report_identical;      /* Print message if files match. */
     char    statistics;            /* If should enable diff statistics gathering. */
-    int     threads;               /* Number of threads to use. 0 implies number of cores. */
+    int     threads;               /* Number of threads to use. Must be 1 or greater. */
     double  tolerance;             /* allowable difference tolerance */
     int     var_diff_count;        /* stop printing differences after count for each var. */
     int     variable;              /* variable list given */

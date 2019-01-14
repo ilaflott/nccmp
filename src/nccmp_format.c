@@ -5,13 +5,13 @@
 #include <netcdf.h>
 #include <nccmp_common.h>
 
-#define GET_INDEX_STR(TYPE)                                                    \
-void nccmp_get_index_str_##TYPE(int nitems, TYPE* items, int last, char* out, char is_fortran)    \
+#define GET_INDEX_STR(TYPE)                                                                       \
+void nccmp_get_index_str_##TYPE(int nitems, const TYPE* items, int last, char* out, char is_fortran)    \
 {                                                                              \
     int i;                                                                     \
     char tmp[NCCMP_MAX_TMP_STR_SIZE];                                          \
     strcpy(out, "");                                                           \
-    if (is_fortran) {                                                             \
+    if (is_fortran) {                                                          \
         sprintf(tmp, "%d", last + 1);                                          \
         strcat(out, tmp);                                                      \
                                                                                \
@@ -31,6 +31,52 @@ void nccmp_get_index_str_##TYPE(int nitems, TYPE* items, int last, char* out, ch
 GET_INDEX_STR(int)
 GET_INDEX_STR(size_t)
 #undef GET_INDEX_STR
+
+#define GET_ENTIRE_INDEX_STR(TYPE)                                                                          \
+void nccmp_get_entire_index_str_##TYPE(int ndims, const TYPE* dimlens, int offset, char* out, char is_fortran)    \
+{                                                                              \
+    int i;                                                                     \
+    char tmp[NCCMP_MAX_TMP_STR_SIZE];                                          \
+    TYPE quotient;                                                             \
+    strcpy(out, "");                                                           \
+                                                                               \
+    TYPE* totals = XMALLOC(TYPE, ndims);                                       \
+    TYPE* result = XMALLOC(TYPE, ndims);                                       \
+                                                                               \
+    totals[ndims-1] = 1;                                                       \
+    for(i=ndims-2; i >= 0; --i) {                                              \
+        totals[i] = totals[i+1] * dimlens[i+1];                                \
+    }                                                                          \
+                                                                               \
+    for(i=0; i < ndims-1; ++i) {                                               \
+        quotient = offset / totals[i];                                         \
+        offset -= totals[i] * quotient;                                        \
+        result[i] = quotient;                                                  \
+    }                                                                          \
+    result[i] = offset;                                                        \
+                                                                               \
+    if (is_fortran) {                                                          \
+        for(i=ndims-1; i > 0; --i) {                                           \
+            sprintf(tmp, "%d,", (int) result[i] + 1);                          \
+            strcat(out, tmp);                                                  \
+        }                                                                      \
+        sprintf(tmp, "%d", (int) result[i] + 1);                               \
+        strcat(out, tmp);                                                      \
+    } else {                                                                   \
+        for(i=0; i < ndims-1; ++i) {                                           \
+            sprintf(tmp, "%d,", (int) result[i]);                              \
+            strcat(out, tmp);                                                  \
+        }                                                                      \
+        sprintf(tmp, "%d", (int) result[i]);                                   \
+        strcat(out, tmp);                                                      \
+    }                                                                          \
+                                                                               \
+    XFREE(totals);                                                             \
+    XFREE(result);                                                             \
+}
+GET_ENTIRE_INDEX_STR(int)
+GET_ENTIRE_INDEX_STR(size_t)
+#undef GET_ENTIRE_INDEX_STR
 
 #define GET_PRODUCT_INDEX_INVERSE_ARRAY(TYPE)                                  \
 void nccmp_get_product_index_inverse_array_##TYPE(TYPE nitems, TYPE* limits, TYPE index, TYPE *result) \

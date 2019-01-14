@@ -15,7 +15,7 @@ PRINT_SETUP()
    Arrays should have sentinals at end that are guaranteed to differ.
 */
 #define CMP_TYPES(NAME1, TYPE1, NAME2, TYPE2)                                  \
-size_t nccmp_cmp_##NAME1##_##NAME2(TYPE1* in1, TYPE2* in2) {                    \
+size_t nccmp_cmp_##NAME1##_##NAME2(TYPE1* in1, TYPE2* in2) {                   \
     TYPE1 const *p1 = in1;                                                     \
     TYPE2 const *p2 = in2;                                                     \
     for(; *p1 == *p2; ++p1, ++p2) { };                                         \
@@ -29,7 +29,7 @@ size_t nccmp_cmp_##NAME1##_##NAME2##_missing(TYPE1* in1, TYPE2* in2, TYPE1 m1, T
     return p1 - in1;                                                           \
 }
 #define CMP_TYPES_NANEQUAL(NAME1, TYPE1, NAME2, TYPE2)                         \
-size_t nccmp_cmp_##NAME1##_##NAME2##_nanequal(TYPE1* in1, TYPE2* in2) {         \
+size_t nccmp_cmp_##NAME1##_##NAME2##_nanequal(TYPE1* in1, TYPE2* in2) {        \
     TYPE1 const *p1 = in1;                                                     \
     TYPE2 const *p2 = in2;                                                     \
     for(; (*p1 == *p2) || (isnan((double)*p1) && isnan((double)*p2)); ++p1, ++p2) { }; \
@@ -334,8 +334,8 @@ CMP_TYPES_FIELD_ARRAY_NANEQUAL_GEN(ushort,   unsigned short)
     *((CAST_TYPE*)( ((unsigned char*)PTR) + (COMP_SIZE * COMP_OFFSET) + FIELD_OFFSET ) + ITEM_OFFSET)
 
 int nccmp_cmp_var_string(nccmp_state_t* state, int ncid1, int ncid2,
-                   int idx1, int idx2, size_t* start, size_t* count,
-                   size_t nitems, int rec, size_t* limits)
+                   int varid1, int varid2, size_t* start, size_t* count,
+                   size_t nitems, int rec, size_t* limits, char entire)
 {
     char **s1, **s2;
     char idx_str[256];
@@ -345,46 +345,75 @@ int nccmp_cmp_var_string(nccmp_state_t* state, int ncid1, int ncid2,
     int last_status = EXIT_SUCCESS;
     nccmp_var_t *v1, *v2;
 
-    v1 = & state->vars1[idx1];
-    v2 = & state->vars2[idx2];
+    v1 = & state->vars1[varid1];
+    v2 = & state->vars2[varid2];
 
     /* Library will allocate each string, we just provide pointers. */
     s1 = XMALLOC(char*, nitems);
     s2 = XMALLOC(char*, nitems);
 
-    while(! loop_done) {
-        status = nc_get_vara_string(ncid1, v1->varid, start, count, s1);
-        HANDLE_NC_ERROR(status);
-        status = nc_get_vara_string(ncid2, v2->varid, start, count, s2);
-        HANDLE_NC_ERROR(status);
+    if( entire ) {
+      status = nc_get_var_string(ncid1, v1->varid, s1);
+      HANDLE_NC_ERROR(status);
+      status = nc_get_var_string(ncid2, v2->varid, s2);
+      HANDLE_NC_ERROR(status);
 
-        for(i = 0; i < nitems; ++i) {
-            if ( ( s1[i] && !s2[i]) ||
-                 (!s1[i] &&  s2[i]) ||
-                 (s1[i] && s2[i] && strcmp(s1[i], s2[i]))
-               ) {
-                if (!state->opts.warn[NCCMP_W_ALL]) {
-                    last_status = EXIT_DIFFER;
-                }
+      for(i = 0; i < nitems; ++i) {
+          if ( ( s1[i] && !s2[i]) ||
+               (!s1[i] &&  s2[i]) ||
+               (s1[i] && s2[i] && strcmp(s1[i], s2[i]))
+             ) {
+              if (!state->opts.warn[NCCMP_W_ALL]) {
+                  last_status = EXIT_DIFFER;
+              }
 
+              diff_count_status = nccmp_inc_diff_count(state, varid1);
+              if (COUNT_OVER == diff_count_status) {
+                  goto recover;
+              }
+              if (!state->opts.quiet) {
+                  nccmp_get_index_str_size_t(v1->ndims, start, i, idx_str, state->opts.is_fortran);
+                  PRINT_DIFF(state->opts.color, state->opts.debug, DIFF_MSG, v1->name, idx_str, s1[i], s2[i]);
+              }
+              if ( (COUNT_EQUAL == diff_count_status) || !state->opts.force ) {
+                  goto recover;
+              }
+          }
+      }
+    } else {
+       /* -------------------------------------------------------------------------- */
+        while(! loop_done) {
+            status = nc_get_vara_string(ncid1, v1->varid, start, count, s1);
+            HANDLE_NC_ERROR(status);
+            status = nc_get_vara_string(ncid2, v2->varid, start, count, s2);
+            HANDLE_NC_ERROR(status);
 
-                diff_count_status = nccmp_inc_diff_count(state, idx1);
-                if (COUNT_OVER == diff_count_status) {
-                    goto recover;
-                }
-                if (!state->opts.quiet) {
-                    nccmp_get_index_str_size_t(v1->ndims, start, i, idx_str, state->opts.is_fortran);
-                    PRINT_DIFF(state->opts.color, state->opts.debug, DIFF_MSG, v1->name, idx_str, s1[i], s2[i]);
-                }
-                if ( (COUNT_EQUAL == diff_count_status) || !state->opts.force ) {
-                    goto recover;
+            for(i = 0; i < nitems; ++i) {
+                if ( ( s1[i] && !s2[i]) ||
+                     (!s1[i] &&  s2[i]) ||
+                     (s1[i] && s2[i] && strcmp(s1[i], s2[i]))
+                   ) {
+                    if (!state->opts.warn[NCCMP_W_ALL]) {
+                        last_status = EXIT_DIFFER;
+                    }
+
+                    diff_count_status = nccmp_inc_diff_count(state, varid1);
+                    if (COUNT_OVER == diff_count_status) {
+                        goto recover;
+                    }
+                    if (!state->opts.quiet) {
+                        nccmp_get_index_str_size_t(v1->ndims, start, i, idx_str, state->opts.is_fortran);
+                        PRINT_DIFF(state->opts.color, state->opts.debug, DIFF_MSG, v1->name, idx_str, s1[i], s2[i]);
+                    }
+                    if ( (COUNT_EQUAL == diff_count_status) || !state->opts.force ) {
+                        goto recover;
+                    }
                 }
             }
+
+            loop_done = nccmp_odometer(start, limits, (int) (rec >= 0), v1->ndims-2) == 0;
         }
-
-        loop_done = nccmp_odometer(start, limits, (int) (rec >= 0), v1->ndims-2) == 0;
     }
-
 recover:
     if (s1) {
 		status = nc_free_string(nitems, s1);
@@ -3211,53 +3240,6 @@ recover:
     return last_status;
 }
 
-int nccmp_cmp_var_iterator_init(nccmp_state_t* state, int varid,
-        size_t* start, size_t* count,
-        size_t* iterator_max, size_t* nitems, int rec)
-{
-    int i;
-    int last_status = EXIT_SUCCESS;
-    const nccmp_var_t* v1 = nccmp_find_var_by_id(state->vars1, state->nvars1, varid);
-
-    if (!v1) {
-        LOG_ERROR("Failed to find var with id=%d\n", varid);
-        last_status = EXIT_FAILURE;
-        goto recover;
-    }
-
-    //Scalar variables have no dimensions and have length of one.
-    if( 0 == v1->ndims ) {
-      start[0] = 0;
-      count[0] = 1;
-      *nitems  = 1;
-      goto recover;
-    }
-    
-    for(i = 0; i < v1->ndims; ++i) {
-        start[i] = 0;
-        iterator_max[i] = v1->dimlens[i] - 1;
-    }
-
-    if (v1->has_rec_dim && (rec >= 0)) {
-        start[0] = rec;
-    }
-
-    /* Read in slab for last dimension at-a-time only.
-       We'll then loop over all the other slower/leftmost iterating dimensions. */
-    for(i = 0; i < v1->ndims-1; ++i) {
-        count[i] = 1;
-    }
-
-    *nitems = nccmp_get_var_last_dim_num_items(v1);
-    if (0 < v1->ndims) {
-        /* Number of values to process per loop batch. */
-        count[v1->ndims-1] = *nitems;
-    }
-    
-recover:
-    return last_status;
-}
-
 int nccmp_cmp_var_atomic_type(nccmp_state_t* state,  int ncid1, int ncid2,
         int varid1, int varid2, size_t* start, size_t* count,
         size_t nitems, int rec, size_t* limits, int thread_id)
@@ -3477,7 +3459,7 @@ int nccmp_cmp_var_atomic_type(nccmp_state_t* state,  int ncid1, int ncid2,
         case NC_STRING:
             if (NC_STRING == type2) {
                 last_status = nccmp_cmp_var_string(state, ncid1, ncid2, varid1, varid2,
-                                start, count, nitems, rec, limits);
+                                start, count, nitems, rec, limits, 0);
                 break;
             }
         default:
@@ -3490,6 +3472,287 @@ int nccmp_cmp_var_atomic_type(nccmp_state_t* state,  int ncid1, int ncid2,
 #undef CMP_TYPE1
 #undef CMP_VAR
 #undef CMP_VAR_TOL
+
+recover:
+    return last_status;
+}
+
+int nccmp_cmp_entire_var_atomic_type(nccmp_state_t* state,  int ncid1, int ncid2,
+        int varid1, int varid2, size_t* start, size_t* count,
+        size_t nitems, size_t* limits, int thread_id)
+{
+    int status, last_status = EXIT_SUCCESS;
+    size_t diff_offset, cmplen, offset;
+    double absdelta, pct;
+    int i;
+    char idx_str[NCCMP_MAX_STRINGS], str1[NCCMP_MAX_STRINGS], str2[NCCMP_MAX_STRINGS];
+
+    const nccmp_var_t *v1, *v2;
+    nccmp_nc_type_t item1, item2;
+    nccmp_nc_type_ptr_t items1, items2;
+    nc_type type1, type2;
+
+    char print_hex = nccmp_is_precision_hex(& state->opts);
+    char do_missing = 0;
+    count_limit_type diff_count_status;
+
+    diff_count_status = nccmp_check_diff_count(state, varid1);
+    if (diff_count_status) {
+        goto recover;
+    }
+
+    strcpy(str1, "");
+    strcpy(str2, "");
+    v1 = nccmp_find_var_by_id(state->vars1, state->nvars1, varid1);
+    v2 = nccmp_find_var_by_id(state->vars2, state->nvars2, varid2);
+    type1 = nccmp_get_var_type(v1);
+    type2 = nccmp_get_var_type(v2);
+
+    if (state->opts.missing && v1->has_missing && v2->has_missing) {
+        do_missing = 1;
+    }
+
+#define CMP_VAR(NAME1, TYPE1, NAME2, TYPE2, NANEQUAL) {                                \
+    items1.p_##NAME1 = NCCMP_BUFFER_ITEM(state->buffers1, thread_id)->bytes.p_##NAME1; \
+    items2.p_##NAME2 = NCCMP_BUFFER_ITEM(state->buffers2, thread_id)->bytes.p_##NAME2; \
+                                                                                       \
+    status = nc_get_var_##NAME1(ncid1, v1->varid, items1.p_##NAME1);     \
+    HANDLE_NC_ERROR(status);                                             \
+    status = nc_get_var_##NAME2(ncid2, v2->varid, items2.p_##NAME2);     \
+    HANDLE_NC_ERROR(status);                                             \
+    /* Sentinels. */                                                     \
+    items1.p_##NAME1[nitems] = 0;                                        \
+    items2.p_##NAME2[nitems] = 1;                                        \
+    offset = 0;                                                          \
+    while (1) {                                                          \
+      if (do_missing) {                                                  \
+        if (NANEQUAL) {                                                  \
+          diff_offset = nccmp_cmp_##NAME1##_##NAME2##_missing_nanequal(items1.p_##NAME1+offset, items2.p_##NAME2+offset, v1->missing.m_##NAME1, v2->missing.m_##NAME2);      \
+        } else {                                                         \
+          diff_offset = nccmp_cmp_##NAME1##_##NAME2##_missing(items1.p_##NAME1+offset, items2.p_##NAME2+offset, v1->missing.m_##NAME1, v2->missing.m_##NAME2);     \
+        }                                                                \
+      } else {                                                           \
+        if (NANEQUAL) {                                                  \
+          diff_offset = nccmp_cmp_##NAME1##_##NAME2##_nanequal(items1.p_##NAME1+offset, items2.p_##NAME2+offset);\
+        } else {                                                         \
+          diff_offset = nccmp_cmp_##NAME1##_##NAME2(items1.p_##NAME1+offset, items2.p_##NAME2+offset); \
+        }                                                                \
+      }                                                                  \
+                                                                         \
+      cmplen = nitems - offset;                                          \
+      if (diff_offset >= cmplen)    {                                    \
+          break;    /* nitems compared, var done. */                     \
+      }                                                                  \
+      /* Diff found. */                                                  \
+      offset += diff_offset + 1;                                         \
+      if (!state->opts.warn[NCCMP_W_ALL]) {                              \
+        last_status = EXIT_DIFFER;                                       \
+      } else {                                                           \
+        last_status = EXIT_SUCCESS;                                      \
+      }                                                                  \
+      diff_count_status = nccmp_inc_diff_count(state, varid1);           \
+      if (COUNT_OVER == diff_count_status) {                             \
+          goto recover_cmp_##NAME1##_##NAME2;                            \
+      }                                                                  \
+      item1.m_##NAME1 = items1.p_##NAME1[offset-1];                      \
+      item2.m_##NAME2 = items2.p_##NAME2[offset-1];                      \
+      if (state->opts.statistics) {                                      \
+          nccmp_update_state_stats(state, varid1, 0, (double)item1.m_##NAME1 - (double)item2.m_##NAME2); \
+      }                                                                                                  \
+      if (!state->opts.quiet) {                                                                          \
+          if (print_hex) {                                                                               \
+              nccmp_##NAME1##_to_hex(item1.m_##NAME1, str1);                                             \
+              nccmp_##NAME2##_to_hex(item2.m_##NAME2, str2);                                             \
+          } else {                                                                                       \
+              nccmp_##NAME1##_to_str(item1.m_##NAME1, str1, state->opts.precision);                      \
+              nccmp_##NAME2##_to_str(item2.m_##NAME2, str2, state->opts.precision);                      \
+          }                                                                                              \
+          if( v1->ndims ) {                                                                              \
+              nccmp_get_entire_index_str_size_t(v1->ndims, v1->dimlens, diff_offset, idx_str, state->opts.is_fortran); \
+              PRINT_DIFF(state->opts.color, state->opts.debug, DIFF_MSG, v1->name, idx_str, str1, str2); \
+          } else {                                                                                       \
+              PRINT_DIFF(state->opts.color, state->opts.debug, DIFF_MSG_SCALAR, v1->name, str1, str2);   \
+          }                                                                                              \
+      }                                                                  \
+      /* Print only up to count of desired diffs. */                     \
+      if ( (COUNT_EQUAL == diff_count_status) || !state->opts.force) {   \
+          goto recover_cmp_##NAME1##_##NAME2;                            \
+      }                                                                  \
+    } /* end while(1) */                                                 \
+                                                                         \
+    recover_cmp_##NAME1##_##NAME2:                                       \
+        break;                                                           \
+} /* end CMP_VAR */
+
+#define CMP_VAR_TOL(NAME1, TYPE1, NAME2, TYPE2, NANEQUAL) {                            \
+    items1.p_##NAME1 = NCCMP_BUFFER_ITEM(state->buffers1, thread_id)->bytes.p_##NAME1; \
+    items2.p_##NAME2 = NCCMP_BUFFER_ITEM(state->buffers2, thread_id)->bytes.p_##NAME2; \
+                                                                       \
+    status = nc_get_var_##NAME1(ncid1, v1->varid, items1.p_##NAME1);   \
+    HANDLE_NC_ERROR(status);                                           \
+    status = nc_get_var_##NAME2(ncid2, v2->varid, items2.p_##NAME2);   \
+    HANDLE_NC_ERROR(status);                                           \
+    for(i = 0; i < nitems; ++i) {                                      \
+        if (do_missing) {                                              \
+            if ((v1->missing.m_##NAME1 == items1.p_##NAME1[i]) &&      \
+                (v2->missing.m_##NAME2 == items2.p_##NAME2[i])) continue; \
+        }                                                              \
+        if (NANEQUAL) {                                                \
+            if ( isnan((double)items1.p_##NAME1[i]) && isnan((double)items2.p_##NAME2[i]) ) continue; \
+        }                                                              \
+        absdelta = fabs((double)(items1.p_##NAME1[i] - items2.p_##NAME2[i])); \
+        if (state->opts.abstolerance ?                                 \
+                (absdelta > state->opts.tolerance) :                   \
+                (double)absdelta*100./(fabs((double)items1.p_##NAME1[i]) > fabs((double)items2.p_##NAME2[i]) ? \
+                                           fabs((double)items1.p_##NAME1[i]) :                                 \
+                                           fabs((double)items2.p_##NAME2[i])) > state->opts.tolerance)         \
+        {                                                                   \
+            if (!state->opts.warn[NCCMP_W_ALL]) {                           \
+                last_status = EXIT_DIFFER;                                  \
+            } else {                                                        \
+                last_status = EXIT_SUCCESS;                                 \
+            }                                                               \
+            diff_count_status = nccmp_inc_diff_count(state, varid1);        \
+            if (COUNT_OVER == diff_count_status) {                          \
+                goto recover_tol_##NAME1##_##NAME2;                         \
+            }                                                               \
+            item1.m_##NAME1 = items1.p_##NAME1[i];                          \
+            item2.m_##NAME2 = items2.p_##NAME2[i];                          \
+            if (state->opts.statistics) {                                   \
+                nccmp_update_state_stats(state, varid1, 0, (double)item1.m_##NAME1 - (double)item2.m_##NAME2); \
+            }                                                               \
+            if (!state->opts.quiet) {                                       \
+                if (print_hex) {                                            \
+                    nccmp_##NAME1##_to_hex(item1.m_##NAME1, str1);          \
+                    nccmp_##NAME2##_to_hex(item2.m_##NAME2, str2);          \
+                } else {                                                    \
+                    nccmp_##NAME1##_to_str(item1.m_##NAME1, str1, state->opts.precision);                               \
+                    nccmp_##NAME2##_to_str(item2.m_##NAME2, str2, state->opts.precision);                               \
+                }                                                                                                       \
+                pct = (double)absdelta*100./(fabs((double)items1.p_##NAME1[i]) > fabs((double)items2.p_##NAME2[i]) ?    \
+                          fabs((double)items1.p_##NAME1[i]) : fabs((double)items2.p_##NAME2[i]));                       \
+                if( v1->ndims ) {                                                                                       \
+                    nccmp_get_entire_index_str_size_t(v1->ndims, v1->dimlens, i, idx_str, state->opts.is_fortran);  \
+                    PRINT_DIFF(state->opts.color, state->opts.debug, DIFF_MSG_PCT, v1->name, idx_str, str1, str2, pct); \
+                } else {                                                                                                \
+                    PRINT_DIFF(state->opts.color, state->opts.debug, DIFF_MSG_PCT_SCALAR, v1->name, str1, str2, pct);   \
+                }                                                                                                       \
+            }                                                                   \
+            if ( (COUNT_EQUAL ==  diff_count_status) || !state->opts.force ) {  \
+                goto recover_tol_##NAME1##_##NAME2;                             \
+            }                                                                   \
+        } /* diff */                                                            \
+    } /* for nitems */                                                          \
+    recover_tol_##NAME1##_##NAME2:                                              \
+        break;                                                                  \
+} /* end CMP_VAR_TOL */
+
+#define CMP(...) if (state->opts.tolerance) { CMP_VAR_TOL(__VA_ARGS__); } else { CMP_VAR(__VA_ARGS__); }
+
+#define CMP_TYPE1(NAME1, TYPE1, NANEQUAL)                                                             \
+    switch(type2) {                                                                                   \
+        case NC_BYTE:   CMP(NAME1, TYPE1, schar,     signed char,       NANEQUAL);      break;        \
+        case NC_CHAR:   CMP(NAME1, TYPE1, text,      char,              NANEQUAL);      break;        \
+        case NC_DOUBLE: CMP(NAME1, TYPE1, double,    double,            state->opts.nanequal); break; \
+        case NC_FLOAT:  CMP(NAME1, TYPE1, float,     float,             state->opts.nanequal); break; \
+        case NC_INT:    CMP(NAME1, TYPE1, int,       int,               NANEQUAL);      break;        \
+        case NC_INT64:  CMP(NAME1, TYPE1, longlong,  long long,         NANEQUAL);      break;        \
+        case NC_SHORT:  CMP(NAME1, TYPE1, short,     short,             NANEQUAL);      break;        \
+        case NC_UBYTE:  CMP(NAME1, TYPE1, uchar,     unsigned char,     NANEQUAL);      break;        \
+        case NC_UINT:   CMP(NAME1, TYPE1, uint,      unsigned int,      NANEQUAL);      break;        \
+        case NC_UINT64: CMP(NAME1, TYPE1, ulonglong, unsigned long long,NANEQUAL);      break;        \
+        case NC_USHORT: CMP(NAME1, TYPE1, ushort,    unsigned short,    NANEQUAL);      break;        \
+        case NC_STRING:                                                                               \
+        default:                                                                                      \
+             LOG_ERROR("Unsupported second var data type = %d\n", type2);                             \
+             last_status = EXIT_FAILED;                                                               \
+             break;                                                                                   \
+    }
+
+
+    switch(type1) {
+        case NC_BYTE:   CMP_TYPE1(schar,    signed char,        0)              break;
+        case NC_CHAR:   CMP_TYPE1(text,     char,               0);             break;
+        case NC_DOUBLE: CMP_TYPE1(double,   double,             state->opts.nanequal); break;
+        case NC_FLOAT:  CMP_TYPE1(float,    float,              state->opts.nanequal); break;
+        case NC_INT:    CMP_TYPE1(int,      int,                0);             break;
+        case NC_INT64:  CMP_TYPE1(longlong, long long,          0);             break;
+        case NC_SHORT:  CMP_TYPE1(short,    short,              0);             break;
+        case NC_UBYTE:  CMP_TYPE1(uchar,    unsigned char,      0);             break;
+        case NC_UINT:   CMP_TYPE1(uint,     unsigned int,       0);             break;
+        case NC_UINT64: CMP_TYPE1(ulonglong,unsigned long long, 0);             break;
+        case NC_USHORT: CMP_TYPE1(ushort,   unsigned short,     0);             break;
+        case NC_STRING:
+            if (NC_STRING == type2) {
+                last_status = nccmp_cmp_var_string(state, ncid1, ncid2, varid1, varid2,
+                                start, count, nitems, 0, limits, 1);
+                break;
+            }
+        default:
+            LOG_ERROR("Unsupported first var data type = %d\n", type1);
+            last_status = EXIT_FAILED;
+            break;
+    }
+
+#undef CMP
+#undef CMP_TYPE1
+#undef CMP_VAR
+#undef CMP_VAR_TOL
+
+recover:
+    return last_status;
+}
+
+int nccmp_cmp_var_iterator_init(nccmp_state_t* state, int varid,
+        size_t* start, size_t* count,
+        size_t* limits, size_t* nitems, int rec, char entire)
+{
+    int i;
+    int last_status = EXIT_SUCCESS;
+    const nccmp_var_t* v1 = nccmp_find_var_by_id(state->vars1, state->nvars1, varid);
+
+    if (!v1) {
+        LOG_ERROR("Failed to find var with id=%d\n", varid);
+        last_status = EXIT_FAILURE;
+        goto recover;
+    }
+
+    //Scalar variables have no dimensions and have length of one.
+    if( 0 == v1->ndims ) {
+      start[0] = 0;
+      count[0] = 1;
+      *nitems  = 1;
+      goto recover;
+    }
+
+    for(i = 0; i < v1->ndims; ++i) {
+        start[i] = 0;
+        limits[i] = v1->dimlens[i] - 1;
+    }
+
+    if( entire ) {
+      *nitems = 1;
+      for(i = 0; i < v1->ndims; ++i) {
+          count[i] = v1->dimlens[i];
+          *nitems *= count[i];
+      }
+    } else {
+        if (v1->has_rec_dim && (rec >= 0)) {
+            start[0] = rec;
+        }
+
+        /* Read in slab for last dimension at-a-time only.
+           We'll then loop over all the other slower/leftmost iterating dimensions. */
+        for(i = 0; i < v1->ndims-1; ++i) {
+            count[i] = 1;
+        }
+
+        *nitems = nccmp_get_var_last_dim_num_items(v1);
+        if (0 < v1->ndims) {
+            /* Number of values to process per loop batch. */
+            count[v1->ndims-1] = *nitems;
+        }
+    }
 
 recover:
     return last_status;
@@ -3515,6 +3778,24 @@ int nccmp_cmp_var_start(nccmp_state_t* state, int ncid1, int ncid2,
                     nitems, rec,
                     limits, thread_id);
     }
+}
+
+int nccmp_cmp_entire_var_start(nccmp_state_t* state, int ncid1, int ncid2,
+        int varid1, int varid2,
+        size_t* start, size_t* count, size_t* limits,
+        size_t nitems, int thread_id)
+{
+  if (NC_FIRSTUSERTYPEID <= state->vars1[varid1].type) {
+      PRINT_FUN(fprintf, stderr, "User defined types not yet supported with the option: -B, --buffer-entire-var\n" );
+      return EXIT_FATAL;
+  } else {
+      return nccmp_cmp_entire_var_atomic_type(state,
+                  ncid1, ncid2,
+                  varid1, varid2,
+                  start, count,
+                  nitems,
+                  limits, thread_id);
+  }
 }
 
 /* Do comparison of variable with 'name'.
@@ -3568,7 +3849,7 @@ int nccmp_cmp_var(nccmp_state_t* state, const char* name, int ncid1,
     }
 
     last_status = nccmp_cmp_var_iterator_init(state, v1->varid,
-        start, count, limits, & nitems, rec);
+        start, count, limits, & nitems, rec, 0);
     if (last_status) {
         goto recover;
     }
@@ -3587,45 +3868,164 @@ recover:
     return last_status;
 }
 
-int nccmp_cmp_vars(nccmp_state_t* state, nccmp_strlist_t* var_names, int ncid1, int ncid2, int thread_id)
+int nccmp_cmp_entire_var(nccmp_state_t* state, nccmp_strlist_t* var_names, int ncid1, int ncid2, int thread_id, int varIndex)
 {
-    int i, idx1, idx2, status = EXIT_SUCCESS, last_status = EXIT_SUCCESS;
-    int rec_iter, rec_first, rec_last;
+    int last_status = EXIT_SUCCESS;
+    size_t *start = NULL, *count = NULL, *limits = NULL;
+    size_t nitems;
+
+    const char* name      = var_names->items[varIndex];
+    const nccmp_var_t *v1 = nccmp_find_var_by_name(state->vars1, state->nvars1, name);
+    const nccmp_var_t *v2 = nccmp_find_var_by_name(state->vars2, state->nvars2, name);
+
+    if (!v1 || !v2) {
+        last_status = EXIT_FATAL;
+        goto recover;
+    }
+
+    if ( v1->has_rec_dim == v2->has_rec_dim &&
+         state->nrecs1 == state->nrecs2 ) {
+        if( state->opts.verbose )
+        {
+            LOG_INFO_CHOOSE(state->opts.color,
+                            state->nrecs1 > 0  ? "Thread %d comparing data for variable %s.\n"
+                                               : "Thread %d comparing non-record data for variable %s.\n",
+                            thread_id, name);
+        }
+    } else {
+        if (!state->opts.warn[NCCMP_W_ALL]) {
+            last_status = EXIT_DIFFER;
+        }
+        goto recover;
+    }
+
+    if (v1->has_rec_dim && (state->nrecs1 < 0)) {
+        if (state->opts.debug) {
+            LOG_DEBUG_CHOOSE(state->opts.color, "Empty record will not be compared.\n");
+        }
+        goto recover;
+    }
+
+    if (v1->len != v2->len) {
+        if (!state->opts.quiet) {
+            PRINT_DIFF(state->opts.color, state->opts.debug, " : VARIABLE : %s : SIZE : %d <> %d\n", name, (int)v1->len, (int)v2->len);
+        }
+        if (!state->opts.warn[NCCMP_W_ALL]) {
+            last_status = EXIT_DIFFER;
+        }
+        goto recover;
+    }
+
+    start  = XCALLOC(size_t, NC_MAX_DIMS);
+    count  = XCALLOC(size_t, NC_MAX_DIMS);
+    limits = XCALLOC(size_t, NC_MAX_DIMS);
+
+    last_status = nccmp_cmp_var_iterator_init(
+        state, v1->varid, start, count, limits, & nitems, 0, 1);
+    if (last_status) {
+        goto recover;
+    }
+
+    if (0 < nitems) {
+        last_status = nccmp_cmp_entire_var_start(
+                        state, ncid1, ncid2, v1->varid, v2->varid,
+                        start, count, limits, nitems, thread_id);
+    }
+
+recover:
+    XFREE(start);
+    XFREE(count);
+    XFREE(limits);
+
+    return last_status;
+}
+
+int nccmp_cmp_entire_vars(nccmp_state_t* state, nccmp_strlist_t* var_names, int ncid1, int ncid2, int thread_id)
+{
+    int varIndex, status = EXIT_SUCCESS, last_status = EXIT_SUCCESS;
 
     if (state->opts.debug) {
-        LOG_DEBUG_CHOOSE(state->opts.color, "cmp_vars\n");
+        LOG_DEBUG_CHOOSE(state->opts.color, "nccmp_cmp_entire_vars\n");
     }
-    for(i = 0; i < var_names->size; ++i) {
-        idx1 = find_var(var_names->items[i], state->vars1, state->nvars1);
-        idx2 = find_var(var_names->items[i], state->vars2, state->nvars2);
 
-        /* Compare recs only if lengths are equal and not zero. */
-        if ( state->vars1[idx1].has_rec_dim &&
-             state->vars2[idx2].has_rec_dim &&
-            (state->nrecs1 == state->nrecs2) &&
-            (state->nrecs1 + state->nrecs2) ) {
-            rec_first = 0;
-            rec_last = state->nrecs1 - 1;
-        } else {
-            rec_first = -1;
-            rec_last = -1;
-        }
+    for(varIndex = thread_id; varIndex < var_names->size; varIndex += state->opts.threads) {
+      status = nccmp_cmp_entire_var(state, var_names, ncid1, ncid2, thread_id, varIndex);
+      last_status = status ? status : last_status;
+      if (last_status && !state->opts.force) {
+          goto recover;
+      }
+    }
 
-        for(rec_iter = rec_first + thread_id;
-            rec_iter <= rec_last;
-            rec_iter += state->opts.threads)
-        {
-            status = nccmp_cmp_var(state, var_names->items[i], ncid1, ncid2,
-                                   rec_iter, thread_id);
-            last_status = status ? status : last_status;
-            if (last_status && !state->opts.force) {
-                goto recover;
-            }
+recover:
+    return last_status;
+}
+
+int nccmp_cmp_partial_var(nccmp_state_t* state, nccmp_strlist_t* var_names, int ncid1, int ncid2, int thread_id, int varIndex)
+{
+    if (state->opts.debug) {
+        LOG_DEBUG_CHOOSE(state->opts.color, "nccmp_cmp_partial_var index=%d\n", varIndex);
+    }
+
+    int idx1 = find_var(var_names->items[varIndex], state->vars1, state->nvars1);
+    int idx2 = find_var(var_names->items[varIndex], state->vars2, state->nvars2);
+    int rec_iter, rec_first, rec_last;
+    int status = EXIT_SUCCESS, last_status = EXIT_SUCCESS;
+
+    /* Compare recs only if lengths are equal and not zero. */
+    if ( state->vars1[idx1].has_rec_dim &&
+         state->vars2[idx2].has_rec_dim &&
+        (state->nrecs1 == state->nrecs2) &&
+        (state->nrecs1 + state->nrecs2) ) {
+        rec_first = 0;
+        rec_last = state->nrecs1 - 1;
+    } else {
+        rec_first = -1;
+        rec_last = -1;
+    }
+
+    for(rec_iter = rec_first + thread_id;
+        rec_iter <= rec_last;
+        rec_iter += state->opts.threads)
+    {
+        status = nccmp_cmp_var(state, var_names->items[varIndex], ncid1, ncid2, rec_iter, thread_id);
+        last_status = status ? status : last_status;
+        if (last_status && !state->opts.force) {
+            goto recover;
         }
     }
 
 recover:
     return last_status;
+}
+
+int nccmp_cmp_partial_vars(nccmp_state_t* state, nccmp_strlist_t* var_names, int ncid1, int ncid2, int thread_id)
+{
+    int varIndex, status = EXIT_SUCCESS, last_status = EXIT_SUCCESS;
+
+    if (state->opts.debug) {
+        LOG_DEBUG_CHOOSE(state->opts.color, "nccmp_cmp_partial_vars\n");
+    }
+
+    for(varIndex = 0; varIndex < var_names->size; ++varIndex) {
+      status = nccmp_cmp_partial_var(state, var_names, ncid1, ncid2, thread_id, varIndex);
+      last_status = status ? status : last_status;
+      if (last_status && !state->opts.force) {
+          goto recover;
+      }
+    }
+
+recover:
+    return last_status;
+}
+
+int nccmp_cmp_vars(nccmp_state_t* state, nccmp_strlist_t* var_names, int ncid1, int ncid2, int thread_id)
+{
+    if (state->opts.buffer_entire_var) {
+        return nccmp_cmp_entire_vars( state, var_names, ncid1, ncid2, thread_id );
+    }
+    else {
+        return nccmp_cmp_partial_vars( state, var_names, ncid1, ncid2, thread_id );
+    }
 }
 
 int nccmp_data(nccmp_state_t* state, nccmp_strlist_t* var_names,
@@ -3660,12 +4060,14 @@ int nccmp_data(nccmp_state_t* state, nccmp_strlist_t* var_names,
                         state->nthread_groups1,
                         state->vars1,
                         state->nvars1,
-                        var_names);
+                        var_names,
+                        state->opts.buffer_entire_var);
     state->buffers2 = nccmp_create_buffer_array(
                         state->nthread_groups2,
                         state->vars2,
                         state->nvars2,
-                        var_names);
+                        var_names,
+                        state->opts.buffer_entire_var);
 
     if (state->opts.debug) {
         LOG_DEBUG_CHOOSE(state->opts.color, "Allocated bytes for buffer1=%zu buffer2=%zu\n",

@@ -45,7 +45,8 @@ nccmp_darray_t* nccmp_create_buffer_array(
         int nthreads, 
         nccmp_var_t *vars,
         int nvars,
-        nccmp_strlist_t *var_names);
+        nccmp_strlist_t *var_names,
+        char entire_var);
 
 /* Deep destruction. */
 void nccmp_destroy_buffer_array(nccmp_darray_t *array);
