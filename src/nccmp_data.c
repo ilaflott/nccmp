@@ -3568,7 +3568,7 @@ int nccmp_cmp_entire_var_atomic_type(nccmp_state_t* state,  int ncid1, int ncid2
               nccmp_##NAME2##_to_str(item2.m_##NAME2, str2, state->opts.precision);                      \
           }                                                                                              \
           if( v1->ndims ) {                                                                              \
-              nccmp_get_entire_index_str_size_t(v1->ndims, v1->dimlens, diff_offset, idx_str, state->opts.is_fortran); \
+              nccmp_get_entire_index_str_size_t(v1->ndims, v1->dimlens, offset-1, idx_str, state->opts.is_fortran); \
               PRINT_DIFF(state->opts.color, state->opts.debug, DIFF_MSG, v1->name, idx_str, str1, str2); \
           } else {                                                                                       \
               PRINT_DIFF(state->opts.color, state->opts.debug, DIFF_MSG_SCALAR, v1->name, str1, str2);   \

@@ -22,7 +22,7 @@ size_t nccmp_compute_max_buffer_num_bytes(
     return nbytes;
 }
 
-size_t nccmp_get_num_items(nccmp_var_t *v)
+size_t nccmp_get_num_items(const nccmp_var_t *v)
 {
     if( !v ) {
         return 0;

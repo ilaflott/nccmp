@@ -444,6 +444,10 @@ Print statistics and hide diff messages.
 
 ## News
 
+Version 1.8.4.1 (1/14/2019)
+
+1. Fixed positions printed for diffs when using -B flag.
+
 Version 1.8.4.0 (1/13/2019)
 
 1. Added a new flag "-B, --buffer-entire-var" to speed up runtime by many orders of magnitude for very tall
