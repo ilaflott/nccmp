@@ -1442,11 +1442,11 @@ int nccmp_dump_info_vars(int ncid)
         HANDLE_NC_ERROR(status);
 
         if (is_nc4) {
-            status = nc_inq_var_szip(ncid, i, & options_mask, & pixels_per_block);
-            HANDLE_NC_ERROR(status);
-        } else {
             options_mask = 0;
             pixels_per_block = 0;
+            status = nc_inq_var_szip(ncid, i, & options_mask, & pixels_per_block);
+            HANDLE_NC_SZIP_ERROR(status);
+            status = NC_NOERR;
         }
 
         nccmp_size_t_array_to_str(chunksizes, ndims, chunksizes_str, ",");
@@ -2132,10 +2132,14 @@ int nccmp_var_encoding(nccmp_state_t *state, nccmp_strlist_t* varlist, int ncid1
             }
         }
 
+        szip_mask1 = 0;
+        szip_mask2 = 0;
+        szip_pixels_per_block1 = 0;
+        szip_pixels_per_block2 = 0;
         status = nc_inq_var_szip(ncid1, varid1, & szip_mask1, & szip_pixels_per_block1);
-        HANDLE_NC_ERROR(status);
+        HANDLE_NC_SZIP_ERROR(status);
         status = nc_inq_var_szip(ncid2, varid2, & szip_mask2, & szip_pixels_per_block2);
-        HANDLE_NC_ERROR(status);
+        HANDLE_NC_SZIP_ERROR(status);
 
         if (szip_mask1 != szip_mask2) {
             if (!state->opts.quiet) {

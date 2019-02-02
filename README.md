@@ -423,18 +423,18 @@ Print statistics and hide diff messages.
                                      eos: Extra attribute end-of-string nulls.
     
     Report bugs to Remik.Ziemlinski at noaa dot gov 
-    nccmp 1.8.4.0
+    nccmp 1.8.5.0
 
     Configuration
-    Date    = 13/01/19
-    Host    = Linux-4.15.0-42-generic
-    NetCDF  = 4.4.0 of Nov 26 2018 22:01:33 $
+    Date    = 02/02/19
+    Host    = Linux-4.15.0-43-generic
+    NetCDF  = 4.6.2 of Feb  2 2019 09:33:38 $
     User    =
     Flags   = CC="/usr/bin/cc" \
-              CFLAGS="" \
+              CFLAGS="-I/home/rziemlinski/3ps/hdf5/include" \
               CPP="" \
               CPPFLAGS="" \
-              LDFLAGS="-L/home/rziemlinski/3ps/hdf5/lib -lhdf5 -lhdf5_hl -L/home/rziemlinski/3ps/netcdf/netcdf-4.4.0/lib -lcurl" \
+              LDFLAGS="-L/home/rziemlinski/3ps/hdf5/lib -lhdf5 -lhdf5_hl -L/home/rziemlinski/3ps/netcdf/netcdf-c-4.6.2/lib -lcurl -lnetcdf -lm" \
               LIBS="" \
               ./configure
 
@@ -443,6 +443,11 @@ Print statistics and hide diff messages.
     pthreads   = yes
 
 ## News
+
+Version 1.8.5.0 (2/2/2019)
+
+1. Updated szip API usage and tests to be compliant with NetCDF 4.6.2.
+   Thanks to Tom Robinson for reporting failing tests.
 
 Version 1.8.4.1 (1/14/2019)
 

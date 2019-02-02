@@ -1,3 +1,4 @@
+#!/bin/bash
 PASS=0
 FAIL=1
 TMPDIR=${TMPDIR-/tmp}
@@ -15,8 +16,8 @@ $builddir/test/make_big $NT $NZ $NY $NX 0 $TMP1
 echo "Making second test file." 
 $builddir/test/make_big $NT $NZ $NY $NX 1 $TMP2 
 
-function run() {
-    $builddir/src/nccmp -mdfbS -n $THREADS $TMP1 $TMP2 > stderr.tmp 2>&1
+run() {
+  $builddir/src/nccmp -mdfbS -n $THREADS $TMP1 $TMP2 > stderr.tmp 2>&1
 	if test "$?" -eq "1"; then :; else
 		echo
 		echo "run: Expected exit code 1."
@@ -27,8 +28,8 @@ function run() {
 	#grep -c DIFFER
 }
 
-function run_tol() {
-    $builddir/src/nccmp -mdfbS -n $THREADS -t 1 $TMP1 $TMP2 > stderr.tol.tmp 2>&1
+run_tol() {
+  $builddir/src/nccmp -mdfbS -n $THREADS -t 1 $TMP1 $TMP2 > stderr.tol.tmp 2>&1
 	if test "$?" -eq "1"; then :; else
 		echo
 		echo "run_tol: Expected exit code 1."
