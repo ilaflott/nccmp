@@ -444,6 +444,12 @@ Print statistics and hide diff messages.
 
 ## News
 
+Version 1.8.6.0 (12/8/2019)
+
+1. Fix compiling by checking for NC_EFILTER, since it was introduced only after NetCDF 4.7.
+2. Fix crash due to insufficient allocations for large number of subgroups.
+   Thanks to Mark Dufour for reporting both items.
+
 Version 1.8.5.0 (2/2/2019)
 
 1. Updated szip API usage and tests to be compliant with NetCDF 4.6.2.

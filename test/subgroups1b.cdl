@@ -1,0 +1,2702 @@
+netcdf group2 {
+
+group: subgroup1 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup2 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup3 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup4 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup5 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup6 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup7 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup8 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup9 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup10 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup11 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup12 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup13 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup14 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup15 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup16 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup17 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup18 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup19 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup20 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup21 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup22 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup23 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup24 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup25 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup26 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup27 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup28 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup29 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup30 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup31 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup32 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup33 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup34 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup35 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup36 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup37 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup38 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup39 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup40 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup41 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup42 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup43 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup44 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup45 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup46 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup47 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup48 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup49 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup50 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup51 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup52 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup53 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup54 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup55 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup56 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup57 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup58 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup59 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup60 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup61 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup62 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup63 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup64 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup65 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup66 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup67 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup68 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup69 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup70 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup71 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup72 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup73 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup74 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup75 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup76 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup77 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup78 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup79 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup80 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup81 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup82 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup83 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup84 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup85 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup86 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup87 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup88 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup89 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup90 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup91 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup92 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup93 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup94 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup95 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup96 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup97 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup98 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup99 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup100 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup101 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup102 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup103 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup104 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup105 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup106 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup107 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup108 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup109 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup110 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup111 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup112 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup113 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup114 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup115 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup116 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup117 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup118 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup119 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup120 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup121 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup122 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup123 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup124 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup125 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup126 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup127 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup128 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup129 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup130 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup131 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup132 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup133 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup134 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup135 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup136 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup137 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup138 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup139 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup140 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup141 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup142 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup143 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup144 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup145 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup146 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup147 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup148 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup149 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup150 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup151 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup152 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup153 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup154 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup155 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup156 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup157 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup158 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup159 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup160 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup161 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup162 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup163 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup164 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup165 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup166 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup167 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup168 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup169 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup170 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup171 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup172 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup173 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup174 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup175 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup176 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup177 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup178 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup179 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup180 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup181 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup182 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup183 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup184 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup185 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup186 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup187 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup188 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup189 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup190 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup191 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup192 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup193 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup194 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup195 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup196 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup197 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup198 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup199 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup200 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup201 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup202 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup203 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup204 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup205 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup206 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup207 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup208 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup209 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup210 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup211 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup212 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup213 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup214 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup215 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup216 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup217 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup218 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup219 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup220 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup221 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup222 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup223 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup224 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup225 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup226 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup227 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup228 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup229 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup230 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup231 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup232 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup233 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup234 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup235 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup236 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup237 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup238 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup239 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup240 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup241 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup242 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup243 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup244 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup245 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup246 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup247 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup248 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup249 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup250 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup251 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup252 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup253 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup254 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup255 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup256 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup257 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup258 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup259 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup260 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup261 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup262 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup263 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup264 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup265 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup266 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup267 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup268 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup269 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup270 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup271 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup272 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup273 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup274 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup275 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup276 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup277 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup278 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup279 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup280 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup281 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup282 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup283 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup284 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup285 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup286 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup287 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup288 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup289 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup290 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup291 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup292 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup293 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup294 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup295 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup296 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup297 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup298 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup299 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 2 ;
+  } // group subgroup
+
+group: subgroup300 {
+  dimensions:
+    dim1 = 2 ;
+  variables:
+    float var1(dim1) ;
+  data:
+   var1 = 1, 3 ;
+  } // group subgroup
+}

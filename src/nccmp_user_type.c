@@ -280,7 +280,8 @@ void nccmp_load_group_user_types_recurse(int group_id,
 		int *id,
 		int debug, int color)
 {
-	int status, child_i, num_children, children[NC_MAX_NAME];
+	int status, child_i, num_children;
+  int* children = XCALLOC(int, NCCMP_MAX_GROUPS);
 	nccmp_darray_t *types;
 
 	/* Load own. */
@@ -290,11 +291,24 @@ void nccmp_load_group_user_types_recurse(int group_id,
 
 	/* Load children. */
 	status = nc_inq_grps(group_id, & num_children, children);
-    HANDLE_NC_ERROR(status);
+  HANDLE_NC_ERROR(status);
 
-    for(child_i = 0; child_i < num_children; ++child_i) {
-    	nccmp_load_group_user_types_recurse(children[child_i], output, id, debug, color);
-    }
+  //Allocate more room for ids.
+  if( num_children > 0 &&
+      num_children > NCCMP_MAX_GROUPS )
+  {
+    XFREE( children );
+    children = XCALLOC(int, num_children);
+
+    status = nc_inq_grps(group_id, & num_children, children);
+    HANDLE_NC_ERROR(status);
+  }
+
+  for(child_i = 0; child_i < num_children; ++child_i) {
+    nccmp_load_group_user_types_recurse(children[child_i], output, id, debug, color);
+  }
+
+  XFREE( children );
 }
 
 /* Creates new array with each user-type id as index.

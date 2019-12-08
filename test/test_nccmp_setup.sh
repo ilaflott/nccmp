@@ -23,7 +23,7 @@
 
 if [ $# -lt 2 ]
 then
-    echo "Usage : $0 [compound|encoding|group|missing|nan|NUMBER|pad] <id>"
+    echo "Usage : $0 [compound|encoding|group|missing|nan|NUMBER|pad|subgroups] <id>"
     echo
     echo "Examples:"
     echo "  $0 21 68  # Will generate files test21{a,b}.68.nc"
@@ -108,7 +108,13 @@ case "$DATA" in
         ./padheader unpadded.$ID.nc 0 
         ./padheader padded.$ID.nc 2048
         ;;
-    *) 
+    subgroups)
+        echo For subgroup tests, require nc4.
+        fmt=$(format 10 $ID)
+        $NCGEN -k $fmt -o subgroups1a.$ID.nc -x $srcdir/subgroups1a.cdl
+        $NCGEN -k $fmt -o subgroups1b.$ID.nc -x $srcdir/subgroups1b.cdl
+        ;;
+    *)
         echo Create basic netcdf test files with ncgen.
         for SUFFIX in a b; do
             # Check for backwards compatible test files. 

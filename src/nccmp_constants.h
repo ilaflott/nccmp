@@ -28,4 +28,10 @@ typedef enum { COUNT_UNDER=0, COUNT_OVER=1, COUNT_EQUAL=2 } count_limit_type;
 
 #define NCCMP_MAX_USER_TYPES 256
 
+/* There is no variable for this. Found limit in documentation.
+   Sadly, nc_inq_grps() assumes pre-allocated array for group ids.
+   https://www.unidata.ucar.edu/software/netcdf/docs/group__groups.html#details
+*/
+#define NCCMP_MAX_GROUPS 32767
+
 #endif

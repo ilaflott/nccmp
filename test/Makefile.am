@@ -9,7 +9,7 @@
 # implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 CLEANFILES =                                                    \
-    group*.nc                                                   \
+    group*.nc subgroups*.nc                                     \
     make_big make_big.exe                                       \
     make_compound_array_atomic make_compound_nest_atomic        \
     make_compound_array_user_type                               \
@@ -57,7 +57,7 @@ TESTS =                                                                 \
     test_nccmp_56.sh test_nccmp_57.sh test_nccmp_58.sh test_nccmp_59.sh \
     test_nccmp_60.sh test_nccmp_61.sh test_nccmp_62.sh test_nccmp_63.sh \
     test_nccmp_64.sh test_nccmp_65.sh test_nccmp_66.sh test_nccmp_67.sh \
-    test_nccmp_68.sh test_nccmp_69.sh test_nccmp_70.sh					
+    test_nccmp_68.sh test_nccmp_69.sh test_nccmp_70.sh test_nccmp_71.sh					
 
 if ENABLE_TEST_BIG
     TESTS += test_big.sh
@@ -65,6 +65,7 @@ endif
 
 EXTRA_DIST =                                                \
     group*.cdl                                              \
+    subgroups*.cdl                                          \
     missing_value*.cdl                                      \
     ncgen_formats.sh                                        \
     stderr*.txt                                             \

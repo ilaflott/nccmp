@@ -123,7 +123,7 @@ TESTS = test_nccmp_strlist$(EXEEXT) test_nccmp_odometer$(EXEEXT) \
 	test_nccmp_61.sh test_nccmp_62.sh test_nccmp_63.sh \
 	test_nccmp_64.sh test_nccmp_65.sh test_nccmp_66.sh \
 	test_nccmp_67.sh test_nccmp_68.sh test_nccmp_69.sh \
-	test_nccmp_70.sh $(am__append_1)
+	test_nccmp_70.sh test_nccmp_71.sh $(am__append_1)
 @ENABLE_TEST_BIG_TRUE@am__append_1 = test_big.sh
 check_PROGRAMS = make_compound_array_atomic$(EXEEXT) \
 	make_compound_array_user_type$(EXEEXT) \
@@ -593,7 +593,7 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 CLEANFILES = \
-    group*.nc                                                   \
+    group*.nc subgroups*.nc                                     \
     make_big make_big.exe                                       \
     make_compound_array_atomic make_compound_nest_atomic        \
     make_compound_array_user_type                               \
@@ -617,6 +617,7 @@ CLEANFILES = \
 
 EXTRA_DIST = \
     group*.cdl                                              \
+    subgroups*.cdl                                          \
     missing_value*.cdl                                      \
     ncgen_formats.sh                                        \
     stderr*.txt                                             \
@@ -1599,6 +1600,13 @@ test_nccmp_69.sh.log: test_nccmp_69.sh
 test_nccmp_70.sh.log: test_nccmp_70.sh
 	@p='test_nccmp_70.sh'; \
 	b='test_nccmp_70.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test_nccmp_71.sh.log: test_nccmp_71.sh
+	@p='test_nccmp_71.sh'; \
+	b='test_nccmp_71.sh'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
