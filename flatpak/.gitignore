@@ -1,0 +1,4 @@
+*.bak
+repo*
+build*
+.flatpak*

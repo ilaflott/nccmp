@@ -55,7 +55,11 @@ source code and configure nccmp using --with-netcdf=dir (Autotools) or -DWITH_NE
 
 ### Binaries
 
-#### Ubuntu 12, 14, 15
+#### Flatpak
+
+    flatpak install nccmp
+
+#### Ubuntu 12, 14, 15, 16
 
     sudo add-apt-repository ppa:remik-ziemlinski/nccmp && \
       sudo apt-get update && \
@@ -443,6 +447,11 @@ Print statistics and hide diff messages.
     pthreads   = yes
 
 ## News
+
+Version 1.8.6.2 (12/15/2019)
+
+1. Fixed linking tests.
+2. Install with Flatpak. Stop maintaining specific linux distro formats like deb/rpm for tools like apt, dpkg, dnf, yum, yast, pacman.
 
 Version 1.8.6.1 (12/14/2019)
 

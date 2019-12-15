@@ -53,7 +53,7 @@ ADD_EXECUTABLE(test_nccmp_stats
                ${CMAKE_SOURCE_DIR}/src/nccmp_user_type.c
                ${CMAKE_SOURCE_DIR}/src/nccmp_utils.c
                ${CMAKE_SOURCE_DIR}/src/xmalloc.c)
-TARGET_LINK_LIBRARIES(test_nccmp_stats netcdf)
+TARGET_LINK_LIBRARIES(test_nccmp_stats netcdf m)
 
 ADD_EXECUTABLE(test_nccmp_strlist 
                test_nccmp_strlist.c
