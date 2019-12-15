@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2004,2009 Remik Ziemlinski <first d0t surname att n0aa d0t g0v>
+   Copyright (C) 2004,2009 Remik Ziemlinski <surname at fastmail.com>
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -110,7 +110,7 @@ Usage: nccmp [OPTION...] file1 [file2]\n\
                                  format: File formats.\n\
                                  eos: Extra attribute end-of-string nulls.\n\
 \n\
-Report bugs to Remik.Ziemlinski@noaa.gov.\n\
+Report bugs to remik at fastmail.com\n\
 "
 
 typedef struct NCCMPOPTS

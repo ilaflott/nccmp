@@ -1,5 +1,5 @@
 #!/bin/bash 
-#   Copyright (C) 2004-2015 Remik Ziemlinski @ noaa gov
+#   Copyright (C) 2004-2015 remik @ fastmail . com
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by

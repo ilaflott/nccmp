@@ -75,7 +75,7 @@ Run either setup-x86.exe or setup-x86_64.exe, and select All => Science => nccmp
 
 ##### Homebrew
 
-    brew tap homebrew/science
+    # Now available in the homebrew/core tap.
     brew install nccmp
     brew test nccmp
 
@@ -422,11 +422,11 @@ Print statistics and hide diff messages.
                                      format: File formats.
                                      eos: Extra attribute end-of-string nulls.
     
-    Report bugs to Remik.Ziemlinski at noaa dot gov 
-    nccmp 1.8.5.0
+    Report bugs to remik at fastmail dot com 
+    nccmp 1.8.6.1
 
     Configuration
-    Date    = 02/02/19
+    Date    = 14/12/19
     Host    = Linux-4.15.0-43-generic
     NetCDF  = 4.6.2 of Feb  2 2019 09:33:38 $
     User    =
@@ -443,6 +443,14 @@ Print statistics and hide diff messages.
     pthreads   = yes
 
 ## News
+
+Version 1.8.6.1 (12/14/2019)
+
+1. Updated contact email.
+2. Added executable bit to installation script. 
+   Reported by Ryan Schmidt.
+3. Updated Homebrew release to use core tap instead of deprecated science. 
+   Reported by T. Joe Mills.
 
 Version 1.8.6.0 (12/8/2019)
 
