@@ -18,15 +18,9 @@
         {
           "type": "git",
           "url": "https://gitlab.com/remikz/nccmp",
-          "branch": "1.8.6.1"
+          "branch": "1.8.6.2"
         }
       ],
-      "config-opts": 
-      [
-        "-DBUILD_TESTS=ON",
-        "-DWITH_NETCDF=/run/build/netcdf"
-      ],
-      "run-tests": true,
       "modules": 
       [
         {
