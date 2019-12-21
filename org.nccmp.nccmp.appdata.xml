@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component>
+  <id>org.nccmp.nccmp</id>
+  <name>nccmp</name>
+  <summary>Compare NetCDF Files</summary>
+  <screenshots>
+    <screenshot><image type="source">https://gitlab.com/remikz/nccmp/raw/master/images/screenshot1.png</image></screenshot>
+  </screenshots>
+  <description><p>nccmp compares two NetCDF files bitwise, semantically or with a user defined tolerance. It is a command-line tool licensed under the GNU General Public License to do parallel comparisons of scientific data.</p></description>
+
+  <metadata_license>CC-BY-3.0</metadata_license>
+  <project_license>GPL-2.0</project_license>
+  <url type="homepage">https://gitlab.com/remikz/nccmp</url>
+
+  <releases>
+    <release version="1.8.6.3" date="2019-12-21" />
+  </releases>
+  <developer_name>Remik Ziemlinski</developer_name>
+  <provides>
+    <binary>nccmp</binary>
+  </provides>
+</component>

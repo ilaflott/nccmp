@@ -448,6 +448,10 @@ Print statistics and hide diff messages.
 
 ## News
 
+Version 1.8.6.3 (12/21/2019)
+
+1. Added AppData meta file for linux systems.
+
 Version 1.8.6.2 (12/15/2019)
 
 1. Fixed linking tests.
