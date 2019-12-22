@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<component>
+<component type="console-application">
   <id>org.nccmp.nccmp</id>
   <name>nccmp</name>
   <summary>Compare NetCDF Files</summary>
