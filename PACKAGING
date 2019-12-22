@@ -4,6 +4,7 @@ After making modifications to code, also update the following:
 - README.md       Update version news, links and usage.
 - src/nccmp_opt.c Copyright year.
 - CMakeLists.txt  VERSION
+- flatpak/*.json  version
 
 ## Build Scripts
 Run these commands to regenerate the autoconf scripts.
@@ -16,4 +17,7 @@ Versions that worked:
 - autoheader/autoconf 2.68
 
 ## Publish
-On Gitlab, create a new tag version like 1.8.3.1 and the site will generate tarballs.   
+On Gitlab, create a new tag version like 1.8.3.1 with Release Notes and the site will generate tarballs.   
+
+## Homebrew
+Update version used in gitlab.com/remikz/homebrew-nccmp/formula/nccmp.rb
