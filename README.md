@@ -79,7 +79,7 @@ Run either setup-x86.exe or setup-x86_64.exe, and select All => Science => nccmp
 
 ##### Homebrew
 
-    # Now available in the homebrew/core tap.
+    brew tap remikz/nccmp https://gitlab.com/remikz/homebrew-nccmp.git
     brew install nccmp
     brew test nccmp
 
