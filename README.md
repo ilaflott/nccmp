@@ -448,6 +448,10 @@ Print statistics and hide diff messages.
 
 ## News
 
+Version 1.8.6.5 (12/24/2019)
+
+1. Added AppData content rating to fix flatpak build bot failure.
+
 Version 1.8.6.4 (12/22/2019)
 
 1. Added AppData component type to fix flatpak build bot failure.

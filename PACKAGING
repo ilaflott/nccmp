@@ -1,10 +1,10 @@
 ## Version
 After making modifications to code, also update the following:
-- configure.ac    Update the version number in AC_INIT.
-- README.md       Update version news, links and usage.
-- src/nccmp_opt.c Copyright year.
-- CMakeLists.txt  VERSION
-- flatpak/*.json  version
+- configure.ac     Update the version number in AC_INIT.
+- README.md        Update version news, links and usage.
+- src/nccmp_opt.c  Copyright year.
+- CMakeLists.txt   VERSION
+- flatpak/org*json version
 
 ## Build Scripts
 Run these commands to regenerate the autoconf scripts.

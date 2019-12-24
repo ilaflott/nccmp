@@ -16,6 +16,7 @@
     <release version="1.8.6.3" date="2019-12-21" />
   </releases>
   <developer_name>Remik Ziemlinski</developer_name>
+  <content_rating type="oars-1.0"/>
   <provides>
     <binary>nccmp</binary>
   </provides>
