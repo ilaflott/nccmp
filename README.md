@@ -53,9 +53,20 @@ source code and configure nccmp using --with-netcdf=dir (Autotools) or -DWITH_NE
 
 ## Download
 
-### Binaries
+### Binaries and Recipes
 
-#### Flatpak
+#### Multi-Platform
+
+##### Conda
+
+    conda install -c conda-forge nccmp
+    
+    # Alternative command if conda-forge is already in your list of channels.
+    conda install nccmp
+
+Courtesy of Klaus Zimmermann
+
+##### Flatpak
 
     flatpak install nccmp
 
