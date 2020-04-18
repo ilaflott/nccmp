@@ -110,7 +110,7 @@ Usage: nccmp [OPTION...] file1 [file2]\n\
                                  format: File formats.\n\
                                  eos: Extra attribute end-of-string nulls.\n\
 \n\
-Report bugs to remik at fastmail.com\n\
+Report bugs to https://gitlab.com/remikz/nccmp\n\
 "
 
 typedef struct NCCMPOPTS

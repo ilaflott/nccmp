@@ -437,19 +437,19 @@ Print statistics and hide diff messages.
                                      format: File formats.
                                      eos: Extra attribute end-of-string nulls.
     
-    Report bugs to remik at fastmail dot com 
-    nccmp 1.8.6.1
+    Report bugs to https://gitlab.com/remikz/nccmp
+    nccmp 1.8.7.0
 
     Configuration
-    Date    = 14/12/19
+    Date    = 18/04/20
     Host    = Linux-4.15.0-43-generic
-    NetCDF  = 4.6.2 of Feb  2 2019 09:33:38 $
+    NetCDF  = 4.6.3 of Dec 14 2019 12:39:59 $
     User    =
     Flags   = CC="/usr/bin/cc" \
               CFLAGS="-I/home/rziemlinski/3ps/hdf5/include" \
               CPP="" \
               CPPFLAGS="" \
-              LDFLAGS="-L/home/rziemlinski/3ps/hdf5/lib -lhdf5 -lhdf5_hl -L/home/rziemlinski/3ps/netcdf/netcdf-c-4.6.2/lib -lcurl -lnetcdf -lm" \
+              LDFLAGS="-L/home/rziemlinski/3ps/hdf5/lib -lhdf5 -lhdf5_hl -L/home/rziemlinski/3ps/netcdf/netcdf-c-4.6.3/lib -lcurl -lnetcdf -lm" \
               LIBS="" \
               ./configure
 
@@ -458,6 +458,11 @@ Print statistics and hide diff messages.
     pthreads   = yes
 
 ## News
+
+Version 1.8.7.0 (4/18/2020)
+
+1. Fixed bug that only found diffs with variable with/without a record dimension depending on input file order.
+   Reported by Dave Allured
 
 Version 1.8.6.5 (12/24/2019)
 
@@ -753,5 +758,5 @@ Version 0.1
 
 ## License
 
-Copyright (C) 2004-2019 Remik Ziemlinski
+Copyright (C) 2004-2020 Remik Ziemlinski
 Licensed under the terms of GPL.

@@ -1,5 +1,5 @@
 dnl Process this file with `autoreconf -i` to produce a configure script.
-AC_INIT(nccmp, 1.8.6.5, [[remik at fastmail dot com]])
+AC_INIT(nccmp, 1.8.7.0, [[https://gitlab.com/remikz/nccmp]])
 
 dnl Include additional scripts.
 AC_CONFIG_MACRO_DIR([m4])

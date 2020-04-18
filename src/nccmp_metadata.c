@@ -1521,7 +1521,7 @@ void nccmp_get_rec_names(nccmp_opt_t *opts, int ncid1, int ncid2,
         status = nc_inq_dimname(ncid2, recid2, recname2);
         HANDLE_NC_ERROR(status);
     } else {
-        strcpy(recname1, "");
+        strcpy(recname2, "");
     }
 }
 

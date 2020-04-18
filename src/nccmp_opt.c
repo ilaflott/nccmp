@@ -183,7 +183,7 @@ void print_options(nccmp_opt_t* popts)
 
 void print_copyright()
 {
-    fprintf(stderr, "\nCopyright (C) 2004-2007,2009,2010,2012-2019 Remik Ziemlinski\n \
+    fprintf(stderr, "\nCopyright (C) 2004-2007,2009,2010,2012-2020 Remik Ziemlinski\n \
 \n\
 This program comes with NO WARRANTY, to the extent permitted by law.\n\
 You may redistribute copies of this program\n\

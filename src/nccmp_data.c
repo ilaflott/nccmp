@@ -3703,54 +3703,56 @@ recover:
     return last_status;
 }
 
-int nccmp_cmp_var_iterator_init(nccmp_state_t* state, int varid,
+int nccmp_cmp_var_iterator_init(nccmp_state_t* state, char usefirst, int varid,
         size_t* start, size_t* count,
         size_t* limits, size_t* nitems, int rec, char entire)
 {
     int i;
     int last_status = EXIT_SUCCESS;
-    const nccmp_var_t* v1 = nccmp_find_var_by_id(state->vars1, state->nvars1, varid);
+    const nccmp_var_t* var = usefirst
+                            ? nccmp_find_var_by_id(state->vars1, state->nvars1, varid)
+                            : nccmp_find_var_by_id(state->vars2, state->nvars2, varid);
 
-    if (!v1) {
+    if (!var) {
         LOG_ERROR("Failed to find var with id=%d\n", varid);
         last_status = EXIT_FAILURE;
         goto recover;
     }
 
     //Scalar variables have no dimensions and have length of one.
-    if( 0 == v1->ndims ) {
+    if( 0 == var->ndims ) {
       start[0] = 0;
       count[0] = 1;
       *nitems  = 1;
       goto recover;
     }
 
-    for(i = 0; i < v1->ndims; ++i) {
+    for(i = 0; i < var->ndims; ++i) {
         start[i] = 0;
-        limits[i] = v1->dimlens[i] - 1;
+        limits[i] = var->dimlens[i] - 1;
     }
 
     if( entire ) {
       *nitems = 1;
-      for(i = 0; i < v1->ndims; ++i) {
-          count[i] = v1->dimlens[i];
+      for(i = 0; i < var->ndims; ++i) {
+          count[i] = var->dimlens[i];
           *nitems *= count[i];
       }
     } else {
-        if (v1->has_rec_dim && (rec >= 0)) {
+        if (var->has_rec_dim && (rec >= 0)) {
             start[0] = rec;
         }
 
         /* Read in slab for last dimension at-a-time only.
            We'll then loop over all the other slower/leftmost iterating dimensions. */
-        for(i = 0; i < v1->ndims-1; ++i) {
+        for(i = 0; i < var->ndims-1; ++i) {
             count[i] = 1;
         }
 
-        *nitems = nccmp_get_var_last_dim_num_items(v1);
-        if (0 < v1->ndims) {
+        *nitems = nccmp_get_var_last_dim_num_items(var);
+        if (0 < var->ndims) {
             /* Number of values to process per loop batch. */
-            count[v1->ndims-1] = *nitems;
+            count[var->ndims-1] = *nitems;
         }
     }
 
@@ -3831,7 +3833,9 @@ int nccmp_cmp_var(nccmp_state_t* state, const char* name, int ncid1,
         goto recover;
     }
 
-    if (v1->has_rec_dim && (rec < 0)) {
+    if (v1->has_rec_dim &&
+        v2->has_rec_dim &&
+        rec < 0) {
         if (state->opts.debug) {
             LOG_DEBUG_CHOOSE(state->opts.color, "Empty record will not be compared.\n");
         }
@@ -3848,13 +3852,21 @@ int nccmp_cmp_var(nccmp_state_t* state, const char* name, int ncid1,
         goto recover;
     }
 
-    last_status = nccmp_cmp_var_iterator_init(state, v1->varid,
-        start, count, limits, & nitems, rec, 0);
-    if (last_status) {
-        goto recover;
+    {
+      //Ignore record dimension parity.
+      char usefirst = !v1->has_rec_dim && v2->has_rec_dim;
+      int varid     = usefirst ? v1->varid : v2->varid;
+      last_status   = nccmp_cmp_var_iterator_init(state, usefirst, varid, start, count, limits, & nitems, rec, 0);
+      if (last_status) {
+          goto recover;
+      }
     }
    
     if (0 < nitems) {
+        if (state->opts.debug) {
+            LOG_DEBUG_CHOOSE(state->opts.color, "nitems=%d start=%d count=%d limits=%d rec=%d\n",
+                             nitems, start[0], count[0], limits[0], rec);
+        }
         last_status = nccmp_cmp_var_start(
                         state, ncid1, ncid2, v1->varid, v2->varid, 
                         start, count, limits, rec, nitems, thread_id);
@@ -3921,7 +3933,7 @@ int nccmp_cmp_entire_var(nccmp_state_t* state, nccmp_strlist_t* var_names, int n
     limits = XCALLOC(size_t, NC_MAX_DIMS);
 
     last_status = nccmp_cmp_var_iterator_init(
-        state, v1->varid, start, count, limits, & nitems, 0, 1);
+        state, 1, v1->varid, start, count, limits, & nitems, 0, 1);
     if (last_status) {
         goto recover;
     }
@@ -3980,7 +3992,7 @@ int nccmp_cmp_partial_var(nccmp_state_t* state, nccmp_strlist_t* var_names, int 
         rec_last = state->nrecs1 - 1;
     } else {
         rec_first = -1;
-        rec_last = -1;
+        rec_last  = -1;
     }
 
     for(rec_iter = rec_first + thread_id;

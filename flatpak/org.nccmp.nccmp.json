@@ -18,7 +18,7 @@
         {
           "type": "git",
           "url": "https://gitlab.com/remikz/nccmp",
-          "branch": "1.8.6.5"
+          "branch": "1.8.7.0"
         }
       ],
       "modules": 
