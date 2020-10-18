@@ -153,6 +153,20 @@ int nccmp_open_file(nccmp_state_t* state, nccmp_group_t** groups,
         *groups = nccmp_create_groups(*ngroups);
         for(i = 0; i < *ngroups; ++i) {
             status = nc_open(filename, NC_NOWRITE, & ((*groups)[i].ncid) );
+
+            //netcdf API doesn't return NC_ENOTFOUND for missing file, so must check ourselves.
+            if( NC_NOERR != status ) {
+              FILE* file = fopen( filename, "r" );
+              if( NULL == file ) {
+                char msg[4096];
+                sprintf( msg, "File not found: %s\n", filename);
+                LOG_ERROR_CHOOSE(state->opts.color, msg );
+                exit(-1);
+              } else {
+                fclose( file );
+              }
+            }
+
             HANDLE_NC_ERROR(status);
             status = nccmp_get_group_info((*groups)[i].ncid, & (*groups)[i]);
             if (status) {

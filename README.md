@@ -459,6 +459,11 @@ Print statistics and hide diff messages.
 
 ## News
 
+Version 1.8.8.0 (10/18/2020)
+
+1. Print file name if not found.
+   Reported by Verónica
+
 Version 1.8.7.0 (4/18/2020)
 
 1. Fixed bug that only found diffs with variable with/without a record dimension depending on input file order.
