@@ -9,8 +9,6 @@
 #include <nccmp_thread.h>
 #include <math.h>
 
-PRINT_SETUP()
-
 /* Element compare and return first offset that differs.
    Arrays should have sentinals at end that are guaranteed to differ.
 */

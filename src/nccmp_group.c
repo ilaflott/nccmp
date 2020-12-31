@@ -7,8 +7,6 @@
 #include <nccmp_common.h>
 #include <nccmp_var.h>
 
-PRINT_SETUP()
-
 void nccmp_add_group_fullnames(nccmp_group_t* group, nccmp_strlist_t* names)
 {
     int i;

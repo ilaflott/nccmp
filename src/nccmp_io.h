@@ -1,6 +1,7 @@
 #ifndef NCCMP_IO_H
 #define NCCMP_IO_H
 
+#include <config.h>
 #include <log.h>
 #include <netcdf.h>
 
@@ -32,10 +33,8 @@
         FUN(__VA_ARGS__);                                                      \
         pthread_mutex_unlock(& mutex_print);                                   \
     }
-    #define PRINT_SETUP() pthread_mutex_t mutex_print;
 #else
     #define PRINT_FUN(FUN, ...) FUN(__VA_ARGS__);
-    #define PRINT_SETUP() /* empty */
 #endif
 
 /* Always print diffs to stderr. */

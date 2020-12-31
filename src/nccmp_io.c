@@ -1,6 +1,9 @@
-#include <nccmp_io.h>
+#include <config.h>
+#include <pthread.h>
 
-PRINT_SETUP()
+#if HAVE_PTHREAD
+    pthread_mutex_t mutex_print;
+#endif
 
 void io_destroy()
 {
