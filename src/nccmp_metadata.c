@@ -13,8 +13,6 @@
     #include <nc3internal.h>
 #endif
 
-PRINT_SETUP()
-
 int nccmp_cmp_att(int ncid1, int ncid2, int varid1, int varid2,
            const char* name, const char* varname, nccmp_opt_t* opts)
 {
