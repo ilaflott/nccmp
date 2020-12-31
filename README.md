@@ -459,6 +459,13 @@ Print statistics and hide diff messages.
 
 ## News
 
+Version 1.8.9.0 (12/31/2020)
+
+1. Fixed bug where attributes of different lengths were not reported correctly.
+   Reported by Dave Allured
+2. Fixed duplicate symbol error with gcc10+.
+   Fixed by Dave Allured
+
 Version 1.8.8.0 (10/18/2020)
 
 1. Print file name if not found.

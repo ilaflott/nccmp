@@ -1,5 +1,5 @@
 dnl Process this file with `autoreconf -i` to produce a configure script.
-AC_INIT(nccmp, 1.8.8.0, [[https://gitlab.com/remikz/nccmp]])
+AC_INIT(nccmp, 1.8.9.0, [[https://gitlab.com/remikz/nccmp]])
 
 dnl Include additional scripts.
 AC_CONFIG_MACRO_DIR([m4])
