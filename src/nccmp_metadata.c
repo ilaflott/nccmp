@@ -62,32 +62,33 @@ int nccmp_cmp_att(int ncid1, int ncid2, int varid1, int varid2,
             nccmp_pretty_print_att(ncid2, varname, varid2, name, typestr2, MAX_STRLEN);
             PRINT_DIFF(opts->color, opts->debug, " : LENGTHS : ATTRIBUTE : %s : VARIABLE : %s : %lu <> %lu : VALUES : ", name, varname, (unsigned long)lenp1, (unsigned long)lenp2);
         }
+
+        char isEosDiff = 0;
         switch(type1) {
-        case NC_CHAR:
-            if (!opts->quiet) {
-                /* Quote strings. */
-                fprintf(stderr, "\"%s\" : \"%s\"\n", typestr1, typestr2);
-            }
-            if (strcmp(typestr1,typestr2) == 0) {
+            case NC_CHAR:
                 /* Same text, but invisible trailing nulls because lengths differ. */
-                if (opts->warn[NCCMP_W_EOS] || opts->warn[NCCMP_W_ALL]) {
-                    /* Pass */
-                } else {
-                    status = EXIT_DIFFER;
-                    return status;
+                if (strcmp(typestr1,typestr2) == 0) {
+                  isEosDiff = 1;
                 }
-            }
-            break;
-        default:
-            if (!opts->quiet) {
-                /* Unquoted. */
-                fprintf(stderr, "%s : %s\n", typestr1, typestr2);
-            }
-            if (!opts->warn[NCCMP_W_ALL]) {
-                status = EXIT_DIFFER;
-                return status;
-            }
-            break;
+
+                if (!opts->quiet) {
+                    /* Quote strings. */
+                    fprintf(stderr, "\"%s\" : \"%s\"\n", typestr1, typestr2);
+                }
+                break;
+            default:
+                if (!opts->quiet) {
+                    /* Unquoted. */
+                    fprintf(stderr, "%s : %s\n", typestr1, typestr2);
+                }
+                break;
+        }
+
+        if ( isEosDiff &&
+             opts->warn[NCCMP_W_EOS] ) {
+            /* Pass */
+        } else if ( !opts->warn[NCCMP_W_ALL] ) {
+            return EXIT_DIFFER;
         }
     }
     if (nccmp_cmp_att_val(ncid1, ncid2, varid1, varid2, name, lenp1, lenp2, type1) != EXIT_SUCCESS) {
@@ -108,8 +109,7 @@ int nccmp_cmp_att(int ncid1, int ncid2, int varid1, int varid2,
             }
         }
         if (!opts->warn[NCCMP_W_ALL]) {
-            status = EXIT_DIFFER;
-            return status;
+            return EXIT_DIFFER;
         }
     }
     return EXIT_SUCCESS;
