@@ -38,7 +38,7 @@ void nccmp_load_dims(int ncid, nccmp_dim_t* dims, int ndims)
     int status, i;
 
     int *dimids = XMALLOC(int, ndims);
-    int include_parents = 1;
+    int include_parents = 0;
 
     status = nc_inq_dimids(ncid, & ndims, dimids, include_parents);
     HANDLE_NC_ERROR(status);
@@ -54,7 +54,7 @@ void nccmp_load_dims(int ncid, nccmp_dim_t* dims, int ndims)
 
 void nccmp_init_dims(int ncid, nccmp_dim_t** dims, int* ndims)
 {
-    int i, status, include_parents = 1;
+    int i, status, include_parents = 0;
 
     nccmp_destroy_dims(dims, ndims);
 

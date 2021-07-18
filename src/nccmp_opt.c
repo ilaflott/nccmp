@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2004-2006,2010,2012 Remik Ziemlinski <first d0t surname att n0aa d0t g0v>
+   Copyright (C) 2004-2007,2009,2010,2012-2021 Remik Ziemlinski
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -41,6 +41,7 @@ static struct option const long_options[] =
     {"metadata",          no_argument,            0, 'm'},
     {"missing",           no_argument,            0, 'M'},
     {"nans-are-equal",    no_argument,            0, 'N'},
+    {"no-subgroups",      no_argument,            0, 'R'},
     {"precision",         required_argument,      0, 'p'},
     {"quiet",             no_argument,            0, 'q'},
     {"report-identical-files", no_argument,       0, 's'},
@@ -99,6 +100,7 @@ void nccmp_opt_init(nccmp_opt_t* popts)
     popts->missing          = 0;
     popts->nanequal         = 0;
     popts->precision        = NULL;
+    popts->subgroups        = 1;
     popts->quiet            = 0;
     popts->report_identical = 0;
     popts->statistics       = 0;
@@ -170,6 +172,7 @@ void print_options(nccmp_opt_t* popts)
    LOG_DEBUG_CHOOSE(popts->color, "nanequal = %d\n", popts->nanequal);
    LOG_DEBUG_CHOOSE(popts->color, "precision = %s\n", popts->precision);
    LOG_DEBUG_CHOOSE(popts->color, "quiet = %d\n", popts->quiet);
+   LOG_DEBUG_CHOOSE(popts->color, "subgroups = %d\n", popts->subgroups);
    LOG_DEBUG_CHOOSE(popts->color, "report_identical = %d\n", popts->report_identical);
    LOG_DEBUG_CHOOSE(popts->color, "statistics = %d\n", popts->statistics);
    LOG_DEBUG_CHOOSE(popts->color, "threads = %d\n", popts->threads);
@@ -183,7 +186,7 @@ void print_options(nccmp_opt_t* popts)
 
 void print_copyright()
 {
-    fprintf(stderr, "\nCopyright (C) 2004-2007,2009,2010,2012-2020 Remik Ziemlinski\n \
+    fprintf(stderr, "\nCopyright (C) 2004-2007,2009,2010,2012-2021 Remik Ziemlinski\n \
 \n\
 This program comes with NO WARRANTY, to the extent permitted by law.\n\
 You may redistribute copies of this program\n\
@@ -271,7 +274,7 @@ int nccmp_opt_parse(int argc, const char** argv, nccmp_opt_t* popts)
         goto recover;
     }
 
-    while ( (c = getopt_long(argc, (char*const*)argv, "A:bBc:C:dDefFgG:hHilmMn:Np:qPr:sSt:T:v:Vw:x:", long_options, 0))
+    while ( (c = getopt_long(argc, (char*const*)argv, "A:bBc:C:dDefFgG:hHilmMn:Np:qPr:RsSt:T:v:Vw:x:", long_options, 0))
           != -1
         ) {
         switch (c) {
@@ -391,6 +394,10 @@ int nccmp_opt_parse(int argc, const char** argv, nccmp_opt_t* popts)
 
         case 'r':
             nccmp_split_strlist_by_delim(optarg, popts->groupnames, ",");
+            break;
+
+        case 'R':
+            popts->subgroups = 0;
             break;
 
         case 's':

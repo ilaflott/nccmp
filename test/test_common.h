@@ -1,6 +1,7 @@
 #ifndef TEST_COMMON_H
 #define TEST_COMMON_H
 
+#include <math.h>
 #include <stdlib.h>
 #include <stdarg.h>
 #include <stdio.h>
@@ -41,6 +42,6 @@ void vprint(FILE * stream, const char* file, int line, ...)
 }
 
 #define ROUND(V, N) ( (int)((V) * pow(10.0, (N))) / pow(10.0, (N)) )
-#define ALMOST_EQUAL(A, B, EPS) ( abs((A)-(B)) < EPS )
+#define ALMOST_EQUAL(A, B, EPS) ( fabs((A)-(B)) < EPS )
 
 #endif /* TEST_COMMON_H */

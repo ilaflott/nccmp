@@ -1,0 +1,6 @@
+DIFFER : LENGTHS : ATTRIBUTE : desc : VARIABLE : var3 : 5 <> 6 : VALUES : "test2" : "test2b"
+DIFFER : LENGTHS : DIMENSION : dim2 : 4 <> 5
+DIFFER : NUMBER OF GROUPS : 1 ("/group") <> 2 ("/group")
+DIFFER : VARIABLE : var1 : POSITION : [1] : VALUES : 2 <> 22
+DIFFER : VARIABLE : var1 : POSITION : [3] : VALUES : 4 <> 24
+DIFFER : VARIABLE : var3 : SIZE : 4 <> 5

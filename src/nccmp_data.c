@@ -3786,7 +3786,7 @@ int nccmp_cmp_entire_var_start(nccmp_state_t* state, int ncid1, int ncid2,
         size_t nitems, int thread_id)
 {
   if (NC_FIRSTUSERTYPEID <= state->vars1[varid1].type) {
-      PRINT_FUN(fprintf, stderr, "User defined types not yet supported with the option: -B, --buffer-entire-var\n" );
+      PRINT_ERROR( "User defined types not yet supported with the option: -B, --buffer-entire-var\n" );
       return EXIT_FATAL;
   } else {
       return nccmp_cmp_entire_var_atomic_type(state,

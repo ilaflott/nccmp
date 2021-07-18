@@ -1,12 +1,12 @@
 netcdf group1 {
 dimensions:
-	dim1 = 4 ;
+	dim0 = 4 ;
 variables:
-	float var1(dim1) ;
-		var1:desc = "test" ;
+	float var0(dim0) ;
+		var0:desc = "test0" ;
 data:
 
- var1 = 1, 2, 3, 4 ;
+ var0 = 1, 2, 3, 4 ;
 
 group: group {
   dimensions:
@@ -14,10 +14,10 @@ group: group {
   	dim2 = 4 ;
   variables:
   	float var1(dim1) ;
-  		var1:desc = "1" ;
+  		var1:desc = "test1" ;
   	float var2(dim1) ;
   	float var3(dim2) ;
-  		var3:desc = "2" ;
+  		var3:desc = "test2" ;
   data:
 
    var1 = 1, 2, 3, 4 ;
@@ -26,28 +26,30 @@ group: group {
 
   group: subgroup {
     dimensions:
-    	dim1 = 4 ;
-    	dim3 = 4 ;
+    	dim4 = 4 ;
+    	dim5 = 4 ;
     variables:
-    	float var1(dim1) ;
-    		var1:desc = "test" ;
-    	float var3(dim3) ;
-    		var3:desc = "test" ;
+    	float var4(dim4) ;
+    		var4:desc = "test4" ;
+    	float var5(dim5) ;
+    		var5:desc = "test5" ;
+      int var9(dim2) ;
     data:
 
-     var1 = 1, 2, 3, 4 ;
-     var3 = 31, 32, 33, 34 ;
+     var4 = 1, 2, 3, 4 ;
+     var5 = 31, 32, 33, 34 ;
+     var9 = 1, 2, 3, 4 ;
     } // group subgroup
   } // group group
   
 group: group3 {
   dimensions:
-  	dim1 = 4 ;
+  	dim6 = 4 ;
   variables:
-  	float var1(dim1) ;
-  		var1:desc = "1" ;
+  	float var6(dim6) ;
+  		var6:desc = "test6" ;
   data:
 
-   var1 = 1, 2, 3, 4 ;
+   var6 = 1, 2, 3, 4 ;
   } // group group3  
 }

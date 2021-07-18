@@ -93,8 +93,9 @@ Usage: nccmp [OPTION...] file1 [file2]\n\
   -P, --header-pad           Compare header padding in classic or 64bit\n\
                              file formats.\n\
   -q, --quiet                Do not print metadata or data differences.\n\
-  -r, --group=group1[,...]   Compare group(s) group1[,...] only.\n\
+  -r, --group=group1[,...]   Compare group(s) group1[,...].\n\
                              Group names can be full or short.\n\
+  -R, --no-subgroups         Do not compare nested groups.\n\
   -s, --report-identical-files\n\
                              Report when files are the same.\n\
   -S, --statistics           Report data difference statistics.\n\
@@ -143,6 +144,7 @@ typedef struct NCCMPOPTS
     char    quiet;                 /* If enabled, do not print diffs. */
     char    report_identical;      /* Print message if files match. */
     char    statistics;            /* If should enable diff statistics gathering. */
+    char    subgroups;             /* Boolean to compare nested groups. */
     int     threads;               /* Number of threads to use. Must be 1 or greater. */
     double  tolerance;             /* allowable difference tolerance */
     int     var_diff_count;        /* stop printing differences after count for each var. */

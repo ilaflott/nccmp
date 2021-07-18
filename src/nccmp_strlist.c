@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2004, Remik Ziemlinski <first d0t surname att n0aa d0t g0v>
+   Copyright (C) 2004-2007,2009,2010,2012-2021 Remik Ziemlinski
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -115,9 +115,52 @@ int* nccmp_compute_strlist_lengths(nccmp_strlist_t* list)
     return result;
 }
 
+char nccmp_copy_with_prefix_strlist(nccmp_strlist_t* src, nccmp_strlist_t* dst, const char* prefix)
+{
+    int len = strlen(prefix);
+    char found = 0;
+
+    for( int i = 0; i < src->size; ++i ) {
+        if( strncmp(src->items[i], prefix, len) == 0 ) {
+            nccmp_add_to_strlist(dst, src->items[i]);
+            found = 1;
+        }
+    }
+
+    return found;
+}
+
+char nccmp_copy_with_suffix_strlist(nccmp_strlist_t* src, nccmp_strlist_t* dst, const char* suffix)
+{
+    char found = 0;
+
+    for( int i = 0; i < src->size; ++i ) {
+        if( nccmp_string_ends_with(src->items[i], suffix) ) {
+            nccmp_add_to_strlist(dst, src->items[i]);
+            found = 1;
+        }
+    }
+
+    return found;
+}
+
+char nccmp_copy_with_substring_strlist(nccmp_strlist_t* src, nccmp_strlist_t* dst, const char* substring)
+{
+    char found = 0;
+
+    for( int i = 0; i < src->size; ++i ) {
+        if( strstr(src->items[i], substring) ) {
+            nccmp_add_to_strlist(dst, src->items[i]);
+            found = 1;
+        }
+    }
+
+    return found;
+}
+
 int nccmp_deep_copy_strlist(nccmp_strlist_t* src, nccmp_strlist_t* dst)
 {
-    int i, status;
+    int i, status, copied;
 
     if (src->size > dst->capacity) {
         return EXIT_FAILED;
@@ -129,7 +172,7 @@ int nccmp_deep_copy_strlist(nccmp_strlist_t* src, nccmp_strlist_t* dst)
         return status;
     }
 
-    for(i=0; i < src->capacity; ++i) {
+    for(copied=0, i=0; i < src->capacity; ++i) {
         if (NULL == src->items[i]) {
             if (dst->items[i]) {
                 XFREE(dst->items[i]);
@@ -138,6 +181,9 @@ int nccmp_deep_copy_strlist(nccmp_strlist_t* src, nccmp_strlist_t* dst)
         } else {
             dst->items[i] = XMALLOC(char, strlen(src->items[i]) + 1);
             strcpy(dst->items[i], src->items[i]);
+        }
+        if (++copied >= src->size) {
+            break;
         }
     }
 
@@ -334,6 +380,22 @@ int nccmp_split_strlist_by_delim(const char* string, nccmp_strlist_t* list, cons
     }
 
     return status;
+}
+
+char nccmp_string_ends_with(const char* string, const char* suffix)
+{
+    if (!string || !suffix) {
+        return 0;
+    }
+
+    size_t lenstring = strlen(string);
+    size_t lensuffix = strlen(suffix);
+
+    if (lensuffix > lenstring) {
+        return 0;
+    }
+
+    return strncmp(string + lenstring - lensuffix, suffix, lensuffix) == 0;
 }
 
 int nccmp_union_strlist(nccmp_strlist_t* list1, nccmp_strlist_t* list2, nccmp_strlist_t* listunion)

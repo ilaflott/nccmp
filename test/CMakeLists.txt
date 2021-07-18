@@ -147,6 +147,12 @@ ADD_TEST(NAME test_nccmp_68          COMMAND ${CMAKE_SOURCE_DIR}/test/test_nccmp
 ADD_TEST(NAME test_nccmp_69          COMMAND ${CMAKE_SOURCE_DIR}/test/test_nccmp_69.sh)
 ADD_TEST(NAME test_nccmp_70          COMMAND ${CMAKE_SOURCE_DIR}/test/test_nccmp_70.sh)
 ADD_TEST(NAME test_nccmp_71          COMMAND ${CMAKE_SOURCE_DIR}/test/test_nccmp_71.sh)
+ADD_TEST(NAME test_nccmp_72          COMMAND ${CMAKE_SOURCE_DIR}/test/test_nccmp_72.sh)
+ADD_TEST(NAME test_nccmp_73          COMMAND ${CMAKE_SOURCE_DIR}/test/test_nccmp_73.sh)
+ADD_TEST(NAME test_nccmp_74          COMMAND ${CMAKE_SOURCE_DIR}/test/test_nccmp_74.sh)
+ADD_TEST(NAME test_nccmp_75          COMMAND ${CMAKE_SOURCE_DIR}/test/test_nccmp_75.sh)
+ADD_TEST(NAME test_nccmp_76          COMMAND ${CMAKE_SOURCE_DIR}/test/test_nccmp_76.sh)
+ADD_TEST(NAME test_nccmp_77          COMMAND ${CMAKE_SOURCE_DIR}/test/test_nccmp_77.sh)
 ADD_TEST(NAME test_big               COMMAND ${CMAKE_SOURCE_DIR}/test/test_big.sh)
 
 SET(CLEAN_FILES group*.nc subgroup*.nc big make_big.exe make_compound_array_atomic make_compound_nest_atomic make_compound_array_user_type make_compound*.nc make_compound*.exe make_compound_vlen_nest make_compound_vlen_nest*.exe make_group make_group.exe make_nans make_nans.exe missing_value*.nc make_nc4_encodings make_nc4_encodings.exe not_encoded*.nc encoded*.nc padded*.nc padheader padheader.exe stderr*.tmp test*.nc test_nccmp_darray test_nccmp_darray.exe test_nccmp_darray_sort test_nccmp_darray_sort.exe test_nccmp_odometer test_nccmp_odometer.exe test_nccmp_stats test_nccmp_stats.exe

@@ -1,0 +1,2 @@
+DIFFER : LENGTHS : ATTRIBUTE : desc : VARIABLE : var0 : 5 <> 6 : VALUES : "test0" : "test0b"
+DIFFER : VARIABLE : var0 : POSITION : [3] : VALUES : 4 <> 0

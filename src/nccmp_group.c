@@ -36,7 +36,7 @@ int nccmp_cmp_group(nccmp_state_t* state, nccmp_group_t* group1, nccmp_group_t* 
         return EXIT_DIFFER;
     }
 
-    if (group1->nchildren != group1->nchildren) {
+    if (group1->nchildren != group2->nchildren) {
         if (!state->opts.quiet) {
             PRINT_DIFF(state->opts.color, state->opts.debug, " : NUMBER OF GROUPS : %zu (\"%s\") <> %zu (\"%s\")\n",
                        group1->nchildren, group1->fullname, group2->nchildren, group2->fullname);
@@ -165,6 +165,26 @@ nccmp_group_t* nccmp_create_groups(size_t n)
     return result;
 }
 
+nccmp_strlist_t* nccmp_create_group_names_to_process(nccmp_state_t* state)
+{
+    nccmp_strlist_t* result = NULL;
+
+    if (state->opts.subgroups) {
+        result = nccmp_find_subgroup_names(state);
+    } else {
+        /* No subgroups. */
+        if (state->opts.groupnames->size) {
+            result = nccmp_new_strlist(state->opts.groupnames->size);
+            nccmp_deep_copy_strlist(state->opts.groupnames, result);
+        } else {
+            result = nccmp_new_strlist(1);
+            nccmp_add_to_strlist(result, "/");
+        }
+    }
+
+    return result;
+}
+
 nccmp_group_t* nccmp_find_group_by_name(nccmp_group_t* groups, const char* name)
 {
     nccmp_group_t* result = 0;
@@ -212,6 +232,72 @@ nccmp_group_t* nccmp_find_group_by_id(nccmp_group_t* groups, const int id)
     }
 
     return 0;
+}
+
+nccmp_strlist_t* nccmp_find_subgroup_names(nccmp_state_t* state)
+{
+    nccmp_strlist_t* result = NULL;
+    nccmp_strlist_t* all_group_names = nccmp_new_strlist(NC_MAX_VARS);
+    nccmp_add_group_fullnames(state->thread_groups1, all_group_names);
+    nccmp_add_group_fullnames(state->thread_groups2, all_group_names);
+
+    if (state->opts.debug) {
+        LOG_DEBUG_CHOOSE(state->opts.color, "all group names:\n");
+        for( int i = 0; i < all_group_names->size; ++i ) {
+            LOG_DEBUG_CHOOSE(state->opts.color, "%s\n", all_group_names->items[i]);
+        }
+    }
+
+    if (state->opts.groupnames->size) {
+        result = nccmp_new_strlist(NC_MAX_VARS);
+        char name[NC_MAX_NAME];
+        char found;
+
+        for( int i = 0; i < state->opts.groupnames->size; ++i ) {
+            found = 0;
+            if (0 == strncmp(state->opts.groupnames->items[i], "/", 1)) {
+                /* Full name. */
+                /* Parent group. */
+                if (nccmp_exists_in_strlist(all_group_names, state->opts.groupnames->items[i])) {
+                    nccmp_add_to_strlist(result,state->opts.groupnames->items[i]);
+                    found += 1;
+                }
+
+                /* Child groups. */
+                strcpy(name, state->opts.groupnames->items[i]);
+                strcat(name, "/");
+                found += nccmp_copy_with_prefix_strlist(all_group_names, result, name);
+
+                if (0 == found) {
+                    PRINT_ERRORS("Full group name \"%s\" not found\n", state->opts.groupnames->items[i]);
+                    nccmp_free_strlist(& result);
+                    break;
+                }
+            } else {
+                /* Short name. */
+                /* Root and leaf group. */
+                strcpy(name, "/");
+                strcat(name, state->opts.groupnames->items[i]);
+                found += nccmp_copy_with_suffix_strlist(all_group_names, result, name);
+
+                /* Child groups. */
+                strcat(name, "/");
+                found += nccmp_copy_with_substring_strlist(all_group_names, result, name);
+
+                if (0 == found) {
+                    PRINT_ERRORS("Short group name \"%s\" not found\n", state->opts.groupnames->items[i]);
+                    nccmp_free_strlist(& result);
+                    break;
+                }
+            }
+        }
+
+        nccmp_free_strlist(& all_group_names);
+    } else {
+       result = all_group_names;
+    }
+
+    return result;
 }
 
 void nccmp_get_group_ids_recurse(nccmp_group_t *group, int *ids, int *index)
@@ -332,23 +418,30 @@ int nccmp_cmp_groups(nccmp_state_t* state)
 {
     int i, status = EXIT_SUCCESS, last_status = EXIT_SUCCESS;
     nccmp_group_t *child1, *child2;
-    nccmp_strlist_t* tmp_group_names = NULL;
     nccmp_strlist_t* group_names_to_process = NULL;
-
-    if (state->opts.groupnames->size) {
-        group_names_to_process = state->opts.groupnames;
-    } else {
-        tmp_group_names = nccmp_new_strlist(NC_MAX_VARS);
-        nccmp_add_group_fullnames(state->thread_groups1, tmp_group_names);
-        nccmp_add_group_fullnames(state->thread_groups2, tmp_group_names);
-        group_names_to_process = tmp_group_names;
-    }
 
     /* Load all user-type info for entire files. */
     state->types1 = nccmp_load_group_user_type_map(state->thread_groups1[0].ncid, state->opts.debug, state->opts.color);
     state->types2 = nccmp_load_group_user_type_map(state->thread_groups2[0].ncid, state->opts.debug, state->opts.color);
 
+    group_names_to_process = nccmp_create_group_names_to_process(state);
+    if (NULL == group_names_to_process) {
+        last_status = EXIT_FATAL;
+        goto recover;
+    }
+
+    if (state->opts.debug) {
+        LOG_DEBUG_CHOOSE(state->opts.color, "group names to process:\n");
+        for( int i = 0; i < group_names_to_process->size; ++i ) {
+            LOG_DEBUG_CHOOSE(state->opts.color, "%s\n", group_names_to_process->items[i]);
+        }
+    }
+
     for(i = 0; i < group_names_to_process->size; ++i) {
+        if (state->opts.verbose) {
+            LOG_INFO_CHOOSE(state->opts.color, "Comparing group \"%s\"\n", group_names_to_process->items[i]);
+        }
+
         child1 = nccmp_find_group_by_name(state->thread_groups1, group_names_to_process->items[i]);
         if (! child1) {
             if (!state->opts.quiet) {
@@ -380,7 +473,8 @@ int nccmp_cmp_groups(nccmp_state_t* state)
     }
 
 recover:
-    nccmp_free_strlist(& tmp_group_names);
+    //old nccmp_free_strlist(& tmp_group_names);
+    nccmp_free_strlist(& group_names_to_process);
 
     return last_status;
 }

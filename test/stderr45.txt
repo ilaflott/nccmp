@@ -1,11 +1,13 @@
-DIFFER : LENGTHS : ATTRIBUTE : desc : VARIABLE : var3 : 1 <> 2 : VALUES : "2" : "2b"
-DIFFER : LENGTHS : ATTRIBUTE : desc : VARIABLE : var3 : 4 <> 5 : VALUES : "test" : "testb"
+DIFFER : Failed to find group /group/subgroup2 in file "group1.45.nc"
+DIFFER : LENGTHS : ATTRIBUTE : desc : VARIABLE : var3 : 5 <> 6 : VALUES : "test2" : "test2b"
+DIFFER : LENGTHS : ATTRIBUTE : desc : VARIABLE : var5 : 5 <> 6 : VALUES : "test5" : "test5b"
 DIFFER : LENGTHS : DIMENSION : dim2 : 4 <> 5
-DIFFER : LENGTHS : DIMENSION : dim2 : 4 <> 5
-DIFFER : LENGTHS : DIMENSION : dim3 : 4 <> 6
-DIFFER : VARIABLE : var1 : POSITION : [0] : VALUES : 1 <> 21
+DIFFER : LENGTHS : DIMENSION : dim5 : 4 <> 6
+DIFFER : NUMBER OF GROUPS : 1 ("/group") <> 2 ("/group")
 DIFFER : VARIABLE : var1 : POSITION : [1] : VALUES : 2 <> 22
-DIFFER : VARIABLE : var1 : POSITION : [2] : VALUES : 3 <> 23
 DIFFER : VARIABLE : var1 : POSITION : [3] : VALUES : 4 <> 24
 DIFFER : VARIABLE : var3 : SIZE : 4 <> 5
-DIFFER : VARIABLE : var3 : SIZE : 4 <> 6
+DIFFER : VARIABLE : var4 : POSITION : [0] : VALUES : 1 <> 21
+DIFFER : VARIABLE : var4 : POSITION : [2] : VALUES : 3 <> 23
+DIFFER : VARIABLE : var5 : SIZE : 4 <> 6
+DIFFER : VARIABLE : var9 : SIZE : 4 <> 5

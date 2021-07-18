@@ -20,9 +20,13 @@ int nccmp_cmp_groups(nccmp_state_t* state);
 
 int nccmp_compute_num_groups(nccmp_group_t *group);
 
+nccmp_strlist_t* nccmp_create_group_names_to_process(nccmp_state_t* state);
+
 nccmp_group_t* nccmp_find_group_by_name(nccmp_group_t* groups, const char* name);
 
 nccmp_group_t* nccmp_find_group_by_id(nccmp_group_t* groups, const int id);
+
+nccmp_strlist_t* nccmp_find_subgroup_names(nccmp_state_t* state);
 
 nccmp_group_t* nccmp_create_group();
 

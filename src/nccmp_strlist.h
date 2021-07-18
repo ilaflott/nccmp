@@ -45,6 +45,15 @@ int nccmp_clear_strlist(nccmp_strlist_t* list);
 /* Compute string lengths and return new array. Caller must free the result array. */
 int* nccmp_compute_strlist_lengths(nccmp_strlist_t* list);
 
+/* Any string in src that begins with prefix is copied to dst. Return 1 if found, 0 if not. */
+char nccmp_copy_with_prefix_strlist(nccmp_strlist_t* src, nccmp_strlist_t* dst, const char* prefix);
+
+/* Any string in src that ends with suffix is copied to dst. Return 1 if found, 0 if not. */
+char nccmp_copy_with_suffix_strlist(nccmp_strlist_t* src, nccmp_strlist_t* dst, const char* suffix);
+
+/* Any string in src that has substring is copied to dst. Return 1 if found, 0 if not. */
+char nccmp_copy_with_substring_strlist(nccmp_strlist_t* src, nccmp_strlist_t* dst, const char* substring);
+
 /* Print all pointers allocated. */
 void nccmp_debug_print_strlist(FILE* f, nccmp_strlist_t* list, char delim);
 
@@ -82,6 +91,9 @@ int nccmp_compute_size_of_strlist(nccmp_strlist_t* list);
    list must be pre-allocated and contents might be overwritten if not empty.
    Returns 0 if success. */
 int nccmp_split_strlist_by_delim(const char* string, nccmp_strlist_t* list, const char* delim);
+
+/* Return 1 if string ends with suffix. */
+char nccmp_string_ends_with(const char* string, const char* suffix);
 
 /* Compute string list union; 'listunion' must already be allocated to
    accommodate size(list1) + size(list2)

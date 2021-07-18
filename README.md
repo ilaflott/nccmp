@@ -420,8 +420,9 @@ Print statistics and hide diff messages.
       -P, --header-pad           Compare header padding in classic or 64bit
                                  file formats.
       -q, --quiet                Do not print metadata or data differences.
-      -r, --group=group1[,...]   Compare group(s) group1[,...] only.
+      -r, --group=group1[,...]   Compare group(s) group1[,...].
                                  Group names can be full or short.
+      -R, --no-subgroups         Do not compare nested groups.
       -s, --report-identical-files
                                  Report when files are the same.
       -S, --statistics           Report data difference statistics.
@@ -438,10 +439,10 @@ Print statistics and hide diff messages.
                                      eos: Extra attribute end-of-string nulls.
     
     Report bugs to https://gitlab.com/remikz/nccmp
-    nccmp 1.8.7.0
+    nccmp 1.9.0.0
 
     Configuration
-    Date    = 18/04/20
+    Date    = 18/07/21
     Host    = Linux-4.15.0-43-generic
     NetCDF  = 4.6.3 of Dec 14 2019 12:39:59 $
     User    =
@@ -458,6 +459,13 @@ Print statistics and hide diff messages.
     pthreads   = yes
 
 ## News
+
+Version 1.9.0.0 (7/18/2021)
+
+1. Added new -R,--no-subgroups option.
+2. Fixed comparing subgroups listed with -r.
+   Reported by Edward Baudrez
+3. Fixed bug with comparing number of subgroups.
 
 Version 1.8.9.0 (12/31/2020)
 
@@ -770,5 +778,5 @@ Version 0.1
 
 ## License
 
-Copyright (C) 2004-2020 Remik Ziemlinski
+Copyright (C) 2004-2021 Remik Ziemlinski
 Licensed under the terms of GPL.
