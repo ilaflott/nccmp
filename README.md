@@ -460,6 +460,10 @@ Print statistics and hide diff messages.
 
 ## News
 
+Version 1.9.0.1 (7/20/2021)
+
+1. Add missing tests to autoconf scripts.
+
 Version 1.9.0.0 (7/18/2021)
 
 1. Added new -R,--no-subgroups option.

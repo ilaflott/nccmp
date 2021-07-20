@@ -1,5 +1,5 @@
 ## Version
-After making modifications to code, also update the following:
+After making modifications to code and cmake/autoconf test lists, also update the following:
 - configure.ac     Update the version number in AC_INIT.
 - README.md        Update version news, links and usage.
 - src/nccmp_opt.c  Copyright year.
