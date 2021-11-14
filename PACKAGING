@@ -5,6 +5,8 @@ After making modifications to code and cmake/autoconf test lists, also update th
 - src/nccmp_opt.c  Copyright year.
 - CMakeLists.txt   VERSION
 - flatpak/org*json version
+- Add new test file format to test_nccmp_setup.sh:format()
+- Add new tests to test/Makefile.am,CMakeLists.txt
 
 ## Build Scripts
 Run these commands to regenerate the autoconf scripts.
@@ -17,7 +19,7 @@ Versions that worked:
 - autoheader/autoconf 2.68
 
 ## Publish
-On Gitlab, create a new tag version like 1.8.3.1 with Release Notes and the site will generate tarballs.   
+On Gitlab, create a new tag version like 1.8.3.1 with non-empty Release Notes and the site will generate tarballs.
 
 ## Homebrew
 Update version used in gitlab.com/remikz/homebrew-nccmp/formula/nccmp.rb

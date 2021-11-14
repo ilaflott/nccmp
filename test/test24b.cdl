@@ -1,0 +1,33 @@
+netcdf nccmp_test2 {
+dimensions:
+        bnds = 2 ;
+        time = UNLIMITED ; // (1 currently)
+        lat = 2 ;
+        lon = 2 ;
+variables:
+        float var(time, lat, lon) ;
+                var:coordinates = "height" ;
+        float time(time) ;
+        float time_bnds(time, bnds) ;
+        float height ;
+        float lat(lat) ;
+                lat:units = "degrees_north" ;
+        float lon(lon) ;
+                lon:units = "degrees_east" ;
+data:
+
+ var =
+  2, 1,
+  1, 1 ;
+
+ time = 0.5 ;
+
+ time_bnds =
+  0, 1 ;
+
+ height = 2 ;
+
+ lat = 0, 1 ;
+
+ lon = 0, 1 ;
+}

@@ -425,7 +425,7 @@ Print statistics and hide diff messages.
       -R, --no-subgroups         Do not compare nested groups.
       -s, --report-identical-files
                                  Report when files are the same.
-      -S, --statistics           Report data difference statistics.
+      -S, --statistics           Report data difference statistics (file1 - file2).
       -t, --tolerance=TOL        Compare if absolute difference > TOL.
       -T, --Tolerance=TOL        Compare if relative percent difference > TOL.
       -v, --variable=var1[,...]  Compare variable(s) var1[,...] only.
@@ -439,18 +439,18 @@ Print statistics and hide diff messages.
                                      eos: Extra attribute end-of-string nulls.
     
     Report bugs to https://gitlab.com/remikz/nccmp
-    nccmp 1.9.0.0
+    nccmp 1.9.1.0
 
     Configuration
-    Date    = 18/07/21
-    Host    = Linux-4.15.0-43-generic
-    NetCDF  = 4.6.3 of Dec 14 2019 12:39:59 $
-    User    =
-    Flags   = CC="/usr/bin/cc" \
-              CFLAGS="-I/home/rziemlinski/3ps/hdf5/include" \
+    Date    = 14/11/21
+    Host    = Linux-5.8.0-59-generic
+    NetCDF  = 4.8.1 of Nov 14 2021 14:59:03 $
+    User    = rziemlinski
+    Flags   = CC="/home/rziemlinski/3ps/clang/bin/clang" \
+              CFLAGS="-I/home/rziemlinski/3ps/hdf5/include -I/home/rziemlinski/3ps/netcdf/4.8.1/include" \
               CPP="" \
               CPPFLAGS="" \
-              LDFLAGS="-L/home/rziemlinski/3ps/hdf5/lib -lhdf5 -lhdf5_hl -L/home/rziemlinski/3ps/netcdf/netcdf-c-4.6.3/lib -lcurl -lnetcdf -lm" \
+              LDFLAGS="-L/home/rziemlinski/3ps/hdf5/lib -lhdf5 -lhdf5_hl -L/home/rziemlinski/3ps/netcdf/netcdf-c-4.8.1/lib -lcurl -lnetcdf -lm" \
               LIBS="" \
               ./configure
 
@@ -459,6 +459,14 @@ Print statistics and hide diff messages.
     pthreads   = yes
 
 ## News
+
+
+Version 1.9.1.0 (11/14/2021)
+
+1. Fix silent false positive diff of scalar variable when using -B.
+   Reported by Martin Dix
+2. Update and clarify manpage.
+   Reported by Edward Baudrez
 
 Version 1.9.0.1 (7/20/2021)
 

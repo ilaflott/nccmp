@@ -336,7 +336,8 @@ void var_info_get(int ncid, nccmp_var_t* vars, int nvars, int verbose, int color
             vars[i].len *= vars[i].dimlens[j];
         }
 
-        vars[i].has_rec_dim = (vars[i].dimids[0] == recid);
+        vars[i].has_rec_dim = (vars[i].ndims > 0) &&
+                              (vars[i].dimids[0] == recid);
 
         /* Get missing_value or _FillValue. */
         if (get_missing(ncid, &vars[i], "missing_value") == 0) {

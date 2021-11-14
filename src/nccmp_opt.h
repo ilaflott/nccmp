@@ -98,7 +98,7 @@ Usage: nccmp [OPTION...] file1 [file2]\n\
   -R, --no-subgroups         Do not compare nested groups.\n\
   -s, --report-identical-files\n\
                              Report when files are the same.\n\
-  -S, --statistics           Report data difference statistics.\n\
+  -S, --statistics           Report data difference statistics (file1 - file2).\n\
   -t, --tolerance=TOL        Compare if absolute difference > TOL.\n\
   -T, --Tolerance=TOL        Compare if relative percent difference > TOL.\n\
   -v, --variable=var1[,...]  Compare variable(s) var1[,...] only.\n\

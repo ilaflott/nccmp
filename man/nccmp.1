@@ -16,6 +16,9 @@ Ignore attribute(s) att1[,...] for all variables.
 .SS -b, --verbose              
 Print messages to show progress.
 
+.SS -B, --buffer-entire-var
+Load entire variable into memory to reduce memory allocation runtime overhead.
+
 .SS -c, --var-diff-count=COUNT   
 Stop comparing a variable after COUNT data diffs.
 
@@ -94,11 +97,14 @@ Do not print metadata or data differences.
 Compare group(s) group1[,...] only. Group names can be full or short.
 "/" is the file root group. "/group1/subgroup2" is an example fullname, whereas "group1" and "subgroup2" are short names.
 
+.SS -R, --no-subgroups
+Do not compare nested groups.
+
 .SS -s, --report-identical-files
 Report when files are the same.
 
 .SS -S, --statistics
-Report data difference statistics summary table after all comparisons.
+Report data difference statistics summary table after all comparisons (FILE1 - FILE2).
 
 .SS -t, --tolerance=TOL
 Compare if absolute difference > TOL.
@@ -145,5 +151,5 @@ Report bugs with bug tracker: <http://sourceforge.net/p/nccmp/bugs/>
 Remik Ziemlinski
 
 .SH COPYRIGHT
-Copyright © 2004-2015 Remik Ziemlinski.  License GPLv2: GNU GPL version 2 <http://gnu.org/licenses/gpl.html>.
+Copyright © 2004-2021 Remik Ziemlinski.  License GPLv2: GNU GPL version 2 <http://gnu.org/licenses/gpl.html>.
 This is free software: you are free to change and redistribute it.  There is NO WARRANTY, to the extent permitted by law.

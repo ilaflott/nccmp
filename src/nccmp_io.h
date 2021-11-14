@@ -55,6 +55,7 @@
 
 #define PRINT_ERROR(MSG) PRINT_FUN(fprintf, stderr, MSG);
 #define PRINT_ERRORS(MSG, ...) PRINT_FUN(fprintf, stderr, MSG, __VA_ARGS__);
+#define PRINTFL(MSG) fprintf(stderr, "%s:%d %s\n", __FILE__, __LINE__, MSG);
 
 void io_destroy();
 void io_init();

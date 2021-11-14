@@ -11,3 +11,8 @@ CMakeCache.txt
 CMakeFiles
 build
 nbproject
+nccmp.c*flags
+nccmp.config
+nccmp.creator*
+nccmp.includes
+nccmp.files
