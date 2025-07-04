@@ -101,7 +101,7 @@ int nccmp_clear_strlist(nccmp_strlist_t* list)
 int* nccmp_compute_strlist_lengths(nccmp_strlist_t* list)
 {
     int *result = NULL;
-    int i;
+    int i = 0;
 
     if (!list) {
         return result;
@@ -119,8 +119,9 @@ char nccmp_copy_with_prefix_strlist(nccmp_strlist_t* src, nccmp_strlist_t* dst, 
 {
     int len = strlen(prefix);
     char found = 0;
+    int i = 0;
 
-    for( int i = 0; i < src->size; ++i ) {
+    for( i = 0; i < src->size; ++i ) {
         if( strncmp(src->items[i], prefix, len) == 0 ) {
             nccmp_add_to_strlist(dst, src->items[i]);
             found = 1;
@@ -133,8 +134,9 @@ char nccmp_copy_with_prefix_strlist(nccmp_strlist_t* src, nccmp_strlist_t* dst, 
 char nccmp_copy_with_suffix_strlist(nccmp_strlist_t* src, nccmp_strlist_t* dst, const char* suffix)
 {
     char found = 0;
+    int i = 0;
 
-    for( int i = 0; i < src->size; ++i ) {
+    for( i = 0; i < src->size; ++i ) {
         if( nccmp_string_ends_with(src->items[i], suffix) ) {
             nccmp_add_to_strlist(dst, src->items[i]);
             found = 1;
@@ -147,8 +149,9 @@ char nccmp_copy_with_suffix_strlist(nccmp_strlist_t* src, nccmp_strlist_t* dst, 
 char nccmp_copy_with_substring_strlist(nccmp_strlist_t* src, nccmp_strlist_t* dst, const char* substring)
 {
     char found = 0;
+    int i = 0;
 
-    for( int i = 0; i < src->size; ++i ) {
+    for( i = 0; i < src->size; ++i ) {
         if( strstr(src->items[i], substring) ) {
             nccmp_add_to_strlist(dst, src->items[i]);
             found = 1;

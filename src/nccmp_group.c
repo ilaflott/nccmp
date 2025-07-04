@@ -243,7 +243,9 @@ nccmp_strlist_t* nccmp_find_subgroup_names(nccmp_state_t* state)
 
     if (state->opts.debug) {
         LOG_DEBUG_CHOOSE(state->opts.color, "all group names:\n");
-        for( int i = 0; i < all_group_names->size; ++i ) {
+        int i = 0;
+
+        for( i = 0; i < all_group_names->size; ++i ) {
             LOG_DEBUG_CHOOSE(state->opts.color, "%s\n", all_group_names->items[i]);
         }
     }
@@ -251,9 +253,10 @@ nccmp_strlist_t* nccmp_find_subgroup_names(nccmp_state_t* state)
     if (state->opts.groupnames->size) {
         result = nccmp_new_strlist(NC_MAX_VARS);
         char name[NC_MAX_NAME];
-        char found;
+        char found = 0;
+        int i = 0;
 
-        for( int i = 0; i < state->opts.groupnames->size; ++i ) {
+        for( i = 0; i < state->opts.groupnames->size; ++i ) {
             found = 0;
             if (0 == strncmp(state->opts.groupnames->items[i], "/", 1)) {
                 /* Full name. */
@@ -416,7 +419,7 @@ recover:
 
 int nccmp_cmp_groups(nccmp_state_t* state)
 {
-    int i, status = EXIT_SUCCESS, last_status = EXIT_SUCCESS;
+    int i = 0, status = EXIT_SUCCESS, last_status = EXIT_SUCCESS;
     nccmp_group_t *child1, *child2;
     nccmp_strlist_t* group_names_to_process = NULL;
 
@@ -432,7 +435,7 @@ int nccmp_cmp_groups(nccmp_state_t* state)
 
     if (state->opts.debug) {
         LOG_DEBUG_CHOOSE(state->opts.color, "group names to process:\n");
-        for( int i = 0; i < group_names_to_process->size; ++i ) {
+        for( i = 0; i < group_names_to_process->size; ++i ) {
             LOG_DEBUG_CHOOSE(state->opts.color, "%s\n", group_names_to_process->items[i]);
         }
     }
