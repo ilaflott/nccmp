@@ -7,7 +7,7 @@
 #include <nccmp_nest.h>
 #include <nccmp_odometer.h>
 #include <nccmp_thread.h>
-#include <math.h>
+#include <math.h> //isnan
 
 /* Element compare and return first offset that differs.
    Arrays should have sentinals at end that are guaranteed to differ.

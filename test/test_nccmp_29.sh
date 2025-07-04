@@ -6,7 +6,7 @@ echo "$I. Nans differ."
 LOG=stderr$I.tmp
 CMD="$($srcdir/nccmp.sh) -d -s test_nans1b.$I.nc test_nans1c.$I.nc > $LOG 2>&1"
 
-$srcdir/test_nccmp_setup.sh nan $I
+$srcdir/test_nccmp_setup.sh nans $I
 eval $CMD
 
 if test "$?" = "1"; then :; else

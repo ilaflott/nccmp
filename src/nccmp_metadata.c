@@ -7,6 +7,7 @@
 #include <nccmp_metadata.h>
 #include <nccmp_opt.h>
 #include <nccmp_common.h>
+#include <math.h> //isnan
 
 #if HAVE_NC_H
     #include <nc.h>
@@ -91,7 +92,7 @@ int nccmp_cmp_att(int ncid1, int ncid2, int varid1, int varid2,
             return EXIT_DIFFER;
         }
     }
-    if (nccmp_cmp_att_val(ncid1, ncid2, varid1, varid2, name, lenp1, lenp2, type1) != EXIT_SUCCESS) {
+    if (nccmp_cmp_att_val(ncid1, ncid2, varid1, varid2, name, lenp1, lenp2, type1, opts->nanequal) != EXIT_SUCCESS) {
         if (!opts->quiet) {
             nccmp_pretty_print_att(ncid1, varname, varid1, name, typestr1, MAX_STRLEN);
             nccmp_pretty_print_att(ncid2, varname, varid2, name, typestr2, MAX_STRLEN);
@@ -116,7 +117,7 @@ int nccmp_cmp_att(int ncid1, int ncid2, int varid1, int varid2,
 }
 
 int nccmp_cmp_att_val(int nc1, int nc2, int varid1, int varid2, const char* name, int len1,
-        int len2, nc_type type)
+        int len2, nc_type type, const char nanequal)
 {
     signed char        *sc1 = 0,  *sc2 = 0;
     char               *c1 = 0,   *c2 = 0;
@@ -139,7 +140,7 @@ int nccmp_cmp_att_val(int nc1, int nc2, int varid1, int varid2, const char* name
         return NC_EINVAL;
     }
 
-    #define CMP_ATT_VAL(PTR, TYPE, NAME) {                                     \
+    #define CMP_ATT_VAL(PTR, TYPE, NAME, NANEQUAL) {                           \
         PTR##1 = XMALLOC(TYPE, len1);                                          \
         PTR##2 = XMALLOC(TYPE, len2);                                          \
         status = nc_get_att_##NAME(nc1, varid1, name, PTR##1);                 \
@@ -153,27 +154,31 @@ int nccmp_cmp_att_val(int nc1, int nc2, int varid1, int varid2, const char* name
             break;                                                             \
         }                                                                      \
         for(i = 0; i < minlen; ++i) {                                          \
-            if (PTR##1[i] != PTR##2[i])    {                                   \
-                last_status = EXIT_DIFFER;                                     \
-                break;                                                         \
+            if (PTR##1[i] != PTR##2[i]) {                                      \
+                if(!NANEQUAL ||                                                \
+                   !isnan((double)PTR##1[i]) ||                                \
+                   !isnan((double)PTR##2[i])) {                                \
+                    last_status = EXIT_DIFFER;                                 \
+                    break;                                                     \
+                }                                                              \
             }                                                                  \
         }                                                                      \
     }
 
     switch(type)
     {
-    case NC_BYTE:   CMP_ATT_VAL(sc, signed char,        schar);     break;
-    case NC_CHAR:   CMP_ATT_VAL(c,  char,               text);      break;
-    case NC_DOUBLE: CMP_ATT_VAL(d,  double,             double);    break;
-    case NC_FLOAT:  CMP_ATT_VAL(f,  float,              float);     break;
-    case NC_INT:    CMP_ATT_VAL(i,  int,                int);       break;
+    case NC_BYTE:   CMP_ATT_VAL(sc, signed char,        schar,     0);        break;
+    case NC_CHAR:   CMP_ATT_VAL(c,  char,               text,      0);        break;
+    case NC_DOUBLE: CMP_ATT_VAL(d,  double,             double,    nanequal); break;
+    case NC_FLOAT:  CMP_ATT_VAL(f,  float,              float,     nanequal); break;
+    case NC_INT:    CMP_ATT_VAL(i,  int,                int,       0);        break;
  /* case NC_LONG: Alias of NC_INT. */
-    case NC_INT64:  CMP_ATT_VAL(l,  long long,          longlong);  break;
-    case NC_SHORT:  CMP_ATT_VAL(s,  short,              short);     break;
-    case NC_UBYTE:  CMP_ATT_VAL(uc, unsigned char,      uchar);     break;
-    case NC_UINT:   CMP_ATT_VAL(ui, unsigned int,       uint);      break;
-    case NC_UINT64: CMP_ATT_VAL(ul, unsigned long long, ulonglong); break;
-    case NC_USHORT: CMP_ATT_VAL(us, unsigned short,     ushort);    break;
+    case NC_INT64:  CMP_ATT_VAL(l,  long long,          longlong,  0);        break;
+    case NC_SHORT:  CMP_ATT_VAL(s,  short,              short,     0);        break;
+    case NC_UBYTE:  CMP_ATT_VAL(uc, unsigned char,      uchar,     0);        break;
+    case NC_UINT:   CMP_ATT_VAL(ui, unsigned int,       uint,      0);        break;
+    case NC_UINT64: CMP_ATT_VAL(ul, unsigned long long, ulonglong, 0);        break;
+    case NC_USHORT: CMP_ATT_VAL(us, unsigned short,     ushort,    0);        break;
     case NC_STRING:
         st1 = XMALLOC(char*, len1);
         st2 = XMALLOC(char*, len2);
@@ -1671,7 +1676,7 @@ int nccmp_global_atts(nccmp_opt_t* opts, int ncid1, int ncid2)
             if(opts->force) continue; else goto recover;
         }
 
-        if (nccmp_cmp_att_val(ncid1,ncid2,NC_GLOBAL,NC_GLOBAL,name1,len1,len2,type1) != NC_NOERR) {
+        if (nccmp_cmp_att_val(ncid1,ncid2,NC_GLOBAL,NC_GLOBAL,name1,len1,len2,type1,opts->nanequal) != NC_NOERR) {
             if (!opts->quiet) {
                 /* Pretty print values. */
                 nccmp_pretty_print_att(ncid1, NULL, NC_GLOBAL, name1, typestr1, MAX_STRLEN);
@@ -1770,7 +1775,7 @@ int nccmp_global_atts(nccmp_opt_t* opts, int ncid1, int ncid2)
             }
         }
 
-        if (nccmp_cmp_att_val(ncid1,ncid2,NC_GLOBAL,NC_GLOBAL,name1,len1,len2,type1) != NC_NOERR) {
+        if (nccmp_cmp_att_val(ncid1,ncid2,NC_GLOBAL,NC_GLOBAL,name1,len1,len2,type1,opts->nanequal) != NC_NOERR) {
             if (!opts->quiet) {
                 /* Pretty print values. */
                 nccmp_pretty_print_att(ncid1, NULL, NC_GLOBAL, name1, typestr1, MAX_STRLEN);

@@ -20,24 +20,44 @@
 }
 
 #define LEN 8
+#define TWO 2
 
 int main(int argc, char *argv[])
 {
 	int nan = 0;
+	int nanVarAtt = 0;
+	int nanGlobalAtt = 0;
 	int cdfid, varid1, varid2, status, recdimid, i;
 	int dimids[4];
 	float fp[LEN];
 	double dp[LEN];
+	float fpAtt[TWO];
+	double dpAtt[TWO];
 	size_t start[2], count[2];
 	char* filename;
 
 	if (argc == 3)
     {
         filename = argv[1];
-        nan = atoi(argv[2]);
+
+		switch( atoi(argv[2]) )
+		{
+		case 1:
+			nan = 1;
+			break;
+		case 2:
+			nanGlobalAtt = 1;
+			break;
+		case 3:
+			nanVarAtt = 1;
+			break;
+		default:
+			break;
+		}
+
     }	else
     {
-        fprintf(stderr, "usage: %s <out.nc> <enable_nans>\n", argv[0]);
+        fprintf(stderr, "usage: %s <out.nc> [0=noNAN,1=nanVar,2=nanGlobalAtt,3=nanVarAtt]\n", argv[0]);
         fprintf(stderr, "\nexample: %s tmp.nc 1\n", argv[0]);
         return 1;
     }
@@ -57,6 +77,19 @@ int main(int argc, char *argv[])
         fp[1] = fp[LEN-1] = NAN;
         dp[1] = dp[LEN-1] = NAN;
     }
+
+	if (nanGlobalAtt || nanVarAtt )
+    {
+        #ifndef NAN
+        fprintf(stderr, "WARN: NAN not supported.\n");
+        #endif
+
+        fpAtt[0] = 0;
+        fpAtt[1] = NAN;
+
+        dpAtt[0] = 0;
+        dpAtt[1] = NAN;
+    }
     
 	status = nc_create(filename, NC_CLOBBER, &cdfid);
 	handle_error(status);
@@ -75,10 +108,27 @@ int main(int argc, char *argv[])
 	status = nc_def_var(cdfid, "test2", NC_DOUBLE, 2, dimids, &varid2);
 	handle_error(status);
 
-	status = nc_enddef(cdfid);
+	if( nanGlobalAtt )
+	{
+		status = nc_put_att_float(cdfid, NC_GLOBAL, "globalAtt1", NC_FLOAT, TWO, fpAtt);
+		handle_error(status);
 
+		status = nc_put_att_double(cdfid, NC_GLOBAL, "globalAtt2", NC_DOUBLE, TWO, dpAtt);
+		handle_error(status);
+	}
+
+	if ( nanVarAtt )
+	{
+		status = nc_put_att_float(cdfid, varid1, "varAtt1", NC_FLOAT, TWO, fpAtt);
+		handle_error(status);
+
+		status = nc_put_att_double(cdfid, varid2, "varAtt2", NC_DOUBLE, TWO, dpAtt);
+		handle_error(status);
+	}
+
+	status = nc_enddef(cdfid);
 	handle_error(status);
-	
+
 	status = nc_put_var_float(cdfid, varid1, fp);
 	handle_error(status);
 

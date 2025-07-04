@@ -11,7 +11,7 @@ int nccmp_cmp_att(int ncid1, int ncid2, int varid1, int varid2,
 
 /* Assumes that both attributes have same length. */
 int nccmp_cmp_att_val(int nc1, int nc2, int varid1, int varid2, 
-        const char* name, int len1, int len2, nc_type type);
+        const char* name, int len1, int len2, nc_type type, char nanequal);
 
 int nccmp_cmp_metadata_var_types(nccmp_state_t *state, nccmp_strlist_t* varlist, int ncid1, int ncid2);
 
