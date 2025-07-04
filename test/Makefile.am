@@ -59,7 +59,8 @@ TESTS =                                                                 \
     test_nccmp_64.sh test_nccmp_65.sh test_nccmp_66.sh test_nccmp_67.sh \
     test_nccmp_68.sh test_nccmp_69.sh test_nccmp_70.sh test_nccmp_71.sh	\
     test_nccmp_72.sh test_nccmp_73.sh test_nccmp_74.sh test_nccmp_75.sh \
-    test_nccmp_76.sh test_nccmp_77.sh test_nccmp_78.sh
+    test_nccmp_76.sh test_nccmp_77.sh test_nccmp_78.sh test_nccmp_79.sh \
+    test_nccmp_80.sh test_nccmp_81.sh test_nccmp_82.sh
     		
 
 if ENABLE_TEST_BIG

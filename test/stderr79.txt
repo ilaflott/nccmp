@@ -1,0 +1,1 @@
+DIFFER : VALUES OF GLOBAL ATTRIBUTE : globalAtt1 : 0,nan <> 0,nan

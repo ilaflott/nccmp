@@ -101,13 +101,25 @@ case "$DATA" in
         $NCGEN -o missing_value2.$ID.nc $srcdir/missing_value2.cdl 
         $NCGEN -o _FillValue1.$ID.nc $srcdir/_FillValue1.cdl
         ;;
-    nan) 
+    nans)
         echo Files for NaN features.
         ./make_nans test_nans1a.$ID.nc 0 # Without nans.
         ./make_nans test_nans1b.$ID.nc 1 # With nans.
         ./make_nans test_nans1c.$ID.nc 1 # With nans. Just separate file from version 1b.
         ;;
-    pad) 
+    nansGlobalAtt)
+        echo Files for NaN global attribute features.
+        ./make_nans test_nansGlobalAtt1a.$ID.nc 0 # Without nans.
+        ./make_nans test_nansGlobalAtt1b.$ID.nc 2 # With nans.
+        ./make_nans test_nansGlobalAtt1c.$ID.nc 2 # With nans. Just separate file from version 1b.
+        ;;
+    nansVarAtt)
+        echo Files for NaN var attribute features.
+        ./make_nans test_nansVarAtt1a.$ID.nc 0 # Without nans.
+        ./make_nans test_nansVarAtt1b.$ID.nc 3 # With nans.
+        ./make_nans test_nansVarAtt1c.$ID.nc 3 # With nans. Just separate file from version 1b.
+        ;;
+    pad)
         echo Create the head pad test files for comparison of different lengths.
         ./padheader unpadded.$ID.nc 0 
         ./padheader padded.$ID.nc 2048
@@ -134,14 +146,14 @@ case "$DATA" in
             fin=$srcdir/test${DATA}${SUFFIX}${PATCH}.cdl
             fout=test${DATA}${SUFFIX}.$ID.nc
             fmt=$(format $DATA $ID)
-            CMD="ncgen -k $fmt -o $fout $fin"
-            echo $CMD
-            eval $CMD
+            ARGS="-k $fmt -o $fout $fin"
+            echo $NCGEN $ARGS
+            eval $NCGEN $ARGS
         done
         if [ $DATA = "01" ] ; then
             echo Create file in nc4 format.
             fmt=$(format 10 $ID)
-            ncgen -k $fmt -o test${DATA}c.$ID.nc $srcdir/test${DATA}a.cdl 
+            $NCGEN -k $fmt -o test${DATA}c.$ID.nc $srcdir/test${DATA}a.cdl
         fi
         ;;
 esac
