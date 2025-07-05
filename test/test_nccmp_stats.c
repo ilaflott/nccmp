@@ -11,7 +11,7 @@ int test_nccmp_compute_var_stats_mean()
     const double expected = 50.0;
 
     data.count = 10;
-    data.sum = 500.0;
+    data.sum_diff = 500.0;
     mean = nccmp_compute_var_stats_mean(& data);
 
     if (! ALMOST_EQUAL(expected, mean, .001)) {
@@ -32,8 +32,8 @@ int test_nccmp_compute_var_stats_stdev()
     const double expected = 3.0276503540974917;
 
     data.count = 10;
-    data.sum = 55.0;
-    data.sum_squares = 385.0;
+    data.sum_diff = 55.0;
+    data.sum_diff_squares = 385.0;
     stdev = nccmp_compute_var_stats_stdev(& data);
 
     if (! ALMOST_EQUAL(expected, stdev, .001)) {

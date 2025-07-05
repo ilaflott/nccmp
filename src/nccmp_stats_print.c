@@ -4,7 +4,7 @@
 #include <nccmp_stats_print.h>
 #include <nccmp_utils.h>
 
-const char *NCCMP_STATS_COLUMNS[] = {"Variable", "Group", "Count", "Sum", "AbsSum", "Min", "Max", "Range", "Mean", "StdDev"};
+const char *NCCMP_STATS_COLUMNS[] = {"Variable", "Group", "Count", "Sum", "Min", "Max", "Range", "Mean", "StdDev", "L1", "L1R", "L2", "L2R"};
 
 nccmp_darray_t* nccmp_compute_str_widths(nccmp_darray_t *array)
 {
@@ -44,16 +44,18 @@ void nccmp_debug_print_stats(nccmp_stats_t *stats)
 	}
 
     LOG_DEBUG("    stats=%p name=%s group_name=%s count=%d "
-    		  "max=%g min=%g sum=%g absum=%g sumsq=%g\n",
+    		  "max=%g min=%g sum=%g absd=%g sumdsq=%g, absumdot=%g, sumtsq=%g\n",
               (void*)stats,
 			  stats->name,
 			  stats->group_name,
 			  stats->count,
-			  stats->max,
-	          stats->min,
-			  stats->sum,
-			  stats->abs_sum,
-			  stats->sum_squares);
+			  stats->max_diff,
+	          stats->min_diff,
+			  stats->sum_diff,
+			  stats->abs_sum_diff,
+			  stats->sum_diff_squares,
+			  stats->abs_sum_diff_over_truth,
+			  stats->sum_truth_squares);
 }
 
 void nccmp_debug_print_stats_array(nccmp_darray_t *array)
@@ -273,21 +275,27 @@ void nccmp_stringify_stats(nccmp_stats_t *stats, nccmp_darray_t *result)
     APPEND_CLONE(stats->group_name);
     snprintf(tmp, NCCMP_MAX_STRINGS, "%d", stats->count);
     APPEND_CLONE(tmp);
-    snprintf(tmp, NCCMP_MAX_STRINGS, "%g", stats->sum);
+    snprintf(tmp, NCCMP_MAX_STRINGS, "%g", stats->sum_diff);
     APPEND_CLONE(tmp);
-    snprintf(tmp, NCCMP_MAX_STRINGS, "%g", stats->abs_sum);
+    snprintf(tmp, NCCMP_MAX_STRINGS, "%g", stats->min_diff);
     APPEND_CLONE(tmp);
-    snprintf(tmp, NCCMP_MAX_STRINGS, "%g", stats->min);
+    snprintf(tmp, NCCMP_MAX_STRINGS, "%g", stats->max_diff);
     APPEND_CLONE(tmp);
-    snprintf(tmp, NCCMP_MAX_STRINGS, "%g", stats->max);
-    APPEND_CLONE(tmp);
-    snprintf(tmp, NCCMP_MAX_STRINGS, "%g", stats->max - stats->min);
+    snprintf(tmp, NCCMP_MAX_STRINGS, "%g", stats->max_diff - stats->min_diff);
     APPEND_CLONE(tmp);
     snprintf(tmp, NCCMP_MAX_STRINGS, "%g", nccmp_compute_var_stats_mean(stats));
     APPEND_CLONE(tmp);
     snprintf(tmp, NCCMP_MAX_STRINGS, "%g", nccmp_compute_var_stats_stdev(stats));
     APPEND_CLONE(tmp);
-    
+    snprintf(tmp, NCCMP_MAX_STRINGS, "%g", stats->abs_sum_diff);
+    APPEND_CLONE(tmp);
+    snprintf(tmp, NCCMP_MAX_STRINGS, "%g", nccmp_compute_var_stats_l1_relative(stats));
+    APPEND_CLONE(tmp);
+    snprintf(tmp, NCCMP_MAX_STRINGS, "%g", nccmp_compute_var_stats_l2(stats));
+    APPEND_CLONE(tmp);
+    snprintf(tmp, NCCMP_MAX_STRINGS, "%g", nccmp_compute_var_stats_l2_relative(stats));
+    APPEND_CLONE(tmp);
+
     #undef CLONE
 }
 

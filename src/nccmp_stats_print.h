@@ -5,7 +5,7 @@
 #include <nccmp_stats.h>
 
 extern const char *NCCMP_STATS_COLUMNS[];
-#define NCCMP_NUM_STATS_COLUMNS 10
+#define NCCMP_NUM_STATS_COLUMNS 13
 
 nccmp_darray_t* nccmp_compute_str_widths(nccmp_darray_t *array);
 

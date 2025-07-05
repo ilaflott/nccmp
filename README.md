@@ -112,7 +112,7 @@ Run either setup-x86.exe or setup-x86_64.exe, and select All => Science => nccmp
       -DBUILD_TESTS=ON \
       -DCMAKE_BUILD_TYPE=Release \
       -DCMAKE_C_COMPILER=$GCC/bin/gcc \
-      -DCMAKE_EXE_LINKER_FLAGS="-L$HDF/lib -lhdf5 -lhdf5_hl -L$NC/lib -lcurl" \
+      -DCMAKE_EXE_LINKER_FLAGS="-L$HDF/lib -lhdf5 -lhdf5_hl -L$NC/lib -lcurl -lxml2" \
       -DCMAKE_INSTALL_PREFIX=path/to/install/dir \
       -DCMAKE_VERBOSE_MAKEFILE=OFF \
       -DNETCDF_INC_DIR=$NC/include \

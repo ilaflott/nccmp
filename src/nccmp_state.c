@@ -208,8 +208,7 @@ void nccmp_init_var_diff_counts(nccmp_state_t* state)
     state->var_diff_counts = XCALLOC(int, max_nvars);
 }
 
-void nccmp_update_state_stats(nccmp_state_t *state, int var_id,
-		int stat_id, double delta)
+void nccmp_update_state_stats(nccmp_state_t *state, int var_id, int stat_id, double truth, double prediction)
 {
 	nccmp_var_stats_t *var_stats = (nccmp_var_stats_t*) state->active_group_stats->var_stats->items[var_id];
 	nccmp_stats_t *stats = (nccmp_stats_t*) var_stats->stats->items[stat_id];
@@ -221,7 +220,7 @@ void nccmp_update_state_stats(nccmp_state_t *state, int var_id,
 		}
 	#endif
 
-    nccmp_update_stats(stats, delta);
+    nccmp_update_stats(stats, truth, prediction);
 
 	#if HAVE_PTHREAD
 		if (state->opts.threads > 1) {

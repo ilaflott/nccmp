@@ -9,7 +9,7 @@
 double nccmp_compute_var_stats_mean(nccmp_stats_t *data)
 {
     if (data && (data->count > 0) ) {
-        return data->sum / data->count;
+        return data->sum_diff / data->count;
     } else {
         return 0.0;
     }
@@ -18,11 +18,38 @@ double nccmp_compute_var_stats_mean(nccmp_stats_t *data)
 double nccmp_compute_var_stats_stdev(nccmp_stats_t *data) 
 {
     if (data && (data->count > 1) ) {
-        return sqrt( (data->sum_squares - (data->sum * data->sum)/data->count) /
+        return sqrt( (data->sum_diff_squares - (data->sum_diff * data->sum_diff)/data->count) /
                      (data->count - 1) );
     } else {
         return 0.0;
     }
+}
+
+double nccmp_compute_var_stats_l1_relative(nccmp_stats_t *data)
+{
+	if (data && (data->count > 0) ) {
+		return data->abs_sum_diff_over_truth / data->count;
+	} else {
+		return 0.0;
+	}
+}
+
+double nccmp_compute_var_stats_l2(nccmp_stats_t *data)
+{
+	if (data && (data->count > 0) )	{
+		return sqrt( data->sum_diff_squares );
+	} else {
+		return 0.0;
+	}
+}
+
+double nccmp_compute_var_stats_l2_relative(nccmp_stats_t *data)
+{
+	if (data && (data->count > 0) )	{
+		return sqrt( data->sum_diff_squares / data->sum_truth_squares );
+	} else {
+		return 0.0;
+	}
 }
 
 nccmp_group_stats_t* nccmp_create_group_stats(
@@ -35,12 +62,11 @@ nccmp_group_stats_t* nccmp_create_group_stats(
     nccmp_group_stats_t *result = XMALLOC(nccmp_group_stats_t, 1);
     nccmp_var_stats_t *var_stats;
     nccmp_var_t *var;
-    int i;
+    int i = 0;
 
 	result->group_id = group_id;
 	result->var_stats = nccmp_darray_create(num_vars);
 
-    // FIXME
 	for(i = 0; i < num_vars; ++i) {
 		var = & vars[i];
 		var_stats = nccmp_create_var_stats(var, types, group_name);
@@ -54,11 +80,13 @@ nccmp_stats_t* nccmp_create_stats(const char *name, const char *group_name)
 {
 	nccmp_stats_t *result = XMALLOC(nccmp_stats_t, 1);
 	result->count = 0;
-    result->min = INFINITY;
-	result->max = -INFINITY;
-	result->sum = 0.0;
-	result->abs_sum = 0.0;
-	result->sum_squares = 0.0;
+    result->min_diff = INFINITY;
+	result->max_diff = -INFINITY;
+	result->sum_diff = 0.0;
+	result->abs_sum_diff = 0.0;
+	result->abs_sum_diff_over_truth = 0.0;
+	result->sum_diff_squares = 0.0;
+	result->sum_truth_squares = 0.0;
 
 	if (name) {
 		result->name = XMALLOC(char, strlen(name) + 1);
@@ -227,18 +255,35 @@ void nccmp_destroy_var_stats_array(nccmp_darray_t *array)
 	}
 }
 
-void nccmp_update_stats(nccmp_stats_t *stat, double delta)
+void nccmp_update_stats(nccmp_stats_t *stat, double truth, double prediction)
 {
+	const double diff      = truth - prediction;
+	const double abs_diff  = diff < 0 ? -diff : diff;
+	const double abs_truth = truth < 0 ? -truth : truth;
+
     ++stat->count;
-    if (delta > stat->max) {
-    	stat->max = delta;
+
+    if (diff > stat->max_diff) {
+    	stat->max_diff = diff;
     }
 
-    if (delta < stat->min) {
-    	stat->min = delta;
+    if (diff < stat->min_diff) {
+    	stat->min_diff = diff;
     }
 
-    stat->sum += delta;
-    stat->abs_sum += delta < 0 ? -delta : delta;
-    stat->sum_squares += delta * delta;
+    stat->sum_diff += diff;
+    stat->abs_sum_diff += abs_diff;
+    stat->sum_diff_squares += diff * diff;
+
+	if( 0 == truth )
+	{
+    	//Avoid division and bias of zero. The diff is relatively maximal.
+		stat->abs_sum_diff_over_truth += 1.0;
+		stat->sum_truth_squares += prediction * prediction;
+	}
+	else
+	{
+		stat->abs_sum_diff_over_truth += abs_diff / abs_truth;
+		stat->sum_truth_squares += truth * truth;
+	}
 }

@@ -573,8 +573,7 @@ int nccmp_cmp_var_user_type_compound_field_array_atomic_type(nccmp_state_t* stat
             item2.m_##NAME2 = COMPOUND_FIELD_ARRAY_VALUE(items2, type2->root_size,                 	\
             		child_field2->offset, TYPE2, array_i, diff_offset);                				\
             if (state->opts.statistics) {                                                           \
-                nccmp_update_state_stats(state, varid1, child_field1->id,   					\
-                                               (double)item1.m_##NAME1 - (double)item2.m_##NAME2);  \
+                nccmp_update_state_stats(state, varid1, child_field1->id, (double)item1.m_##NAME1, (double)item2.m_##NAME2); \
             }                                                                                       \
             if (!state->opts.quiet) {                                                        \
                 nccmp_get_index_str_size_t(v1->ndims, start, array_i, root_idxstr,           \
@@ -1228,8 +1227,7 @@ int nccmp_cmp_var_user_type_compound_field_nonarray_atomic_type(nccmp_state_t* s
         item2.m_##NAME2 = COMPOUND_FIELD_VALUE(items2, comp_type2->root_size,  \
         								field2->offset, TYPE2, diff_offset);   \
         if (state->opts.statistics) {                                          \
-            nccmp_update_state_stats(state, varid1, field1->id,				   \
-                                           (double)item1.m_##NAME1 - (double)item2.m_##NAME2);      \
+            nccmp_update_state_stats(state, varid1, field1->id,	(double)item1.m_##NAME1, (double)item2.m_##NAME2); \
         }                                                                                           \
         if (!state->opts.quiet) {                                                                   \
             nccmp_get_index_str_size_t(v1->ndims, start, diff_offset, idx_str, state->opts.is_fortran);\
@@ -1277,14 +1275,13 @@ int nccmp_cmp_var_user_type_compound_field_nonarray_atomic_type(nccmp_state_t* s
                 break;                                                         \
             }                                                                  \
             if (state->opts.statistics) {                                                               \
-                nccmp_update_state_stats(state, varid1, field1->id,                                     \
-                                               (double)item1.m_##NAME1 - (double)item2.m_##NAME2);      \
+                nccmp_update_state_stats(state, varid1, field1->id, (double)item1.m_##NAME1, (double)item2.m_##NAME2); \
             }                                                                                           \
             if (!state->opts.quiet) {                                                                   \
                 if ((v1->ndims == 1)  && (v1->has_rec_dim)) {                                           \
-                    nccmp_get_index_str_size_t(v1->ndims, start, rec, idx_str, state->opts.is_fortran);    \
+                    nccmp_get_index_str_size_t(v1->ndims, start, rec, idx_str, state->opts.is_fortran); \
                 } else {                                                                                \
-                    nccmp_get_index_str_size_t(v1->ndims, start, i, idx_str, state->opts.is_fortran);      \
+                    nccmp_get_index_str_size_t(v1->ndims, start, i, idx_str, state->opts.is_fortran);   \
                 }                                                                                       \
                 if (print_hex) {                                                                        \
                     nccmp_##NAME1##_to_hex(item1.m_##NAME1, str1);                                      \
@@ -1960,8 +1957,7 @@ int nccmp_cmp_var_user_type_nest_atomic_item(nccmp_state_t* state,
             goto recover;                                                      \
         }                                                                      \
         if (state->opts.statistics) {                                                               \
-            nccmp_update_state_stats(state, varid1, nest->type1->id,                         \
-                                           (double)value1.m_##NAME1 - (double)value2.m_##NAME2);    \
+            nccmp_update_state_stats(state, varid1, nest->type1->id, (double)value1.m_##NAME1, (double)value2.m_##NAME2); \
         }                                                                                           \
         if (!state->opts.quiet) {                                                                   \
             nest_str[0] = 0;                                                                                    \
@@ -2808,9 +2804,7 @@ int nccmp_cmp_var_user_type_vlen_atomic(nccmp_state_t* state, int ncid1, int nci
                         goto recover;                                          \
                     }                                                          \
                     if (state->opts.statistics) {                              \
-                        nccmp_update_state_stats(state, varid1, 0,             \
-                                                     (double)*(list1.p_##NAME1 + j) - \
-                                                     (double)*(list2.p_##NAME2 + j)); \
+                        nccmp_update_state_stats(state, varid1, 0, (double)*(list1.p_##NAME1 + j), (double)*(list2.p_##NAME2 + j)); \
                     }                                                          \
                     if (!state->opts.quiet) {                                                                               \
                         nccmp_get_index_str_size_t(v1->ndims, start, i, idx_str, state->opts.is_fortran);                      \
@@ -3320,7 +3314,7 @@ int nccmp_cmp_var_atomic_type(nccmp_state_t* state,  int ncid1, int ncid2,
             item1.m_##NAME1 = items1.p_##NAME1[offset-1];                      \
             item2.m_##NAME2 = items2.p_##NAME2[offset-1];                      \
             if (state->opts.statistics) {                                      \
-                nccmp_update_state_stats(state, varid1, 0, (double)item1.m_##NAME1 - (double)item2.m_##NAME2); \
+                nccmp_update_state_stats(state, varid1, 0, (double)item1.m_##NAME1, (double)item2.m_##NAME2);  \
             }                                                                                                  \
             if (!state->opts.quiet) {                                                                          \
                 if (print_hex) {                                                                               \
@@ -3386,7 +3380,7 @@ int nccmp_cmp_var_atomic_type(nccmp_state_t* state,  int ncid1, int ncid2,
                     item1.m_##NAME1 = items1.p_##NAME1[i];                          \
                     item2.m_##NAME2 = items2.p_##NAME2[i];                          \
                     if (state->opts.statistics) {                                   \
-                        nccmp_update_state_stats(state, varid1, 0, (double)item1.m_##NAME1 - (double)item2.m_##NAME2); \
+                        nccmp_update_state_stats(state, varid1, 0, (double)item1.m_##NAME1, (double)item2.m_##NAME2); \
                     }                                                               \
                     if (!state->opts.quiet) {                                       \
                         if (print_hex) {                                            \
@@ -3555,7 +3549,7 @@ int nccmp_cmp_entire_var_atomic_type(nccmp_state_t* state,  int ncid1, int ncid2
       item1.m_##NAME1 = items1.p_##NAME1[offset-1];                      \
       item2.m_##NAME2 = items2.p_##NAME2[offset-1];                      \
       if (state->opts.statistics) {                                      \
-          nccmp_update_state_stats(state, varid1, 0, (double)item1.m_##NAME1 - (double)item2.m_##NAME2); \
+          nccmp_update_state_stats(state, varid1, 0, (double)item1.m_##NAME1, (double)item2.m_##NAME2);  \
       }                                                                                                  \
       if (!state->opts.quiet) {                                                                          \
           if (print_hex) {                                                                               \
@@ -3617,7 +3611,7 @@ int nccmp_cmp_entire_var_atomic_type(nccmp_state_t* state,  int ncid1, int ncid2
             item1.m_##NAME1 = items1.p_##NAME1[i];                          \
             item2.m_##NAME2 = items2.p_##NAME2[i];                          \
             if (state->opts.statistics) {                                   \
-                nccmp_update_state_stats(state, varid1, 0, (double)item1.m_##NAME1 - (double)item2.m_##NAME2); \
+                nccmp_update_state_stats(state, varid1, 0, (double)item1.m_##NAME1, (double)item2.m_##NAME2); \
             }                                                               \
             if (!state->opts.quiet) {                                       \
                 if (print_hex) {                                            \
