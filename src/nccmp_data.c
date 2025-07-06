@@ -454,7 +454,7 @@ int nccmp_cmp_var_user_type_compound_field_array_atomic_type_string(nccmp_state_
     size_t array_size = 0;
     int array_i, i;
     char **strings1, **strings2;
-    char array_idx_str[64], root_idx_str[64], idx_str[64];
+    char array_idx_str[64], root_idx_str[64], idx_str[2*64+2];
     char field_path_str[NC_MAX_NAME];
     count_limit_type diff_count_status;
     nccmp_user_type_t *child_field1, *child_field2;
@@ -546,7 +546,7 @@ int nccmp_cmp_var_user_type_compound_field_array_atomic_type(nccmp_state_t* stat
 
     size_t array_size = (size_t) nccmp_product_int(
     		child_field1->dim_sizes, 0, child_field1->num_dims-1);
-    char array_idxstr[32], root_idxstr[32], idx_str[32], str1[32], str2[32];
+    char array_idxstr[32], root_idxstr[32], idx_str[2*32+2], str1[32], str2[32];
     nccmp_nc_type_t item1, item2;
 
     if (state->opts.debug) {
@@ -591,16 +591,16 @@ int nccmp_cmp_var_user_type_compound_field_array_atomic_type(nccmp_state_t* stat
             		child_field2->offset, TYPE2, array_i, diff_offset);                				\
             if (state->opts.statistics) {                                                           \
                 nccmp_update_state_stats(state, varid1, child_field1->id, (double)item1.m_##NAME1, (double)item2.m_##NAME2); \
-            }                                                                                       \
+            }                                                                                \
             if (!state->opts.quiet) {                                                        \
                 nccmp_get_index_str_size_t(v1->ndims, start, array_i, root_idxstr,           \
-                                     state->opts.is_fortran);                                   \
+                                     state->opts.is_fortran);                                \
                 nccmp_get_product_index_str_int(											 \
                 		child_field1->num_dims,     										 \
 						child_field1->dim_sizes,           									 \
                                           diff_offset, array_idxstr,                         \
-                                          state->opts.is_fortran);                              \
-                if (state->opts.is_fortran) {                                                   \
+                                          state->opts.is_fortran);                           \
+                if (state->opts.is_fortran) {                                                \
                     sprintf(idx_str, "%s,%s", array_idxstr, root_idxstr);                    \
                 } else {                                                                     \
                     sprintf(idx_str, "%s,%s", root_idxstr, array_idxstr);                    \
@@ -3966,6 +3966,62 @@ recover:
     return last_status;
 }
 
+int nccmp_cmp_partial_var_shape(nccmp_state_t* state, int index1, int index2)
+{
+    if (state->opts.debug) {
+        LOG_DEBUG_CHOOSE(state->opts.color, "nccmp_cmp_partial_var_shape\n");
+    }
+
+    int last_status = EXIT_SUCCESS;
+    char isDiffShape = 0;
+    char dim_str1[NC_MAX_NAME], dim_str2[NC_MAX_NAME];
+    const char* const MSG_ISOMORPHIC = "Use -B to compare variable data with isomorphic shapes.\n";
+
+    //Compare shape to avoid ambiguous error. NetCDF: Start+count exceeds dimension bound
+    if (state->vars1[index1].ndims != state->vars2[index2].ndims) {
+        if (!state->opts.quiet) {
+            PRINT_DIFF(state->opts.color, state->opts.debug,
+                       " : DIMENSIONS : %s : %d <> %d\n",
+                       state->vars1[index1].name,
+                       state->vars1[index1].ndims,
+                       state->vars2[index2].ndims );
+            if (state->vars1[index1].len == state->vars2[index2].len) {
+                PRINT_ERROR(MSG_ISOMORPHIC);
+            }
+        }
+        if (!state->opts.warn[NCCMP_W_ALL]) {
+            last_status = EXIT_DIFFER;
+        }
+        goto recover;
+    }
+
+    for( int i = 0; i < state->vars1[index1].ndims; ++i ) {
+        if( state->vars1[index1].dimlens[i] != state->vars2[index2].dimlens[i] ) {
+            isDiffShape = 1;
+            break;
+        }
+    }
+
+    if( isDiffShape > 0 ) {
+        if (!state->opts.quiet) {
+            nccmp_get_shape_str(state->vars1[index1].ndims, state->vars1[index1].dimlens, dim_str1);
+            nccmp_get_shape_str(state->vars2[index2].ndims, state->vars2[index2].dimlens, dim_str2);
+
+            PRINT_DIFF(state->opts.color, state->opts.debug,
+                       " : SHAPE : %s : [%s] <> [%s]\n", state->vars1[index1].name, dim_str1, dim_str2);
+
+            if (state->vars1[index1].len == state->vars2[index2].len) {
+                PRINT_ERROR(MSG_ISOMORPHIC);
+            }
+        }
+        last_status = EXIT_DIFFER;
+        goto recover;
+    }
+
+recover:
+    return last_status;
+}
+
 int nccmp_cmp_partial_var(nccmp_state_t* state, nccmp_strlist_t* var_names, int ncid1, int ncid2, int thread_id, int varIndex)
 {
     if (state->opts.debug) {
@@ -3987,6 +4043,11 @@ int nccmp_cmp_partial_var(nccmp_state_t* state, nccmp_strlist_t* var_names, int 
     } else {
         rec_first = -1;
         rec_last  = -1;
+    }
+
+    last_status = nccmp_cmp_partial_var_shape( state, idx1, idx2 );
+    if( last_status ) {
+        goto recover;
     }
 
     for(rec_iter = rec_first + thread_id;

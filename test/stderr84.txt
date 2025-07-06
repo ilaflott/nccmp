@@ -1,0 +1,2 @@
+DIFFER : DIMENSIONS : var1 : 3 <> 4
+Use -B to compare variable data with isomorphic shapes.

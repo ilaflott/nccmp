@@ -5,6 +5,21 @@
 #include <netcdf.h>
 #include <nccmp_common.h>
 
+void nccmp_get_shape_str(int ndims, const size_t* dimlens, char* out)
+{
+    int i;
+    char tmp[NCCMP_MAX_TMP_STR_SIZE];
+    strcpy(out, "");
+
+    for(i=0; i < ndims-1; ++i) {
+        sprintf(tmp, "%d,", (int)dimlens[i]);
+        strcat(out, tmp);
+    }
+
+    sprintf(tmp, "%d", (int)dimlens[ndims-1]);
+    strcat(out, tmp);
+}
+
 #define GET_INDEX_STR(TYPE)                                                                       \
 void nccmp_get_index_str_##TYPE(int nitems, const TYPE* items, int last, char* out, char is_fortran)    \
 {                                                                              \

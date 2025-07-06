@@ -1,0 +1,2 @@
+DIFFER : SHAPE : var1 : [1,2,12] <> [2,3,4]
+Use -B to compare variable data with isomorphic shapes.

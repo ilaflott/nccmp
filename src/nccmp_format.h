@@ -59,6 +59,8 @@ void nccmp_chunk_storage_to_str(int value, char* result);
 
 void nccmp_endian_to_str(int value, char* result);
 
+void nccmp_get_shape_str(int ndims, const size_t* dimlens, char* out);
+
 /*
     Returns formatted string of dimension indices.
     Intended to print out locations of value differences.
