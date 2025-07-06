@@ -38,6 +38,7 @@ static struct option const long_options[] =
     {"header-pad",        no_argument,            0, 'P'},
     {"history",           no_argument,            0, 'h'},
     {"info",              no_argument,            0, 'i'},
+    {"join-tolerance",    no_argument,            0, 'j'},
     {"metadata",          no_argument,            0, 'm'},
     {"missing",           no_argument,            0, 'M'},
     {"nans-are-equal",    no_argument,            0, 'N'},
@@ -75,7 +76,6 @@ void nccmp_opt_init(nccmp_opt_t* popts)
 {
     if (popts == NULL) return;
 
-    popts->abstolerance     = 0;
     popts->buffer_entire_var= 0;
     popts->color            = 0;
     popts->data             = 0;
@@ -96,6 +96,7 @@ void nccmp_opt_init(nccmp_opt_t* popts)
     popts->help             = 0;
     popts->history          = 0;
     popts->info             = 0;
+    popts->join_tolerance   = 0;
     popts->metadata         = 0;
     popts->missing          = 0;
     popts->nanequal         = 0;
@@ -105,7 +106,9 @@ void nccmp_opt_init(nccmp_opt_t* popts)
     popts->report_identical = 0;
     popts->statistics       = 0;
     popts->threads          = 1;
-    popts->tolerance        = 0;
+    popts->tolerance_absolute = 0;
+    popts->tolerance_percent  = 0;
+    popts->tolerance_type   = TOLERANCE_NONE;
     popts->version          = 0;
     popts->var_diff_count   = 0;
     popts->variable         = 0;
@@ -134,7 +137,6 @@ void print_features()
 
 void print_options(nccmp_opt_t* popts)
 {
-   LOG_DEBUG_CHOOSE(popts->color, "abstolerance = %d\n", popts->abstolerance);
    LOG_DEBUG_CHOOSE(popts->color, "buffer_entire_var = %d\n", popts->buffer_entire_var);
    LOG_DEBUG_CHOOSE(popts->color, "color = %d\n", popts->color);
    LOG_DEBUG_CHOOSE(popts->color, "data = %d\n", popts->data);
@@ -167,6 +169,7 @@ void print_options(nccmp_opt_t* popts)
    LOG_DEBUG_CHOOSE(popts->color, "header_pad = %d\n", popts->header_pad);
    LOG_DEBUG_CHOOSE(popts->color, "history = %d\n", popts->history);
    LOG_DEBUG_CHOOSE(popts->color, "info = %d\n", popts->info);
+   LOG_DEBUG_CHOOSE(popts->color, "join_tolerance = %d\n", popts->join_tolerance);
    LOG_DEBUG_CHOOSE(popts->color, "metadata = %d\n", popts->metadata);
    LOG_DEBUG_CHOOSE(popts->color, "missing = %d\n", popts->missing);
    LOG_DEBUG_CHOOSE(popts->color, "nanequal = %d\n", popts->nanequal);
@@ -176,7 +179,9 @@ void print_options(nccmp_opt_t* popts)
    LOG_DEBUG_CHOOSE(popts->color, "report_identical = %d\n", popts->report_identical);
    LOG_DEBUG_CHOOSE(popts->color, "statistics = %d\n", popts->statistics);
    LOG_DEBUG_CHOOSE(popts->color, "threads = %d\n", popts->threads);
-   LOG_DEBUG_CHOOSE(popts->color, "tolerance = %g\n", popts->tolerance);
+   LOG_DEBUG_CHOOSE(popts->color, "tolerance_absolute = %g\n", popts->tolerance_absolute);
+   LOG_DEBUG_CHOOSE(popts->color, "tolerance_percent = %g\n", popts->tolerance_percent);
+   LOG_DEBUG_CHOOSE(popts->color, "tolerance_type = %d\n", popts->tolerance_type);
    LOG_DEBUG_CHOOSE(popts->color, "var_diff_count = %d\n", popts->var_diff_count);
 
    LOG_DEBUG_CHOOSE(popts->color, "variablelist = ");
@@ -186,7 +191,7 @@ void print_options(nccmp_opt_t* popts)
 
 void print_copyright()
 {
-    fprintf(stderr, "\nCopyright (C) 2004-2007,2009,2010,2012-2021 Remik Ziemlinski\n \
+    fprintf(stderr, "\nCopyright (C) 2004-2007,2009,2010,2012-2025 Remik Ziemlinski\n \
 \n\
 This program comes with NO WARRANTY, to the extent permitted by law.\n\
 You may redistribute copies of this program\n\
@@ -274,7 +279,7 @@ int nccmp_opt_parse(int argc, const char** argv, nccmp_opt_t* popts)
         goto recover;
     }
 
-    while ( (c = getopt_long(argc, (char*const*)argv, "A:bBc:C:dDefFgG:hHilmMn:Np:qPr:RsSt:T:v:Vw:x:", long_options, 0))
+    while ( (c = getopt_long(argc, (char*const*)argv, "A:bBc:C:dDefFgG:hHijlmMn:Np:qPr:RsSt:T:v:Vw:x:", long_options, 0))
           != -1
         ) {
         switch (c) {
@@ -343,6 +348,10 @@ int nccmp_opt_parse(int argc, const char** argv, nccmp_opt_t* popts)
             popts->info = 1;
             break;
 
+        case 'j':
+            popts->join_tolerance = 1;
+            break;
+
         case 'l':
             popts->color = 1;
             break;
@@ -409,8 +418,8 @@ int nccmp_opt_parse(int argc, const char** argv, nccmp_opt_t* popts)
             break;
 
         case 't':
-            popts->tolerance = strtod(optarg, NULL);
-            popts->abstolerance = 1;
+            popts->tolerance_type |= TOLERANCE_ABSOLUTE;
+            popts->tolerance_absolute = strtod(optarg, NULL);
             if ( (errno == ERANGE) || (errno == EDOM))
             {
                 LOG_ERROR("Specified tolerance cannot be used.\n");
@@ -420,8 +429,8 @@ int nccmp_opt_parse(int argc, const char** argv, nccmp_opt_t* popts)
             break;
 
         case 'T':
-            popts->tolerance = strtod(optarg, NULL);
-            popts->abstolerance = 0;
+            popts->tolerance_type |= TOLERANCE_PERCENT;
+            popts->tolerance_percent = strtod(optarg, NULL);
             if ( (errno == ERANGE) || (errno == EDOM))
             {
                 LOG_ERROR("Specified tolerance cannot be used.\n");

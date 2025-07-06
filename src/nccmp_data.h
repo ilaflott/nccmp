@@ -7,6 +7,9 @@
 
 int nccmp_data(nccmp_state_t* state, nccmp_strlist_t* varnames, nccmp_group_t* group1, nccmp_group_t* group2);
 
+/* Return 0 if no difference. The value is returned in the variable absdiff_output. */
+int nccmp_cmp_tolerance(nccmp_state_t* state, double value1, double value2, double* absdiff_output);
+
 int nccmp_data_start_threads(nccmp_state_t* state, nccmp_strlist_t* var_names,
                              const char* group_name1, const char* group_name2);
 

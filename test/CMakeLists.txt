@@ -158,6 +158,7 @@ ADD_TEST(NAME test_nccmp_79          COMMAND ${CMAKE_SOURCE_DIR}/test/test_nccmp
 ADD_TEST(NAME test_nccmp_80          COMMAND ${CMAKE_SOURCE_DIR}/test/test_nccmp_80.sh)
 ADD_TEST(NAME test_nccmp_81          COMMAND ${CMAKE_SOURCE_DIR}/test/test_nccmp_81.sh)
 ADD_TEST(NAME test_nccmp_82          COMMAND ${CMAKE_SOURCE_DIR}/test/test_nccmp_82.sh)
+ADD_TEST(NAME test_nccmp_83          COMMAND ${CMAKE_SOURCE_DIR}/test/test_nccmp_83.sh)
 ADD_TEST(NAME test_big               COMMAND ${CMAKE_SOURCE_DIR}/test/test_big.sh)
 
 SET(CLEAN_FILES group*.nc subgroup*.nc big make_big.exe make_compound_array_atomic make_compound_nest_atomic make_compound_array_user_type make_compound*.nc make_compound*.exe make_compound_vlen_nest make_compound_vlen_nest*.exe make_group make_group.exe make_nans make_nans.exe missing_value*.nc make_nc4_encodings make_nc4_encodings.exe not_encoded*.nc encoded*.nc padded*.nc padheader padheader.exe stderr*.tmp test*.nc test_nccmp_darray test_nccmp_darray.exe test_nccmp_darray_sort test_nccmp_darray_sort.exe test_nccmp_odometer test_nccmp_odometer.exe test_nccmp_stats test_nccmp_stats.exe

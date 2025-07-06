@@ -331,6 +331,23 @@ CMP_TYPES_FIELD_ARRAY_NANEQUAL_GEN(ushort,   unsigned short)
 #define COMPOUND_FIELD_ARRAY_VALUE(PTR, COMP_SIZE, FIELD_OFFSET, CAST_TYPE, COMP_OFFSET, ITEM_OFFSET)        \
     *((CAST_TYPE*)( ((unsigned char*)PTR) + (COMP_SIZE * COMP_OFFSET) + FIELD_OFFSET ) + ITEM_OFFSET)
 
+int nccmp_cmp_tolerance(nccmp_state_t* state, double value1, double value2, double* absdiff_output)
+{
+    *absdiff_output = fabs( value1 - value2 );
+
+    const char result_absolute = TOLERANCE_ABSOLUTE & state->opts.tolerance_type ?
+        *absdiff_output > state->opts.tolerance_absolute :
+        0;
+
+    const char result_percent = TOLERANCE_PERCENT & state->opts.tolerance_type ?
+        (*absdiff_output * 100. / (fabs(value1) > fabs(value2) ? fabs(value1) : fabs(value2))) > state->opts.tolerance_percent :
+        0;
+
+    return state->opts.join_tolerance ?
+           result_absolute && result_percent :
+           result_absolute || result_percent;
+}
+
 int nccmp_cmp_var_string(nccmp_state_t* state, int ncid1, int ncid2,
                    int varid1, int varid2, size_t* start, size_t* count,
                    size_t nitems, int rec, size_t* limits, char entire)
@@ -607,7 +624,7 @@ int nccmp_cmp_var_user_type_compound_field_array_atomic_type(nccmp_state_t* stat
     }
 
 #define CMP_FIELD_ATOMIC_ARRAY_SELECT(...)                                     \
-    if (state->opts.tolerance) {                                               \
+    if (TOLERANCE_NONE != state->opts.tolerance_type) {                        \
         /* TODO: CMP_FIELD_ATOMIC_ARRAY_TOL(__VA_ARGS__);                   */ \
     } else {                                                                   \
         CMP_FIELD_ATOMIC_ARRAY(__VA_ARGS__);                                   \
@@ -1159,7 +1176,7 @@ int nccmp_cmp_var_user_type_compound_field_nonarray_atomic_type(nccmp_state_t* s
     char idx_str[32], str1[32], str2[32], field_path_str[NC_MAX_NAME];
     nccmp_var_t *v1 = & state->vars1[varid1];
     nccmp_nc_type_t item1, item2;
-    double absdelta, pct;
+    double absdiff, pct;
     int i;
     nccmp_user_type_t *user_type;
     nccmp_user_type_t *field1 = NCCMP_USER_TYPE_ITEM(comp_type1->fields, fieldid1);
@@ -1258,12 +1275,7 @@ int nccmp_cmp_var_user_type_compound_field_nonarray_atomic_type(nccmp_state_t* s
         if (NANEQUAL) {                                                        \
             if ( isnan((double)item1.m_##NAME1) && isnan((double)item2.m_##NAME2) ) continue;  \
         }                                                                      \
-        absdelta = fabs((double)(item1.m_##NAME1 - item2.m_##NAME2));          \
-        if (state->opts.abstolerance ?                                         \
-                (absdelta > state->opts.tolerance) :                           \
-                (double)absdelta*100./(fabs((double)item1.m_##NAME1) > fabs((double)item2.m_##NAME2) ?       \
-                        fabs((double)item1.m_##NAME1) :                        \
-                        fabs((double)item2.m_##NAME2)) > state->opts.tolerance)\
+        if( nccmp_cmp_tolerance( state, item1.m_##NAME1, item2.m_##NAME2, &absdiff ) ) \
         {                                                                      \
             if (!state->opts.warn[NCCMP_W_ALL]) {                              \
                 last_status = EXIT_DIFFER;                                     \
@@ -1290,7 +1302,7 @@ int nccmp_cmp_var_user_type_compound_field_nonarray_atomic_type(nccmp_state_t* s
                     nccmp_##NAME1##_to_str(item1.m_##NAME1, str1, state->opts.precision);               \
                     nccmp_##NAME2##_to_str(item2.m_##NAME2, str2, state->opts.precision);               \
                 }                                                                                       \
-                pct = (double)absdelta * 100.0 /                                                        \
+                pct = (double)absdiff * 100.0 /                                                        \
                       (fabs((double)item1.m_##NAME1) > fabs((double)item2.m_##NAME2) ?                  \
                         fabs((double)item1.m_##NAME1) :                                                 \
                         fabs((double)item2.m_##NAME2));                                                 \
@@ -1306,7 +1318,7 @@ int nccmp_cmp_var_user_type_compound_field_nonarray_atomic_type(nccmp_state_t* s
     }
 
 #define CMP_FIELD_ATOMIC_SELECT(...)                                           \
-    if (state->opts.tolerance) {                                               \
+    if ( TOLERANCE_NONE != state->opts.tolerance_type ) {                      \
         CMP_FIELD_ATOMIC_TOL(__VA_ARGS__);                                     \
     } else {                                                                   \
         CMP_FIELD_ATOMIC(__VA_ARGS__);                                         \
@@ -3238,7 +3250,7 @@ int nccmp_cmp_var_atomic_type(nccmp_state_t* state,  int ncid1, int ncid2,
 {
     int status, last_status = EXIT_SUCCESS;
     size_t diff_offset, cmplen, offset;
-    double absdelta, pct;
+    double absdiff, pct;
     int i;
     char idx_str[NCCMP_MAX_STRINGS], str1[NCCMP_MAX_STRINGS], str2[NCCMP_MAX_STRINGS];
 
@@ -3361,12 +3373,7 @@ int nccmp_cmp_var_atomic_type(nccmp_state_t* state,  int ncid1, int ncid2,
                 if (NANEQUAL) {                                                \
                     if ( isnan((double)items1.p_##NAME1[i]) && isnan((double)items2.p_##NAME2[i]) ) continue;      \
                 }                                                              \
-                absdelta = fabs((double)(items1.p_##NAME1[i] - items2.p_##NAME2[i]));    \
-                if (state->opts.abstolerance ?                                 \
-                        (absdelta > state->opts.tolerance) :                   \
-                        (double)absdelta*100./(fabs((double)items1.p_##NAME1[i]) > fabs((double)items2.p_##NAME2[i]) ? \
-                                                   fabs((double)items1.p_##NAME1[i]) :   \
-                                                   fabs((double)items2.p_##NAME2[i])) > state->opts.tolerance)         \
+                if( nccmp_cmp_tolerance( state, items1.p_##NAME1[i], items2.p_##NAME2[i], &absdiff ) ) \
                 {                                                                   \
                     if (!state->opts.warn[NCCMP_W_ALL]) {                           \
                         last_status = EXIT_DIFFER;                                  \
@@ -3390,7 +3397,7 @@ int nccmp_cmp_var_atomic_type(nccmp_state_t* state,  int ncid1, int ncid2,
                             nccmp_##NAME1##_to_str(item1.m_##NAME1, str1, state->opts.precision);       \
                             nccmp_##NAME2##_to_str(item2.m_##NAME2, str2, state->opts.precision);       \
                         }                                                                               \
-                        pct = (double)absdelta*100./(fabs((double)items1.p_##NAME1[i]) > fabs((double)items2.p_##NAME2[i]) ? fabs((double)items1.p_##NAME1[i]) : fabs((double)items2.p_##NAME2[i]));       \
+                        pct = (double)absdiff*100./(fabs((double)items1.p_##NAME1[i]) > fabs((double)items2.p_##NAME2[i]) ? fabs((double)items1.p_##NAME1[i]) : fabs((double)items2.p_##NAME2[i]));       \
                         if( v1->ndims ) {                                                                                       \
                             if ((v1->ndims == 1)  && (v1->has_rec_dim)) {                                                       \
                                 nccmp_get_index_str_size_t(v1->ndims, start, rec, idx_str, state->opts.is_fortran);             \
@@ -3413,7 +3420,7 @@ int nccmp_cmp_var_atomic_type(nccmp_state_t* state,  int ncid1, int ncid2,
         break;                                                                      \
 } /* end CMP_VAR_TOL */
 
-#define CMP(...) if (state->opts.tolerance) { CMP_VAR_TOL(__VA_ARGS__); } else { CMP_VAR(__VA_ARGS__); }
+#define CMP(...) if ( TOLERANCE_NONE != state->opts.tolerance_type ) { CMP_VAR_TOL(__VA_ARGS__); } else { CMP_VAR(__VA_ARGS__); }
 
 #define CMP_TYPE1(NAME1, TYPE1, NANEQUAL)                                      \
     switch(type2) {                                                            \
@@ -3475,7 +3482,7 @@ int nccmp_cmp_entire_var_atomic_type(nccmp_state_t* state,  int ncid1, int ncid2
 {
     int status, last_status = EXIT_SUCCESS;
     size_t diff_offset, cmplen, offset;
-    double absdelta, pct;
+    double absdiff, pct;
     int i;
     char idx_str[NCCMP_MAX_STRINGS], str1[NCCMP_MAX_STRINGS], str2[NCCMP_MAX_STRINGS];
 
@@ -3592,12 +3599,7 @@ int nccmp_cmp_entire_var_atomic_type(nccmp_state_t* state,  int ncid1, int ncid2
         if (NANEQUAL) {                                                \
             if ( isnan((double)items1.p_##NAME1[i]) && isnan((double)items2.p_##NAME2[i]) ) continue; \
         }                                                              \
-        absdelta = fabs((double)(items1.p_##NAME1[i] - items2.p_##NAME2[i])); \
-        if (state->opts.abstolerance ?                                 \
-                (absdelta > state->opts.tolerance) :                   \
-                (double)absdelta*100./(fabs((double)items1.p_##NAME1[i]) > fabs((double)items2.p_##NAME2[i]) ? \
-                                           fabs((double)items1.p_##NAME1[i]) :                                 \
-                                           fabs((double)items2.p_##NAME2[i])) > state->opts.tolerance)         \
+        if( nccmp_cmp_tolerance( state, items1.p_##NAME1[i], items2.p_##NAME2[i], &absdiff ) ) \
         {                                                                   \
             if (!state->opts.warn[NCCMP_W_ALL]) {                           \
                 last_status = EXIT_DIFFER;                                  \
@@ -3621,7 +3623,7 @@ int nccmp_cmp_entire_var_atomic_type(nccmp_state_t* state,  int ncid1, int ncid2
                     nccmp_##NAME1##_to_str(item1.m_##NAME1, str1, state->opts.precision);                               \
                     nccmp_##NAME2##_to_str(item2.m_##NAME2, str2, state->opts.precision);                               \
                 }                                                                                                       \
-                pct = (double)absdelta*100./(fabs((double)items1.p_##NAME1[i]) > fabs((double)items2.p_##NAME2[i]) ?    \
+                pct = (double)absdiff*100./(fabs((double)items1.p_##NAME1[i]) > fabs((double)items2.p_##NAME2[i]) ?    \
                           fabs((double)items1.p_##NAME1[i]) : fabs((double)items2.p_##NAME2[i]));                       \
                 if( v1->ndims ) {                                                                                       \
                     nccmp_get_entire_index_str_size_t(v1->ndims, v1->dimlens, i, idx_str, state->opts.is_fortran);  \
@@ -3639,7 +3641,7 @@ int nccmp_cmp_entire_var_atomic_type(nccmp_state_t* state,  int ncid1, int ncid2
         break;                                                                  \
 } /* end CMP_VAR_TOL */
 
-#define CMP(...) if (state->opts.tolerance) { CMP_VAR_TOL(__VA_ARGS__); } else { CMP_VAR(__VA_ARGS__); }
+#define CMP(...) if ( TOLERANCE_NONE != state->opts.tolerance_type ) { CMP_VAR_TOL(__VA_ARGS__); } else { CMP_VAR(__VA_ARGS__); }
 
 #define CMP_TYPE1(NAME1, TYPE1, NANEQUAL)                                                             \
     switch(type2) {                                                                                   \

@@ -68,6 +68,7 @@ Usage: nccmp [OPTION...] file1 [file2]\n\
   -H, --help                 Give this usage message.\n\
       --usage                \n\
   -i, --info                 Print file structure info for one or both files.\n\
+  -j, --join-tolerance       Join comparison of absolute and percent tolerances\n\
   -l, --color                Print colored messages.\n\
   -m, --metadata             Compare metadata.\n\
                              Use -g to include global attributes.\n\
@@ -100,7 +101,7 @@ Usage: nccmp [OPTION...] file1 [file2]\n\
                              Report when files are the same.\n\
   -S, --statistics           Report data difference statistics (file1 - file2).\n\
   -t, --tolerance=TOL        Compare if absolute difference > TOL.\n\
-  -T, --Tolerance=TOL        Compare if relative percent difference > TOL.\n\
+  -T, --Tolerance=PERCENT    Compare if relative percent difference > PERCENT (0-100).\n\
   -v, --variable=var1[,...]  Compare variable(s) var1[,...] only.\n\
   -V, --version              Print program version.\n\
   -x, --exclude=var1[,...]   Exclude variable(s) var1[,...].\n\
@@ -113,10 +114,15 @@ Usage: nccmp [OPTION...] file1 [file2]\n\
 \n\
 Report bugs to https://gitlab.com/remikz/nccmp\n\
 "
+typedef enum
+{
+    TOLERANCE_NONE     = 0,
+    TOLERANCE_ABSOLUTE = 1,
+    TOLERANCE_PERCENT  = 1 << 1
+} nccmp_tolerance_t;
 
 typedef struct NCCMPOPTS
 {
-    char    abstolerance;          /* flag, 0=percentage (0-100+), 1=absolute tolerance */
     char    buffer_entire_var;     /* Load entire variable into memory if not zero. */
     char    color;                 /* Print color messages if non-zero. */
     int     data;                  /* compare variable values? */
@@ -137,6 +143,7 @@ typedef struct NCCMPOPTS
     int     help;                  /* give usage insructions */
     int     history;               /* compare global history attribute */
     char    info;                  /* flag, to print file structure info */
+    char    join_tolerance;        /* flag, if not zero, then join absolute AND percent tolerances */
     int     metadata;              /* compare metadata, excluding global attributes */
     int     missing;               /* ignore different missing_value/_FillValues */
     char    nanequal;              /* Nans should be considered equal if compared. */
@@ -146,13 +153,15 @@ typedef struct NCCMPOPTS
     char    statistics;            /* If should enable diff statistics gathering. */
     char    subgroups;             /* Boolean to compare nested groups. */
     int     threads;               /* Number of threads to use. Must be 1 or greater. */
-    double  tolerance;             /* allowable difference tolerance */
+    double  tolerance_absolute;    /* allowable difference tolerance absolute */
+    double  tolerance_percent;     /* allowable difference tolerance percent */
+    nccmp_tolerance_t tolerance_type; /* enum */
     int     var_diff_count;        /* stop printing differences after count for each var. */
     int     variable;              /* variable list given */
     int     verbose;               /* print messages to show progress */
     int     version;               /* give program version */
     nccmp_strlist_t*  variablelist; /* specific variables to compare */
-char    warn[NCCMP_WARN_NUM_TAGS]; /* booleans if a warning is on/off */
+    char    warn[NCCMP_WARN_NUM_TAGS]; /* booleans if a warning is on/off */
 } nccmp_opt_t;
 
 int nccmp_opt_parse(int argc, const char** argv, nccmp_opt_t* popts);

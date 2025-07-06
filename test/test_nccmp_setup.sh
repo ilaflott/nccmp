@@ -47,11 +47,14 @@ function format() {
     NC_FORMATS=$($srcdir/ncgen_formats.sh $ID)
     NC3=$(echo $NC_FORMATS | cut -f1 -d' ')
     NC4=$(echo $NC_FORMATS | cut -f2 -d' ')
+    # Explicitly define what netcdf format to use per test file made with ncgen.
+    # Row 1 is for file ids: 0 1 2 3 4, and so on.
     FMT=(0    $NC3 $NC3 $NC3 $NC3
          $NC3 $NC3 $NC3 $NC3 $NC3
          $NC4 $NC4 $NC4 $NC4 $NC4
          $NC4 $NC4 $NC4 $NC4 $NC4
-         $NC4 $NC4 $NC4 $NC4 $NC3)
+         $NC4 $NC4 $NC4 $NC4 $NC3
+         $NC3)
     
     echo ${FMT[${index}]}
 }

@@ -1,0 +1,11 @@
+netcdf test25b {
+
+dimensions:
+    x = 3, t = unlimited ;
+
+variables:
+    int var(t,x);
+
+data:
+   var = 1, 37, 10300;
+}
