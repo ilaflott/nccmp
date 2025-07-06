@@ -18,7 +18,7 @@
         {
           "type": "git",
           "url": "https://gitlab.com/remikz/nccmp",
-          "branch": "1.9.1.0"
+          "branch": "1.10.0.0"
         }
       ],
       "modules": 
@@ -30,8 +30,8 @@
           [
             {
               "type": "archive",
-              "url" : "https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.10/hdf5-1.10.5/src/hdf5-1.10.5.tar.bz2",
-              "sha256" : "68d6ea8843d2a106ec6a7828564c1689c7a85714a35d8efafa2fee20ca366f44"
+              "url" : "https://support.hdfgroup.org/releases/hdf5/v1_14/v1_14_6/downloads/hdf5-1.14.6.tar.gz",
+              "sha256" : "e4defbac30f50d64e1556374aa49e574417c9e72c6b1de7a4ff88c4b1bea6e9b"
             }
           ]
         },
@@ -42,8 +42,8 @@
           [
             {
               "type": "archive",
-              "url": "https://github.com/Unidata/netcdf-c/archive/v4.7.3.tar.gz",
-              "sha256": "05d064a2d55147b83feff3747bea13deb77bef390cb562df4f9f9f1ce147840d"
+              "url": "https://github.com/Unidata/netcdf-c/archive/refs/tags/v4.9.3.tar.gz",
+              "sha256": "990f46d49525d6ab5dc4249f8684c6deeaf54de6fec63a187e9fb382cc0ffdff"
             }
           ]
         }

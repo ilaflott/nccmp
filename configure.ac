@@ -1,5 +1,5 @@
 dnl Process this file with `autoreconf -i` to produce a configure script.
-AC_INIT(nccmp, 1.9.1.0, [[https://gitlab.com/remikz/nccmp]])
+AC_INIT([nccmp],[1.10.0.0],[[https://gitlab.com/remikz/nccmp]])
 
 dnl Include additional scripts.
 AC_CONFIG_MACRO_DIR([m4])
@@ -73,7 +73,15 @@ AC_CHECK_DECL(  [NC_FIRSTUSERTYPEID],
 
 dnl Checks for header files.
 AC_HEADER_STDBOOL
-AC_HEADER_STDC
+m4_warn([obsolete],
+[The preprocessor macro 'STDC_HEADERS' is obsolete.
+  Except in unusual embedded environments, you can safely include all
+  C89 headers unconditionally.])dnl
+# Autoupdate added the next two lines to ensure that your configure
+# script's behavior did not change.  They are probably safe to remove.
+AC_CHECK_INCLUDES_DEFAULT
+AC_PROG_EGREP
+
 AC_CHECK_HEADERS(getopt.h errno.h fcntl.h limits.h memory.h netcdf.h strings.h string.h stdbool.h sys/stat.h sys/types.h unistd.h)
 
 AM_CONDITIONAL([SYSTEM_GETOPT], [test x$ac_cv_header_getopt_h = xyes])
@@ -106,7 +114,8 @@ AC_DEFINE_UNQUOTED([BUILD_USER],     ["$USER"],        [Who built this.])
 AC_DEFINE_UNQUOTED([BUILD_DATE],     ["`date`"],       [When built.])
 AC_DEFINE_UNQUOTED([BUILD_HOST],     ["`uname -a`"],   [Where built.])
  
-AC_OUTPUT(Makefile man/Makefile src/Makefile test/Makefile)
+AC_CONFIG_FILES([Makefile man/Makefile src/Makefile test/Makefile])
+AC_OUTPUT
 
 AC_MSG_NOTICE([
 

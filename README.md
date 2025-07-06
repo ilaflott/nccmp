@@ -26,7 +26,7 @@ Here's an incomplete list of reasons why you may want to check your data:
 - Global attributes compared with or without the history attribute.
 - Exits when first difference is found or optionally continues to process all variables and/or attributes by force, or up to a global or per-variable count.
 - Attribute exclusion when comparing metadata.
-- Bitwise compare or with tolerances (absolute or relative).
+- Bitwise compare or with tolerances (absolute or relative or both).
 - Header padding contents and attribute comparisons for NetCDF3 classic/64bit file formats.
 - NaN values can be treated as equal (in case you use NaN's as grid masks).
 - Compare or dump encodings for one or both files: checksumming, chunking, compression, endianness, format, shuffling, and header-pad sizes.
@@ -34,8 +34,9 @@ Here's an incomplete list of reasons why you may want to check your data:
 - Compare asymmetric atomic data type values, within variable-length arrays too. For example, a variable can be uint in the first file, and int64 in the second.
 - Compare similarly named compound fields and ignore differently named or missing fields, so compound schemas may have variation in field type, field order and field existence.
 - Asymmetric enum value and datatype semantics. Enum identifiers are compared instead of their encoded values, so your dataset schema can evolve flexibly without worrying about enum order, size, type, or numeric values, although any metadata differences will be reported.
-- Print data difference statistics (count, sum, absolute sum, min, max, range, mean, stdev) for numeric variables and compound fields. In quiet mode, only this summary table will print.
+- Print data difference statistics (count, sum, min, max, range, mean, stdev, L1 norm, L2 relative norm, L2 norm, L2 relative norm) for numeric variables and compound fields. In quiet mode, only this summary table will print.
 - Lightweight. Comparing multi-gigabyte files will only consume several megabytes of arena memory.
+- Detect isomorphic variable shapes.
 
 ### Multithreading
 
@@ -354,13 +355,13 @@ Compare nested compound field arrays of user types.
 Print statistics and hide diff messages.
 
     $ nccmp -dfqS test21a.68.nc test21b.68.nc
-    Variable         Group           Count     Sum AbsSum     Min     Max  Range    Mean   StdDev
-    var1             /                   2      -3      3      -2      -1      1    -1.5 0.707107
-    var2.com2.com1.i /                   2     -30     30     -20     -10     10     -15  7.07107
-    var3.com2.com1.i /group              2    -300    300    -200    -100    100    -150  70.7107
-    var4.f           /group              1   -1000   1000   -1000   -1000      0   -1000        0
-    var4.s           /group              1  -10000  10000  -10000  -10000      0  -10000        0
-    var5.com2.com1.i /group/subgroup     2 -300000 300000 -200000 -100000 100000 -150000  70710.7
+    Variable         Group           Count     Sum     Min     Max  Range    Mean   StdDev     L1 L1R      L2 L2R
+    var1             /                   2      -3      -2      -1      1    -1.5 0.707107      3   1 2.23607   1
+    var2.com2.com1.i /                   2     -30     -20     -10     10     -15  7.07107     30   1 22.3607   1
+    var3.com2.com1.i /group              2    -300    -200    -100    100    -150  70.7107    300   1 223.607   1
+    var4.f           /group              1   -1000   -1000   -1000      0   -1000        0   1000   1    1000   1
+    var4.s           /group              1  -10000  -10000  -10000      0  -10000        0  10000   1   10000   1
+    var5.com2.com1.i /group/subgroup     2 -300000 -200000 -100000 100000 -150000  70710.7 300000   1  223607   1
 
 ## Usage
 
@@ -395,6 +396,7 @@ Print statistics and hide diff messages.
       -H, --help                 Give this usage message.
           --usage
       -i, --info                 Print file structure info for one or both files.
+      -j, --join-tolerance       Join comparison of absolute and percent tolerances
       -l, --color                Print colored messages.
       -m, --metadata             Compare metadata.
                                  Use -g to include global attributes.
@@ -427,7 +429,7 @@ Print statistics and hide diff messages.
                                  Report when files are the same.
       -S, --statistics           Report data difference statistics (file1 - file2).
       -t, --tolerance=TOL        Compare if absolute difference > TOL.
-      -T, --Tolerance=TOL        Compare if relative percent difference > TOL.
+      -T, --Tolerance=PERCENT    Compare if relative percent difference > PERCENT (0-100).
       -v, --variable=var1[,...]  Compare variable(s) var1[,...] only.
       -V, --version              Print program version.
       -x, --exclude=var1[,...]   Exclude variable(s) var1[,...].
@@ -439,7 +441,7 @@ Print statistics and hide diff messages.
                                      eos: Extra attribute end-of-string nulls.
     
     Report bugs to https://gitlab.com/remikz/nccmp
-    nccmp 1.9.1.0
+    nccmp 1.10.0.0
 
     Configuration
     Date    = 14/11/21
@@ -460,6 +462,14 @@ Print statistics and hide diff messages.
 
 ## News
 
+
+Version 1.10.0.0 (7/6/2025)
+
+1. Fix CMake 4 and various compiler warnings.
+2. Fix NaNs are equal (-N flag) for global and variable attributes.
+3. Added more statistics: L1 Relative Norm, L2 Norm, L2 Relative Norm and renamed the printed AbsSum column name to L1.
+4. Allow joining tolerance flags -t and -T.
+5. Detect isomorphic variable shapes and suggest using -B flag to compare values anyway.
 
 Version 1.9.1.0 (11/14/2021)
 
