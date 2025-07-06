@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="console-application">
+  <id>org.nccmp.nccmp</id>
+  <url type="homepage">https://gitlab.com/remikz/nccmp</url>
+  <name>nccmp</name>
+  <summary>Compare NetCDF files</summary>
+  
+  <metadata_license>FSFAP</metadata_license>
+  <project_license>LGPL-2.0-or-later</project_license>
+  
+  <description>
+    <p>
+      nccmp compares two NetCDF files bitwise, semantically or with a user defined tolerance (absolute or relative percentage). Parallel comparisons are done in local memory without requiring temporary files. Highly recommended for regression testing scientific models or datasets in a test-driven development environment.
+    </p>
+  </description>
+  
+  <icon type="stock">utilities-terminal</icon>
+  
+  <categories>
+    <category>Science</category>
+    <category>NumericalAnalysis</category>
+  </categories>
+  
+  <provides>
+    <binary>nccmp</binary>
+  </provides>
+
+  <developer id="org.nccmp">
+    <name>Remik Ziemlinski</name>
+  </developer>
+
+  <content_rating type="oars-1.1" />
+
+  <releases>
+    <release version="1.10.0.0" date="2025-07-06">
+        <url type="details">https://gitlab.com/remikz/nccmp</url>
+        <description>
+        <p>Release description</p>
+            <ul>
+            <li>Fix CMake 4 and various compiler warnings.</li>
+            <li>Fix NaNs are equal (-N flag) for global and variable attributes.</li>
+            <li>Added more statistics: L1 Relative Norm, L2 Norm, L2 Relative Norm and renamed the printed AbsSum column name to L1.</li>
+            <li>Allow joining tolerance flags -t and -T.</li>
+            <li>Detect isomorphic variable shapes and suggest using -B flag to compare values anyway.</li>
+            </ul>
+        </description>
+    </release>
+  </releases>
+</component>
