@@ -4,10 +4,7 @@
   "runtime-version": "24.08",
   "sdk": "org.freedesktop.Sdk",
   "command": "nccmp",
-  "finish-args":
-  [
-    "--filesystem=host"
-  ],
+  "finish-args": [],
   "modules": 
   [
     {
@@ -18,7 +15,7 @@
         {
           "type": "git",
           "url": "https://gitlab.com/remikz/nccmp",
-          "branch": "1.10.0.0"
+          "tag": "1.10.0.0"
         }
       ],
       "modules": 
