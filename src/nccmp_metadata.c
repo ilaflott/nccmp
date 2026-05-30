@@ -182,12 +182,6 @@ int nccmp_cmp_att_val(int nc1, int nc2, int varid1, int varid2, const char* name
     case NC_STRING:
         st1 = XMALLOC(char*, len1);
         st2 = XMALLOC(char*, len2);
-        for(i = 0; i < minlen; ++i) {
-            st1[i] = XMALLOC(char, NC_MAX_NAME);
-            st2[i] = XMALLOC(char, NC_MAX_NAME);
-            memset(st1[i], 0, NC_MAX_NAME);
-            memset(st2[i], 0, NC_MAX_NAME);
-        }
         status = nc_get_att_string(nc1, varid1, name, st1);
         if (status != NC_NOERR)    {
             last_status = EXIT_FAILED;
