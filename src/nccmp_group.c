@@ -404,9 +404,11 @@ int nccmp_get_group_info(int ncid, nccmp_group_t* group) {
         status = nccmp_get_group_info(gids[i], group->children[i]);
         if (status) {
             for(j = 0; j <= i; ++j) {
+                nccmp_destroy_group(group->children[j]);
                 XFREE(group->children[j]);
             }
             XFREE(group->children);
+            group->nchildren = 0;
             goto recover;
         }
     }
