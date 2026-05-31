@@ -20,7 +20,7 @@ int nccmp_cmp_att(int ncid1, int ncid2, int varid1, int varid2,
     int ncstatus, status;
     nc_type type1, type2;
     size_t lenp1, lenp2;
-    static const int MAX_STRLEN = 8192;
+    enum { MAX_STRLEN = 8192 };
     char typestr1[MAX_STRLEN];
     char typestr2[MAX_STRLEN];
 
@@ -1551,7 +1551,7 @@ int nccmp_global_atts(nccmp_opt_t* opts, int ncid1, int ncid2)
     size_t len1, len2;
     char name1[NC_MAX_NAME], name2[NC_MAX_NAME];
     nccmp_strlist_t* processedatts = NULL;
-    static const int MAX_STRLEN = 8192;
+    enum { MAX_STRLEN = 8192 };
     char typestr1[MAX_STRLEN], typestr2[MAX_STRLEN];
 
     status = status2 = EXIT_SUCCESS;
@@ -1978,7 +1978,7 @@ int nccmp_var_encoding(nccmp_state_t *state, nccmp_strlist_t* varlist, int ncid1
     int checksum1, checksum2;
     int chunk_storage1, chunk_storage2;
     size_t chunk_sizes1[NC_MAX_DIMS], chunk_sizes2[NC_MAX_DIMS];
-    const int MAX_LEN = 256;
+    enum { MAX_LEN = 256 };
     char tmpstr1[MAX_LEN], tmpstr2[MAX_LEN];
     int shuffle1, shuffle2, deflate1, deflate2, deflate_level1, deflate_level2;
     int endian1, endian2;

@@ -1,0 +1,1 @@
+DIFFER : VARIABLE : some_data : POSITION : [2] : VALUES : 3 <> 5

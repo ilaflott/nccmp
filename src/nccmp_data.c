@@ -4105,9 +4105,25 @@ int nccmp_data(nccmp_state_t* state, nccmp_strlist_t* var_names,
         LOG_INFO_CHOOSE(state->opts.color, "Comparing group data.\n");
     }
 
-    status = validate_var_names(& state->opts, var_names, & validated_var_names,
-            group1->ncid, group2->ncid, state->vars1, state->vars2,
-            state->nvars1, state->nvars2);
+    status = validate_var_names(
+              & state->opts, 
+              var_names, 
+              & validated_var_names,
+              group1->ncid, 
+              group2->ncid,
+              state->vars1,
+              state->vars2,
+              state->nvars1, 
+              state->nvars2,
+              state->user_vars_found1, 
+              state->user_vars_found2);
+
+    if (! validated_var_names || 
+        ! validated_var_names->size) {
+        /* No variables to compare data for in this group. */
+        goto recover;
+    }
+
     last_status = status ? status : last_status;
     if (last_status && !state->opts.force) {
         goto recover;

@@ -1,0 +1,12 @@
+netcdf a {
+dimensions:
+	nx = 3 ;
+variables:
+	int some_data(nx) ;
+
+data:
+    some_data = 1, 2, 3;
+
+group: an_empty_group {
+  } 
+}

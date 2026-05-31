@@ -38,7 +38,7 @@ TESTS =                                                                 \
     test_nccmp_darray                                                   \
     test_nccmp_darray_sort                                              \
     test_nccmp_stats                                                    \
-    test_nccmp_user_type.sh						\
+    test_nccmp_user_type.sh						                        \
     test_nccmp_01.sh test_nccmp_02.sh test_nccmp_03.sh                  \
     test_nccmp_04.sh test_nccmp_05.sh test_nccmp_06.sh test_nccmp_07.sh \
     test_nccmp_08.sh test_nccmp_09.sh test_nccmp_10.sh test_nccmp_11.sh \
@@ -61,7 +61,8 @@ TESTS =                                                                 \
     test_nccmp_72.sh test_nccmp_73.sh test_nccmp_74.sh test_nccmp_75.sh \
     test_nccmp_76.sh test_nccmp_77.sh test_nccmp_78.sh test_nccmp_79.sh \
     test_nccmp_80.sh test_nccmp_81.sh test_nccmp_82.sh test_nccmp_83.sh \
-	test_nccmp_84.sh test_nccmp_85.sh
+	test_nccmp_84.sh test_nccmp_85.sh test_nccmp_86.sh test_nccmp_87.sh \
+    test_nccmp_88.sh
 
 if ENABLE_TEST_BIG
     TESTS += test_big.sh

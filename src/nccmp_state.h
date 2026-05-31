@@ -54,6 +54,11 @@ typedef struct nccmp_state_t {
     /* Each thread will have own group tree (ncid filehandles) since api not thread safe. */
     struct nccmp_group_t *thread_groups1;
     struct nccmp_group_t *thread_groups2;
+
+    /* Tracks which -v variables were found in at least one group per file,
+       for post-loop cross-file mismatch reporting. */
+    nccmp_strlist_t *user_vars_found1;
+    nccmp_strlist_t *user_vars_found2;
 } nccmp_state_t;
 
 /* Returns non-zero if globar or var count is above or equal to threshold. */

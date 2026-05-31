@@ -195,7 +195,8 @@ nccmp_strlist_t* make_cmp_var_name_list(nccmp_opt_t* opts, int ncid1, int ncid2)
 
 int validate_var_names(nccmp_opt_t* opts, nccmp_strlist_t* names, nccmp_strlist_t** valid,
         int ncid1, int ncid2, nccmp_var_t *vars1, nccmp_var_t *vars2,
-        int nvars1, int nvars2)
+        int nvars1, int nvars2,
+        nccmp_strlist_t* found1, nccmp_strlist_t* found2)
 {
     int i, idx1, idx2, status = EXIT_SUCCESS;
     nccmp_strlist_t* processed = 0;
@@ -234,37 +235,57 @@ int validate_var_names(nccmp_opt_t* opts, nccmp_strlist_t* names, nccmp_strlist_
         idx1 = find_var(names->items[i], vars1, nvars1);
         idx2 = find_var(names->items[i], vars2, nvars2);
 
-        if (idx1 < 0) {
-            if (! opts->metadata) { /* This gets reported in cmpmeta. */
-                if (!opts->quiet) {
-                    PRINT_DIFF(opts->color, opts->debug, " : Failed to find variable %s in file \"%s\".\n",
-                               names->items[i], opts->file1);
-                }
-            }
-            if (!opts->warn[NCCMP_W_ALL]) {
-                status = EXIT_DIFFER;
-            }
-            if (opts->force) {
-                continue;
-            } else {
-                break;
-            }
+        /* Record which variables exist in each file's current group. */
+        if (idx1 >= 0 && found1) {
+            nccmp_add_to_strlist(found1, names->items[i]);
         }
 
-        if (idx2 < 0) {
-            if (! opts->metadata) { /* This gets reported in cmpmeta. */
-                if (!opts->quiet) {
-                    PRINT_DIFF(opts->color, opts->debug, " : Failed to find variable %s in file \"%s\".\n",
-                               names->items[i], opts->file2);
+        if (idx2 >= 0 && found2) {
+            nccmp_add_to_strlist(found2, names->items[i]);
+        }
+
+        if (idx1 < 0 || idx2 < 0) {
+            if (opts->variable) {
+                /* User explicitly specified -v variables; skip vars not in
+                   this group. They may exist in another group. A single
+                   cross-file mismatch is reported after all groups are done. */
+                continue;
+            }
+
+            /* Non -v case. Try all available vars. Report missing variable immediately. */
+            if (idx1 < 0) {
+                /* This diff already gets reported in cmpmeta if -m is enabled. */
+                if (! opts->metadata) { 
+                    if (!opts->quiet) {
+                        PRINT_DIFF(opts->color, opts->debug, " : Failed to find variable %s in file \"%s\".\n",
+                                   names->items[i], opts->file1);
+                    }
+                }
+                if (!opts->warn[NCCMP_W_ALL]) {
+                    status = EXIT_DIFFER;
+                }
+                if (opts->force) {
+                    continue;
+                } else {
+                    break;
                 }
             }
-            if (!opts->warn[NCCMP_W_ALL]) {
-                status = EXIT_DIFFER;
-            }
-            if (opts->force) {
-                continue;
-            } else {
-                break;
+
+            if (idx2 < 0) {
+                if (! opts->metadata) {
+                    if (!opts->quiet) {
+                        PRINT_DIFF(opts->color, opts->debug, " : Failed to find variable %s in file \"%s\".\n",
+                                   names->items[i], opts->file2);
+                    }
+                }
+                if (!opts->warn[NCCMP_W_ALL]) {
+                    status = EXIT_DIFFER;
+                }
+                if (opts->force) {
+                    continue;
+                } else {
+                    break;
+                }
             }
         }
 

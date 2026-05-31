@@ -37,11 +37,13 @@ char get_missing(int ncid, nccmp_var_t * var, const char* attname);
 /* Get vars to use to do cmp based on input varname and exclusion lists. */
 nccmp_strlist_t* make_cmp_var_name_list(nccmp_opt_t* opts, int ncid1, int ncid2);
 
-/* @param valid[out]: List of valid var names.
- */
+/* valid[out]: List of valid var names.
+   found1,found2: If non-NULL, each name found in the respective file's
+                  group vars is recorded here (for cross-file tracking across groups). */
 int validate_var_names(nccmp_opt_t* opts, nccmp_strlist_t* names, nccmp_strlist_t** valid,
         int ncid1, int ncid2, nccmp_var_t *vars1, nccmp_var_t *vars2,
-        int nvars1, int nvars2);
+        int nvars1, int nvars2,
+        nccmp_strlist_t* found1, nccmp_strlist_t* found2);
 
 void var_info_destroy(nccmp_var_t** vars, int* nvars);
 
