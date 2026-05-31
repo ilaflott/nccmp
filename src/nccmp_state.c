@@ -87,6 +87,9 @@ void nccmp_destroy_state(nccmp_state_t *state)
     var_info_destroy(& state->vars1, & state->nvars1);
     var_info_destroy(& state->vars2, & state->nvars2);
 
+    nccmp_free_strlist(& state->user_vars_found1);
+    nccmp_free_strlist(& state->user_vars_found2);
+
     XFREE(state->var_diff_counts);
 
     state->global_diff_count = 0;
@@ -112,6 +115,9 @@ void nccmp_init_state(nccmp_state_t *state)
 
     state->thread_groups1 = NULL;
     state->thread_groups2 = NULL;
+
+    state->user_vars_found1 = NULL;
+    state->user_vars_found2 = NULL;
 
     state->nrecs1 = 0;
     state->nrecs2 = 0;

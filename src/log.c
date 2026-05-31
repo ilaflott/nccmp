@@ -9,7 +9,7 @@
 void log_format(const char* tag, FILE * stream, const char* file,
                 int line, const char* message, va_list args)
 {
-    const int BUF_LEN = 256;
+    enum { BUF_LEN = 256 };
     char            fmt[BUF_LEN], buffer[BUF_LEN];
     struct timeval  tv;
     struct tm       *tm;

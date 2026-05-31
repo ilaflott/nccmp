@@ -56,7 +56,7 @@ function format() {
          $NC4 $NC4 $NC4 $NC4 $NC4
          $NC4 $NC4 $NC4 $NC4 $NC4
          $NC4 $NC4 $NC4 $NC4 $NC3
-         $NC3 $NC4 $NC4)
+         $NC3 $NC4 $NC4 $NC4 $NC4)
     
     echo ${FMT[${index}]}
 }

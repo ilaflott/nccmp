@@ -435,6 +435,12 @@ int nccmp_cmp_groups(nccmp_state_t* state)
         goto recover;
     }
 
+    /* Initialize per-file tracking lists for -v variables. */
+    if (state->opts.variable) {
+        state->user_vars_found1 = nccmp_new_strlist(state->opts.variablelist->size);
+        state->user_vars_found2 = nccmp_new_strlist(state->opts.variablelist->size);
+    }
+
     if (state->opts.debug) {
         LOG_DEBUG_CHOOSE(state->opts.color, "group names to process:\n");
         for( i = 0; i < group_names_to_process->size; ++i ) {
@@ -477,9 +483,51 @@ int nccmp_cmp_groups(nccmp_state_t* state)
         }
     }
 
+    /* After all groups processed, report if -v variables were found in
+       only one of the two files.  Found lists are only populated via the
+       data comparison path (nccmp_data). */
+    if (state->opts.variable && 
+        state->opts.variablelist && 
+        state->opts.data) {
+        for(i = 0; i < state->opts.variablelist->size; ++i) {
+            int in1 = nccmp_exists_in_strlist(state->user_vars_found1, state->opts.variablelist->items[i]);
+            int in2 = nccmp_exists_in_strlist(state->user_vars_found2, state->opts.variablelist->items[i]);
+            if (in1 && !in2) {
+                if (!state->opts.quiet) {
+                    PRINT_DIFF(state->opts.color, state->opts.debug,
+                               " : Failed to find variable %s in file \"%s\".\n",
+                               state->opts.variablelist->items[i], state->opts.file2);
+                }
+                if (!state->opts.warn[NCCMP_W_ALL]) {
+                    last_status = EXIT_DIFFER;
+                }
+            } else if (!in1 && in2) {
+                if (!state->opts.quiet) {
+                    PRINT_DIFF(state->opts.color, state->opts.debug,
+                               " : Failed to find variable %s in file \"%s\".\n",
+                               state->opts.variablelist->items[i], state->opts.file1);
+                }
+                if (!state->opts.warn[NCCMP_W_ALL]) {
+                    last_status = EXIT_DIFFER;
+                }
+            } else if (!in1 && !in2) {
+                if (!state->opts.quiet) {
+                    PRINT_DIFF(state->opts.color, state->opts.debug,
+                               " : Failed to find variable %s in either file.\n",
+                               state->opts.variablelist->items[i]);
+                }
+                if (!state->opts.warn[NCCMP_W_ALL]) {
+                    last_status = EXIT_DIFFER;
+                }
+            }
+        }
+    }
+
 recover:
     //old nccmp_free_strlist(& tmp_group_names);
     nccmp_free_strlist(& group_names_to_process);
+    nccmp_free_strlist(& state->user_vars_found1);
+    nccmp_free_strlist(& state->user_vars_found2);
 
     return last_status;
 }

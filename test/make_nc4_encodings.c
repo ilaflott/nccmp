@@ -24,8 +24,8 @@ int main(int argc, char *argv[])
 {
 	char* fn;
 	int enable = 0;
-	const int N = 10;
-	const int NDIMS = 1;
+	enum { N = 10 };
+	enum { NDIMS = 1 };
 	size_t dimlens[NDIMS];
 	size_t start[N], count[N];
 	int dimids[NDIMS], varid, status, ncid, data[N];
