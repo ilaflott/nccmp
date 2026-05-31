@@ -477,13 +477,15 @@ int nccmp_opt_parse(int argc, const char** argv, nccmp_opt_t* popts)
 
         case ':':
             LOG_ERROR("-%c without argument.\n", optopt);
-            popts->help = 1;
-            break;
+            print_usage();
+            status = EXIT_FATAL;
+            goto recover;
 
         case '?':
             LOG_ERROR("Unknown argument %c.\n", optopt);
-            popts->help = 1;
-            break;
+            print_usage();
+            status = EXIT_FATAL;
+            goto recover;
         }
     }
 
