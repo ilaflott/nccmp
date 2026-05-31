@@ -463,6 +463,12 @@ Print statistics and hide diff messages.
 ## News
 
 
+Version 1.11.0.0 (5/31/2026)
+
+1. Fix bugs reporting variable name diff while processing groups.
+2. Fix returning fatal exit code for bad command-line options. 
+3. Fix memory leaks using string attributes and groups.
+
 Version 1.10.0.0 (7/6/2025)
 
 1. Fix CMake 4 and various compiler warnings.
@@ -800,5 +806,5 @@ Version 0.1
 
 ## License
 
-Copyright (C) 2004-2021 Remik Ziemlinski
+Copyright (C) 2004-2026 Remik Ziemlinski
 Licensed under the terms of GPL.
