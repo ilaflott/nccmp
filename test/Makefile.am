@@ -62,7 +62,7 @@ TESTS =                                                                 \
     test_nccmp_76.sh test_nccmp_77.sh test_nccmp_78.sh test_nccmp_79.sh \
     test_nccmp_80.sh test_nccmp_81.sh test_nccmp_82.sh test_nccmp_83.sh \
 	test_nccmp_84.sh test_nccmp_85.sh test_nccmp_86.sh test_nccmp_87.sh \
-    test_nccmp_88.sh
+    test_nccmp_88.sh test_nccmp_89.sh
 
 if ENABLE_TEST_BIG
     TESTS += test_big.sh
