@@ -174,7 +174,7 @@ int main(int argc, char** argv) {
     stat = nc_def_compound(ncid, sizeof(comp2), "comp2", & typeid2);
     check_err(stat, __LINE__, __FILE__);
 
-    /* Define nested members first to keep the type layout aligned with the C struct. */
+    /* libnetcdf 4.10 requires nested compound members to be inserted first. */
     stat = nc_insert_compound(ncid, typeid2, "com1", offsetof(comp2, com1), typeid1);
     check_err(stat, __LINE__, __FILE__);
     
@@ -219,7 +219,7 @@ int main(int argc, char** argv) {
     stat = nc_def_compound(ncid, sizeof(comp3), "comp3", & typeid3);
     check_err(stat, __LINE__, __FILE__);
 
-    /* Define nested members first to keep the type layout aligned with the C struct. */
+    /* libnetcdf 4.10 requires nested compound members to be inserted first. */
     stat = nc_insert_compound(ncid, typeid3, "com2", offsetof(comp3, com2), typeid2);
     check_err(stat, __LINE__, __FILE__);
     
