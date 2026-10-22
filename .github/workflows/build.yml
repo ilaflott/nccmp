@@ -49,6 +49,7 @@ jobs:
       - name: Build, test, and install with Autotools
         if: matrix.build-system == 'autotools'
         run: |
+          autoreconf -fi
           mkdir -p build/autotools
           cd build/autotools
           ../../configure --prefix="$RUNNER_TEMP/nccmp-install"
