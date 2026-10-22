@@ -1,0 +1,61 @@
+image: condaforge/miniforge3:latest
+
+workflow:
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH == "main" || $CI_COMMIT_BRANCH == "master"'
+
+stages:
+  - build
+
+variables:
+  LC_ALL: C
+
+build-and-test:
+  stage: build
+  timeout: 30m
+  resource_group: nccmp-netcdf-build
+  parallel:
+    matrix:
+      - BUILD_SYSTEM: [cmake, autotools]
+        LIBNETCDF_VERSION: ["4.9.2", "4.9.3", "4.10.0", "4.10.1"]
+  before_script:
+    - apt-get update
+    - apt-get install -y --no-install-recommends autoconf automake build-essential cmake
+    - conda create --yes --name nccmp-test --channel conda-forge --override-channels "libnetcdf=${LIBNETCDF_VERSION}" "hdf5=1.14.*"
+    - eval "$(conda shell.bash hook)"
+    - conda activate nccmp-test
+  script:
+    - export NETCDF_PREFIX="$CONDA_PREFIX"
+    - |
+      for tool in ncgen nc-config ncdump h5cc; do
+        test "$(command -v "$tool")" = "$NETCDF_PREFIX/bin/$tool"
+      done
+    - nc-config --all
+    - h5cc -showconfig
+    - |
+      if [ "$BUILD_SYSTEM" = cmake ]; then
+        cmake -S . -B build/cmake \
+          -DBUILD_TESTS=ON \
+          -DCMAKE_BUILD_TYPE=Release \
+          -DNETCDF_INC_DIR="$NETCDF_PREFIX/include" \
+          -DNETCDF_LIB_PATH="$NETCDF_PREFIX/lib/libnetcdf.so" \
+          -DCMAKE_EXE_LINKER_FLAGS="-L$NETCDF_PREFIX/lib -Wl,-rpath,$NETCDF_PREFIX/lib" \
+          -DCMAKE_INSTALL_PREFIX="$CI_PROJECT_DIR/build/install"
+        cmake --build build/cmake --parallel 2
+        ctest --test-dir build/cmake --output-on-failure \
+          --no-tests=error --exclude-regex '^test_big$'
+        cmake --install build/cmake
+      else
+        autoreconf -fi
+        mkdir -p build/autotools
+        cd build/autotools
+        CPPFLAGS="-I$NETCDF_PREFIX/include" \
+          LDFLAGS="-L$NETCDF_PREFIX/lib -Wl,-rpath,$NETCDF_PREFIX/lib" \
+          ../../configure --prefix="$CI_PROJECT_DIR/build/install"
+        make -j2
+        make check || { cat test/test-suite.log; exit 1; }
+        make install
+      fi
+    - |
+      "$CI_PROJECT_DIR/build/install/bin/nccmp" --version
