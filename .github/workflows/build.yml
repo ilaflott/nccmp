@@ -20,7 +20,7 @@ jobs:
         netcdf-version: ["4.9.2", "4.9.3", "4.10.0", "4.10.1"]
     defaults:
       run:
-        shell: bash
+        shell: bash -el {0}
     env:
       LC_ALL: C
     steps:
