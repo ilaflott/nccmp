@@ -43,6 +43,9 @@ jobs:
           echo "NETCDF_PREFIX=$CONDA_PREFIX" >> "$GITHUB_ENV"
       - name: Report dependency versions
         run: |
+          for tool in ncgen nc-config ncdump h5cc; do
+            test "$(command -v "$tool")" = "$NETCDF_PREFIX/bin/$tool"
+          done
           gcc --version
           cmake --version
           nc-config --all
