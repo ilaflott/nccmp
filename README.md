@@ -97,6 +97,71 @@ Run either setup-x86.exe or setup-x86_64.exe, and select All => Science => nccmp
 
 ## Compiling
 
+### Ubuntu / GitHub Actions baseline
+The GitHub mirror's [build workflow](.github/workflows/build.yml) builds, tests,
+and installs with both CMake and Autotools on Ubuntu 24.04. It runs on every
+push to `main` or `master` (the mirror's current default branch), and on pull
+requests targeting any branch. Each job reports the NetCDF and HDF5 configuration
+and checks the installed executable.
+Install the build and test dependencies:
+    sudo apt-get update
+    sudo apt-get install -y --no-install-recommends \
+      autoconf automake build-essential cmake libnetcdf-dev netcdf-bin
+From the repository root, build with CMake:
+    cmake -S . -B build/cmake \
+      -DBUILD_TESTS=ON \
+      -DCMAKE_BUILD_TYPE=Release \
+      -DCMAKE_INSTALL_PREFIX="$HOME/.local"
+    cmake --build build/cmake --parallel 2
+    ctest --test-dir build/cmake --output-on-failure \
+      --no-tests=error --exclude-regex '^test_big$'
+    cmake --install build/cmake
+Alternatively, from the repository root, use the supplied Autotools configure
+script:
+    mkdir -p build/autotools
+    cd build/autotools
+    ../../configure --prefix="$HOME/.local"
+    make -j2
+    make check
+    make install
+Check either installation with `"$HOME/.local/bin/nccmp" --version`.
+Before adding CI, the unchanged source was built and installed in an Ubuntu 24.04
+Docker container with GCC 13.3.0, CMake 3.28.3, NetCDF 4.9.2, and HDF5 1.10.10.
+Both build systems passed all 95 regular tests. The source was mounted read-only,
+and all build products were kept outside the source tree.
+This baseline intentionally excludes the multi-gigabyte `test_big` test. CMake
+registers it whenever `BUILD_TESTS=ON`; Autotools only enables it with
+`--enable-test-big`. Header-pad support is also outside this baseline because it
+requires matching NetCDF source headers, not just the installed development
+package. The system-library baseline does **not** establish NetCDF 4.10+ or HDF5
+2.x compatibility.
+### NetCDF 4.10+ compatibility follow-up
+The next stage addresses
+[upstream work item 33](https://gitlab.com/remikz/nccmp/-/work_items/33) and its linked
+report, [conda-forge/nccmp-feedstock#28](https://github.com/conda-forge/nccmp-feedstock/issues/28).
+The downstream dependency conflict is described in
+[NOAA-GFDL/fre-cli#998](https://github.com/NOAA-GFDL/fre-cli/pull/998).
+As of October 22, 2026, the NetCDF 4.10.0 and 4.10.1 feedstock rebuilds,
+[conda-forge/nccmp-feedstock#30](https://github.com/conda-forge/nccmp-feedstock/pull/30)
+and [conda-forge/nccmp-feedstock#32](https://github.com/conda-forge/nccmp-feedstock/pull/32),
+have passing build checks but remain unmerged. The feedstock builds the test
+executables but only smoke-tests the installed program, so those checks alone
+do not demonstrate regression-suite compatibility.
+1. Reproduce the feedstock dependency combinations in isolated environments:
+   NetCDF 4.9.x as a control, 4.10.0, and 4.10.1 or newer. Record the resolved
+   NetCDF/HDF5 versions and verify that nccmp, the test executables, and `ncgen`
+   use the same installation.
+2. Run both build systems and the regular regression suite for each combination.
+   Start with HDF5 1.14.x, then test supported HDF5 2.x combinations separately
+   to distinguish NetCDF changes from HDF5 changes. Test optional header-pad
+   support against the matching NetCDF source tree.
+3. Fix only reproducible failures, preserving the older-library baseline. Add
+   regression coverage and update both build systems where necessary, then add
+   the verified dependency combinations to CI.
+4. Coordinate the conda-forge rebuild and publication separately from source
+   changes. Confirm that the downstream environment solves with the rebuilt
+   package before removing its NetCDF/HDF5 pins.
+
 ### Linux/Unix/MacPorts/Anaconda
 
 (Optional) Download the NetCDF source code to support header-pad comparisons.
