@@ -173,6 +173,9 @@ int main(int argc, char** argv) {
     
     stat = nc_def_compound(ncid, sizeof(comp2), "comp2", & typeid2);
     check_err(stat, __LINE__, __FILE__);
+
+    stat = nc_insert_compound(ncid, typeid2, "com1", offsetof(comp2, com1), typeid1);
+    check_err(stat, __LINE__, __FILE__);
     
     stat = nc_insert_compound(ncid, typeid2, "sc2", offsetof(comp2, sc2), NC_BYTE);
     check_err(stat, __LINE__, __FILE__);    
@@ -210,12 +213,12 @@ int main(int argc, char** argv) {
     stat = nc_insert_compound(ncid, typeid2, "t2", offsetof(comp2, t2), NC_STRING);
     check_err(stat, __LINE__, __FILE__);    
 
-    stat = nc_insert_compound(ncid, typeid2, "com1", offsetof(comp2, com1), typeid1);
-    check_err(stat, __LINE__, __FILE__);    
-
     /* ---------------------------------- */
     
     stat = nc_def_compound(ncid, sizeof(comp3), "comp3", & typeid3);
+    check_err(stat, __LINE__, __FILE__);
+
+    stat = nc_insert_compound(ncid, typeid3, "com2", offsetof(comp3, com2), typeid2);
     check_err(stat, __LINE__, __FILE__);
     
     stat = nc_insert_compound(ncid, typeid3, "sc3", offsetof(comp3, sc3), NC_BYTE);
@@ -252,9 +255,6 @@ int main(int argc, char** argv) {
     check_err(stat, __LINE__, __FILE__);    
 
     stat = nc_insert_compound(ncid, typeid3, "t3", offsetof(comp3, t3), NC_STRING);
-    check_err(stat, __LINE__, __FILE__);    
-
-    stat = nc_insert_compound(ncid, typeid3, "com2", offsetof(comp3, com2), typeid2);
     check_err(stat, __LINE__, __FILE__);    
     
     /* ------------------------------------ */
