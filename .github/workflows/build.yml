@@ -9,16 +9,18 @@ permissions:
   contents: read
 jobs:
   build:
-    name: Ubuntu / ${{ matrix.build-system }}
+    name: Ubuntu / ${{ matrix.build-system }} / libnetcdf ${{ matrix.netcdf-version }}
     runs-on: ubuntu-24.04
-    timeout-minutes: 15
+    timeout-minutes: 30
     strategy:
       fail-fast: false
+      max-parallel: 1
       matrix:
         build-system: [cmake, autotools]
+        netcdf-version: ["4.9.2", "4.9.3", "4.10.0", "4.10.1"]
     defaults:
       run:
-        shell: bash
+        shell: bash -el {0}
     env:
       LC_ALL: C
     steps:
@@ -28,9 +30,22 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
-            autoconf automake build-essential cmake libnetcdf-dev netcdf-bin
+            autoconf automake build-essential cmake
+      - name: Set up Conda
+        uses: conda-incubator/setup-miniconda@fc2d68f6413eb2d87b895e92f8584b5b94a10167 # v3.3.0
+        with:
+          activate-environment: test
+          channels: conda-forge
+          conda-remove-defaults: true
+      - name: Install libnetcdf
+        run: |
+          conda install --yes "libnetcdf=${{ matrix.netcdf-version }}" "hdf5=1.14.*"
+          echo "NETCDF_PREFIX=$CONDA_PREFIX" >> "$GITHUB_ENV"
       - name: Report dependency versions
         run: |
+          for tool in ncgen nc-config ncdump h5cc; do
+            test "$(command -v "$tool")" = "$NETCDF_PREFIX/bin/$tool"
+          done
           gcc --version
           cmake --version
           nc-config --all
@@ -41,6 +56,9 @@ jobs:
           cmake -S . -B build/cmake \
             -DBUILD_TESTS=ON \
             -DCMAKE_BUILD_TYPE=Release \
+            -DNETCDF_INC_DIR="$NETCDF_PREFIX/include" \
+            -DNETCDF_LIB_PATH="$NETCDF_PREFIX/lib/libnetcdf.so" \
+            -DCMAKE_EXE_LINKER_FLAGS="-L$NETCDF_PREFIX/lib -Wl,-rpath,$NETCDF_PREFIX/lib" \
             -DCMAKE_INSTALL_PREFIX="$RUNNER_TEMP/nccmp-install"
           cmake --build build/cmake --parallel 2
           ctest --test-dir build/cmake --output-on-failure \
@@ -52,7 +70,9 @@ jobs:
           autoreconf -fi
           mkdir -p build/autotools
           cd build/autotools
-          ../../configure --prefix="$RUNNER_TEMP/nccmp-install"
+          CPPFLAGS="-I$NETCDF_PREFIX/include" \
+            LDFLAGS="-L$NETCDF_PREFIX/lib -Wl,-rpath,$NETCDF_PREFIX/lib" \
+            ../../configure --prefix="$RUNNER_TEMP/nccmp-install"
           make -j2
           make check || { cat test/test-suite.log; exit 1; }
           make install
