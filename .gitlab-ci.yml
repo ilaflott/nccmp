@@ -1,4 +1,4 @@
-image: condaforge/miniforge3:latest
+image: condaforge/miniforge3:26.7.2-0
 
 workflow:
   rules:
