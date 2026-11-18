@@ -9,7 +9,7 @@ permissions:
   contents: read
 jobs:
   build:
-    name: Ubuntu / ${{ matrix.build-system }} / libnetcdf ${{ matrix.netcdf-version }}
+    name: Ubuntu / ${{ matrix.build-system }} / libnetcdf ${{ matrix.netcdf-version }} / HDF5 ${{ matrix.hdf5-version }}
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     strategy:
@@ -17,7 +17,11 @@ jobs:
       max-parallel: 4
       matrix:
         build-system: [cmake, autotools]
-        netcdf-version: ["4.9.2", "4.9.3", "4.10.0", "4.10.1"]
+        netcdf-version: ["4.9.3", "4.10.1"]
+        hdf5-version: ["1.14.*", "2.*"]
+        exclude:
+          - netcdf-version: "4.9.3"
+            hdf5-version: "2.*"
     defaults:
       run:
         shell: bash -el {0}
@@ -37,9 +41,9 @@ jobs:
           activate-environment: test
           channels: conda-forge
           conda-remove-defaults: true
-      - name: Install libnetcdf
+      - name: Install libnetcdf and HDF5
         run: |
-          conda install --yes "libnetcdf=${{ matrix.netcdf-version }}" "hdf5=1.14.*"
+          conda install --yes "libnetcdf=${{ matrix.netcdf-version }}" "hdf5=${{ matrix.hdf5-version }}"
           echo "NETCDF_PREFIX=$CONDA_PREFIX" >> "$GITHUB_ENV"
       - name: Report dependency versions
         run: |
