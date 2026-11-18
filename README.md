@@ -463,6 +463,12 @@ Print statistics and hide diff messages.
 ## News
 
 
+Version 1.11.0.1 (11/17/2026)
+
+1. Fix test_nccmp_62 failing with libnetcdf 4.10 and later. Nested compound
+   members are now declared in offset order, matching how the data is laid out,
+   so test files are written correctly and the reference output matches again.
+
 Version 1.11.0.0 (5/31/2026)
 
 1. Fix bugs reporting variable name diff while processing groups.
